@@ -4,8 +4,8 @@ description: 새로운 기능 추가, UI 개선, 문서 업데이트 등 추가 
 body:
   - type: markdown
     attributes:
-      value: >
-        **☝️ 이슈 제목은 '[commit type] 작업내용' 형식으로 작성해주세요. ☝️** \n
+      value: |
+        **☝️ 이슈 제목은 '[commit type] 작업내용' 형식으로 작성해주세요. ☝️**
         ex) [feat] 로그인 상태에 따른 UI 분기 처리
 
   - type: markdown

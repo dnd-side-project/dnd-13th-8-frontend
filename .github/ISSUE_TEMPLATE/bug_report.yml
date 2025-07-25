@@ -4,8 +4,8 @@ description: 발견한 버그를 보고하고 재현 방법을 설명하기 위�
 body:
   - type: markdown
     attributes:
-      value: >
-        **☝️ 이슈 제목은 '[bug] 에러 내용' 형식으로 작성해주세요. ☝️** \n
+      value: |
+        **☝️ 이슈 제목은 '[bug] 에러 내용' 형식으로 작성해주세요. ☝️**
         ex) [bug] Vercel Image 402 Payment Error
 
   - type: markdown
