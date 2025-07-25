@@ -2,6 +2,16 @@ name: 🚀 기능 요청
 description: 새로운 기능 추가, UI 개선, 문서 업데이트 등 추가 및 개선 요청을 위한 이슈 템플릿입니다.
 
 body:
+  - type: markdown
+    attributes:
+      value: >
+        **☝️ 이슈 제목은 '[commit type] 작업내용' 형식으로 작성해주세요. ☝️** \n
+        ex) [feat] 로그인 상태에 따른 UI 분기 처리
+
+  - type: markdown
+    attributes:
+      value: "\n&nbsp;"
+
   - type: textarea
     id: feature-description
     attributes:
