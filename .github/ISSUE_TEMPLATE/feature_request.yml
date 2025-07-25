@@ -1,0 +1,62 @@
+name: 🚀 기능 요청
+description: 새로운 기능 추가, UI 개선, 문서 업데이트 등 추가 및 개선 요청을 위한 이슈 템플릿입니다.
+
+body:
+  - type: textarea
+    id: feature-description
+    attributes:
+      label: "📝 기능 설명"
+      description: "추가하려는 기능에 대해 자세히 설명해주세요. 사용자 관점에서 어떤 문제를 해결하는지, 어떤 가치를 제공하는지 포함하면 좋습니다."
+      placeholder: "ex)\n- 새로운 사용자 대시보드 UI 구현\n- 상품 검색 필터 기능 추가"
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: "\n&nbsp;"
+
+  - type: textarea
+    id: tasks
+    attributes:
+      label: "🛠️ 작업 목록"
+      description: "이 기능을 구현하기 위한 구체적인 작업 항목을 한 줄씩 작성해주세요. 엔터를 눌러 다음 줄로 넘어갈 수 있습니다."
+      value: |
+        - [ ]
+        - [ ]
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: "\n&nbsp;"
+
+  - type: textarea
+    id: related-issues
+    attributes:
+      label: "📌 관련 Issue 또는 PR"
+      description: "관련된 Issue 번호나 PR 번호를 작성해주세요. 없다면 '- 없음' 으로 작성해주세요."
+      placeholder: "ex) #123"
+    validations:
+      required: false
+
+  - type: markdown
+    attributes:
+      value: "\n&nbsp;"
+
+  - type: textarea
+    id: learnings-references
+    attributes:
+      label: "📖 학습 및 참고 자료"
+      description: "참고할만한 자료(문서, 블로그 코드 등)가 있다면 공유해주세요. 없다면 '- 없음' 으로 작성해주세요."
+      placeholder: "ex) - React Query의 staleTime 설정 방법: [링크]"
+    validations:
+      required: false
+
+  - type: markdown
+    attributes:
+      value: "\n&nbsp;"
+
+  - type: markdown
+    attributes:
+      value: >
+        **👇 아래의 Assignee, Label, Project, Milestone을 설정해주세요. 👇**
