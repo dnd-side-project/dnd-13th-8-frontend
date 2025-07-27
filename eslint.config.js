@@ -67,7 +67,7 @@ export default tseslint.config(
       'react/self-closing-comp': 'error', // 불필요하게 닫는 태그 (<div/> 대신 <div></div>) 방지
       'react/jsx-boolean-value': ['error', 'never'], // JSX에서 불필요한 true 값 생략 (예: `readOnly={true}` 대신 `readOnly`)
       'react/no-array-index-key': 'warn', // 배열의 key로 index 사용 시 경고
-      'react/jsx-curly-brace-presence': ['error', { props: 'always', children: 'never' }], // JSX props에 항상 중괄호 사용, children에는 사용하지 않음
+      'react/jsx-curly-brace-presence': ['error', { props: 'never', children: 'never' }], // JSX props에 문자열은 따옴표 사용, children에는 중괄호 사용하지 않음
       'react/no-unescaped-entities': 'off', // JSX에서 HTML 엔티티 (예: `&nbsp;`) 이스케이프 강제 끄기 (가독성 목적)
 
       // React Hooks 규칙
