@@ -1,4 +1,4 @@
-# GitHub Copilot 지침
+# GitHub Copilot Code Review Style Guide
 
 ---
 
