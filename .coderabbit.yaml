@@ -150,7 +150,7 @@ guidelines: |
 
   ### 4.3. 빌드 퍼포먼스
 
-  - Vite의 설정(`vite.config.js`)에서 빌드 성능을 저하시킬 수 있는 요소를 확인하고, 최적화 방안을 제안해주세요. (예: `build.sourcemap` 설정, `plugins` 최적화 등)
+  - Vite의 설정(`vite.config.ts`)에서 빌드 성능을 저하시킬 수 있는 요소를 확인하고, 최적화 방안을 제안해주세요. (예: `build.sourcemap` 설정, `plugins` 최적화 등)
 
   ---
 
