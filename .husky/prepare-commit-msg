@@ -23,6 +23,6 @@ if [ -n "$ISSUE_NUMBER" ]; then
   echo "커밋 메세지에 이슈 번호 $FORMATTED_ISSUE 을(를) 추가했습니다."
 elif ! echo "$COMMIT_MSG" | grep -q "(no-issue)"; then
   # issue 번호가 없으면 (no-issue) 추가
-  echo "$COMMIT_MSG" | sed "ls/$/ (no-issue)/" > "$COMMIT_MSG_FILE"
+  echo "$COMMIT_MSG" | sed "s/$/ (no-issue)/" > "$COMMIT_MSG_FILE"
   echo "이슈 번호를 찾을 수 없어 커밋 메세지에 (no-issue)을(를) 추가했습니다."
 fi
