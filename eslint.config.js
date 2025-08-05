@@ -127,6 +127,8 @@ export default tseslint.config(
 
       // lint-staged에서 Prettier를 먼저 실행하므로 비활성화
       'prettier/prettier': 'off', // Prettier 규칙 비활성화
+
+      'import/no-cycle': ['error', { maxDepth: Infinity }], // 모듈 간 순환 참조 방지. 무한 깊이까지 탐색하여 감지하며, 감지 시 빌드 실패 처리
     },
 
     // 플러그인이 규칙을 실행하는 데 필요한 추가 정보
