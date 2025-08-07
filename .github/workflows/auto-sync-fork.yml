@@ -1,19 +1,16 @@
-name: Auto sync to forked repository
+name: Auto Sync to Forked Repo
 
 on:
   push:
     branches:
       - main
       - develop
-  pull_request:
-    branches:
-      - develop
 
 jobs:
-  build_and_sync:
-    name: Build and Sync
+  auto_sync:
+    name: Auto Sync Fork
     runs-on: ubuntu-latest
-    if: github.repository == 'dnd-side-project/dnd-13th-8-frontend' # 원본 저장소에서만 실행되도록 제한
+    if: github.repository == 'dnd-side-project/dnd-13th-8-frontend'
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -47,16 +44,15 @@ jobs:
         run: pnpm build
 
       - name: Add remote fork
-        if: github.event_name == 'push'
         run: |
           git remote add forked_repo https://maylh:${{ secrets.AUTO_SYNC_DEULAK }}@github.com/maylh/dnd-13th-8-frontend
           git config user.name maylh
           git config user.email gus_05@naver.com
 
       - name: Push to forked repo (main)
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        if: github.ref == 'refs/heads/main'
         run: git push -f forked_repo HEAD:refs/heads/main
 
       - name: Push to forked repo (develop)
-        if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+        if: github.ref == 'refs/heads/develop'
         run: git push -f forked_repo HEAD:refs/heads/develop
