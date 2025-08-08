@@ -1,3 +1,6 @@
+// For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
+import storybook from 'eslint-plugin-storybook'
+
 import eslint from '@eslint/js'
 import globals from 'globals'
 import reactHooks from 'eslint-plugin-react-hooks'
@@ -12,7 +15,7 @@ import unusedImports from 'eslint-plugin-unused-imports'
 export default tseslint.config(
   {
     // ESLint 검사에서 제외할 파일/디렉토리 지정
-    ignores: ['dist', 'node_modules', 'stories'],
+    ignores: ['dist', 'node_modules', 'stories', '.storybook/**/*', 'vitest.shims.d.ts'],
   },
   {
     // 설정 파일이 적용될 파일 확장자 지정
@@ -168,5 +171,6 @@ export default tseslint.config(
         version: 'detect', // React 버전을 자동으로 감지하여 React 관련 규칙을 정확하게 적용
       },
     },
-  }
+  },
+  storybook.configs['flat/recommended']
 )
