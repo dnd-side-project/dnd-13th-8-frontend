@@ -30,6 +30,7 @@
   },
   "dependencies": {
     "@tanstack/react-query": "^5.84.2",
+    "axios": "^1.11.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "styled-components": "^6.1.19",
