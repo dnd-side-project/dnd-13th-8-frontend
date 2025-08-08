@@ -1,1 +1,3 @@
-// index.ts
+import QueryProvider from './QueryProvider'
+
+export { QueryProvider }

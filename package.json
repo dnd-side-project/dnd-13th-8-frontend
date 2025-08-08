@@ -29,6 +29,7 @@
     ]
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.84.2",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },
