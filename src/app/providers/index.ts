@@ -1,3 +1,4 @@
 import QueryProvider from './QueryProvider'
+import ThemeProvider from './ThemeProvider'
 
-export { QueryProvider }
+export { QueryProvider, ThemeProvider }
