@@ -99,11 +99,42 @@ export default tseslint.config(
               position: 'before',
             },
             {
+              pattern: '@app/**', // FSD app 레이어 import
+              group: 'internal',
+              position: 'after',
+            },
+            {
+              pattern: '@entities/**', // FSD entities 레이어 import
+              group: 'internal',
+              position: 'after',
+            },
+            {
+              pattern: '@features/**', // FSD features 레이어 import
+              group: 'internal',
+              position: 'after',
+            },
+            {
+              pattern: '@shared/**', // FSD shared 레이어 import
+              group: 'internal',
+              position: 'after',
+            },
+            {
+              pattern: '@widgets/**', // FSD widgets 레이어 import
+              group: 'internal',
+              position: 'after',
+            },
+            {
+              pattern: '@pages/**', // FSD pages 레이어 import
+              group: 'internal',
+              position: 'after',
+            },
+            {
               pattern: '@/**', // `@/`로 시작하는 import를 'internal' 그룹처럼 처리 (프로젝트 루트의 alias)
               group: 'internal',
               position: 'after',
             },
           ],
+          pathGroupsExcludedImportTypes: ['react'],
           alphabetize: {
             order: 'asc', // 알파벳 순으로 정렬
             caseInsensitive: true, // 대소문자 무시
