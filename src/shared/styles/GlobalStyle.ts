@@ -4,8 +4,13 @@ import reset from 'styled-reset'
 const GlobalStyle = createGlobalStyle`
   ${reset}
 
-  /* pretendard */
-  @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css');
+  @font-face {
+    font-family: 'Pretendard';
+    src: url('/fonts/PretendardVariable.woff2') format('woff2');
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+  }
 
   * {
     box-sizing: border-box;

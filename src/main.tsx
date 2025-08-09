@@ -6,7 +6,7 @@ import { QueryProvider, ThemeProvider } from '@app/providers'
 
 import GlobalStyle from '@shared/styles/GlobalStyle'
 
-import App from './App.tsx'
+import App from './App'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
