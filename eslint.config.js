@@ -170,6 +170,20 @@ export default tseslint.config(
       react: {
         version: 'detect', // React 버전을 자동으로 감지하여 React 관련 규칙을 정확하게 적용
       },
+      'import/resolver': {
+        alias: {
+          map: [
+            ['@', './src'],
+            ['@app', './src/app'],
+            ['@entities', './src/entities'],
+            ['@features', './src/features'],
+            ['@shared', './src/shared'],
+            ['@widgets', './src/widgets'],
+            ['@pages', './src/pages'],
+          ],
+          extensions: ['.js', '.jsx', '.ts', '.tsx'],
+        },
+      },
     },
   },
   storybook.configs['flat/recommended']
