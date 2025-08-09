@@ -35,11 +35,8 @@ const GlobalStyle = createGlobalStyle`
   /* 공통 레이아웃 */
   main {
     position: relative;
-    width: 375px;
-    min-width: 320px;
-    max-width: 420px;
-    min-height: 100dvh;
-    max-height: fit-content;
+    width: clamp(320px, 100dvw, 420px);
+    height: clamp(100dvh, 100dvh, fit-content);
     margin: 0 auto;
     overflow-x: auto;
     overflow-y: auto;
