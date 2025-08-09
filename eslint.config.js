@@ -1,3 +1,6 @@
+// For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
+import storybook from 'eslint-plugin-storybook'
+
 import eslint from '@eslint/js'
 import globals from 'globals'
 import reactHooks from 'eslint-plugin-react-hooks'
@@ -12,7 +15,7 @@ import unusedImports from 'eslint-plugin-unused-imports'
 export default tseslint.config(
   {
     // ESLint 검사에서 제외할 파일/디렉토리 지정
-    ignores: ['dist', 'node_modules', 'stories'],
+    ignores: ['dist', 'node_modules', 'stories', '.storybook/**/*', 'vitest.shims.d.ts'],
   },
   {
     // 설정 파일이 적용될 파일 확장자 지정
@@ -99,11 +102,42 @@ export default tseslint.config(
               position: 'before',
             },
             {
+              pattern: '@app/**', // FSD app 레이어 import
+              group: 'internal',
+              position: 'after',
+            },
+            {
+              pattern: '@entities/**', // FSD entities 레이어 import
+              group: 'internal',
+              position: 'after',
+            },
+            {
+              pattern: '@features/**', // FSD features 레이어 import
+              group: 'internal',
+              position: 'after',
+            },
+            {
+              pattern: '@shared/**', // FSD shared 레이어 import
+              group: 'internal',
+              position: 'after',
+            },
+            {
+              pattern: '@widgets/**', // FSD widgets 레이어 import
+              group: 'internal',
+              position: 'after',
+            },
+            {
+              pattern: '@pages/**', // FSD pages 레이어 import
+              group: 'internal',
+              position: 'after',
+            },
+            {
               pattern: '@/**', // `@/`로 시작하는 import를 'internal' 그룹처럼 처리 (프로젝트 루트의 alias)
               group: 'internal',
               position: 'after',
             },
           ],
+          pathGroupsExcludedImportTypes: ['react'],
           alphabetize: {
             order: 'asc', // 알파벳 순으로 정렬
             caseInsensitive: true, // 대소문자 무시
@@ -134,8 +168,15 @@ export default tseslint.config(
     // 플러그인이 규칙을 실행하는 데 필요한 추가 정보
     settings: {
       react: {
-        version: 'detect', // React 버전을 자동으로 감지하여 React 관련 규칙을 정확하게 적용
+        version: 'detect',
+      },
+      'import/resolver': {
+        typescript: {
+          alwaysTryTypes: true,
+          project: './tsconfig.app.json',
+        },
       },
     },
-  }
+  },
+  storybook.configs['flat/recommended']
 )
