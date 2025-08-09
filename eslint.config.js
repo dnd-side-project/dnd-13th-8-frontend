@@ -168,20 +168,12 @@ export default tseslint.config(
     // 플러그인이 규칙을 실행하는 데 필요한 추가 정보
     settings: {
       react: {
-        version: 'detect', // React 버전을 자동으로 감지하여 React 관련 규칙을 정확하게 적용
+        version: 'detect',
       },
       'import/resolver': {
-        alias: {
-          map: [
-            ['@', './src'],
-            ['@app', './src/app'],
-            ['@entities', './src/entities'],
-            ['@features', './src/features'],
-            ['@shared', './src/shared'],
-            ['@widgets', './src/widgets'],
-            ['@pages', './src/pages'],
-          ],
-          extensions: ['.js', '.jsx', '.ts', '.tsx'],
+        typescript: {
+          alwaysTryTypes: true,
+          project: './tsconfig.app.json',
         },
       },
     },
