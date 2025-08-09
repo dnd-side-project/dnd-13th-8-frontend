@@ -13,6 +13,9 @@ reviews:
     # PR이 열렸을 때와 업데이트될 때 자동 리뷰
     auto_incremental_review: true
 
+  # 리뷰 정도 설정 (chill, assertive)
+  profile: 'chill'
+
   # 리뷰에서 제외할 파일/폴더 패턴 (! 접두사 사용)
   path_filters:
     - '!**/node_modules/**'
