@@ -4,7 +4,7 @@ import { createRoot } from 'react-dom/client'
 
 import { QueryProvider, ThemeProvider } from '@app/providers'
 
-import GlobalStyle from '@shared/styles/GlobalStyle'
+import GlobalStyle from '@shared/styles/globalStyle'
 
 import App from './App'
 
