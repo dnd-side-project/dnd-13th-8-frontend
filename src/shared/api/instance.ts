@@ -25,7 +25,6 @@ axiosInstance.interceptors.request.use(
 // 응답 interceptor
 axiosInstance.interceptors.response.use(
   (response: AxiosResponse) => {
-    if (!response) Promise.reject()
     // TODO: 응답 구조에 따라 수정
     return response.data
   },

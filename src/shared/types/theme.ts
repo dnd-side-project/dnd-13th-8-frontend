@@ -1,4 +1,4 @@
-export interface theme {
+export interface Theme {
   breakpoints: {
     sm: string
     md: string
