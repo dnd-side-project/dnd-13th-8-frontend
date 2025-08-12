@@ -1,7 +1,7 @@
 import type { Preview } from '@storybook/react-vite'
 import { ThemeProvider } from 'styled-components'
 import { MemoryRouter } from 'react-router-dom'
-import { theme } from '../src/shared/styles/theme'
+import { theme } from '@/shared/styles/theme'
 import GlobalStyle from '@/shared/styles/globalStyle'
 
 const preview: Preview = {
