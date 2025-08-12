@@ -23,6 +23,17 @@ const GlobalStyle = createGlobalStyle`
     line-height: 1.5;
   }
 
+
+  button {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    color: 'inherit',
+  }
+
+
+
   /* 스크롤바 미노출 */
   html {
     scrollbar-width: none;
