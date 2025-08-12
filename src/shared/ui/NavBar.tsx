@@ -32,6 +32,8 @@ export default NavBar
 
 const NavButtonBox = styled.nav`
   display: flex;
+  align-items: center;
+  justify-content: center;
   gap: 8px;
   padding: 11px 20px;
   background: linear-gradient(to top, rgb(36, 38, 45), rgba(65, 86, 163, 0.4));
@@ -49,6 +51,7 @@ const NavItem = styled.div<{ $active?: boolean }>`
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   width: 68px;
   gap: 4px;
   color: ${({ theme, $active }) =>
