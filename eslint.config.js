@@ -88,6 +88,8 @@ export default tseslint.config(
       // TypeScript 관련 규칙
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }], // 사용되지 않는 TypeScript 변수 금지, `_`로 시작하는 변수는 무시
       '@typescript-eslint/no-explicit-any': 'error', // `any` 타입 사용 금지
+      '@typescript-eslint/no-empty-interface': 'off', // 빈 인터페이스 규칙 비활성화
+      '@typescript-eslint/no-empty-object-type': 'off', // 빈 객체 타입 규칙 비활성화
 
       // Import 관련 규칙
       'import/no-unresolved': 'off', // import 경로 해결 실패 시 오류 끄기
