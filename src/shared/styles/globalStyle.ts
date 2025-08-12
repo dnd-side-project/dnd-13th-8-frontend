@@ -29,7 +29,7 @@ const GlobalStyle = createGlobalStyle`
     border: none;
     padding: 0;
     cursor: pointer;
-    color: 'inherit',
+    color: inherit;
   }
 
 
