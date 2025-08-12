@@ -36,7 +36,7 @@ const GlobalStyle = createGlobalStyle`
   main {
     position: relative;
     width: clamp(320px, 100dvw, 420px);
-    height: clamp(100dvh, 100dvh, fit-content);
+    min-height: 100dvh;
     margin: 0 auto;
     overflow-x: auto;
     overflow-y: auto;
