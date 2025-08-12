@@ -35,5 +35,5 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src", ".storybook/**/*", "vitest.shims.d.ts"]
+  "include": ["svg.d.ts", "src", ".storybook/**/*", "vitest.shims.d.ts"]
 }
