@@ -1,16 +1,9 @@
 import { ThemeProvider as StyledThemeProvider } from 'styled-components'
 
+import { theme } from '@shared/styles/theme'
+
 interface ThemeProviderProps {
   children: React.ReactNode
-}
-
-// 기본 테마 정의
-const theme = {
-  breakpoints: {
-    sm: '320px',
-    md: '375px',
-    lg: '420px',
-  },
 }
 
 const ThemeProvider = ({ children }: ThemeProviderProps) => {
