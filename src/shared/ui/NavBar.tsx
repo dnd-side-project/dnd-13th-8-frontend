@@ -56,8 +56,8 @@ const NavItem = styled.div<{ $active?: boolean }>`
   gap: 4px;
   color: ${({ theme, $active }) =>
     $active ? theme.COLOR['primary-normal'] : theme.COLOR['gray-100']};
-  ${({ theme }) => theme.FONT.caption};
-  cursor: pointer;
+  ${({ theme }) => theme.FONT.caption2};
+  font-weight: ${({ $active }) => ($active ? 500 : 400)};
 `
 
 const NavLink = styled(Link)`
