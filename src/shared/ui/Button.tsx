@@ -14,28 +14,29 @@ const getSizeStyles = (size: ButtonSize) => {
   switch (size) {
     case 'L':
       return css`
-        width: 335px;
+        min-width: 335px;
         height: 46px;
         border-radius: 10px;
         ${({ theme }) => theme.FONT['body1-normal']}
       `
     case 'M':
       return css`
-        width: 76px;
+        min-width: 76px;
         height: 42px;
         border-radius: 10px;
         ${({ theme }) => theme.FONT['body2-normal']}
       `
     case 'S':
       return css`
-        width: 51px;
+        padding: 5px 8px;
+        min-width: 51px;
         height: 26px;
         border-radius: 99px;
         ${({ theme }) => theme.FONT.caption1}
       `
     default:
       return css`
-        width: 76px;
+        min-width: 76px;
         height: 42px;
         border-radius: 10px;
         ${({ theme }) => theme.FONT['body2-normal']}
