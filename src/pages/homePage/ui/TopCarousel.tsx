@@ -107,12 +107,7 @@ const Slide = styled.div<{ active: boolean }>`
             ${props.theme.COLOR['gray-800']}
           )
           padding-box,
-        linear-gradient(
-            to bottom right,
-            rgba(230, 255, 248, 0.5),
-            ${`${props.theme.COLOR['gray-800']}80`}
-          )
-          border-box;
+        linear-gradient(to bottom right, rgba(230, 255, 248, 0.5), rgb(24, 25, 32, 0.8)) border-box;
     `}
 `
 

@@ -62,7 +62,7 @@ const normalStyles = css`
 
 const StyledDotButton = styled.button<{ selected?: boolean }>`
   border-radius: 50%;
-  transition: all 0.5 ease;
+  transition: all 0.5s ease;
 
   ${({ selected }) => (selected ? selectedStyles : normalStyles)}
 `

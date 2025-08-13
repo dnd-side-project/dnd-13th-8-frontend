@@ -24,7 +24,7 @@ const sizeStyles = {
   `,
 } as const
 
-const StyledBadge = styled.div<{ size: 'small' | 'large' }>`
+const StyledBadge = styled.span<{ size: 'small' | 'large' }>`
   width: fit-content;
   ${flexCenter}
   border-radius: 99px;

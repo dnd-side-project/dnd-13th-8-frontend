@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import styled from 'styled-components'
 
 import TopCarousel from '@/pages/homePage/ui/TopCarousel'
 
@@ -17,15 +18,20 @@ const mockData = [
   { title: '플레이리스트 #4', genre: '클래식' },
 ]
 
+const StoryContainer = styled.div`
+  width: 420px;
+  margin: 0 auto;
+`
+
 export const Default: Story = {
   args: {
     data: mockData,
   },
   decorators: [
     (Story) => (
-      <div style={{ width: '420px', margin: '0 auto' }}>
+      <StoryContainer>
         <Story />
-      </div>
+      </StoryContainer>
     ),
   ],
 }
