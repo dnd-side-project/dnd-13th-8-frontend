@@ -1,5 +1,7 @@
 import styled, { css } from 'styled-components'
 
+import { flexCenter } from '@/shared/styles/mixins'
+
 interface BadgeProps {
   size?: 'small' | 'large'
   text: string
@@ -13,21 +15,18 @@ export default Badge
 
 const sizeStyles = {
   small: css`
-    width: 32px;
-    height: 18px;
+    padding: 2px 6px;
     ${({ theme }) => theme.FONT.caption2};
   `,
   large: css`
-    width: 36px;
-    height: 22px;
+    padding: 3px 7px;
     ${({ theme }) => theme.FONT.caption1};
   `,
 } as const
 
 const StyledBadge = styled.div<{ size: 'small' | 'large' }>`
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: fit-content;
+  ${flexCenter}
   border-radius: 99px;
   background-color: ${({ theme }) => theme.COLOR['gray-700']};
   color: ${({ theme }) => theme.COLOR['primary-normal']};

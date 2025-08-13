@@ -3,20 +3,28 @@ import { useEffect, useState } from 'react'
 import useEmblaCarousel from 'embla-carousel-react'
 import styled, { css } from 'styled-components'
 
+import CharacterImg from '@/assets/images/img_character.png'
+import { flexCenter } from '@/shared/styles/mixins'
+import Badge from '@/shared/ui/Badge'
+
 import { DotButton, useDotButton } from './DotButton'
 
-type PropType = {
-  slides: number[]
+interface SlideData {
+  title: string
+  genre: string
 }
 
-const TopCarousel = ({ slides }: PropType) => {
+interface TopCarouselProps {
+  data: SlideData[]
+}
+
+const TopCarousel = ({ data }: TopCarouselProps) => {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true })
   const [activeIndex, setActiveIndex] = useState(0)
 
   useEffect(() => {
     if (!emblaApi) return
     const onSelect = () => setActiveIndex(emblaApi.selectedScrollSnap())
-
     emblaApi.on('select', onSelect)
     onSelect()
   }, [emblaApi])
@@ -27,24 +35,33 @@ const TopCarousel = ({ slides }: PropType) => {
     <Embla>
       <div ref={emblaRef}>
         <EmblaContainer>
-          {slides.map((index) => (
+          <EmblaSlide key="image">
+            <Slide active={activeIndex === 0}>
+              <Image src={CharacterImg} alt="Deulak character" />
+            </Slide>
+          </EmblaSlide>
+
+          {data.map((slide, index) => (
             <EmblaSlide key={index}>
-              <EmblaSlideNumber active={index === activeIndex}>{index + 1}</EmblaSlideNumber>
+              <Slide active={activeIndex === index + 1}>
+                <SlideOverlay>
+                  <Badge size="small" text={slide.genre} />
+                  <Title>{slide.title}</Title>
+                </SlideOverlay>
+              </Slide>
             </EmblaSlide>
           ))}
         </EmblaContainer>
       </div>
 
       <EmblaControls>
-        <EmblaDots>
-          {scrollSnaps.map((_, index) => (
-            <DotButton
-              key={index}
-              onClick={() => onDotButtonClick(index)}
-              selected={index === selectedIndex}
-            />
-          ))}
-        </EmblaDots>
+        {scrollSnaps.map((_, index) => (
+          <DotButton
+            key={index}
+            onClick={() => onDotButtonClick(index)}
+            selected={index === selectedIndex}
+          />
+        ))}
       </EmblaControls>
     </Embla>
   )
@@ -63,26 +80,25 @@ const EmblaContainer = styled.div`
 
 const EmblaSlide = styled.div`
   flex: 0 0 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  ${flexCenter}
 `
 
-const EmblaSlideNumber = styled.div<{ active: boolean }>`
+const Slide = styled.div<{ active: boolean }>`
+  position: relative;
   border-radius: 20px;
   width: 220px;
   height: 220px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  ${flexCenter}
   background-color: ${({ theme }) => theme.COLOR['gray-700']};
   transition: transform 0.8s ease;
   transform: scale(0.8);
+  overflow: hidden;
 
   ${(props) =>
     props.active &&
     css`
       border: 0.8px solid transparent;
+      border-radius: 24px;
       transform: scale(1);
       background:
         linear-gradient(
@@ -100,14 +116,36 @@ const EmblaSlideNumber = styled.div<{ active: boolean }>`
     `}
 `
 
-const EmblaControls = styled.div`
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
+const Image = styled.img`
+  object-fit: cover;
 `
 
-const EmblaDots = styled.div`
+const EmblaControls = styled.div`
+  ${flexCenter}
+  margin-top: 20px;
   gap: 8px;
+`
+
+const Title = styled.p`
+  color: ${({ theme }) => theme.COLOR['common-white']};
+  ${({ theme }) => theme.FONT['body1-normal']};
+  font-weight: 600;
+`
+
+const SlideOverlay = styled.div`
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  gap: 4px;
+  position: absolute;
+  bottom: 0;
+  height: 62px;
+  width: 100%;
+  padding: 6px 16px 8px 16px;
+
+  background: rgba(124, 124, 124, 0.1);
+  border: 0.5px solid rgba(255, 255, 255, 0.2);
+  box-shadow:
+    0px 4px 4px rgba(0, 0, 0, 0.25),
+    0px 0px 12px rgba(0, 0, 0, 0.04);
+  backdrop-filter: blur(8px);
 `
