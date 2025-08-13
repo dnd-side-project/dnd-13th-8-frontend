@@ -20,7 +20,7 @@ const Link = ({ variant = 'large', data }: LinkProps) => {
           <Gallery width={variant === 'large' ? 24 : 20} height={variant === 'large' ? 24 : 20} />
         )}
       </Thumbnail>
-      <span>{data.title}</span>
+      <Title $variant={variant}>{data.title}</Title>
     </LinkBox>
   )
 }
@@ -29,13 +29,8 @@ export default Link
 
 const LinkBox = styled.div<{ $variant?: 'large' | 'small' }>`
   display: flex;
+  align-items: center;
   gap: ${(props) => (props.$variant === 'large' ? '10px' : '9px')};
-
-  span {
-    color: ${({ theme }) => theme.COLOR['gray-50']};
-    ${({ $variant, theme }) =>
-    $variant === 'large' ? theme.FONT['body2-normal'] : theme.FONT.caption1};
-  }
 `
 
 interface ThumbnailProps {
@@ -56,4 +51,17 @@ const Thumbnail = styled.div<ThumbnailProps>`
   display: flex;
   justify-content: center;
   align-items: center;
+`
+
+const Title = styled.p<{ $variant?: 'large' | 'small' }>`
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  word-break: break-word;
+  width: ${({ $variant }) => ($variant === 'large' ? '245px' : '128px')};
+
+  color: ${({ theme }) => theme.COLOR['gray-50']};
+  ${({ $variant, theme }) =>
+    $variant === 'large' ? theme.FONT['body2-normal'] : theme.FONT.caption1};
 `
