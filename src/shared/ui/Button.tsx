@@ -56,7 +56,7 @@ const stateStyles: Record<ButtonState, ReturnType<typeof css>> = {
   `,
 }
 
-const Button = ({ children, size = 'M', state = 'primary', onClick }: ButtonProps) => {
+const Button = ({ children, size, state, onClick }: ButtonProps) => {
   return (
     <StyledButton
       type="button"
