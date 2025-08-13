@@ -49,37 +49,42 @@ export const theme = {
     headline2: css`
       font-size: 16px;
       line-height: 24px;
-      letter-spacing: -0.0057em;
+      letter-spacing: 0.0057em;
     `,
     'body1-normal': css`
       font-size: 15px;
       line-height: 22px;
-      letter-spacing: -0.0096em;
+      letter-spacing: 0.0096em;
     `,
     'body1-reading': css`
       font-size: 15px;
       line-height: 24px;
-      letter-spacing: -0.0096em;
+      letter-spacing: 0.0096em;
     `,
     'body2-normal': css`
       font-size: 14px;
       line-height: 20px;
-      letter-spacing: -0.0145em;
+      letter-spacing: 0.0145em;
     `,
     'body2-reading': css`
       font-size: 14px;
       line-height: 22px;
-      letter-spacing: -0.0145em;
+      letter-spacing: 0.0145em;
     `,
     label: css`
       font-size: 13px;
       line-height: 18px;
-      letter-spacing: -0.0194em;
+      letter-spacing: 0.0194em;
     `,
-    caption: css`
+    caption1: css`
       font-size: 12px;
       line-height: 16px;
-      letter-spacing: -0.0252em;
+      letter-spacing: 0.0252em;
+    `,
+    caption2: css`
+      font-size: 11px;
+      line-height: 14px;
+      letter-spacing: 0.0311em;
     `,
   },
 }
