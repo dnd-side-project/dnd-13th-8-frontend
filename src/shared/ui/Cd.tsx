@@ -32,7 +32,7 @@ interface StyleProps {
 }
 
 const Container = styled.div<StyleProps>`
-  position: relative; // overlay 기준
+  position: relative; /* overlay 기준 */
   width: ${({ $variant }) => sizeMap[$variant]}px;
   height: ${({ $variant }) => sizeMap[$variant]}px;
 `
