@@ -70,7 +70,7 @@ const getStateStyles = (state: ButtonState) => {
   }
 }
 
-const Button: React.FC<ButtonProps> = ({ children, size = 'M', state = 'primary', onClick }) => {
+const Button = ({ children, size = 'M', state = 'primary', onClick }: ButtonProps) => {
   return (
     <StyledButton
       type="button"
