@@ -39,7 +39,6 @@ const Wrapper = styled.div`
   gap: 16px;
   padding: 15px;
   width: 240px;
-  border-radius: 14px;
 
   border: 1px solid transparent;
   border-radius: 14px;
