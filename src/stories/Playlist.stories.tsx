@@ -5,7 +5,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import Playlist from '@/widgets/playlist/Playlist'
 
 const meta: Meta<typeof Playlist> = {
-  title: 'Widgets/Playlist',
+  title: 'Widgets/Playlist/Playlist',
   component: Playlist,
   tags: ['autodocs'],
 }
