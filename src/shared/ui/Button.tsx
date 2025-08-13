@@ -1,73 +1,59 @@
+import type { ReactNode, MouseEventHandler } from 'react'
+
 import styled, { css } from 'styled-components'
 
 type ButtonSize = 'L' | 'M' | 'S'
 type ButtonState = 'primary' | 'secondary' | 'disabled'
 
 interface ButtonProps {
-  children: React.ReactNode
+  children: ReactNode
   size: ButtonSize
   state: ButtonState
-  onClick?: () => void
+  onClick?: MouseEventHandler<HTMLButtonElement>
 }
 
-const getSizeStyles = (size: ButtonSize) => {
-  switch (size) {
-    case 'L':
-      return css`
-        min-width: 335px;
-        height: 46px;
-        border-radius: 10px;
-        ${({ theme }) => theme.FONT['body1-normal']}
-      `
-    case 'M':
-      return css`
-        min-width: 76px;
-        height: 42px;
-        border-radius: 10px;
-        ${({ theme }) => theme.FONT['body2-normal']}
-      `
-    case 'S':
-      return css`
-        padding: 5px 8px;
-        min-width: 51px;
-        height: 26px;
-        border-radius: 99px;
-        ${({ theme }) => theme.FONT.caption1}
-      `
-    default:
-      return css`
-        min-width: 76px;
-        height: 42px;
-        border-radius: 10px;
-        ${({ theme }) => theme.FONT['body2-normal']}
-      `
-  }
+const BUTTON_STYLES = {
+  L: { minWidth: '335px', height: '46px', borderRadius: '10px' },
+  M: { minWidth: '76px', height: '42px', borderRadius: '10px' },
+  S: { minWidth: '51px', height: '26px', borderRadius: '99px' },
+} as const
+
+const sizeStyles: Record<ButtonSize, ReturnType<typeof css>> = {
+  L: css`
+    min-width: ${BUTTON_STYLES.L.minWidth};
+    height: ${BUTTON_STYLES.L.height};
+    border-radius: ${BUTTON_STYLES.L.borderRadius};
+    ${({ theme }) => theme.FONT['body1-normal']}
+  `,
+  M: css`
+    min-width: ${BUTTON_STYLES.M.minWidth};
+    height: ${BUTTON_STYLES.M.height};
+    border-radius: ${BUTTON_STYLES.M.borderRadius};
+    ${({ theme }) => theme.FONT['body2-normal']}
+  `,
+  S: css`
+    padding: 5px 8px;
+    min-width: ${BUTTON_STYLES.S.minWidth};
+    height: ${BUTTON_STYLES.S.height};
+    border-radius: ${BUTTON_STYLES.S.borderRadius};
+    ${({ theme }) => theme.FONT.caption1}
+  `,
 }
 
-const getStateStyles = (state: ButtonState) => {
-  switch (state) {
-    case 'primary':
-      return css`
-        background: ${({ theme }) => theme.COLOR['primary-normal']};
-        color: ${({ theme }) => theme.COLOR['gray-900']};
-      `
-    case 'secondary':
-      return css`
-        background: ${({ theme }) => theme.COLOR['gray-600']};
-        color: ${({ theme }) => theme.COLOR['primary-normal']};
-      `
-    case 'disabled':
-      return css`
-        background: ${({ theme }) => theme.COLOR['gray-600']};
-        color: ${({ theme }) => theme.COLOR['gray-400']};
-        cursor: not-allowed;
-      `
-    default:
-      return css`
-        background: ${({ theme }) => theme.COLOR['gray-600']};
-        color: ${({ theme }) => theme.COLOR['gray-400']};
-      `
-  }
+const stateStyles: Record<ButtonState, ReturnType<typeof css>> = {
+  primary: css`
+    background: ${({ theme }) => theme.COLOR['primary-normal']};
+    color: ${({ theme }) => theme.COLOR['gray-900']};
+  `,
+  secondary: css`
+    background: ${({ theme }) => theme.COLOR['gray-600']};
+    color: ${({ theme }) => theme.COLOR['primary-normal']};
+  `,
+  disabled: css`
+    background: ${({ theme }) => theme.COLOR['gray-600']};
+    color: ${({ theme }) => theme.COLOR['gray-400']};
+    cursor: not-allowed;
+  `,
 }
 
 const Button = ({ children, size = 'M', state = 'primary', onClick }: ButtonProps) => {
@@ -93,6 +79,6 @@ const StyledButton = styled.button<{
   display: flex;
   align-items: center;
   justify-content: center;
-  ${({ size }) => getSizeStyles(size)}
-  ${({ state }) => getStateStyles(state)}
+  ${({ size }) => sizeStyles[size]}
+  ${({ state }) => stateStyles[state]}
 `
