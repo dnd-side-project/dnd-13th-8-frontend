@@ -18,7 +18,7 @@ const Playlist = ({ title, username, liked, onClick }: PlaylistProps) => {
     <Wrapper>
       <CdBox>
         <Cd variant="xl" />
-        <LikeButton>
+        <LikeButton $opacity={liked ? 1 : 0.2}>
           <SvgButton
             icon={Like}
             onClick={onClick}
@@ -58,10 +58,12 @@ const CdBox = styled.div`
   align-items: center;
 `
 
-const LikeButton = styled.div`
+const LikeButton = styled.div<{ $opacity?: number }>`
   position: absolute;
   top: 6px;
   right: 6px;
+
+  opacity: ${({ $opacity }) => $opacity};
 `
 
 const Title = styled.h3`
