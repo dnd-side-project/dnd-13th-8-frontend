@@ -21,6 +21,31 @@ export const theme = {
     'gray-900': '#0f1014',
   },
 
+  GRADIENT: {
+    hologram: `conic-gradient(
+      from 0deg,
+      #ffffff 0deg,
+      #c2fff4 68deg,
+      #f8fccc 100deg,
+      #c5f3eb 180deg,
+      #ffe2fe 254deg,
+      #c0f9ef 275deg,
+      #fffbe9 300deg,
+      #ffffff 360deg
+    )`,
+    gradient1: `linear-gradient(
+      to right,
+      #c0f5e5 0%,
+      #eaf1e6 77%,
+      #f0f1ce 100%
+    )`,
+    gradient2: `linear-gradient(
+      to right,
+      #8ef5e2 0%,
+      #d8f5fe 100%
+    )`,
+  },
+
   OPACITY: {
     scrim: 'rgba(15, 16, 20, 0.6)',
   },
