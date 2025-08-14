@@ -169,7 +169,7 @@ const Overlay = styled(motion.div)`
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: ${({ theme }) => theme.OPACITY.scrim};
   z-index: 1000;
   display: flex;
   align-items: flex-end;
