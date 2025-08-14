@@ -1,0 +1,212 @@
+import React, { useCallback, useEffect, useRef } from 'react'
+import { createPortal } from 'react-dom'
+
+import { motion, AnimatePresence } from 'framer-motion'
+import type { PanInfo } from 'framer-motion'
+import styled from 'styled-components'
+
+import { useDevice, type DeviceType } from '@/shared/hooks/useDevice'
+
+const BOTTOM_SHEET_CONSTANTS = {
+  // 드래그 관련
+  DRAG_CLOSE_THRESHOLD: 100, // px
+  DRAG_ELASTIC: 0.2, // 드래그 탄성
+
+  // 애니메이션
+  SPRING_DAMPING: 40, // 높을수록 튀는 현상 줄어듦
+  SPRING_STIFFNESS: 300, // 높을수록 빠르고 탄력적으로 움직임
+  OVERLAY_DURATION: 0.2,
+
+  // 핸들 (px)
+  HANDLE_WIDTH: 48,
+  HANDLE_HEIGHT: 4,
+  HANDLE_MARGIN: 6,
+
+  // 기본 높이
+  DEFAULT_HEIGHT: '50dvh',
+} as const
+
+interface BottomSheetProps {
+  isOpen: boolean
+  onClose: () => void
+  children: React.ReactNode
+  height?: string
+}
+
+const BottomSheet: React.FC<BottomSheetProps> = ({
+  isOpen,
+  onClose,
+  children,
+  height = BOTTOM_SHEET_CONSTANTS.DEFAULT_HEIGHT,
+}) => {
+  const overlayRef = useRef<HTMLDivElement>(null)
+  const deviceType = useDevice()
+
+  const handleEscape = useCallback(
+    (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        onClose()
+      }
+    },
+    [onClose]
+  )
+
+  useEffect(() => {
+    if (isOpen) {
+      document.addEventListener('keydown', handleEscape)
+      document.body.style.overflow = 'hidden'
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape)
+      document.body.style.overflow = 'unset'
+    }
+  }, [isOpen, handleEscape])
+
+  const handleOverlayClick = useCallback(
+    (event: React.MouseEvent) => {
+      if (event.target === overlayRef.current) {
+        onClose()
+      }
+    },
+    [onClose]
+  )
+
+  // 클릭으로 바텀시트 닫기
+  const handleHandleClick = useCallback(() => {
+    onClose()
+  }, [onClose])
+
+  // 드래그로 바텀시트 닫기
+  const handleDragEnd = useCallback(
+    (_event: never, info: PanInfo) => {
+      // 임계값 이상 아래로 드래그하면 닫기
+      if (info.offset.y > BOTTOM_SHEET_CONSTANTS.DRAG_CLOSE_THRESHOLD) {
+        onClose()
+      }
+    },
+    [onClose]
+  )
+
+  const sheetVariants = {
+    hidden: {
+      y: '100%',
+    },
+    visible: {
+      y: 0,
+      transition: {
+        type: 'spring' as const,
+        damping: BOTTOM_SHEET_CONSTANTS.SPRING_DAMPING,
+        stiffness: BOTTOM_SHEET_CONSTANTS.SPRING_STIFFNESS,
+      },
+    },
+    exit: {
+      y: '100%',
+      transition: {
+        type: 'spring' as const,
+        damping: BOTTOM_SHEET_CONSTANTS.SPRING_DAMPING,
+        stiffness: BOTTOM_SHEET_CONSTANTS.SPRING_STIFFNESS,
+      },
+    },
+  }
+
+  const overlayVariants = {
+    hidden: {
+      opacity: 0,
+    },
+    visible: {
+      opacity: 1,
+      transition: {
+        duration: BOTTOM_SHEET_CONSTANTS.OVERLAY_DURATION,
+      },
+    },
+    exit: {
+      opacity: 0,
+      transition: {
+        duration: BOTTOM_SHEET_CONSTANTS.OVERLAY_DURATION,
+      },
+    },
+  }
+
+  if (typeof window === 'undefined') return null
+
+  return createPortal(
+    <AnimatePresence>
+      {isOpen && (
+        <Overlay
+          ref={overlayRef}
+          onClick={handleOverlayClick}
+          variants={overlayVariants}
+          initial="hidden"
+          animate="visible"
+          exit="exit"
+        >
+          <SheetContainer
+            drag="y"
+            dragConstraints={{ top: 0 }} // 위로는 드래그 불가
+            dragElastic={BOTTOM_SHEET_CONSTANTS.DRAG_ELASTIC}
+            onDragEnd={handleDragEnd}
+            variants={sheetVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            deviceType={deviceType}
+            height={height}
+          >
+            <Handle onClick={handleHandleClick} />
+            <Content>{children}</Content>
+          </SheetContainer>
+        </Overlay>
+      )}
+    </AnimatePresence>,
+    document.body
+  )
+}
+
+const Overlay = styled(motion.div)`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+`
+
+const SheetContainer = styled(motion.div)<{ deviceType: DeviceType; height: string }>`
+  position: relative;
+  width: ${({ deviceType }) => (deviceType === 'mobile' ? 'clamp(320px, 100dvw, 420px)' : '375px')};
+  height: ${({ height }) => height};
+  border-radius: 20px 20px 0 0;
+  overflow: hidden;
+  background-color: ${({ theme }) => theme.COLOR['gray-600']};
+  color: ${({ theme }) => theme.COLOR['gray-10']};
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+  cursor: grab;
+
+  &:active {
+    cursor: grabbing;
+  }
+`
+
+const Handle = styled.button`
+  display: block;
+  margin: ${BOTTOM_SHEET_CONSTANTS.HANDLE_MARGIN}px auto;
+  width: ${BOTTOM_SHEET_CONSTANTS.HANDLE_WIDTH}px;
+  height: ${BOTTOM_SHEET_CONSTANTS.HANDLE_HEIGHT}px;
+  background-color: ${({ theme }) => theme.COLOR['gray-500']};
+  border-radius: 99px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+`
+
+const Content = styled.div`
+  padding: 24px 20px;
+  height: 100%;
+  overflow-y: auto;
+`
+
+export default BottomSheet
