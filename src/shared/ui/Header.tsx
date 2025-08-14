@@ -36,7 +36,6 @@ const Side = styled.div<{ position: 'left' | 'right' }>`
         ${theme.FONT.heading1};
         font-weight: 600;
         color: ${theme.COLOR['common-white']};
-        font-size: 18px;
       `
       : `
         justify-content: flex-end;
