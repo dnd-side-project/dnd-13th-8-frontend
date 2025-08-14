@@ -18,8 +18,19 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.12.0
+          cache: 'pnpm'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
       - name: Install Dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
 
       - name: Run Chromatic
         id: chromatic
@@ -33,7 +44,7 @@ jobs:
       - name: Create comment PR
         uses: thollander/actions-comment-pull-request@v2
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN}}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           comment_tag: ${{ github.event.pull_request.number }}-storybook
           message: |
