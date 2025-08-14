@@ -1,0 +1,104 @@
+import React, {
+  type ChangeEventHandler,
+  type ComponentType,
+  type FocusEventHandler,
+  type SVGProps,
+} from 'react'
+
+import styled from 'styled-components'
+
+import SvgButton from '@/shared/ui/SvgButton'
+
+type InputType = 'text' | 'search' | 'url'
+type IconPosition = 'left' | 'right'
+
+interface InputProps {
+  type: InputType
+  placeholder?: string
+  error?: boolean
+  errorMessage?: string
+  maxLength?: number
+  width?: string
+  icon?: ComponentType<SVGProps<SVGSVGElement>>
+  iconPosition?: IconPosition
+  onChange?: ChangeEventHandler<HTMLInputElement>
+  onFocus?: FocusEventHandler<HTMLInputElement>
+  onBlur?: FocusEventHandler<HTMLInputElement>
+  onClickIcon?: () => void
+}
+
+const ERROR_COLOR = '#ff5454'
+
+const Input = ({
+  type,
+  placeholder,
+  error = false,
+  errorMessage,
+  maxLength,
+  width,
+  icon,
+  iconPosition = 'left',
+  onChange,
+  onFocus,
+  onBlur,
+  onClickIcon,
+}: InputProps) => {
+  return (
+    <>
+      <InputContainer width={width ?? '100%'} error={error} iconPosition={iconPosition}>
+        {icon && onClickIcon ? (
+          <SvgButton icon={icon} onClick={onClickIcon} />
+        ) : (
+          icon && React.createElement(icon)
+        )}
+        <StyledInput
+          type={type}
+          placeholder={placeholder}
+          maxLength={maxLength}
+          onChange={onChange}
+          onFocus={onFocus}
+          onBlur={onBlur}
+        />
+      </InputContainer>
+      {error && errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
+    </>
+  )
+}
+
+export default Input
+
+const InputContainer = styled.div<{
+  width: string
+  error: boolean
+  iconPosition: IconPosition
+}>`
+  display: flex;
+  flex-direction: ${({ iconPosition }) => (iconPosition === 'left' ? 'row' : 'row-reverse')};
+  align-items: center;
+  padding: 14px 11px;
+  gap: 8px;
+  width: ${({ width }) => width};
+  height: 42px;
+  border: 1px solid ${({ theme, error }) => (error ? ERROR_COLOR : theme.COLOR['gray-700'])};
+  border-radius: 10px;
+  background-color: ${({ theme }) => theme.COLOR['gray-700']};
+
+  &:focus-within {
+    border: 1px solid ${({ theme, error }) => (error ? ERROR_COLOR : theme.COLOR['primary-normal'])};
+  }
+`
+
+const StyledInput = styled.input`
+  width: 100%;
+  color: ${({ theme }) => theme.COLOR['gray-10']};
+  ${({ theme }) => theme.FONT['body2-normal']};
+
+  &::placeholder {
+    color: ${({ theme }) => theme.COLOR['gray-300']};
+  }
+`
+
+const ErrorMessage = styled.span`
+  color: ${ERROR_COLOR};
+  ${({ theme }) => theme.FONT['caption1']};
+`

@@ -23,7 +23,6 @@ const GlobalStyle = createGlobalStyle`
     line-height: 1.5;
   }
 
-
   button {
     background: none;
     border: none;
@@ -32,7 +31,23 @@ const GlobalStyle = createGlobalStyle`
     color: inherit;
   }
 
+  input {
+    background: transparent;
+    border: none;
+    outline: none;
+  }
 
+  input[type="search"]::-webkit-search-decoration,
+  input[type="search"]::-webkit-search-cancel-button,
+  input[type="search"]::-webkit-search-results-button,
+  input[type="search"]::-webkit-search-results-decoration {
+    -webkit-appearance: none;
+  }
+
+  input[type="search"] {
+    -webkit-appearance: textfield;
+    appearance: textfield;
+  }
 
   /* 스크롤바 미노출 */
   html {
@@ -41,18 +56,6 @@ const GlobalStyle = createGlobalStyle`
   }
   ::-webkit-scrollbar {
     display: none;
-  }
-
-  /* 공통 레이아웃 */
-  main {
-    position: relative;
-    width: clamp(320px, 100dvw, 420px);
-    min-height: 100dvh;
-    margin: 0 auto;
-    overflow-x: auto;
-    overflow-y: auto;
-    background-color: #0f1013;
-    color: #fafbfe;
   }
 `
 
