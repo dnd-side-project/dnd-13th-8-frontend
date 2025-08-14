@@ -2,12 +2,11 @@ import styled from 'styled-components'
 
 import { flexRowCenter } from '@/shared/styles/mixins'
 
-
 interface SearchResultItemProps {
   image: React.ReactNode
   searchResult: string
   userName?: string
-  onClick?: () => void
+  onClick: () => void
 }
 
 const SearchResultItem = ({ image, searchResult, userName, onClick }: SearchResultItemProps) => {
