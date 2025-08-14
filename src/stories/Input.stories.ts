@@ -4,7 +4,7 @@ import { Search, Send } from '@/assets/icons'
 import Input from '@/shared/ui/Input'
 
 const meta: Meta<typeof Input> = {
-  title: 'UI/Input',
+  title: 'Shared/Input',
   component: Input,
   parameters: {
     layout: 'centered',

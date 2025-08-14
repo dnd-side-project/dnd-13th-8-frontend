@@ -5,10 +5,10 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import BottomSheet from '@/shared/ui/BottomSheet'
 
 const meta: Meta<typeof BottomSheet> = {
-  title: 'UI/BottomSheet',
+  title: 'Shared/BottomSheet',
   component: BottomSheet,
   parameters: {
-    layout: 'fullscreen',
+    layout: 'centered',
   },
   tags: ['autodocs'],
   argTypes: {
