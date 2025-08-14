@@ -5,7 +5,7 @@ on:
     branches:
       - develop
     paths:
-      - '**/*.stories.@(tsx|mdx)'
+      - '**/*.stories.@(ts|tsx|mdx)'
       - '.storybook/**'
 
 permissions: write-all
