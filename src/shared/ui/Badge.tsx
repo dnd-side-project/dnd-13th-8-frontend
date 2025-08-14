@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components'
 
-import { flexCenter } from '@/shared/styles/mixins'
+import { flexRowCenter } from '@/shared/styles/mixins'
 
 interface BadgeProps {
   size?: 'small' | 'large'
@@ -26,7 +26,7 @@ const sizeStyles = {
 
 const StyledBadge = styled.span<{ size: 'small' | 'large' }>`
   width: fit-content;
-  ${flexCenter}
+  ${flexRowCenter}
   border-radius: 99px;
   background-color: ${({ theme }) => theme.COLOR['gray-700']};
   color: ${({ theme }) => theme.COLOR['primary-normal']};

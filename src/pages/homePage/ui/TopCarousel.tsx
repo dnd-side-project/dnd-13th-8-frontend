@@ -4,7 +4,7 @@ import useEmblaCarousel from 'embla-carousel-react'
 import styled, { css } from 'styled-components'
 
 import CharacterImg from '@/assets/images/img_character.png'
-import { flexCenter } from '@/shared/styles/mixins'
+import { flexRowCenter } from '@/shared/styles/mixins'
 import Badge from '@/shared/ui/Badge'
 
 import { DotButton, useDotButton } from './DotButton'
@@ -80,7 +80,7 @@ const EmblaContainer = styled.div`
 
 const EmblaSlide = styled.div`
   flex: 0 0 50%;
-  ${flexCenter}
+  ${flexRowCenter}
 `
 
 const Slide = styled.div<{ active: boolean }>`
@@ -88,7 +88,7 @@ const Slide = styled.div<{ active: boolean }>`
   border-radius: 20px;
   width: 220px;
   height: 220px;
-  ${flexCenter}
+  ${flexRowCenter}
   background-color: ${({ theme }) => theme.COLOR['gray-700']};
   transition: transform 0.8s ease;
   transform: scale(0.8);
@@ -116,7 +116,7 @@ const Image = styled.img`
 `
 
 const EmblaControls = styled.div`
-  ${flexCenter}
+  ${flexRowCenter}
   margin-top: 20px;
   gap: 8px;
 `
