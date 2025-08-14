@@ -12,7 +12,7 @@ const meta: Meta<typeof Header> = {
   parameters: {
     docs: {
       description: {
-        component: `Header 컴포넌트는 상단 영역에 위치하며, left, center, right props에 원하는 컴포넌트나 HTML 태그를 넣어 사용할 수 있습니다. <br/> 텍스트를 children으로 전달하면 Header 내부에서 자동으로 스타일이 적용됩니다.`,
+        component: `Header 컴포넌트는 상단 영역에 위치하며, left, center, right props에 원하는 컴포넌트나 HTML 태그를 넣어 사용할 수 있습니다. <br/> HTML 태그를 통해 텍스트를 children으로 전달하는 경우 Header 내부에서 자동으로 스타일이 적용됩니다.`,
       },
     },
   },
