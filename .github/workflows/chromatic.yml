@@ -4,9 +4,6 @@ on:
   pull_request:
     branches:
       - develop
-    paths:
-      - '**/*.stories.@(ts|tsx|mdx)'
-      - '.storybook/**'
 
 permissions: write-all
 
