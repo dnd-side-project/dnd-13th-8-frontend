@@ -2,6 +2,8 @@ import type { ReactNode, MouseEventHandler } from 'react'
 
 import styled, { css } from 'styled-components'
 
+import { flexRowCenter } from '@/shared/styles/mixins'
+
 type ButtonSize = 'L' | 'M' | 'S'
 type ButtonState = 'primary' | 'secondary' | 'disabled'
 
@@ -76,9 +78,7 @@ const StyledButton = styled.button<{
   $size: ButtonSize
   $state: ButtonState
 }>`
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  ${flexRowCenter}
   ${({ $size }) => sizeStyles[$size]}
   ${({ $state }) => stateStyles[$state]}
 `
