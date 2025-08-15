@@ -6,6 +6,12 @@ import LoopCarousel from '@/pages/homePage/ui/LoopCarousel'
 const meta: Meta<typeof LoopCarousel> = {
   title: 'Pages/Home/LoopCarousel',
   component: LoopCarousel,
+  argTypes: {
+    isAuth: {
+      control: { type: 'boolean' },
+      defaultValue: false,
+    },
+  },
 }
 
 export default meta
@@ -26,6 +32,7 @@ const StoryContainer = styled.div`
 export const Default: Story = {
   args: {
     data: mockData,
+    isAuth: false,
   },
   decorators: [
     (Story) => (
