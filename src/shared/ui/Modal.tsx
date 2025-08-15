@@ -22,19 +22,19 @@ const Modal = ({
   cancelText?: string
   onClose: () => void
   onConfirm: () => void
-  onCancel: () => void
-} & ({ ctaType: 'single'; onCancel?: never } | { ctaType: 'double'; onCancel: () => void })) => {
+  onCancel?: () => void
+}) => {
   return (
     <Overlay isOpen={isOpen} onClose={onClose}>
       <ModalContainer>
         <ModalTitle>{title}</ModalTitle>
         <CtaWrapper>
-          {(ctaType as 'single') === 'single' && (
+          {ctaType === 'single' && (
             <Button size="M" state="primary" onClick={onConfirm}>
               <span>{confirmText}</span>
             </Button>
           )}
-          {(ctaType as 'double') === 'double' && (
+          {ctaType === 'double' && (
             <>
               <Button size="M" state="secondary" onClick={onCancel}>
                 <span>{cancelText}</span>
