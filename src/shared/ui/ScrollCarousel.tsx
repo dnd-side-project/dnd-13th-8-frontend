@@ -17,6 +17,10 @@ const ScrollCarousel = ({ children, gap }: ScrollCarouselProps) => {
     const onSelect = () => setActiveIndex(emblaApi.selectedScrollSnap())
     emblaApi.on('select', onSelect)
     onSelect()
+
+    return () => {
+      emblaApi.off('select', onSelect) // 언마운트 시 이벤트 해제
+    }
   }, [emblaApi])
 
   return (
