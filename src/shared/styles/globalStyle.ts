@@ -49,6 +49,11 @@ const GlobalStyle = createGlobalStyle`
     appearance: textfield;
   }
 
+  /* IOS/Safari 검색 취소 버튼 미노출 */
+  input[type="search"]::-webkit-search-cancel-button {
+    display: none;
+  }
+
   /* 스크롤바 미노출 */
   html {
     scrollbar-width: none;
