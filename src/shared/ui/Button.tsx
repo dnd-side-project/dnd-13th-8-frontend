@@ -32,7 +32,7 @@ const sizeStyles: Record<ButtonSize, ReturnType<typeof css>> = {
     ${({ theme }) => theme.FONT['body2-normal']}
   `,
   S: css`
-    padding: 5px 8px;
+    padding: 5px 12px;
     min-width: ${BUTTON_STYLES.S.minWidth};
     height: ${BUTTON_STYLES.S.height};
     border-radius: ${BUTTON_STYLES.S.borderRadius};
