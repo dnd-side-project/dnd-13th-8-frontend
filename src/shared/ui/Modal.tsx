@@ -1,4 +1,4 @@
-import { styled } from 'styled-components'
+import styled from 'styled-components'
 
 import Button from '@/shared/ui/Button'
 import Overlay from '@/shared/ui/Overlay'
