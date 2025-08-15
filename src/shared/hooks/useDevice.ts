@@ -1,21 +1,17 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 
 export type DeviceType = 'pc' | 'mobile'
 
-export const useDevice = () => {
-  const [deviceType, setDeviceType] = useState<DeviceType>('pc')
+const getDeviceType = (): DeviceType => {
+  if (typeof navigator === 'undefined') return 'pc' // SSR 대응
+  const userAgent = navigator.userAgent.toLowerCase()
+  const isMobile = /mobile|android|iphone|ipad|phone|blackberry|opera mini|windows phone/i.test(
+    userAgent
+  )
+  return isMobile ? 'mobile' : 'pc'
+}
 
-  useEffect(() => {
-    const checkDevice = () => {
-      const userAgent = navigator.userAgent.toLowerCase()
-      const isMobile = /mobile|android|iphone|ipad|phone|blackberry|opera mini|windows phone/i.test(
-        userAgent
-      )
-      setDeviceType(isMobile ? 'mobile' : 'pc')
-    }
-
-    checkDevice()
-  }, [])
-
+export const useDevice = (): DeviceType => {
+  const [deviceType] = useState<DeviceType>(() => getDeviceType())
   return deviceType
 }
