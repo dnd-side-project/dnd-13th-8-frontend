@@ -40,6 +40,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
   height = BOTTOM_SHEET_CONSTANTS.DEFAULT_HEIGHT,
 }) => {
   const overlayRef = useRef<HTMLDivElement>(null)
+  const prevOverflowRef = useRef<string | null>(null)
   const deviceType = useDevice()
 
   const handleEscape = useCallback(
@@ -53,16 +54,20 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
 
   useEffect(() => {
     if (isOpen) {
+      // 현재 overflow 값 저장
+      prevOverflowRef.current = document.body.style.overflow
       document.addEventListener('keydown', handleEscape)
       document.body.style.overflow = 'hidden'
     }
 
     return () => {
       document.removeEventListener('keydown', handleEscape)
-      document.body.style.overflow = 'unset'
+      // 기존 overflow 값으로 복원
+      document.body.style.overflow = prevOverflowRef.current || 'visible'
     }
   }, [isOpen, handleEscape])
 
+  // 오버레이 클릭으로 바텀시트 닫기
   const handleOverlayClick = useCallback(
     (event: React.MouseEvent) => {
       if (event.target === overlayRef.current) {
@@ -79,7 +84,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
 
   // 드래그로 바텀시트 닫기
   const handleDragEnd = useCallback(
-    (_event: never, info: PanInfo) => {
+    (_event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
       // 임계값 이상 아래로 드래그하면 닫기
       if (info.offset.y > BOTTOM_SHEET_CONSTANTS.DRAG_CLOSE_THRESHOLD) {
         onClose()
@@ -88,26 +93,28 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
     [onClose]
   )
 
+  const springTransition = {
+    type: 'spring' as const,
+    damping: BOTTOM_SHEET_CONSTANTS.SPRING_DAMPING,
+    stiffness: BOTTOM_SHEET_CONSTANTS.SPRING_STIFFNESS,
+  }
+
   const sheetVariants = {
     hidden: {
       y: '100%',
     },
     visible: {
       y: 0,
-      transition: {
-        type: 'spring' as const,
-        damping: BOTTOM_SHEET_CONSTANTS.SPRING_DAMPING,
-        stiffness: BOTTOM_SHEET_CONSTANTS.SPRING_STIFFNESS,
-      },
+      transition: springTransition,
     },
     exit: {
       y: '100%',
-      transition: {
-        type: 'spring' as const,
-        damping: BOTTOM_SHEET_CONSTANTS.SPRING_DAMPING,
-        stiffness: BOTTOM_SHEET_CONSTANTS.SPRING_STIFFNESS,
-      },
+      transition: springTransition,
     },
+  }
+
+  const overlayTransition = {
+    duration: BOTTOM_SHEET_CONSTANTS.OVERLAY_DURATION,
   }
 
   const overlayVariants = {
@@ -116,15 +123,11 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
     },
     visible: {
       opacity: 1,
-      transition: {
-        duration: BOTTOM_SHEET_CONSTANTS.OVERLAY_DURATION,
-      },
+      transition: overlayTransition,
     },
     exit: {
       opacity: 0,
-      transition: {
-        duration: BOTTOM_SHEET_CONSTANTS.OVERLAY_DURATION,
-      },
+      transition: overlayTransition,
     },
   }
 
@@ -142,6 +145,9 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
           exit="exit"
         >
           <SheetContainer
+            role="dialog"
+            aria-modal="true"
+            tabIndex={-1}
             drag="y"
             dragConstraints={{ top: 0 }} // 위로는 드래그 불가
             dragElastic={BOTTOM_SHEET_CONSTANTS.DRAG_ELASTIC}
@@ -150,10 +156,10 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
             initial="hidden"
             animate="visible"
             exit="exit"
-            deviceType={deviceType}
-            height={height}
+            $deviceType={deviceType}
+            $height={height}
           >
-            <Handle onClick={handleHandleClick} />
+            <Handle type="button" aria-label="바텀시트 닫기" onClick={handleHandleClick} />
             <Content>{children}</Content>
           </SheetContainer>
         </Overlay>
@@ -176,10 +182,11 @@ const Overlay = styled(motion.div)`
   justify-content: center;
 `
 
-const SheetContainer = styled(motion.div)<{ deviceType: DeviceType; height: string }>`
+const SheetContainer = styled(motion.div)<{ $deviceType: DeviceType; $height: string }>`
   position: relative;
-  width: ${({ deviceType }) => (deviceType === 'mobile' ? 'clamp(320px, 100dvw, 420px)' : '375px')};
-  height: ${({ height }) => height};
+  width: ${({ $deviceType }) =>
+    $deviceType === 'mobile' ? 'clamp(320px, 100dvw, 420px)' : '375px'};
+  height: ${({ $height }) => $height};
   border-radius: 20px 20px 0 0;
   overflow: hidden;
   background-color: ${({ theme }) => theme.COLOR['gray-600']};
