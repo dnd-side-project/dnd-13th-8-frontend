@@ -14,11 +14,11 @@ interface SlideData {
   genre: string
 }
 
-interface TopCarouselProps {
+interface LoopCarouselProps {
   data: SlideData[]
 }
 
-const TopCarousel = ({ data }: TopCarouselProps) => {
+const LoopCarousel = ({ data }: LoopCarouselProps) => {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true })
   const [activeIndex, setActiveIndex] = useState(0)
 
@@ -67,7 +67,7 @@ const TopCarousel = ({ data }: TopCarouselProps) => {
   )
 }
 
-export default TopCarousel
+export default LoopCarousel
 
 const Embla = styled.div`
   overflow: hidden;
