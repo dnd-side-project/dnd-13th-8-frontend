@@ -8,7 +8,7 @@ export const flexRowCenter = css`
 `
 
 export const flexColCenter = css`
-  display: center;
+  display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;

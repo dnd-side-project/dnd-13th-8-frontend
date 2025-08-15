@@ -1,5 +1,6 @@
 import styled from 'styled-components'
 
+import { flexColCenter, flexRowCenter } from '@/shared/styles/mixins'
 import Button from '@/shared/ui/Button'
 import Overlay from '@/shared/ui/Overlay'
 
@@ -53,10 +54,7 @@ const Modal = ({
 export default Modal
 
 const ModalContainer = styled.section`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  ${flexColCenter}
   gap: 24px;
   padding: 28px 20px 20px 20px;
   width: 311px;
@@ -76,9 +74,7 @@ const ModalTitle = styled.h2`
 `
 
 const CtaWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  ${flexRowCenter}
   gap: 10px;
   width: 100%;
   & > button {

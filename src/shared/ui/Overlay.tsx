@@ -4,6 +4,8 @@ import { createPortal } from 'react-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import styled from 'styled-components'
 
+import { flexRowCenter } from '@/shared/styles/mixins'
+
 interface OverlayProps {
   isOpen: boolean
   onClose: () => void
@@ -111,9 +113,7 @@ const StyledOverlay = styled(motion.div)`
   left: 0;
   right: 0;
   bottom: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  ${flexRowCenter}
   background-color: ${({ theme }) => theme.OPACITY.scrim};
   z-index: 1000;
 `
