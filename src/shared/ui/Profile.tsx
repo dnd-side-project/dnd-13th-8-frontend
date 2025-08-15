@@ -21,11 +21,23 @@ const Profile = ({ size, profileUrl }: ProfileProps) => {
   const [imgSrc, setImgSrc] = useState(DefaultProfile)
 
   useEffect(() => {
-    if (profileUrl) {
-      const img = new Image()
-      img.onload = () => setImgSrc(profileUrl)
-      img.onerror = () => setImgSrc(DefaultProfile)
-      img.src = profileUrl
+    if (!profileUrl) {
+      setImgSrc(DefaultProfile)
+      return
+    }
+
+    let isCanceled = false
+    const img = new Image()
+    img.onload = () => {
+      if (isCanceled) setImgSrc(profileUrl)
+    }
+    img.onerror = () => {
+      if (isCanceled) setImgSrc(DefaultProfile)
+    }
+    img.src = profileUrl
+
+    return () => {
+      isCanceled = true
     }
   }, [profileUrl])
 
