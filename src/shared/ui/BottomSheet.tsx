@@ -6,6 +6,7 @@ import type { PanInfo } from 'framer-motion'
 import styled from 'styled-components'
 
 import { useDevice, type DeviceType } from '@/shared/hooks/useDevice'
+import Overlay from '@/shared/ui/Overlay'
 
 const BOTTOM_SHEET_CONSTANTS = {
   // 드래그 관련
@@ -39,7 +40,6 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
   children,
   height = BOTTOM_SHEET_CONSTANTS.DEFAULT_HEIGHT,
 }) => {
-  const overlayRef = useRef<HTMLDivElement>(null)
   const prevOverflowRef = useRef<string | null>(null)
   const deviceType = useDevice()
 
@@ -66,16 +66,6 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
       document.body.style.overflow = prevOverflowRef.current || 'visible'
     }
   }, [isOpen, handleEscape])
-
-  // 오버레이 클릭으로 바텀시트 닫기
-  const handleOverlayClick = useCallback(
-    (event: React.MouseEvent) => {
-      if (event.target === overlayRef.current) {
-        onClose()
-      }
-    },
-    [onClose]
-  )
 
   // 클릭으로 바텀시트 닫기
   const handleHandleClick = useCallback(() => {
@@ -113,37 +103,12 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
     },
   }
 
-  const overlayTransition = {
-    duration: BOTTOM_SHEET_CONSTANTS.OVERLAY_DURATION,
-  }
-
-  const overlayVariants = {
-    hidden: {
-      opacity: 0,
-    },
-    visible: {
-      opacity: 1,
-      transition: overlayTransition,
-    },
-    exit: {
-      opacity: 0,
-      transition: overlayTransition,
-    },
-  }
-
   if (typeof window === 'undefined') return null
 
   return createPortal(
     <AnimatePresence>
       {isOpen && (
-        <Overlay
-          ref={overlayRef}
-          onClick={handleOverlayClick}
-          variants={overlayVariants}
-          initial="hidden"
-          animate="visible"
-          exit="exit"
-        >
+        <Overlay isOpen={isOpen} onClose={onClose} useAnimation childrenAlign="bottom">
           <SheetContainer
             role="dialog"
             aria-modal="true"
@@ -168,19 +133,6 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
     document.body
   )
 }
-
-const Overlay = styled(motion.div)`
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: ${({ theme }) => theme.OPACITY.scrim};
-  z-index: 1000;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-`
 
 const SheetContainer = styled(motion.div)<{ $deviceType: DeviceType; $height: string }>`
   position: relative;
