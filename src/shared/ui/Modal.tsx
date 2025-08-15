@@ -9,6 +9,8 @@ const Modal = ({
   isOpen,
   title,
   ctaType,
+  confirmText = '확인',
+  cancelText = '취소',
   onClose,
   onConfirm,
   onCancel,
@@ -16,27 +18,29 @@ const Modal = ({
   isOpen: boolean
   title: string
   ctaType: CtaType
+  confirmText?: string
+  cancelText?: string
   onClose: () => void
   onConfirm: () => void
-  onCancel?: () => void
-}) => {
+  onCancel: () => void
+} & ({ ctaType: 'single'; onCancel?: never } | { ctaType: 'double'; onCancel: () => void })) => {
   return (
     <Overlay isOpen={isOpen} onClose={onClose}>
       <ModalContainer>
         <ModalTitle>{title}</ModalTitle>
         <CtaWrapper>
-          {ctaType === 'single' && (
+          {(ctaType as 'single') === 'single' && (
             <Button size="M" state="primary" onClick={onConfirm}>
-              <span>확인</span>
+              <span>{confirmText}</span>
             </Button>
           )}
-          {ctaType === 'double' && (
+          {(ctaType as 'double') === 'double' && (
             <>
               <Button size="M" state="secondary" onClick={onCancel}>
-                <span>취소</span>
+                <span>{cancelText}</span>
               </Button>
               <Button size="M" state="primary" onClick={onConfirm}>
-                <span>확인</span>
+                <span>{confirmText}</span>
               </Button>
             </>
           )}
