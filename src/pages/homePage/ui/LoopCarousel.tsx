@@ -94,8 +94,6 @@ const EmblaSlide = styled.div`
 const Slide = styled.div<{ active: boolean }>`
   position: relative;
   border-radius: 20px;
-  /* width: 188px;
-  height: 188px; */
   width: 240px;
   height: 240px;
   ${flexRowCenter}
