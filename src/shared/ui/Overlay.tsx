@@ -75,7 +75,7 @@ const Overlay = ({ isOpen, onClose, children, useAnimation = true }: OverlayProp
     return createPortal(
       <>
         {isOpen && (
-          <StyledOverlay as="div" onClick={onClose}>
+          <StyledOverlay as="div" ref={overlayRef} onClick={handleOverlayClick}>
             {children}
           </StyledOverlay>
         )}
