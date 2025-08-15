@@ -4,8 +4,9 @@ import useEmblaCarousel from 'embla-carousel-react'
 import styled, { css } from 'styled-components'
 
 import CharacterImg from '@/assets/images/img_character.png'
-import { flexRowCenter } from '@/shared/styles/mixins'
+import { flexColCenter, flexRowCenter } from '@/shared/styles/mixins'
 import Badge from '@/shared/ui/Badge'
+import Button from '@/shared/ui/Button'
 
 import { DotButton, useDotButton } from './DotButton'
 
@@ -37,7 +38,12 @@ const LoopCarousel = ({ data }: LoopCarouselProps) => {
         <EmblaContainer>
           <EmblaSlide key="image">
             <Slide active={activeIndex === 0}>
-              <Image src={CharacterImg} alt="Deulak character" />
+              <FirstContent>
+                <Image src={CharacterImg} alt="Deulak character" width={160} height={160} />
+                <Button size="S" state="primary">
+                  CD 커버에 내 취향을 담아요
+                </Button>
+              </FirstContent>
             </Slide>
           </EmblaSlide>
 
@@ -45,7 +51,7 @@ const LoopCarousel = ({ data }: LoopCarouselProps) => {
             <EmblaSlide key={index}>
               <Slide active={activeIndex === index + 1}>
                 <SlideOverlay>
-                  <Badge size="small" text={slide.genre} />
+                  <Badge size="large" text={slide.genre} />
                   <Title>{slide.title}</Title>
                 </SlideOverlay>
               </Slide>
@@ -86,12 +92,14 @@ const EmblaSlide = styled.div`
 const Slide = styled.div<{ active: boolean }>`
   position: relative;
   border-radius: 20px;
-  width: 220px;
-  height: 220px;
+  /* width: 188px;
+  height: 188px; */
+  width: 240px;
+  height: 240px;
   ${flexRowCenter}
   background-color: ${({ theme }) => theme.COLOR['gray-700']};
   transition: transform 0.8s ease;
-  transform: scale(0.8);
+  transform: scale(0.78);
   overflow: hidden;
 
   ${(props) =>
@@ -149,4 +157,9 @@ const SlideOverlay = styled.div`
     0px 4px 4px rgba(0, 0, 0, 0.25),
     0px 0px 12px rgba(0, 0, 0, 0.04);
   backdrop-filter: blur(8px);
+`
+
+const FirstContent = styled.div`
+  ${flexColCenter}
+  gap: 12px;
 `
