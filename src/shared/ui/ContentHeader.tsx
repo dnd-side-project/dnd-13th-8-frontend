@@ -42,7 +42,7 @@ const ContentHeader = ({
           <SortButton
             type="button"
             key={item.value}
-            active={currentSort === item.value}
+            $active={currentSort === item.value}
             onClick={() => handleSortChange(item.value)}
           >
             {item.label}
@@ -71,10 +71,10 @@ const FilterButton = styled.button`
   gap: 2px;
 `
 
-const SortButton = styled.button<{ active: boolean }>`
+const SortButton = styled.button<{ $active: boolean }>`
   width: 100%;
   height: 60px;
   ${({ theme }) => theme.FONT['headline2']}
-  color: ${({ theme, active }) =>
-    active ? theme.COLOR['primary-normal'] : theme.COLOR['gray-10']};
+  color: ${({ theme, $active }) =>
+    $active ? theme.COLOR['primary-normal'] : theme.COLOR['gray-10']};
 `

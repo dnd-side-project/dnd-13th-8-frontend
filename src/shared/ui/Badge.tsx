@@ -8,7 +8,7 @@ interface BadgeProps {
 }
 
 const Badge = ({ size = 'large', text }: BadgeProps) => {
-  return <StyledBadge size={size}>{text}</StyledBadge>
+  return <StyledBadge $size={size}>{text}</StyledBadge>
 }
 
 export default Badge
@@ -24,7 +24,7 @@ const sizeStyles = {
   `,
 } as const
 
-const StyledBadge = styled.span<{ size: 'small' | 'large' }>`
+const StyledBadge = styled.span<{ $size: 'small' | 'large' }>`
   width: fit-content;
   ${flexRowCenter}
   border-radius: 99px;
@@ -32,5 +32,5 @@ const StyledBadge = styled.span<{ size: 'small' | 'large' }>`
   color: ${({ theme }) => theme.COLOR['primary-normal']};
   font-weight: 600;
 
-  ${({ size }) => sizeStyles[size]}
+  ${({ $size }) => sizeStyles[$size]}
 `

@@ -60,8 +60,8 @@ const Button = ({ children, size, state, onClick }: ButtonProps) => {
   return (
     <StyledButton
       type="button"
-      size={size}
-      state={state}
+      $size={size}
+      $state={state}
       onClick={onClick}
       disabled={state === 'disabled'}
     >
@@ -73,12 +73,12 @@ const Button = ({ children, size, state, onClick }: ButtonProps) => {
 export default Button
 
 const StyledButton = styled.button<{
-  size: ButtonSize
-  state: ButtonState
+  $size: ButtonSize
+  $state: ButtonState
 }>`
   display: flex;
   align-items: center;
   justify-content: center;
-  ${({ size }) => sizeStyles[size]}
-  ${({ state }) => stateStyles[state]}
+  ${({ $size }) => sizeStyles[$size]}
+  ${({ $state }) => stateStyles[$state]}
 `

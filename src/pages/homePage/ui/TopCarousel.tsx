@@ -36,14 +36,14 @@ const TopCarousel = ({ data }: TopCarouselProps) => {
       <div ref={emblaRef}>
         <EmblaContainer>
           <EmblaSlide key="image">
-            <Slide active={activeIndex === 0}>
+            <Slide $active={activeIndex === 0}>
               <Image src={CharacterImg} alt="Deulak character" />
             </Slide>
           </EmblaSlide>
 
           {data.map((slide, index) => (
             <EmblaSlide key={index}>
-              <Slide active={activeIndex === index + 1}>
+              <Slide $active={activeIndex === index + 1}>
                 <SlideOverlay>
                   <Badge size="small" text={slide.genre} />
                   <Title>{slide.title}</Title>
@@ -83,7 +83,7 @@ const EmblaSlide = styled.div`
   ${flexRowCenter}
 `
 
-const Slide = styled.div<{ active: boolean }>`
+const Slide = styled.div<{ $active: boolean }>`
   position: relative;
   border-radius: 20px;
   width: 220px;
@@ -95,7 +95,7 @@ const Slide = styled.div<{ active: boolean }>`
   overflow: hidden;
 
   ${(props) =>
-    props.active &&
+    props.$active &&
     css`
       border: 0.8px solid transparent;
       border-radius: 24px;
