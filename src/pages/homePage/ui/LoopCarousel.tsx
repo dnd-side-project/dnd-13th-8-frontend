@@ -4,6 +4,7 @@ import useEmblaCarousel from 'embla-carousel-react'
 import styled, { css } from 'styled-components'
 
 import CharacterImg from '@/assets/images/img_character.png'
+import { BUTTON_TEXT } from '@/pages/homePage/config/messages'
 import { flexColCenter, flexRowCenter } from '@/shared/styles/mixins'
 import Badge from '@/shared/ui/Badge'
 import Button from '@/shared/ui/Button'
@@ -17,9 +18,10 @@ interface SlideData {
 
 interface LoopCarouselProps {
   data: SlideData[]
+  isAuth: boolean
 }
 
-const LoopCarousel = ({ data }: LoopCarouselProps) => {
+const LoopCarousel = ({ data, isAuth }: LoopCarouselProps) => {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true })
   const [activeIndex, setActiveIndex] = useState(0)
 
@@ -41,7 +43,7 @@ const LoopCarousel = ({ data }: LoopCarouselProps) => {
               <FirstContent>
                 <Image src={CharacterImg} alt="Deulak character" width={160} height={160} />
                 <Button size="S" state="primary">
-                  CD 커버에 내 취향을 담아요
+                  {isAuth ? BUTTON_TEXT.MEMBER : BUTTON_TEXT.GUEST}
                 </Button>
               </FirstContent>
             </Slide>
