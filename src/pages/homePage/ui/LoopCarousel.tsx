@@ -50,7 +50,7 @@ const LoopCarousel = ({ data }: LoopCarouselProps) => {
           {data.map((slide, index) => (
             <EmblaSlide key={index}>
               <Slide active={activeIndex === index + 1}>
-                <SlideOverlay>
+                <SlideOverlay active={activeIndex === index + 1}>
                   <Badge size="large" text={slide.genre} />
                   <Title>{slide.title}</Title>
                 </SlideOverlay>
@@ -141,15 +141,14 @@ const Title = styled.p`
   word-break: break-word;
 `
 
-const SlideOverlay = styled.div`
+const SlideOverlay = styled.div<{ active: boolean }>`
   display: flex;
   flex-direction: column;
   gap: 4px;
   position: absolute;
   bottom: 0;
-  height: 62px;
   width: 100%;
-  padding: 6px 16px 8px 16px;
+  padding: 6px 16px 12px 16px;
 
   background: rgba(124, 124, 124, 0.1);
   border: 0.5px solid rgba(255, 255, 255, 0.2);
@@ -157,6 +156,14 @@ const SlideOverlay = styled.div`
     0px 4px 4px rgba(0, 0, 0, 0.25),
     0px 0px 12px rgba(0, 0, 0, 0.04);
   backdrop-filter: blur(8px);
+
+  transition: all 0.5s ease;
+
+  ${(props) =>
+    props.active &&
+    css`
+      padding: 10px 20px 16px 20px;
+    `}
 `
 
 const FirstContent = styled.div`
