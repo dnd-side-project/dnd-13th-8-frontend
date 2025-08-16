@@ -23,14 +23,9 @@ const SearchResultPage = () => {
     setSearchValue(keyword)
   }, [keyword])
 
-  const handleItemClick = (type: string) => {
-    if (type === 'playlist') {
-      navigate('/discover')
-    } else if (type === 'user') {
-      navigate('/discover')
-    }
+  const handleItemClick = (id: number) => {
+    navigate(`/discover/${id}`)
   }
-
   return (
     <>
       <Header
@@ -64,7 +59,7 @@ const SearchResultPage = () => {
               searchResult={item.searchResult}
               imageUrl={item.imageUrl}
               userName={item.type === 'playlist' ? item.userName : null}
-              onClick={() => handleItemClick(item.type)}
+              onClick={() => handleItemClick(item.id)}
             />
           ))}
         </ResultList>
