@@ -6,7 +6,7 @@ export const useAuth = () => {
   const [userInfo] = useState({
     id: '1',
     nickname: '김들락',
-    profileImg: '',
+    profileImg: 'https://avatars.githubusercontent.com/u/71167956?s=200&v=4',
   })
   const [isLoading] = useState(false)
   const [error] = useState(null)
