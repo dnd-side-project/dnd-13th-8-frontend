@@ -25,9 +25,7 @@ const PlaylistWithSong = ({ title, username, songs }: PlaylistWithSongProps) => 
   return (
     <Wrapper>
       <TopContainer>
-        <CdBox>
-          <Cd variant="sm" />
-        </CdBox>
+        <Cd variant="sm" bgColor={theme.COLOR['gray-800']} />
         <InfoBox>
           <InfoText>
             <Title>{title}</Title>
@@ -73,17 +71,6 @@ const Wrapper = styled.div`
         ${({ theme }) => theme.COLOR['gray-800']}
       )
       border-box;
-`
-
-const CdBox = styled.div`
-  width: 88px;
-  height: 88px;
-  border-radius: 10px;
-  background-color: ${({ theme }) => theme.COLOR['gray-800']};
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
 `
 
 const InfoText = styled.div`
