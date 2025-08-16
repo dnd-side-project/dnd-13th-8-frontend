@@ -86,7 +86,11 @@ const CdBox = styled.div`
   align-items: center;
 `
 
-const InfoText = styled.div``
+const InfoText = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+`
 
 const InfoBox = styled.div`
   display: flex;
