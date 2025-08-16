@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import styled from 'styled-components'
 
@@ -23,6 +23,18 @@ const UserProfile = () => {
     profileImg: userInfo.profileImg,
   })
   const [isFileError, setIsFileError] = useState(false)
+
+  // React 컴포넌트 라이프사이클에 맞춰 blob: URL 해제 및 메모리 릭 방지
+  useEffect(() => {
+    return () => {
+      if (
+        typeof updatedProfile.profileImg === 'string' &&
+        updatedProfile.profileImg.startsWith('blob:')
+      ) {
+        URL.revokeObjectURL(updatedProfile.profileImg)
+      }
+    }
+  }, [updatedProfile.profileImg])
 
   const onProfileEditClick = () => {
     if (!isEditMode) {
@@ -49,13 +61,13 @@ const UserProfile = () => {
       if (fileInputRef.current) {
         fileInputRef.current.value = ''
       }
-      setUpdatedProfile({ ...updatedProfile, profileImg: null })
+      setUpdatedProfile((prev) => ({ ...prev, profileImg: userInfo.profileImg }))
       return
     }
 
     setIsFileError(false)
     const image = window.URL.createObjectURL(file)
-    setUpdatedProfile({ ...updatedProfile, profileImg: image })
+    setUpdatedProfile((prev) => ({ ...prev, profileImg: image }))
   }
 
   return (
