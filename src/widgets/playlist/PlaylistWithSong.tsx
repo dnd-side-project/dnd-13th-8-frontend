@@ -1,10 +1,9 @@
 import { useNavigate } from 'react-router-dom'
 
-import styled from 'styled-components'
+import styled, { useTheme } from 'styled-components'
 
 import { Play } from '@/assets/icons'
 import { flexRowCenter } from '@/shared/styles/mixins'
-import { theme } from '@/shared/styles/theme'
 import Cd from '@/shared/ui/Cd'
 import Link from '@/shared/ui/Link'
 import SvgButton from '@/shared/ui/SvgButton'
@@ -17,6 +16,7 @@ interface PlaylistWithSongProps {
 
 const PlaylistWithSong = ({ title, username, songs }: PlaylistWithSongProps) => {
   const navigate = useNavigate()
+  const theme = useTheme()
 
   const handlePlayClick = () => {
     navigate('/discover') // TODO : 추후 루트 수정
@@ -121,5 +121,5 @@ const PlayButton = styled.button`
   border-radius: 99px;
   ${({ theme }) => theme.FONT['body2-normal']};
   color: ${({ theme }) => theme.COLOR['gray-900']};
-  width: 73px;
+  max-width: 73px;
 `
