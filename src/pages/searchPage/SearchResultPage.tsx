@@ -23,9 +23,12 @@ const SearchResultPage = () => {
     setSearchValue(keyword)
   }, [keyword])
 
-  const handleSearch = (keyword: string) => {
-    setSearchValue(keyword)
-    navigate(`/searchResult?keyword=${encodeURIComponent(keyword)}`)
+  const handleItemClick = (type: string) => {
+    if (type === 'playlist') {
+      navigate('/discover')
+    } else if (type === 'user') {
+      navigate('/discover')
+    }
   }
 
   return (
@@ -61,7 +64,7 @@ const SearchResultPage = () => {
               searchResult={item.searchResult}
               imageUrl={item.imageUrl}
               userName={item.type === 'playlist' ? item.userName : null}
-              onClick={() => handleSearch(item.searchResult)}
+              onClick={() => handleItemClick(item.type)}
             />
           ))}
         </ResultList>
