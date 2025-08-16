@@ -8,7 +8,7 @@ type ProfileSize = 'L' | 'M' | 'S'
 
 interface ProfileProps {
   size: ProfileSize
-  profileUrl?: string
+  profileUrl?: string | File
 }
 
 const PROFILE_STYLES = {
@@ -18,7 +18,7 @@ const PROFILE_STYLES = {
 } as const
 
 const Profile = ({ size, profileUrl }: ProfileProps) => {
-  const [imgSrc, setImgSrc] = useState(DefaultProfile)
+  const [imgSrc, setImgSrc] = useState(typeof profileUrl === 'string' ? profileUrl : DefaultProfile)
 
   useEffect(() => {
     if (!profileUrl) {
@@ -26,19 +26,16 @@ const Profile = ({ size, profileUrl }: ProfileProps) => {
       return
     }
 
-    let isCanceled = false
-    const img = new Image()
-    img.onload = () => {
-      if (isCanceled) setImgSrc(profileUrl)
+    if (profileUrl instanceof File) {
+      const imageUrl = URL.createObjectURL(profileUrl)
+      setImgSrc(imageUrl)
+      return () => URL.revokeObjectURL(imageUrl)
     }
-    img.onerror = () => {
-      if (isCanceled) setImgSrc(DefaultProfile)
-    }
-    img.src = profileUrl
 
-    return () => {
-      isCanceled = true
-    }
+    const img = new Image()
+    img.onload = () => setImgSrc(profileUrl)
+    img.onerror = () => setImgSrc(DefaultProfile)
+    img.src = profileUrl
   }, [profileUrl])
 
   return <StyledImg src={imgSrc} alt="프로필 이미지" $size={size} />
