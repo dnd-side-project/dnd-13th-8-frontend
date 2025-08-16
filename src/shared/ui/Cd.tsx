@@ -1,18 +1,25 @@
 import styled from 'styled-components'
 
-import cdBase from '@/assets/images/img_cd_base.png'
 import cdOverlay from '@/assets/images/img_cd_overlay_test.png'
+import { flexRowCenter } from '@/shared/styles/mixins'
 
 interface CdProps {
-  variant: 'xl' | 'lg' | 'md' | 'sm' | 'xs'
+  variant: 'xxl' | 'xl' | 'lg' | 'md' | 'sm' | 'xs'
+  bgColor?: 'none' | 'default' | 'dark'
 }
 
-const Cd = ({ variant }: CdProps) => {
-  return (
-    <Container $variant={variant}>
-      <Base />
-      {/* icon layer */}
+const Cd = ({ variant, bgColor = 'default' }: CdProps) => {
+  const Content = (
+    <Base $variant={variant}>
       <Overlay />
+    </Base>
+  )
+
+  if (bgColor === 'none') return Content
+
+  return (
+    <Container $variant={variant} $bgColor={bgColor}>
+      {Content}
     </Container>
   )
 }
@@ -20,41 +27,46 @@ const Cd = ({ variant }: CdProps) => {
 export default Cd
 
 const sizeMap = {
-  xl: 120,
-  lg: 108,
-  md: 88,
-  sm: 72,
-  xs: 48,
+  xxl: { container: 280, base: 280, borderRadius: 0 },
+  xl: { container: 140, base: 120, borderRadius: 16 },
+  lg: { container: 124, base: 108, borderRadius: 14 },
+  md: { container: 104, base: 88, borderRadius: 10 },
+  sm: { container: 88, base: 72, borderRadius: 10 },
+  xs: { container: 56, base: 48, borderRadius: 6 },
 } as const
 
 interface StyleProps {
   $variant: keyof typeof sizeMap
 }
 
-const Container = styled.div<StyleProps>`
-  position: relative; /* overlay 기준 */
-  width: ${({ $variant }) => sizeMap[$variant]}px;
-  height: ${({ $variant }) => sizeMap[$variant]}px;
+interface ContainerProps extends StyleProps {
+  $bgColor?: 'default' | 'dark'
+}
+
+const Container = styled.div<ContainerProps>`
+  width: ${({ $variant }) => sizeMap[$variant].container}px;
+  height: ${({ $variant }) => sizeMap[$variant].container}px;
+  border-radius: ${({ $variant }) => sizeMap[$variant].borderRadius}px;
+  background-color: ${({ $bgColor, theme }) =>
+    $bgColor === 'dark' ? theme.COLOR['gray-800'] : theme.COLOR['gray-600']};
+  ${flexRowCenter}
 `
 
-const Base = styled.div`
-  width: 100%;
-  height: 100%;
+const Base = styled.div<StyleProps>`
+  position: relative;
+  width: ${({ $variant }) => sizeMap[$variant].base}px;
+  height: ${({ $variant }) => sizeMap[$variant].base}px;
   border-radius: 100%;
-  background-image: url(${cdBase});
-  background-size: cover;
-  background-position: center;
+  background: ${({ theme }) => theme.GRADIENT.hologram};
 `
 
 const Overlay = styled.div`
   position: absolute;
-  top: 0;
-  left: 0;
+  inset: 0;
 
-  width: 100%;
-  height: 100%;
   border-radius: 100%;
   background-image: url(${cdOverlay});
   background-size: cover;
   background-position: center;
+  z-index: 2;
 `

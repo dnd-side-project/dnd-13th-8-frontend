@@ -82,7 +82,8 @@ const LoopCarousel = ({ data, isAuth }: LoopCarouselProps) => {
 export default LoopCarousel
 
 const Embla = styled.div`
-  overflow: hidden;
+  overflow: visible;
+  margin-top: 20px;
 `
 
 const EmblaContainer = styled.div`

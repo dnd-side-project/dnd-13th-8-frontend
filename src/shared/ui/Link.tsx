@@ -29,7 +29,6 @@ export default Link
 
 const LinkBox = styled.div<{ $variant?: 'large' | 'small' }>`
   display: flex;
-  align-items: center;
   gap: ${(props) => (props.$variant === 'large' ? '10px' : '9px')};
 `
 

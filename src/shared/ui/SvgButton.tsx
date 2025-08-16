@@ -2,6 +2,8 @@ import React from 'react'
 
 import styled from 'styled-components'
 
+import { flexRowCenter } from '@/shared/styles/mixins'
+
 interface SvgButtonProps {
   icon: React.ComponentType<React.SVGProps<SVGSVGElement>>
   onClick?: () => void
@@ -26,4 +28,6 @@ const Button = styled.button<{
 }>`
   width: ${({ $width }) => $width}px;
   height: ${({ $height }) => $height}px;
+
+  ${flexRowCenter}
 `

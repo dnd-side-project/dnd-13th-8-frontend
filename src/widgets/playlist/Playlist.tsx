@@ -41,7 +41,6 @@ export default Playlist
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: 12px;
   width: 140px;
 `
@@ -50,7 +49,6 @@ const CdBox = styled.div`
   position: relative;
   width: 140px;
   height: 140px;
-  background-color: ${({ theme }) => theme.COLOR['gray-600']};
   border-radius: 16px;
 
   display: flex;
