@@ -3,7 +3,11 @@ import { useState } from 'react'
 // TODO: PrivateRoute 화면 구현 용 임시 하드코딩, 퍼블리싱(~8.17) 이후 로그인 및 인증 로직 구현
 export const useAuth = () => {
   const [isAuth] = useState(true)
-  const [userInfo] = useState(null)
+  const [userInfo] = useState({
+    id: '1',
+    nickname: '김들락',
+    profileImg: '',
+  })
   const [isLoading] = useState(false)
   const [error] = useState(null)
 

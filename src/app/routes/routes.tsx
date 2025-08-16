@@ -2,7 +2,7 @@ import { Routes, Route } from 'react-router-dom'
 
 import PrivateRoute from '@widgets/authGuard/PrivateRoute'
 
-import MyPage from '@pages/myPage/ui/MyPage'
+import MyPage from '@/pages/myPage/ui'
 
 export const AppRoutes = () => {
   return (
