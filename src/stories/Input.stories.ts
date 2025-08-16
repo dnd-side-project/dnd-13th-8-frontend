@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
-import { Search, Send } from '@/assets/icons'
+import { Search } from '@/assets/icons'
 import Input from '@/shared/ui/Input'
 
 const meta: Meta<typeof Input> = {
@@ -46,17 +46,6 @@ export const SearchInput: Story = {
     icon: Search,
     iconPosition: 'left',
     onClickIcon: () => alert('검색!'),
-    width: '375px',
-  },
-}
-
-export const ChatInput: Story = {
-  args: {
-    type: 'text',
-    placeholder: '실시간 채팅달기',
-    icon: Send,
-    iconPosition: 'right',
-    onClickIcon: () => alert('전송!'),
     width: '375px',
   },
 }
