@@ -8,6 +8,7 @@ export const theme = {
     'accent-yellow': '#ffffe2',
     'common-white': '#ffffff',
     'common-black': '#000000',
+    'common-error': '#ff5454',
     'gray-10': '#fafbfe',
     'gray-50': '#e6edf8',
     'gray-100': '#d7e1ed',

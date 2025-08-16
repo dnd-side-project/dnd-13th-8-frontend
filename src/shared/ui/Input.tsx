@@ -15,6 +15,8 @@ type IconPosition = 'left' | 'right'
 interface InputProps {
   type: InputType
   placeholder?: string
+  value?: string
+  defaultValue?: string
   error?: boolean
   errorMessage?: string
   maxLength?: number
@@ -27,11 +29,11 @@ interface InputProps {
   onClickIcon?: () => void
 }
 
-const ERROR_COLOR = '#ff5454'
-
 const Input = ({
   type,
   placeholder,
+  value,
+  defaultValue,
   error = false,
   errorMessage,
   maxLength,
@@ -45,7 +47,7 @@ const Input = ({
 }: InputProps) => {
   return (
     <>
-      <InputContainer width={width ?? '100%'} error={error} iconPosition={iconPosition}>
+      <InputContainer $width={width ?? '100%'} $error={error} $iconPosition={iconPosition}>
         {icon && onClickIcon ? (
           <SvgButton icon={icon} onClick={onClickIcon} />
         ) : (
@@ -54,6 +56,8 @@ const Input = ({
         <StyledInput
           type={type}
           placeholder={placeholder}
+          value={value}
+          defaultValue={defaultValue}
           maxLength={maxLength}
           onChange={onChange}
           onFocus={onFocus}
@@ -68,23 +72,26 @@ const Input = ({
 export default Input
 
 const InputContainer = styled.div<{
-  width: string
-  error: boolean
-  iconPosition: IconPosition
+  $width: string
+  $error: boolean
+  $iconPosition: IconPosition
 }>`
   display: flex;
-  flex-direction: ${({ iconPosition }) => (iconPosition === 'left' ? 'row' : 'row-reverse')};
+  flex-direction: ${({ $iconPosition }) => ($iconPosition === 'left' ? 'row' : 'row-reverse')};
   align-items: center;
   padding: 14px 11px;
   gap: 8px;
-  width: ${({ width }) => width};
+  width: ${({ $width }) => $width};
   height: 42px;
-  border: 1px solid ${({ theme, error }) => (error ? ERROR_COLOR : theme.COLOR['gray-700'])};
+  border: 1px solid
+    ${({ theme, $error }) => ($error ? theme.COLOR['common-error'] : theme.COLOR['gray-700'])};
   border-radius: 10px;
   background-color: ${({ theme }) => theme.COLOR['gray-700']};
 
   &:focus-within {
-    border: 1px solid ${({ theme, error }) => (error ? ERROR_COLOR : theme.COLOR['primary-normal'])};
+    border: 1px solid
+      ${({ theme, $error }) =>
+    $error ? theme.COLOR['common-error'] : theme.COLOR['primary-normal']};
   }
 `
 
@@ -99,6 +106,6 @@ const StyledInput = styled.input`
 `
 
 const ErrorMessage = styled.span`
-  color: ${ERROR_COLOR};
+  color: ${({ theme }) => theme.COLOR['common-error']};
   ${({ theme }) => theme.FONT['caption1']};
 `

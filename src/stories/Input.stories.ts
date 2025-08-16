@@ -61,6 +61,7 @@ export const UrlInput: Story = {
 export const ErrorInput: Story = {
   args: {
     type: 'url',
+    defaultValue: 'abc@naver.com',
     error: true,
     errorMessage: '유효하지 않은 링크입니다',
     width: '275px',

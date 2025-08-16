@@ -10,9 +10,9 @@ interface HeaderProps {
 
 const Header = ({ left, center, right }: HeaderProps) => (
   <HeaderContainer>
-    <Side position="left">{left}</Side>
+    <Side $position="left">{left}</Side>
     <Center>{center}</Center>
-    <Side position="right">{right}</Side>
+    <Side $position="right">{right}</Side>
   </HeaderContainer>
 )
 
@@ -25,15 +25,15 @@ const HeaderContainer = styled.header`
 
   ${flexRowCenter}
   height: 60px;
-  padding: 18px 20px;
+  padding: 18px 0px;
   background-color: ${({ theme }) => theme.COLOR['gray-900']};
 `
 
-const Side = styled.div<{ position: 'left' | 'right' }>`
+const Side = styled.div<{ $position: 'left' | 'right' }>`
   flex: 1;
   ${flexRowCenter}
-  ${({ position, theme }) =>
-    position === 'left'
+  ${({ $position, theme }) =>
+    $position === 'left'
       ? `
         justify-content: flex-start;
         ${theme.FONT.heading1};

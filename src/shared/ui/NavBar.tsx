@@ -5,6 +5,8 @@ import styled, { useTheme } from 'styled-components'
 import { NAV_ITEMS } from '@/shared/config/navItems'
 import SvgButton from '@/shared/ui/SvgButton'
 
+export const NAV_HEIGHT = 64
+
 const NavBar = () => {
   const location = useLocation()
   const theme = useTheme()
@@ -40,7 +42,7 @@ const NavButtonBox = styled.nav`
   border: 0.5px solid rgba(204, 255, 250, 0.2);
   border-radius: 999px;
   width: 335px;
-  height: 64px;
+  height: ${NAV_HEIGHT}px;
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   box-shadow: 4px 0 16px 0 rgba(0, 0, 0, 0.4);
