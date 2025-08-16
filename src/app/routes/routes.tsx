@@ -8,6 +8,7 @@ import PrivateRoute from '@widgets/authGuard/PrivateRoute'
 const MyPage = lazy(() => import('@/pages/myPage/ui'))
 const HomePage = lazy(() => import('@/pages/homePage'))
 const SearchPage = lazy(() => import('@/pages/searchPage'))
+const SearchResultPage = lazy(() => import('@/pages/searchPage/SearchResultPage'))
 
 export const AppRoutes = () => {
   return (
@@ -15,6 +16,7 @@ export const AppRoutes = () => {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/search" element={<SearchPage />} />
+        <Route path="/searchResult" element={<SearchResultPage />} />
         <Route
           path="/mypage/*"
           element={

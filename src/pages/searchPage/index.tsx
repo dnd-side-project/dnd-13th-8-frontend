@@ -1,19 +1,34 @@
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+
 import styled, { css } from 'styled-components'
 
 import { LeftArrow, Search } from '@/assets/icons'
 import { TrendKeyword } from '@/pages/searchPage/ui'
-import { CategoryButton, Header, Input } from '@/shared/ui'
+import { CategoryButton, Header, Input, SvgButton } from '@/shared/ui'
 
 const SearchPage = () => {
+  const [searchValue, setSearchValue] = useState('')
+  const navigate = useNavigate()
+
   return (
-    <div>
-      <Header left={<LeftArrow />} center={<span>검색</span>} />
+    <>
+      <Header
+        left={<SvgButton icon={LeftArrow} onClick={() => navigate(-1)} />}
+        center={<span>검색</span>}
+      />
       <Input
+        type="search"
+        placeholder="플레이리스트명 또는 닉네임으로 검색"
+        value={searchValue}
+        onChange={(e) => setSearchValue(e.target.value)}
         icon={Search}
         iconPosition="left"
-        onClickIcon={function aK() {}}
-        placeholder="플레이리스트명 또는 닉네임으로 검색"
-        type="search"
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            navigate(`/searchResult?keyword=${encodeURIComponent(searchValue)}`)
+          }
+        }}
       />
       <TrendKeywordsSection>
         <h1>인기 검색어</h1>
@@ -31,7 +46,7 @@ const SearchPage = () => {
           ))}
         </Category>
       </MoodSection>
-    </div>
+    </>
   )
 }
 
