@@ -3,26 +3,20 @@ import { useState } from 'react'
 import styled from 'styled-components'
 
 import { Filter } from '@/assets/icons'
-import type { SortType, FilterListType } from '@/shared/hooks/useSort'
 import BottomSheet from '@/shared/ui/BottomSheet'
 
+export type SortType = 'popular' | 'latest'
 interface ContentHeaderProps {
   totalCount: number
   currentSort: SortType
-  filterList: FilterListType
-  onSortChange?: (sort: SortType) => void
+  onSortChange: (sort: SortType) => void
 }
 
-const ContentHeader = ({
-  totalCount,
-  currentSort,
-  filterList,
-  onSortChange,
-}: ContentHeaderProps) => {
+const ContentHeader = ({ totalCount, currentSort, onSortChange }: ContentHeaderProps) => {
   const [isOpen, setIsOpen] = useState(false)
 
   const handleSortChange = (newSort: SortType) => {
-    onSortChange?.(newSort)
+    onSortChange(newSort)
     setIsOpen(false)
   }
 
@@ -30,24 +24,27 @@ const ContentHeader = ({
     <>
       <HeaderContainer>
         <span>총 {totalCount ?? 0}개</span>
-
         <FilterButton type="button" onClick={() => setIsOpen(true)}>
           <Filter />
-          <span>{filterList.find((item) => item.value === currentSort)?.label}</span>
+          <span>{currentSort === 'latest' ? '최신순' : '인기순'}</span>
         </FilterButton>
       </HeaderContainer>
 
       <BottomSheet isOpen={isOpen} onClose={() => setIsOpen(false)} height="200px">
-        {filterList.map((item) => (
-          <SortButton
-            type="button"
-            key={item.value}
-            $active={currentSort === item.value}
-            onClick={() => handleSortChange(item.value)}
-          >
-            {item.label}
-          </SortButton>
-        ))}
+        <SortButton
+          type="button"
+          $active={currentSort === 'latest'}
+          onClick={() => handleSortChange('latest')}
+        >
+          최신순
+        </SortButton>
+        <SortButton
+          type="button"
+          $active={currentSort === 'popular'}
+          onClick={() => handleSortChange('popular')}
+        >
+          인기순
+        </SortButton>
       </BottomSheet>
     </>
   )
