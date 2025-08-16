@@ -106,12 +106,15 @@ const sectionCommonLayout = css`
   flex-direction: column;
   gap: 12px;
   background-color: ${({ theme }) => theme.COLOR['gray-800']};
-  font-weight: 600;
   ${({ theme }) => theme.FONT.headline1};
 
   /* main padding 상쇄 */
   width: calc(100% + 40px);
   margin: 0 -20px;
+
+  h1 {
+    font-weight: 600;
+  }
 `
 
 const SecondSection = styled.section`
