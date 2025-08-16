@@ -1,15 +1,27 @@
+import { useNavigate } from 'react-router-dom'
+
 import styled, { css } from 'styled-components'
 
-import { Gear, Logo, Notification } from '@/assets/icons'
+import { Logo, Notification, Search } from '@/assets/icons'
 import { TITLE_TEXT } from '@/pages/homePage/config/messages'
 import LoopCarousel from '@/pages/homePage/ui/LoopCarousel'
 import Header from '@/shared/ui/Header'
 import ScrollCarousel from '@/shared/ui/ScrollCarousel'
+import SvgButton from '@/shared/ui/SvgButton'
 import Playlist from '@/widgets/playlist/Playlist'
 import PlaylistWithSong from '@/widgets/playlist/PlaylistWithSong'
 
 const HomePage = () => {
+  const navigate = useNavigate()
   const isAuth = false // TODO : 실제 로그인 상태를 가져오는 로직으로 교체
+
+  const handleNotiClick = () => {
+    navigate('/mypage/notification')
+  }
+
+  const handleSearchClick = () => {
+    navigate('/search')
+  }
 
   return (
     <PageLayout>
@@ -17,8 +29,8 @@ const HomePage = () => {
         left={<Logo />}
         right={
           <>
-            <Notification />
-            <Gear />
+            <SvgButton icon={Notification} onClick={handleNotiClick} />
+            <SvgButton icon={Search} onClick={handleSearchClick} />
           </>
         }
       />
