@@ -41,7 +41,6 @@ export default Playlist
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: 12px;
   width: 140px;
 `
