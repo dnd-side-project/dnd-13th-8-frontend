@@ -41,7 +41,7 @@ const MainLayout = styled.main<{
   overflow-x: auto;
   overflow-y: auto;
   background-color: ${({ theme }) => theme.COLOR['gray-900']};
-  color: #fafbfe;
+  color: ${({ theme }) => theme.COLOR['gray-10']};
 `
 
 const NavContainer = styled.div<{
