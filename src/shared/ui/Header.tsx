@@ -22,7 +22,7 @@ const HeaderContainer = styled.header`
   ${flexRowCenter}
   width: 100%;
   height: 60px;
-  padding: 18px 20px;
+  padding: 18px 0px;
   background-color: ${({ theme }) => theme.COLOR['gray-900']};
 `
 
