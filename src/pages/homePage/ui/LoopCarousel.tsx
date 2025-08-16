@@ -39,7 +39,7 @@ const LoopCarousel = ({ data, isAuth }: LoopCarouselProps) => {
       <div ref={emblaRef}>
         <EmblaContainer>
           <EmblaSlide key="image">
-            <Slide active={activeIndex === 0}>
+            <Slide $active={activeIndex === 0}>
               <FirstContent>
                 <Image src={CharacterImg} alt="Deulak character" width={160} height={160} />
                 <Button size="S" state="primary">
@@ -51,8 +51,8 @@ const LoopCarousel = ({ data, isAuth }: LoopCarouselProps) => {
 
           {data.map((slide, index) => (
             <EmblaSlide key={index}>
-              <Slide active={activeIndex === index + 1}>
-                <SlideOverlay active={activeIndex === index + 1}>
+              <Slide $active={activeIndex === index + 1}>
+                <SlideOverlay $active={activeIndex === index + 1}>
                   <Badge size="large" text={slide.genre} />
                   <Title>{slide.title}</Title>
                 </SlideOverlay>
@@ -91,7 +91,7 @@ const EmblaSlide = styled.div`
   ${flexRowCenter}
 `
 
-const Slide = styled.div<{ active: boolean }>`
+const Slide = styled.div<{ $active: boolean }>`
   position: relative;
   border-radius: 20px;
   width: 240px;
@@ -102,8 +102,8 @@ const Slide = styled.div<{ active: boolean }>`
   transform: scale(0.78);
   overflow: hidden;
 
-  ${(props) =>
-    props.active &&
+  ${({ $active }) =>
+    $active &&
     css`
       border: 0.8px solid transparent;
       border-radius: 24px;
@@ -111,8 +111,8 @@ const Slide = styled.div<{ active: boolean }>`
       background:
         linear-gradient(
             to bottom right,
-            ${props.theme.COLOR['gray-600']},
-            ${props.theme.COLOR['gray-800']}
+            ${({ theme }) => theme.COLOR['gray-600']},
+            ${({ theme }) => theme.COLOR['gray-800']}
           )
           padding-box,
         linear-gradient(to bottom right, rgba(230, 255, 248, 0.5), rgb(24, 25, 32, 0.8)) border-box;
@@ -141,7 +141,7 @@ const Title = styled.p`
   word-break: break-word;
 `
 
-const SlideOverlay = styled.div<{ active: boolean }>`
+const SlideOverlay = styled.div<{ $active: boolean }>`
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -159,8 +159,8 @@ const SlideOverlay = styled.div<{ active: boolean }>`
 
   transition: all 0.5s ease;
 
-  ${(props) =>
-    props.active &&
+  ${({ $active }) =>
+    $active &&
     css`
       padding: 10px 20px 16px 20px;
     `}
