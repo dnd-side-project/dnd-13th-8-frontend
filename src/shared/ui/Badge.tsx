@@ -30,7 +30,6 @@ const StyledBadge = styled.span<{ $size: 'small' | 'large' }>`
   border-radius: 99px;
   background-color: ${({ theme }) => theme.COLOR['gray-700']};
   color: ${({ theme }) => theme.COLOR['primary-normal']};
-  font-weight: 600;
 
   ${({ $size }) => sizeStyles[$size]}
 `
