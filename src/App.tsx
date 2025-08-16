@@ -23,7 +23,7 @@ const MainLayout = styled.main<{
   margin: 0 auto;
   padding: 0 20px;
   width: ${({ $deviceType }) =>
-    $deviceType === 'mobile' ? 'clamp(320px, 100dvw, 420px)' : '375px'};
+    $deviceType === 'mobile' ? 'clamp(320px, 100dvw, 430px)' : '375px'};
   min-height: 100dvh;
   overflow-x: auto;
   overflow-y: auto;
