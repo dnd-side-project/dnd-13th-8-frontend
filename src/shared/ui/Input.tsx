@@ -15,6 +15,8 @@ type IconPosition = 'left' | 'right'
 interface InputProps {
   type: InputType
   placeholder?: string
+  value?: string
+  defaultValue?: string
   error?: boolean
   errorMessage?: string
   maxLength?: number
@@ -32,6 +34,8 @@ const ERROR_COLOR = '#ff5454'
 const Input = ({
   type,
   placeholder,
+  value,
+  defaultValue,
   error = false,
   errorMessage,
   maxLength,
@@ -54,6 +58,8 @@ const Input = ({
         <StyledInput
           type={type}
           placeholder={placeholder}
+          value={value}
+          defaultValue={defaultValue}
           maxLength={maxLength}
           onChange={onChange}
           onFocus={onFocus}
