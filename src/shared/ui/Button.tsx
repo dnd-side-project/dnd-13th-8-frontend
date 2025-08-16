@@ -2,6 +2,8 @@ import type { ReactNode, MouseEventHandler } from 'react'
 
 import styled, { css } from 'styled-components'
 
+import { flexRowCenter } from '@/shared/styles/mixins'
+
 type ButtonSize = 'L' | 'M' | 'S'
 type ButtonState = 'primary' | 'secondary' | 'disabled'
 
@@ -60,8 +62,8 @@ const Button = ({ children, size, state, onClick }: ButtonProps) => {
   return (
     <StyledButton
       type="button"
-      size={size}
-      state={state}
+      $size={size}
+      $state={state}
       onClick={onClick}
       disabled={state === 'disabled'}
     >
@@ -73,12 +75,10 @@ const Button = ({ children, size, state, onClick }: ButtonProps) => {
 export default Button
 
 const StyledButton = styled.button<{
-  size: ButtonSize
-  state: ButtonState
+  $size: ButtonSize
+  $state: ButtonState
 }>`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  ${({ size }) => sizeStyles[size]}
-  ${({ state }) => stateStyles[state]}
+  ${flexRowCenter}
+  ${({ $size }) => sizeStyles[$size]}
+  ${({ $state }) => stateStyles[$state]}
 `

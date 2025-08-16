@@ -9,7 +9,7 @@ interface DotButtonProps {
 }
 
 export const DotButton = ({ selected, onClick }: DotButtonProps) => {
-  return <StyledDotButton type="button" onClick={onClick} selected={selected} />
+  return <StyledDotButton type="button" onClick={onClick} $selected={selected} />
 }
 
 export const useDotButton = (emblaApi: EmblaCarouselType | undefined) => {
@@ -60,9 +60,9 @@ const normalStyles = css`
   background-color: ${({ theme }) => theme.COLOR['gray-200']};
 `
 
-const StyledDotButton = styled.button<{ selected?: boolean }>`
+const StyledDotButton = styled.button<{ $selected?: boolean }>`
   border-radius: 50%;
   transition: all 0.5s ease;
 
-  ${({ selected }) => (selected ? selectedStyles : normalStyles)}
+  ${({ $selected }) => ($selected ? selectedStyles : normalStyles)}
 `

@@ -4,16 +4,21 @@ import { createPortal } from 'react-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import styled from 'styled-components'
 
-import { flexRowCenter } from '@/shared/styles/mixins'
-
 interface OverlayProps {
   isOpen: boolean
   onClose: () => void
   children: React.ReactNode
   useAnimation?: boolean
+  childrenAlign?: 'center' | 'bottom'
 }
 
-const Overlay = ({ isOpen, onClose, children, useAnimation = true }: OverlayProps) => {
+const Overlay = ({
+  isOpen,
+  onClose,
+  children,
+  useAnimation = true,
+  childrenAlign = 'center',
+}: OverlayProps) => {
   const overlayRef = useRef<HTMLDivElement>(null)
   const prevOverflowRef = useRef<string | null>(null)
 
@@ -77,7 +82,12 @@ const Overlay = ({ isOpen, onClose, children, useAnimation = true }: OverlayProp
     return createPortal(
       <>
         {isOpen && (
-          <StyledOverlay as="div" ref={overlayRef} onClick={handleOverlayClick}>
+          <StyledOverlay
+            as="div"
+            ref={overlayRef}
+            onClick={handleOverlayClick}
+            $childrenAlign={childrenAlign}
+          >
             {children}
           </StyledOverlay>
         )}
@@ -96,6 +106,7 @@ const Overlay = ({ isOpen, onClose, children, useAnimation = true }: OverlayProp
           initial="hidden"
           animate="visible"
           exit="exit"
+          $childrenAlign={childrenAlign}
         >
           {children}
         </StyledOverlay>
@@ -107,13 +118,15 @@ const Overlay = ({ isOpen, onClose, children, useAnimation = true }: OverlayProp
 
 export default Overlay
 
-const StyledOverlay = styled(motion.div)`
+const StyledOverlay = styled(motion.div)<{ $childrenAlign?: 'center' | 'bottom' }>`
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  ${flexRowCenter}
+  display: flex;
+  align-items: ${({ $childrenAlign }) => ($childrenAlign === 'bottom' ? 'flex-end' : 'center')};
+  justify-content: center;
   background-color: ${({ theme }) => theme.OPACITY.scrim};
   z-index: 1000;
 `
