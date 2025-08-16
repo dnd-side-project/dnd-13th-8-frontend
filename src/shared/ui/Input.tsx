@@ -49,7 +49,7 @@ const Input = ({
 }: InputProps) => {
   return (
     <>
-      <InputContainer width={width ?? '100%'} error={error} iconPosition={iconPosition}>
+      <InputContainer $width={width ?? '100%'} $error={error} $iconPosition={iconPosition}>
         {icon && onClickIcon ? (
           <SvgButton icon={icon} onClick={onClickIcon} />
         ) : (
@@ -74,23 +74,24 @@ const Input = ({
 export default Input
 
 const InputContainer = styled.div<{
-  width: string
-  error: boolean
-  iconPosition: IconPosition
+  $width: string
+  $error: boolean
+  $iconPosition: IconPosition
 }>`
   display: flex;
-  flex-direction: ${({ iconPosition }) => (iconPosition === 'left' ? 'row' : 'row-reverse')};
+  flex-direction: ${({ $iconPosition }) => ($iconPosition === 'left' ? 'row' : 'row-reverse')};
   align-items: center;
   padding: 14px 11px;
   gap: 8px;
-  width: ${({ width }) => width};
+  width: ${({ $width }) => $width};
   height: 42px;
-  border: 1px solid ${({ theme, error }) => (error ? ERROR_COLOR : theme.COLOR['gray-700'])};
+  border: 1px solid ${({ theme, $error }) => ($error ? ERROR_COLOR : theme.COLOR['gray-700'])};
   border-radius: 10px;
   background-color: ${({ theme }) => theme.COLOR['gray-700']};
 
   &:focus-within {
-    border: 1px solid ${({ theme, error }) => (error ? ERROR_COLOR : theme.COLOR['primary-normal'])};
+    border: 1px solid
+      ${({ theme, $error }) => ($error ? ERROR_COLOR : theme.COLOR['primary-normal'])};
   }
 `
 
