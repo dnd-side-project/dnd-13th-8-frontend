@@ -1,5 +1,7 @@
 import styled from 'styled-components'
 
+import { AppRoutes } from '@app/routes/routes'
+
 import { useDevice, type DeviceType } from '@/shared/hooks/useDevice'
 
 const App = () => {
@@ -7,7 +9,7 @@ const App = () => {
 
   return (
     <MainLayout $deviceType={deviceType}>
-      <div>App Layout</div>
+      <AppRoutes />
     </MainLayout>
   )
 }
