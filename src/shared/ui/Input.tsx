@@ -29,8 +29,6 @@ interface InputProps {
   onClickIcon?: () => void
 }
 
-const ERROR_COLOR = '#ff5454'
-
 const Input = ({
   type,
   placeholder,
@@ -85,13 +83,15 @@ const InputContainer = styled.div<{
   gap: 8px;
   width: ${({ $width }) => $width};
   height: 42px;
-  border: 1px solid ${({ theme, $error }) => ($error ? ERROR_COLOR : theme.COLOR['gray-700'])};
+  border: 1px solid
+    ${({ theme, $error }) => ($error ? theme.COLOR['common-error'] : theme.COLOR['gray-700'])};
   border-radius: 10px;
   background-color: ${({ theme }) => theme.COLOR['gray-700']};
 
   &:focus-within {
     border: 1px solid
-      ${({ theme, $error }) => ($error ? ERROR_COLOR : theme.COLOR['primary-normal'])};
+      ${({ theme, $error }) =>
+    $error ? theme.COLOR['common-error'] : theme.COLOR['primary-normal']};
   }
 `
 
@@ -106,6 +106,6 @@ const StyledInput = styled.input`
 `
 
 const ErrorMessage = styled.span`
-  color: ${ERROR_COLOR};
+  color: ${({ theme }) => theme.COLOR['common-error']};
   ${({ theme }) => theme.FONT['caption1']};
 `
