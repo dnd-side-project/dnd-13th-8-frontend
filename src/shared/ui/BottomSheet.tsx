@@ -141,7 +141,7 @@ const SheetContainer = styled(motion.div)<{ $deviceType: DeviceType; $height: st
   height: ${({ $height }) => $height};
   border-radius: 20px 20px 0 0;
   overflow: hidden;
-  background-color: ${({ theme }) => theme.COLOR['gray-600']};
+  background-color: ${({ theme }) => theme.COLOR['gray-700']};
   color: ${({ theme }) => theme.COLOR['gray-10']};
   box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
   cursor: grab;
