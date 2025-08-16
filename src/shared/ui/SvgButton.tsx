@@ -10,12 +10,20 @@ interface SvgButtonProps {
   width?: number
   height?: number
   fill?: string
+  stroke?: string
 }
 
-const SvgButton = ({ icon: Icon, onClick, width = 24, height = 24, fill }: SvgButtonProps) => {
+const SvgButton = ({
+  icon: Icon,
+  onClick,
+  width = 24,
+  height = 24,
+  fill,
+  stroke,
+}: SvgButtonProps) => {
   return (
     <Button type="button" onClick={onClick} $width={width} $height={height}>
-      <Icon fill={fill} />
+      <Icon fill={fill} stroke={stroke} />
     </Button>
   )
 }
