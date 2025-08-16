@@ -1,8 +1,11 @@
+import { lazy, Suspense } from 'react'
 import { Routes, Route } from 'react-router-dom'
+
+import Loading from '@shared/ui/Loading'
 
 import PrivateRoute from '@widgets/authGuard/PrivateRoute'
 
-import MyPage from '@/pages/myPage/ui'
+const MyPage = lazy(() => import('@/pages/myPage/ui'))
 
 export const AppRoutes = () => {
   return (
@@ -11,7 +14,9 @@ export const AppRoutes = () => {
         path="/mypage/*"
         element={
           <PrivateRoute>
-            <MyPage />
+            <Suspense fallback={<Loading isLoading width="100%" height="100%" />}>
+              <MyPage />
+            </Suspense>
           </PrivateRoute>
         }
       />
