@@ -10,7 +10,7 @@ const TrendKeyword = ({ text }: TrendKeywordProps) => {
 
 export default TrendKeyword
 
-const StyledButton = styled.div`
+const StyledButton = styled.button`
   width: fit-content;
   background-color: ${({ theme }) => theme.COLOR['gray-700']};
   color: ${({ theme }) => theme.COLOR['gray-50']};
