@@ -30,6 +30,10 @@ const LoopCarousel = ({ data, isAuth }: LoopCarouselProps) => {
     const onSelect = () => setActiveIndex(emblaApi.selectedScrollSnap())
     emblaApi.on('select', onSelect)
     onSelect()
+
+    return () => {
+      emblaApi.off('select', onSelect) // 언마운트 시 이벤트 해제
+    }
   }, [emblaApi])
 
   const { selectedIndex, scrollSnaps, onDotButtonClick } = useDotButton(emblaApi)
