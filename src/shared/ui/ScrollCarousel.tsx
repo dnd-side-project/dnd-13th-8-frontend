@@ -25,7 +25,7 @@ const ScrollCarousel = ({ children, gap }: ScrollCarouselProps) => {
 
   return (
     <div ref={emblaRef}>
-      <EmblaContainer gap={gap}>
+      <EmblaContainer $gap={gap}>
         {React.Children.map(children, (child, index) => (
           <EmblaSlide key={index}>{child}</EmblaSlide>
         ))}
@@ -36,10 +36,10 @@ const ScrollCarousel = ({ children, gap }: ScrollCarouselProps) => {
 
 export default ScrollCarousel
 
-const EmblaContainer = styled.div<{ gap: number }>`
+const EmblaContainer = styled.div<{ $gap: number }>`
   display: flex;
   touch-action: pan-y pinch-zoom;
-  gap: ${({ gap }) => gap}px;
+  gap: ${({ $gap }) => $gap}px;
 `
 
 const EmblaSlide = styled.div`
