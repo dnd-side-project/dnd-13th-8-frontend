@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
-import { theme } from '@/shared/styles/theme'
 import Cd from '@/shared/ui/Cd'
 
 const meta: Meta<typeof Cd> = {
@@ -12,7 +11,10 @@ const meta: Meta<typeof Cd> = {
       control: { type: 'select' },
       options: ['xxl', 'xl', 'lg', 'md', 'sm', 'xs'],
     },
-    bgColor: { control: 'color' },
+    bgColor: {
+      control: { type: 'radio' },
+      options: ['none', 'default', 'dark'],
+    },
   },
 }
 
@@ -23,19 +25,33 @@ type Story = StoryObj<typeof Cd>
 export const Default: Story = {
   args: {
     variant: 'md',
-    bgColor: theme.COLOR['gray-600'], // 예: 금색 배경
+    bgColor: 'default',
+  },
+}
+
+export const Dark: Story = {
+  args: {
+    variant: 'md',
+    bgColor: 'dark',
+  },
+}
+
+export const NoBackground: Story = {
+  args: {
+    variant: 'md',
+    bgColor: 'none',
   },
 }
 
 export const Variants: Story = {
   render: () => (
     <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
-      <Cd variant="xxl" />
-      <Cd variant="xl" />
-      <Cd variant="lg" />
-      <Cd variant="md" />
-      <Cd variant="sm" />
-      <Cd variant="xs" />
+      <Cd variant="xxl" bgColor="default" />
+      <Cd variant="xl" bgColor="default" />
+      <Cd variant="lg" bgColor="default" />
+      <Cd variant="md" bgColor="default" />
+      <Cd variant="sm" bgColor="default" />
+      <Cd variant="xs" bgColor="default" />
     </div>
   ),
 }

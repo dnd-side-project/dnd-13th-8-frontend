@@ -25,7 +25,7 @@ const PlaylistWithSong = ({ title, username, songs }: PlaylistWithSongProps) => 
   return (
     <Wrapper>
       <TopContainer>
-        <Cd variant="sm" bgColor={theme.COLOR['gray-800']} />
+        <Cd variant="sm" bgColor="dark" />
         <InfoBox>
           <InfoText>
             <Title>{title}</Title>

@@ -49,7 +49,6 @@ const CdBox = styled.div`
   position: relative;
   width: 140px;
   height: 140px;
-  background-color: ${({ theme }) => theme.COLOR['gray-600']};
   border-radius: 16px;
 
   display: flex;

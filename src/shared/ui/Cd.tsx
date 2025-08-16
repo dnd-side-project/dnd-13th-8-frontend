@@ -5,25 +5,25 @@ import { flexRowCenter } from '@/shared/styles/mixins'
 
 interface CdProps {
   variant: 'xxl' | 'xl' | 'lg' | 'md' | 'sm' | 'xs'
-  bgColor?: string
+  bgColor?: 'none' | 'default' | 'dark'
 }
 
-const Cd = ({ variant, bgColor }: CdProps) => {
+const Cd = ({ variant, bgColor = 'default' }: CdProps) => {
   const Content = (
     <Base $variant={variant}>
-      {/* icon layer */}
       <Overlay />
     </Base>
   )
 
-  return bgColor ? (
+  if (bgColor === 'none') return Content
+
+  return (
     <Container $variant={variant} $bgColor={bgColor}>
       {Content}
     </Container>
-  ) : (
-    Content
   )
 }
+
 export default Cd
 
 const sizeMap = {
@@ -40,14 +40,15 @@ interface StyleProps {
 }
 
 interface ContainerProps extends StyleProps {
-  $bgColor?: string
+  $bgColor?: 'default' | 'dark'
 }
 
 const Container = styled.div<ContainerProps>`
   width: ${({ $variant }) => sizeMap[$variant].container}px;
   height: ${({ $variant }) => sizeMap[$variant].container}px;
   border-radius: ${({ $variant }) => sizeMap[$variant].borderRadius}px;
-  background-color: ${({ $bgColor, theme }) => $bgColor ?? theme.COLOR['gray-600']};
+  background-color: ${({ $bgColor, theme }) =>
+    $bgColor === 'dark' ? theme.COLOR['gray-800'] : theme.COLOR['gray-600']};
   ${flexRowCenter}
 `
 
