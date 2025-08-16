@@ -26,4 +26,8 @@ const Button = styled.button<{
 }>`
   width: ${({ $width }) => $width}px;
   height: ${({ $height }) => $height}px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `

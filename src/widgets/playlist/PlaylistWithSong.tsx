@@ -1,7 +1,13 @@
+import { useNavigate } from 'react-router-dom'
+
 import styled from 'styled-components'
 
+import { Play } from '@/assets/icons'
+import { flexRowCenter } from '@/shared/styles/mixins'
+import { theme } from '@/shared/styles/theme'
 import Cd from '@/shared/ui/Cd'
 import Link from '@/shared/ui/Link'
+import SvgButton from '@/shared/ui/SvgButton'
 
 interface PlaylistWithSongProps {
   title: string
@@ -10,6 +16,12 @@ interface PlaylistWithSongProps {
 }
 
 const PlaylistWithSong = ({ title, username, songs }: PlaylistWithSongProps) => {
+  const navigate = useNavigate()
+
+  const handlePlayClick = () => {
+    navigate('/discover') // TODO : 추후 루트 수정
+  }
+
   return (
     <Wrapper>
       <TopContainer>
@@ -17,8 +29,14 @@ const PlaylistWithSong = ({ title, username, songs }: PlaylistWithSongProps) => 
           <Cd variant="sm" />
         </CdBox>
         <InfoBox>
-          <Title>{title}</Title>
-          <UserName>{username}</UserName>
+          <InfoText>
+            <Title>{title}</Title>
+            <UserName>{username}</UserName>
+          </InfoText>
+          <PlayButton onClick={handlePlayClick}>
+            <SvgButton width={16} height={16} icon={Play} fill={theme.COLOR['gray-900']} />
+            PLAY
+          </PlayButton>
         </InfoBox>
       </TopContainer>
       <SongsBox>
@@ -68,11 +86,12 @@ const CdBox = styled.div`
   align-items: center;
 `
 
+const InfoText = styled.div``
+
 const InfoBox = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  width: 110px;
+  justify-content: space-between;
 `
 
 const Title = styled.h3`
@@ -80,11 +99,11 @@ const Title = styled.h3`
   ${({ theme }) => theme.FONT['body1-normal']};
   font-weight: 600;
 
-  display: -webkit-box;
-  -webkit-line-clamp: 1;
-  -webkit-box-orient: vertical;
+  display: inline-block;
+  max-width: 110px;
   overflow: hidden;
-  word-break: break-word;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `
 
 const TopContainer = styled.div`
@@ -101,4 +120,15 @@ const SongsBox = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
+`
+
+const PlayButton = styled.button`
+  background-color: ${({ theme }) => theme.COLOR['primary-normal']};
+  ${flexRowCenter}
+  gap: 4px;
+  padding: 5px 12px 5px 8px;
+  border-radius: 99px;
+  ${({ theme }) => theme.FONT['body2-normal']};
+  color: ${({ theme }) => theme.COLOR['gray-900']};
+  width: 73px;
 `
