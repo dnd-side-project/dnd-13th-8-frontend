@@ -5,10 +5,11 @@ import styled from 'styled-components'
 import { Profile as DefaultProfile } from '@/assets/images'
 
 type ProfileSize = 'L' | 'M' | 'S'
+export type ProfileUrl = string | File | null
 
 interface ProfileProps {
   size: ProfileSize
-  profileUrl?: string | File
+  profileUrl?: ProfileUrl
 }
 
 const PROFILE_STYLES = {
@@ -18,7 +19,7 @@ const PROFILE_STYLES = {
 } as const
 
 const Profile = ({ size, profileUrl }: ProfileProps) => {
-  const [imgSrc, setImgSrc] = useState(typeof profileUrl === 'string' ? profileUrl : DefaultProfile)
+  const [imgSrc, setImgSrc] = useState(DefaultProfile)
 
   useEffect(() => {
     if (!profileUrl) {
