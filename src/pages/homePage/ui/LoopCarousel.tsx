@@ -4,8 +4,10 @@ import useEmblaCarousel from 'embla-carousel-react'
 import styled, { css } from 'styled-components'
 
 import CharacterImg from '@/assets/images/img_character.png'
-import { flexRowCenter } from '@/shared/styles/mixins'
+import { BUTTON_TEXT } from '@/pages/homePage/config/messages'
+import { flexColCenter, flexRowCenter } from '@/shared/styles/mixins'
 import Badge from '@/shared/ui/Badge'
+import Button from '@/shared/ui/Button'
 
 import { DotButton, useDotButton } from './DotButton'
 
@@ -14,11 +16,12 @@ interface SlideData {
   genre: string
 }
 
-interface TopCarouselProps {
+interface LoopCarouselProps {
   data: SlideData[]
+  isAuth: boolean
 }
 
-const TopCarousel = ({ data }: TopCarouselProps) => {
+const LoopCarousel = ({ data, isAuth }: LoopCarouselProps) => {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true })
   const [activeIndex, setActiveIndex] = useState(0)
 
@@ -27,6 +30,10 @@ const TopCarousel = ({ data }: TopCarouselProps) => {
     const onSelect = () => setActiveIndex(emblaApi.selectedScrollSnap())
     emblaApi.on('select', onSelect)
     onSelect()
+
+    return () => {
+      emblaApi.off('select', onSelect) // 언마운트 시 이벤트 해제
+    }
   }, [emblaApi])
 
   const { selectedIndex, scrollSnaps, onDotButtonClick } = useDotButton(emblaApi)
@@ -37,15 +44,20 @@ const TopCarousel = ({ data }: TopCarouselProps) => {
         <EmblaContainer>
           <EmblaSlide key="image">
             <Slide $active={activeIndex === 0}>
-              <Image src={CharacterImg} alt="Deulak character" />
+              <FirstContent>
+                <Image src={CharacterImg} alt="Deulak character" width={160} height={160} />
+                <Button size="S" state="primary">
+                  {isAuth ? BUTTON_TEXT.MEMBER : BUTTON_TEXT.GUEST}
+                </Button>
+              </FirstContent>
             </Slide>
           </EmblaSlide>
 
           {data.map((slide, index) => (
             <EmblaSlide key={index}>
               <Slide $active={activeIndex === index + 1}>
-                <SlideOverlay>
-                  <Badge size="small" text={slide.genre} />
+                <SlideOverlay $active={activeIndex === index + 1}>
+                  <Badge size="large" text={slide.genre} />
                   <Title>{slide.title}</Title>
                 </SlideOverlay>
               </Slide>
@@ -67,10 +79,11 @@ const TopCarousel = ({ data }: TopCarouselProps) => {
   )
 }
 
-export default TopCarousel
+export default LoopCarousel
 
 const Embla = styled.div`
-  overflow: hidden;
+  overflow: visible;
+  margin-top: 20px;
 `
 
 const EmblaContainer = styled.div`
@@ -86,16 +99,16 @@ const EmblaSlide = styled.div`
 const Slide = styled.div<{ $active: boolean }>`
   position: relative;
   border-radius: 20px;
-  width: 220px;
-  height: 220px;
+  width: 240px;
+  height: 240px;
   ${flexRowCenter}
   background-color: ${({ theme }) => theme.COLOR['gray-700']};
   transition: transform 0.8s ease;
-  transform: scale(0.8);
+  transform: scale(0.78);
   overflow: hidden;
 
-  ${(props) =>
-    props.$active &&
+  ${({ $active }) =>
+    $active &&
     css`
       border: 0.8px solid transparent;
       border-radius: 24px;
@@ -103,8 +116,8 @@ const Slide = styled.div<{ $active: boolean }>`
       background:
         linear-gradient(
             to bottom right,
-            ${props.theme.COLOR['gray-600']},
-            ${props.theme.COLOR['gray-800']}
+            ${({ theme }) => theme.COLOR['gray-600']},
+            ${({ theme }) => theme.COLOR['gray-800']}
           )
           padding-box,
         linear-gradient(to bottom right, rgba(230, 255, 248, 0.5), rgb(24, 25, 32, 0.8)) border-box;
@@ -133,15 +146,14 @@ const Title = styled.p`
   word-break: break-word;
 `
 
-const SlideOverlay = styled.div`
+const SlideOverlay = styled.div<{ $active: boolean }>`
   display: flex;
   flex-direction: column;
   gap: 4px;
   position: absolute;
   bottom: 0;
-  height: 62px;
   width: 100%;
-  padding: 6px 16px 8px 16px;
+  padding: 6px 16px 12px 16px;
 
   background: rgba(124, 124, 124, 0.1);
   border: 0.5px solid rgba(255, 255, 255, 0.2);
@@ -149,4 +161,17 @@ const SlideOverlay = styled.div`
     0px 4px 4px rgba(0, 0, 0, 0.25),
     0px 0px 12px rgba(0, 0, 0, 0.04);
   backdrop-filter: blur(8px);
+
+  transition: all 0.5s ease;
+
+  ${({ $active }) =>
+    $active &&
+    css`
+      padding: 10px 20px 16px 20px;
+    `}
+`
+
+const FirstContent = styled.div`
+  ${flexColCenter}
+  gap: 12px;
 `

@@ -38,7 +38,7 @@ const MainLayout = styled.main<{
   padding: 0 20px ${({ $layoutBottomGap }) => NAV_HEIGHT + $layoutBottomGap}px 20px;
   width: ${({ $layoutWidth }) => $layoutWidth};
   min-height: 100dvh;
-  overflow-x: auto;
+  overflow-x: hidden;
   overflow-y: auto;
   background-color: ${({ theme }) => theme.COLOR['gray-900']};
   color: ${({ theme }) => theme.COLOR['gray-10']};

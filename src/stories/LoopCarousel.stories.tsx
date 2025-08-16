@@ -1,15 +1,21 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import styled from 'styled-components'
 
-import TopCarousel from '@/pages/homePage/ui/TopCarousel'
+import LoopCarousel from '@/pages/homePage/ui/LoopCarousel'
 
-const meta: Meta<typeof TopCarousel> = {
-  title: 'Pages/Home/TopCarousel',
-  component: TopCarousel,
+const meta: Meta<typeof LoopCarousel> = {
+  title: 'Pages/Home/LoopCarousel',
+  component: LoopCarousel,
+  argTypes: {
+    isAuth: {
+      control: { type: 'boolean' },
+      defaultValue: false,
+    },
+  },
 }
 
 export default meta
-type Story = StoryObj<typeof TopCarousel>
+type Story = StoryObj<typeof LoopCarousel>
 
 const mockData = [
   { title: '플레이리스트 #1', genre: '힙합' },
@@ -26,6 +32,7 @@ const StoryContainer = styled.div`
 export const Default: Story = {
   args: {
     data: mockData,
+    isAuth: false,
   },
   decorators: [
     (Story) => (
