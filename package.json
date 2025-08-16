@@ -33,7 +33,6 @@
   "dependencies": {
     "@tanstack/react-query": "^5.84.2",
     "axios": "^1.11.0",
-    "framer-motion": "^12.23.12",
     "embla-carousel": "^8.6.0",
     "embla-carousel-react": "^8.6.0",
     "framer-motion": "^12.23.12",
