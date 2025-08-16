@@ -34,12 +34,12 @@ interface BottomSheetProps {
   height?: string
 }
 
-const BottomSheet: React.FC<BottomSheetProps> = ({
+const BottomSheet = ({
   isOpen,
   onClose,
   children,
   height = BOTTOM_SHEET_CONSTANTS.DEFAULT_HEIGHT,
-}) => {
+}: BottomSheetProps) => {
   const prevOverflowRef = useRef<string | null>(null)
   const deviceType = useDevice()
 
