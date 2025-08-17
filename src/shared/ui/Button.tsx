@@ -15,7 +15,13 @@ interface ButtonProps {
 }
 
 const BUTTON_STYLES = {
-  L: { minWidth: '335px', maxWidth: '100%', padding: '12px 0', borderRadius: '10px' },
+  L: {
+    minWidth: '280px',
+    width: '100%',
+    maxWidth: '390px',
+    padding: '12px 0',
+    borderRadius: '10px',
+  },
   M: { padding: '11px 20px', borderRadius: '10px' },
   S: { padding: '5px 12px', borderRadius: '99px' },
 } as const
@@ -27,6 +33,7 @@ const sizeStyles: Record<ButtonSize, ReturnType<typeof css>> = {
     padding: ${BUTTON_STYLES.L.padding};
     border-radius: ${BUTTON_STYLES.L.borderRadius};
     ${({ theme }) => theme.FONT['body1-normal']}
+    flex: 1;
   `,
   M: css`
     padding: ${BUTTON_STYLES.M.padding};
