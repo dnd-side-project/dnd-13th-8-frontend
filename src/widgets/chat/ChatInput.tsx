@@ -100,7 +100,7 @@ const Wrapper = styled.div<{ $isExpanded: boolean }>`
 
 const StyledInput = styled.textarea`
   flex: 1;
-  max-width: 267px;
+  width: 100%;
   ${({ theme }) => theme.FONT['body2-normal']};
   color: ${({ theme }) => theme.COLOR['gray-10']};
   line-height: 15px;
