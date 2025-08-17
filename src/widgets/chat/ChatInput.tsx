@@ -92,8 +92,10 @@ const Wrapper = styled.div<{ $isExpanded: boolean }>`
   background-color: ${({ theme }) => theme.COLOR['gray-600']};
   padding: 10px 14px;
   border-radius: 8px;
+  width: 100%;
   height: fit-content;
   align-items: ${({ $isExpanded }) => ($isExpanded ? 'flex-end' : 'center')};
+  margin-bottom: 32px;
 `
 
 const StyledInput = styled.textarea`

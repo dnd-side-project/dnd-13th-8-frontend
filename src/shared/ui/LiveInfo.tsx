@@ -10,7 +10,7 @@ interface LiveInfoProps {
 const LiveInfo = ({ isOnAir, listenerCount }: LiveInfoProps) => {
   return (
     <Wrapper>
-      {isOnAir && <OnAirBadge>On Air</OnAirBadge>}
+      {isOnAir && <OnAirBadge>ON AIR</OnAirBadge>}
       <ListenerCount>
         <User /> {listenerCount}
       </ListenerCount>

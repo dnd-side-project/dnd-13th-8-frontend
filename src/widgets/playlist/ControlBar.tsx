@@ -31,5 +31,5 @@ const Wrapper = styled.div`
   display: flex;
   width: 100%;
   justify-content: space-between;
-  padding: 32px 60px 24px 60px;
+  padding: 32px 60px 40px 60px;
 `
