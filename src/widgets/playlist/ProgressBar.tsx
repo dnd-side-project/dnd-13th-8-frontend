@@ -1,8 +1,12 @@
 import styled from 'styled-components'
 
+import { Mark } from '@/assets/icons'
+import { SvgButton } from '@/shared/ui'
+
 interface ProgressBarProps {
   currentTime: number
   duration: number
+  trackLengths: number[]
 }
 
 const formatTime = (time: number) => {
@@ -11,14 +15,37 @@ const formatTime = (time: number) => {
     .join(':')
 }
 
-const ProgressBar = ({ currentTime, duration }: ProgressBarProps) => {
+const ProgressBar = ({ currentTime, duration, trackLengths }: ProgressBarProps) => {
   const progressPercent = duration > 0 ? (currentTime / duration) * 100 : 0
+
+  let sum = 0
+  const marks = trackLengths
+    .map((len) => {
+      const start = sum
+      sum += len
+      return start // 시작 지점 구하기
+    })
+    .slice(1) // 첫 번째 값 제외
+    .map((t) => (t / duration) * 100) // 퍼센트 변환
+
+  const handleClickMarker = () => {
+    // TODO: 해당 곡의 시작 지점부터 재생되도록
+  }
 
   return (
     <Wrapper>
+      <Markers>
+        {marks.map((percent, idx) => (
+          <MarkItem key={idx} $percent={percent}>
+            <SvgButton icon={Mark} width={12} height={12} onClick={handleClickMarker} />
+          </MarkItem>
+        ))}
+      </Markers>
+
       <BarContainer>
-        <BarProgress $progress={progressPercent} />
+        <Progress $progress={progressPercent} />
       </BarContainer>
+
       <TimeBox>
         <span>{formatTime(currentTime)}</span>
         <span>{formatTime(duration)}</span>
@@ -34,6 +61,19 @@ const Wrapper = styled.div`
   flex-direction: column;
   gap: 2px;
   width: 100%;
+  padding-top: 6px;
+`
+
+const Markers = styled.div`
+  position: relative;
+  width: 100%;
+  height: 12px;
+`
+
+const MarkItem = styled.div<{ $percent: number }>`
+  position: absolute;
+  left: ${({ $percent }) => $percent}%;
+  transform: translateX(-50%);
 `
 
 const BarContainer = styled.div`
@@ -44,7 +84,7 @@ const BarContainer = styled.div`
   overflow: hidden;
 `
 
-const BarProgress = styled.div<{ $progress: number }>`
+const Progress = styled.div<{ $progress: number }>`
   height: 100%;
   background-color: ${({ theme }) => theme.COLOR['gray-10']};
   width: ${({ $progress }) => $progress}%;

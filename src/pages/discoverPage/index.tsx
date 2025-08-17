@@ -5,10 +5,11 @@ import { Cd, Header, LiveInfo } from '@/shared/ui'
 import { ChatInput } from '@/widgets/chat'
 import { ActionBar, ControlBar, ProgressBar } from '@/widgets/playlist'
 
-
 const DiscoverPage = () => {
   // TODO: 실제 전송 로직으로 교체
   const handleSendMessage = () => {}
+
+  const trackLengths = [180, 240, 180]
 
   return (
     <div>
@@ -26,7 +27,7 @@ const DiscoverPage = () => {
         <Cd variant="xxl" bgColor="none" />
         <ActionBar playlistId="1" />
       </Wrapper>
-      <ProgressBar currentTime={300} duration={1000} />
+      <ProgressBar currentTime={300} duration={1000} trackLengths={trackLengths} />
       <ControlBar />
       <ChatInput onSend={handleSendMessage} openBottomSheetOnFocus />
     </div>
