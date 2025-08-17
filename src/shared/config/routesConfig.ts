@@ -5,6 +5,7 @@ const MyPage = lazy(() => import('@pages/myPage/ui'))
 const Setting = lazy(() => import('@pages/myPage/ui/setting'))
 const Terms = lazy(() => import('@pages/myPage/ui/terms'))
 const Privacy = lazy(() => import('@pages/myPage/ui/privacy'))
+const Unregister = lazy(() => import('@/pages/myPage/ui/unregister'))
 
 export interface RouteConfig {
   path: string
@@ -40,7 +41,7 @@ export const routesConfig: RouteConfig[] = [
   // { path: '/mypage/notification', component: () => <></>, private: true },
   { path: '/mypage/terms', component: Terms, private: true, isNotSuspense: true },
   { path: '/mypage/privacy', component: Privacy, private: true, isNotSuspense: true },
-  // { path: '/mypage/unregister', component: () => <></>, private: true, isNotSuspense: true },
+  { path: '/mypage/unregister', component: Unregister, private: true, isNotSuspense: true },
 
   // 로그인
   // { path: '/login', component: () => <></>, isNotSuspense: true },

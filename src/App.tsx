@@ -25,6 +25,7 @@ const App = () => {
       '/mypage/notification',
       '/mypage/terms',
       '/mypage/privacy',
+      '/mypage/unregister',
     ]
     setIsNavVisible(!HIDE_NAV_PATHS.includes(pathname))
   }, [location])

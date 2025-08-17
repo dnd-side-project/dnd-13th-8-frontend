@@ -9,6 +9,7 @@ import { SubHeader } from '@pages/myPage/ui/components'
 import { ToggleSwitch } from '@pages/myPage/ui/setting/components'
 
 import { RightArrow } from '@/assets/icons'
+import { flexRowCenter } from '@/shared/styles/mixins'
 
 const Setting = () => {
   const navigate = useNavigate()
@@ -58,6 +59,13 @@ const Setting = () => {
           </SettingItem>
         </ul>
       </SectionWrap>
+
+      <BottomCraWrap>
+        <button type="button">로그아웃</button>
+        <button type="button" onClick={() => navigate('/mypage/unregister')}>
+          탈퇴하기
+        </button>
+      </BottomCraWrap>
     </>
   )
 }
@@ -94,4 +102,23 @@ const SettingItem = styled.li`
 
 const StyledHr = styled.hr`
   border: 1px solid ${({ theme }) => theme.COLOR['gray-700']};
+`
+
+const BottomCraWrap = styled.div`
+  position: absolute;
+  left: 0;
+  bottom: 66px;
+  ${flexRowCenter}
+  width: 100%;
+  height: 18px;
+
+  & > button {
+    width: 100%;
+    ${({ theme }) => theme.FONT['label']}
+    color: ${({ theme }) => theme.COLOR['gray-200']};
+  }
+
+  & > button:first-child {
+    border-right: 2px solid ${({ theme }) => theme.COLOR['gray-700']};
+  }
 `
