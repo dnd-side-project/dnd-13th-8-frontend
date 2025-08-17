@@ -1,24 +1,21 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 
 import styled from 'styled-components'
 
-import { Header, SvgButton } from '@shared/ui'
+import { SvgButton } from '@shared/ui'
 
+import { SubHeader } from '@pages/myPage/ui/components'
 import { ToggleSwitch } from '@pages/myPage/ui/setting/components'
 
-import { LeftArrow, RightArrow } from '@/assets/icons'
+import { RightArrow } from '@/assets/icons'
 
 const Setting = () => {
   const [isNotiOn, setIsNotiOn] = useState(false)
-  const navigate = useNavigate()
 
   return (
     <>
-      <Header
-        left={<SvgButton icon={LeftArrow} width={24} height={24} onClick={() => navigate(-1)} />}
-        center={<PageTitle>설정</PageTitle>}
-      />
+      <SubHeader title="설정" />
+
       <SectionWrap>
         <SectionTitle>설정</SectionTitle>
         <ul>
@@ -53,11 +50,6 @@ const Setting = () => {
 }
 
 export default Setting
-
-const PageTitle = styled.h1`
-  ${({ theme }) => theme.FONT.headline2}
-  cursor: default;
-`
 
 const SectionWrap = styled.section`
   margin: 20px 0;
