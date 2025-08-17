@@ -26,7 +26,7 @@ const withWrapper = (
 
 export const AppRoutes = () => (
   <Routes>
-    {routesConfig.map(({ path, component: Component, private: isPrivate, isNotSuspense }) => (
+    {routesConfig.map(({ path, component: Component, isPrivate, isNotSuspense }) => (
       <Route key={path} path={path} element={withWrapper(Component, isPrivate, isNotSuspense)} />
     ))}
   </Routes>

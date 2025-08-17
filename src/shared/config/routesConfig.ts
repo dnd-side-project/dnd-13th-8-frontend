@@ -1,4 +1,5 @@
 import { lazy } from 'react'
+import type { ComponentType, LazyExoticComponent } from 'react'
 
 const HomePage = lazy(() => import('@pages/homePage/HomePage'))
 const MyPage = lazy(() => import('@pages/myPage/ui'))
@@ -9,8 +10,8 @@ const Unregister = lazy(() => import('@/pages/myPage/ui/unregister'))
 
 export interface RouteConfig {
   path: string
-  component: React.ComponentType
-  private?: boolean // private route 페이지
+  component: ComponentType<{}> | LazyExoticComponent<ComponentType<{}>>
+  isPrivate?: boolean // private route 페이지
   isNotSuspense?: boolean // suspense 미적용 페이지
   hideNav?: boolean // navbar 숨김 여부
 }
@@ -34,30 +35,30 @@ export const routesConfig: RouteConfig[] = [
   // { path: '/customize', component: () => <></>, hideNav: true },
 
   // 마이페이지 (private)
-  { path: '/mypage', component: MyPage, private: true },
-  // { path: '/mypage/:albumId/playlist', component: () => <></>, private: true },
-  // { path: '/mypage/:albumId/playlist/edit', component: () => <></>, private: true },
-  // { path: '/mypage/create', component: () => <></>, private: true },
+  { path: '/mypage', component: MyPage, isPrivate: true },
+  // { path: '/mypage/:albumId/playlist', component: () => <></>, isPrivate: true },
+  // { path: '/mypage/:albumId/playlist/edit', component: () => <></>, isPrivate: true },
+  // { path: '/mypage/create', component: () => <></>, isPrivate: true },
   {
     path: '/mypage/setting',
     component: Setting,
-    private: true,
+    isPrivate: true,
     isNotSuspense: true,
     hideNav: true,
   },
-  // { path: '/mypage/notification', component: () => <></>, private: true, hideNav: true },
-  { path: '/mypage/terms', component: Terms, private: true, isNotSuspense: true, hideNav: true },
+  // { path: '/mypage/notification', component: () => <></>, isPrivate: true, hideNav: true },
+  { path: '/mypage/terms', component: Terms, isPrivate: true, isNotSuspense: true, hideNav: true },
   {
     path: '/mypage/privacy',
     component: Privacy,
-    private: true,
+    isPrivate: true,
     isNotSuspense: true,
     hideNav: true,
   },
   {
     path: '/mypage/unregister',
     component: Unregister,
-    private: true,
+    isPrivate: true,
     isNotSuspense: true,
     hideNav: true,
   },
