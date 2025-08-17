@@ -36,11 +36,18 @@ const Profile = ({ size, profileUrl }: ProfileProps) => {
     setImgSrc(profileUrl)
   }, [profileUrl])
 
+  const onError = () => {
+    if (imgSrc !== DefaultProfile) {
+      setImgSrc(DefaultProfile)
+    }
+  }
+
   return (
     <StyledImg
       src={typeof imgSrc === 'string' ? imgSrc : DefaultProfile}
       alt="프로필 이미지"
       $size={size}
+      onError={onError}
     />
   )
 }
