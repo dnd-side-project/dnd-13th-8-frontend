@@ -29,7 +29,7 @@ const Setting = () => {
           </SettingItem>
           <SettingItem>
             <span>버전</span>
-            <span>1.0.0.</span>
+            <span>{__APP_VERSION__}</span>
           </SettingItem>
         </ul>
       </SectionWrap>
