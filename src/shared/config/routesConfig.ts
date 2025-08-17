@@ -33,7 +33,7 @@ export const routesConfig: RouteConfig[] = [
   { path: '/discover/:uniqueId/playlist', component: PlaylistInfoPage },
 
   // 나의 CD
-  // { path: '/mycd', component: () => <></> },
+  { path: '/mycd', component: DiscoverPage }, // TODO: 추추 험포넌트 수정 예정
   // { path: '/mycd/playlist', component: () => <></> },
 
   // 커스터마이징
