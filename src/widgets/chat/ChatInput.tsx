@@ -78,7 +78,11 @@ const ChatInput = ({ onSend, openBottomSheetOnFocus }: ChatInputProps) => {
         onClose={() => setIsBottomSheetOpen(false)}
         height="50dvh"
       >
-        채팅창 영역
+        <Title>실시간 채팅</Title>
+        <Message>
+          <EmptyText>아직 채팅이 없습니다</EmptyText>
+          <HighlightText>첫 채팅을 남겨 보세요!</HighlightText>
+        </Message>
       </BottomSheet>
     </>
   )
@@ -108,4 +112,31 @@ const StyledInput = styled.textarea`
   word-break: break-word;
   white-space: pre-wrap;
   overflow-y: auto;
+`
+
+const Title = styled.h1`
+  ${({ theme }) => theme.FONT.headline1};
+  font-weight: 600;
+  color: ${({ theme }) => theme.COLOR['gray-10']};
+`
+
+const Message = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  text-align: center;
+  gap: 4px;
+`
+
+const EmptyText = styled.span`
+  color: ${({ theme }) => theme.COLOR['gray-50']};
+  font-weight: 600;
+  ${({ theme }) => theme.FONT.heading2};
+`
+
+const HighlightText = styled.span`
+  color: ${({ theme }) => theme.COLOR['gray-200']};
+  ${({ theme }) => theme.FONT['body1-normal']};
 `
