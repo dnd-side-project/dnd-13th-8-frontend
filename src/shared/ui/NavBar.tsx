@@ -14,7 +14,10 @@ const NavBar = () => {
   return (
     <NavButtonBox>
       {NAV_ITEMS.map(({ icon: Icon, title, paths }) => {
-        const isActive = paths.includes(location.pathname)
+        const isActive = paths.some((path) =>
+          path === '/' ? location.pathname === '/' : location.pathname.startsWith(path)
+        )
+
         const color = isActive ? theme.COLOR['primary-normal'] : theme.COLOR['gray-100']
 
         return (

@@ -33,7 +33,7 @@ const Side = styled.div<{ $position: 'left' | 'right' }>`
     $position === 'left'
       ? `
         justify-content: flex-start;
-        ${theme.FONT.heading1};
+        ${theme.FONT.headline1};
         font-weight: 600;
         color: ${theme.COLOR['common-white']};
       `

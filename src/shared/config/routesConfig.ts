@@ -7,6 +7,10 @@ const Setting = lazy(() => import('@pages/myPage/ui/setting'))
 const Terms = lazy(() => import('@pages/myPage/ui/terms'))
 const Privacy = lazy(() => import('@pages/myPage/ui/privacy'))
 const Unregister = lazy(() => import('@/pages/myPage/ui/unregister'))
+const SearchPage = lazy(() => import('@/pages/searchPage'))
+const SearchResult = lazy(() => import('@/pages/searchPage/SearchResultPage'))
+const DiscoverPage = lazy(() => import('@/pages/discoverPage'))
+const PlaylistInfoPage = lazy(() => import('@/pages/discoverPage/PlaylistInfoPage'))
 
 export interface RouteConfig {
   path: string
@@ -21,11 +25,12 @@ export const routesConfig: RouteConfig[] = [
   { path: '/', component: HomePage },
 
   // 검색
-  // { path: '/search', component: () => <></> },
+  { path: '/search', component: SearchPage },
+  { path: '/searchResult', component: SearchResult },
 
   // 둘러보기
-  // { path: '/discover/:uniqueId', component: () => <></> },
-  // { path: '/discover/:uniqueId/playlist', component: () => <></> },
+  { path: '/discover', component: DiscoverPage },
+  { path: '/discover/:uniqueId/playlist', component: PlaylistInfoPage },
 
   // 나의 CD
   // { path: '/mycd', component: () => <></> },
