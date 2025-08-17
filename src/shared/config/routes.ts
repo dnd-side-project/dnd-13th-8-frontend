@@ -1,40 +1,50 @@
-export const ROUTES = {
+import { lazy } from 'react'
+
+const HomePage = lazy(() => import('@pages/homePage/HomePage'))
+const MyPage = lazy(() => import('@pages/myPage/ui'))
+const Setting = lazy(() => import('@pages/myPage/ui/setting'))
+
+export interface RouteConfig {
+  path: string
+  component: React.ComponentType
+  private?: boolean // private route 페이지
+  isNotSuspense?: boolean // suspense 미적용 페이지
+}
+
+export const routesConfig: RouteConfig[] = [
   // 홈
-  HOME: '/',
+  { path: '/', component: HomePage },
 
   // 검색
-  SEARCH: '/search',
+  // { path: '/search', component: () => <></> },
 
   // 둘러보기
-  DISCOVER: '/discover/:uniqueId',
-  DISCOVER_PLAYLIST: '/discover/:uniqueId/playlist',
+  // { path: '/discover/:uniqueId', component: () => <></> },
+  // { path: '/discover/:uniqueId/playlist', component: () => <></> },
 
   // 나의 CD
-  MY_CD: '/mycd',
-  MY_CD_PLAYLIST: '/mycd/playlist',
+  // { path: '/mycd', component: () => <></> },
+  // { path: '/mycd/playlist', component: () => <></> },
 
   // 커스터마이징
-  CUSTOMIZE: '/customize',
+  // { path: '/customize', component: () => <></> },
 
-  // 마이페이지
-  MY_PAGE: '/mypage',
-  MY_PAGE_PLAYLIST: '/mypage/:albumId/playlist',
-  MY_PAGE_PLAYLIST_EDIT: '/mypage/:albumId/playlist/edit',
-  MY_PAGE_PLAYLIST_CREATE: '/mypage/create',
-  MY_PAGE_SETTING: '/mypage/setting',
-  MY_PAGE_NOTIFICATION: '/mypage/notification',
-  MY_PAGE_TERMS: '/mypage/terms',
-  MY_PAGE_PRIVACY: '/mypage/privacy',
-  MY_PAGE_UNREGISTER: '/mypage/unregister',
+  // 마이페이지 (private)
+  { path: '/mypage', component: MyPage, private: true },
+  // { path: '/mypage/:albumId/playlist', component: () => <></>, private: true },
+  // { path: '/mypage/:albumId/playlist/edit', component: () => <></>, private: true },
+  // { path: '/mypage/create', component: () => <></>, private: true },
+  { path: '/mypage/setting', component: Setting, private: true },
+  // { path: '/mypage/notification', component: () => <></>, private: true },
+  // { path: '/mypage/terms', component: () => <></>, private: true, isNotSuspense: true },
+  // { path: '/mypage/privacy', component: () => <></>, private: true, isNotSuspense: true },
+  // { path: '/mypage/unregister', component: () => <></>, private: true, isNotSuspense: true },
 
   // 로그인
-  LOGIN: '/login',
-  LOGIN_CALLBACK: '/login/callback',
+  // { path: '/login', component: () => <></>, isNotSuspense: true },
+  // { path: '/login/callback', component: () => <></>, isNotSuspense: true },
 
-  // 404, 500
-  NOT_FOUND: '*',
-  ERROR: '/error',
-} as const
-
-export type RouteKey = keyof typeof ROUTES
-export type RoutePath = (typeof ROUTES)[RouteKey]
+  // 에러 페이지
+  // { path: '*', component: () => <div></div>, isNotSuspense: true },
+  // { path: '/error', component: () => <div></div>, isNotSuspense: true },
+]
