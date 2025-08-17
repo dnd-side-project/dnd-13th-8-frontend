@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import { ChatInput } from '@/widgets/chat'
 
 const meta: Meta<typeof ChatInput> = {
-  title: 'Shared/ChatInput',
+  title: 'Widgets/Chat/ChatInput',
   component: ChatInput,
   tags: ['autodocs'],
   argTypes: {
