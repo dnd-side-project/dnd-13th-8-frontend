@@ -11,14 +11,14 @@ interface ChatInputProps {
   openBottomSheetOnFocus?: boolean
 }
 
+const LINE_HEIGHT = 16
+const MAX_LINES = 4
+
 const ChatInput = ({ onSend, openBottomSheetOnFocus }: ChatInputProps) => {
   const [message, setMessage] = useState('')
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false)
   const [isExpanded, setIsExpanded] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
-
-  const lineHeight = 16
-  const maxLines = 4
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setMessage(e.target.value)
@@ -46,9 +46,9 @@ const ChatInput = ({ onSend, openBottomSheetOnFocus }: ChatInputProps) => {
   const adjustHeight = () => {
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto'
-      const newHeight = Math.min(textareaRef.current.scrollHeight, lineHeight * maxLines)
+      const newHeight = Math.min(textareaRef.current.scrollHeight, LINE_HEIGHT * MAX_LINES)
       textareaRef.current.style.height = `${newHeight}px`
-      setIsExpanded(newHeight > lineHeight) // 1줄 이상이면 expanded
+      setIsExpanded(newHeight > LINE_HEIGHT) // 1줄 이상이면 expanded
     }
   }
 
@@ -111,7 +111,6 @@ const StyledInput = styled.textarea`
   overflow-y: auto;
   word-break: break-word;
   white-space: pre-wrap;
-  overflow-y: auto;
 `
 
 const Title = styled.h1`
