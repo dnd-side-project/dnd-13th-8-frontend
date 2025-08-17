@@ -16,7 +16,7 @@ const Customize = () => {
       <Header
         left={<SvgButton icon={LeftArrow} width={24} height={24} onClick={() => navigate(-1)} />}
         right={
-          <Button state="primary" size="S" onClick={() => navigate('-1')}>
+          <Button state="primary" size="S" onClick={() => navigate(-1)}>
             저장
           </Button>
         }
