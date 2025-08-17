@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { createSearchParams, useNavigate } from 'react-router-dom'
 
 import styled, { css } from 'styled-components'
 
@@ -10,6 +10,14 @@ import { CategoryButton, Header, Input, SvgButton } from '@/shared/ui'
 const SearchPage = () => {
   const [searchValue, setSearchValue] = useState('')
   const navigate = useNavigate()
+
+  const handleSearch = () => {
+    if (!searchValue.trim()) return
+    navigate({
+      pathname: '/searchResult',
+      search: `?${createSearchParams({ keyword: searchValue.trim() })}`,
+    })
+  }
 
   return (
     <>
@@ -26,7 +34,7 @@ const SearchPage = () => {
         iconPosition="left"
         onKeyDown={(e) => {
           if (e.key === 'Enter') {
-            navigate(`/searchResult?keyword=${encodeURIComponent(searchValue)}`)
+            handleSearch()
           }
         }}
       />
