@@ -1,3 +1,5 @@
+import { useNavigate } from 'react-router-dom'
+
 import styled from 'styled-components'
 
 import { SvgButton, Cd, Badge } from '@shared/ui'
@@ -18,12 +20,19 @@ const PlaylistGrid = ({
   }[]
   currentTab: 'album' | 'like'
 }) => {
+  const navigate = useNavigate()
+
   return (
     <ListGrid>
       {/* TODO: 추후 develop merge 후 수정된 CD 컴포넌트로 교체 */}
       <CdContainer>
         <CdBackground>
-          <SvgButton icon={Plus} width={40} height={40} />
+          <SvgButton
+            icon={Plus}
+            width={40}
+            height={40}
+            onClick={() => navigate('/mypage/create')}
+          />
         </CdBackground>
         <CdAddLabel>추가하기</CdAddLabel>
       </CdContainer>

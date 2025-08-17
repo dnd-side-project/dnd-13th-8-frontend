@@ -2,7 +2,9 @@ import { lazy } from 'react'
 import type { ComponentType, LazyExoticComponent } from 'react'
 
 const HomePage = lazy(() => import('@pages/homePage'))
+const Customize = lazy(() => import('@pages/customize'))
 const MyPage = lazy(() => import('@pages/myPage/ui'))
+const Create = lazy(() => import('@pages/myPage/ui/create'))
 const Setting = lazy(() => import('@pages/myPage/ui/setting'))
 const Terms = lazy(() => import('@pages/myPage/ui/terms'))
 const Privacy = lazy(() => import('@pages/myPage/ui/privacy'))
@@ -32,13 +34,13 @@ export const routesConfig: RouteConfig[] = [
   // { path: '/mycd/playlist', component: () => <></> },
 
   // 커스터마이징
-  // { path: '/customize', component: () => <></>, hideNav: true },
+  { path: '/customize', component: Customize, hideNav: true },
 
   // 마이페이지 (private)
   { path: '/mypage', component: MyPage, isPrivate: true },
   // { path: '/mypage/:albumId/playlist', component: () => <></>, isPrivate: true },
   // { path: '/mypage/:albumId/playlist/edit', component: () => <></>, isPrivate: true },
-  // { path: '/mypage/create', component: () => <></>, isPrivate: true },
+  { path: '/mypage/create', component: Create, isPrivate: true },
   {
     path: '/mypage/setting',
     component: Setting,
