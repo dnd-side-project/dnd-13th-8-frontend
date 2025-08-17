@@ -15,30 +15,28 @@ interface ButtonProps {
 }
 
 const BUTTON_STYLES = {
-  L: { minWidth: '335px', height: '46px', borderRadius: '10px' },
-  M: { minWidth: '76px', height: '42px', borderRadius: '10px' },
-  S: { minWidth: '51px', height: '26px', borderRadius: '99px' },
+  L: { minWidth: '335px', maxWidth: '100%', padding: '12px 0', borderRadius: '10px' },
+  M: { padding: '11px 20px', borderRadius: '10px' },
+  S: { padding: '5px 12px', borderRadius: '99px' },
 } as const
 
 const sizeStyles: Record<ButtonSize, ReturnType<typeof css>> = {
   L: css`
     min-width: ${BUTTON_STYLES.L.minWidth};
-    height: ${BUTTON_STYLES.L.height};
+    max-width: ${BUTTON_STYLES.L.maxWidth};
+    padding: ${BUTTON_STYLES.L.padding};
     border-radius: ${BUTTON_STYLES.L.borderRadius};
     ${({ theme }) => theme.FONT['body1-normal']}
   `,
   M: css`
-    min-width: ${BUTTON_STYLES.M.minWidth};
-    height: ${BUTTON_STYLES.M.height};
+    padding: ${BUTTON_STYLES.M.padding};
     border-radius: ${BUTTON_STYLES.M.borderRadius};
     ${({ theme }) => theme.FONT['body2-normal']}
   `,
   S: css`
-    padding: 5px 12px;
-    min-width: ${BUTTON_STYLES.S.minWidth};
-    height: ${BUTTON_STYLES.S.height};
+    padding: ${BUTTON_STYLES.S.padding};
     border-radius: ${BUTTON_STYLES.S.borderRadius};
-    ${({ theme }) => theme.FONT.caption1}
+    ${({ theme }) => theme.FONT['body2-normal']}
   `,
 }
 
