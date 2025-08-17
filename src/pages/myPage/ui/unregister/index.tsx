@@ -2,8 +2,8 @@ import { useNavigate } from 'react-router-dom'
 
 import styled from 'styled-components'
 
+import { TermsContainer, TermsItems } from '@pages/myPage/styles/common.styled'
 import { SubHeader } from '@pages/myPage/ui/components'
-import { TermsContainer, TermsItems } from '@pages/myPage/ui/terms'
 
 import { flexRowCenter } from '@/shared/styles/mixins'
 import { Button } from '@/shared/ui'
@@ -13,7 +13,7 @@ const Unregister = () => {
 
   return (
     <>
-      <SubHeader title="개인정보 처리방침" />
+      <SubHeader title="탈퇴하기" />
       <TermsContainer>
         <li>
           <h2>1. 개인정보처리방침</h2>

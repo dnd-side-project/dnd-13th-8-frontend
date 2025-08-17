@@ -1,8 +1,5 @@
-import styled from 'styled-components'
-
+import { TermsContainer, TermsItems } from '@pages/myPage/styles/common.styled'
 import { SubHeader } from '@pages/myPage/ui/components'
-
-import { flexColCenter } from '@/shared/styles/mixins'
 
 const Terms = () => {
   return (
@@ -47,19 +44,3 @@ const Terms = () => {
 }
 
 export default Terms
-
-export const TermsContainer = styled.ol`
-  display: inline-block;
-  margin: 16px 0;
-
-  & > h2 {
-    ${({ theme }) => theme.FONT['body1-normal']}
-  }
-`
-
-export const TermsItems = styled.ul`
-  margin-top: 12px;
-  ${flexColCenter}
-  gap: 12px;
-  ${({ theme }) => theme.FONT['label']}
-`
