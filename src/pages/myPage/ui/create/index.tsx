@@ -62,7 +62,7 @@ const Create = () => {
             <CdBackground>
               <Cd variant="lg" />
             </CdBackground>
-            <CdEditBtn type="button">
+            <CdEditBtn type="button" onClick={() => navigate('/customize')}>
               <PencilPrimary width={16} height={16} />
             </CdEditBtn>
           </CdContainer>
