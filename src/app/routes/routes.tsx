@@ -1,7 +1,7 @@
 import { Suspense } from 'react'
 import { Routes, Route } from 'react-router-dom'
 
-import { routesConfig } from '@shared/config/routes'
+import { routesConfig } from '@shared/config/routesConfig'
 import Loading from '@shared/ui/Loading'
 
 import PrivateRoute from '@widgets/authGuard/PrivateRoute'
