@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 
-import cdOverlay from '@/assets/images/img_cd_overlay_test.png'
+import { Overlay } from '@/assets/icons'
 import { flexRowCenter } from '@/shared/styles/mixins'
 
 interface CdProps {
@@ -11,7 +11,7 @@ interface CdProps {
 const Cd = ({ variant, bgColor = 'default' }: CdProps) => {
   const Content = (
     <Base $variant={variant}>
-      <Overlay />
+      <Overlay width="100%" height="100%" />
     </Base>
   )
 
@@ -58,15 +58,4 @@ const Base = styled.div<StyleProps>`
   height: ${({ $variant }) => sizeMap[$variant].base}px;
   border-radius: 100%;
   background: ${({ theme }) => theme.GRADIENT.hologram};
-`
-
-const Overlay = styled.div`
-  position: absolute;
-  inset: 0;
-
-  border-radius: 100%;
-  background-image: url(${cdOverlay});
-  background-size: cover;
-  background-position: center;
-  z-index: 2;
 `
