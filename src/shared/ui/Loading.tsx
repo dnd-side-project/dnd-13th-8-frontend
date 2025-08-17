@@ -15,7 +15,7 @@ interface LoadingProps {
 const Loading = ({ isLoading, width, height = 'auto' }: LoadingProps) => {
   const deviceType = useDevice()
 
-  const maxWidth = deviceType === 'mobile' ? 'clamp(320px, 100dvw, 420px)' : '375px'
+  const maxWidth = deviceType === 'mobile' ? 'clamp(320px, 100dvw, 430px)' : '375px'
 
   return (
     <Overlay isOpen={isLoading} onClose={() => {}} childrenAlign="center">
