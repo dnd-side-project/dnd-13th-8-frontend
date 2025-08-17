@@ -65,7 +65,7 @@ export const theme = {
     heading2: css`
       font-size: 20px;
       line-height: 28px;
-      letter-spacing: -0.12em;
+      letter-spacing: -0.012em;
     `,
     headline1: css`
       font-size: 18px;

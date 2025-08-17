@@ -31,6 +31,10 @@ const GlobalStyle = createGlobalStyle`
     color: inherit;
   }
 
+  textarea {
+    all: unset;       
+  }
+
   /* 모든 텍스트 요소에 white-space 적용 */
   p, span, div, h1, h2, h3, h4, h5, h6, a, li {
     white-space: pre-line;
