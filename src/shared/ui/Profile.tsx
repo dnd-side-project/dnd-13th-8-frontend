@@ -19,7 +19,7 @@ const PROFILE_STYLES = {
 } as const
 
 const Profile = ({ size, profileUrl }: ProfileProps) => {
-  const [imgSrc, setImgSrc] = useState(DefaultProfile)
+  const [imgSrc, setImgSrc] = useState<ProfileUrl>(profileUrl || DefaultProfile)
 
   useEffect(() => {
     if (!profileUrl) {
@@ -33,13 +33,23 @@ const Profile = ({ size, profileUrl }: ProfileProps) => {
       return () => URL.revokeObjectURL(imageUrl)
     }
 
-    const img = new Image()
-    img.onload = () => setImgSrc(profileUrl)
-    img.onerror = () => setImgSrc(DefaultProfile)
-    img.src = profileUrl
+    setImgSrc(profileUrl)
   }, [profileUrl])
 
-  return <StyledImg src={imgSrc} alt="프로필 이미지" $size={size} />
+  const onError = () => {
+    if (imgSrc !== DefaultProfile) {
+      setImgSrc(DefaultProfile)
+    }
+  }
+
+  return (
+    <StyledImg
+      src={typeof imgSrc === 'string' ? imgSrc : DefaultProfile}
+      alt="프로필 이미지"
+      $size={size}
+      onError={onError}
+    />
+  )
 }
 
 export default Profile

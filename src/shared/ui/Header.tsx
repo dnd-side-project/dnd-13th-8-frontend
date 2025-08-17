@@ -19,6 +19,7 @@ const Header = ({ left, center, right }: HeaderProps) => (
 export default Header
 
 const HeaderContainer = styled.header`
+  width: 100%;
   ${flexRowCenter}
   height: 60px;
   padding: 18px 0px;

@@ -50,7 +50,7 @@ const MyPage = () => {
               icon={Gear}
               width={24}
               height={24}
-              onClick={() => navigate('/mypage/settings')}
+              onClick={() => navigate('/mypage/setting')}
             />
           </>
         }

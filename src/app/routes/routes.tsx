@@ -1,31 +1,33 @@
-import { lazy, Suspense } from 'react'
+import { Suspense } from 'react'
 import { Routes, Route } from 'react-router-dom'
 
+import { routesConfig } from '@shared/config/routesConfig'
 import Loading from '@shared/ui/Loading'
 
 import PrivateRoute from '@widgets/authGuard/PrivateRoute'
 
-const MyPage = lazy(() => import('@/pages/myPage/ui'))
-const HomePage = lazy(() => import('@/pages/homePage'))
-const SearchPage = lazy(() => import('@/pages/searchPage'))
-const SearchResultPage = lazy(() => import('@/pages/searchPage/SearchResultPage'))
+const PageLoading = () => <Loading isLoading width="100%" height="100%" />
 
-export const AppRoutes = () => {
-  return (
-    <Suspense fallback={<Loading isLoading width="100%" height="100%" />}>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/search" element={<SearchPage />} />
-        <Route path="/searchResult" element={<SearchResultPage />} />
-        <Route
-          path="/mypage/*"
-          element={
-            <PrivateRoute>
-              <MyPage />
-            </PrivateRoute>
-          }
-        />
-      </Routes>
+// 공통 Wrapper
+const withWrapper = (
+  Component: React.ComponentType,
+  isPrivate?: boolean,
+  isNotSuspense?: boolean
+): React.ReactElement => {
+  const element = isNotSuspense ? (
+    <Component />
+  ) : (
+    <Suspense fallback={<PageLoading />}>
+      <Component />
     </Suspense>
   )
+  return isPrivate ? <PrivateRoute>{element}</PrivateRoute> : element
 }
+
+export const AppRoutes = () => (
+  <Routes>
+    {routesConfig.map(({ path, component: Component, isPrivate, isNotSuspense }) => (
+      <Route key={path} path={path} element={withWrapper(Component, isPrivate, isNotSuspense)} />
+    ))}
+  </Routes>
+)
