@@ -29,6 +29,7 @@ const BUTTON_STYLES = {
 const sizeStyles: Record<ButtonSize, ReturnType<typeof css>> = {
   L: css`
     min-width: ${BUTTON_STYLES.L.minWidth};
+    width: ${BUTTON_STYLES.L.width};
     max-width: ${BUTTON_STYLES.L.maxWidth};
     padding: ${BUTTON_STYLES.L.padding};
     border-radius: ${BUTTON_STYLES.L.borderRadius};
