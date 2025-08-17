@@ -5,9 +5,12 @@ import styled from 'styled-components'
 
 import { AppRoutes } from '@app/routes/routes'
 
+import { routesConfig } from '@shared/config/routesConfig'
 import { useDevice, type DeviceType } from '@shared/hooks/useDevice'
 import { flexRowCenter } from '@shared/styles/mixins'
 import NavBar, { NAV_HEIGHT } from '@shared/ui/NavBar'
+
+const LAYOUT_BOTTOM_GAP = 34
 
 const App = () => {
   const deviceType = useDevice()
@@ -16,18 +19,12 @@ const App = () => {
   const [isNavVisible, setIsNavVisible] = useState(true)
 
   const LAYOUT_WIDTH = deviceType === 'mobile' ? 'clamp(320px, 100dvw, 430px)' : '375px'
-  const LAYOUT_BOTTOM_GAP = 34
 
   useEffect(() => {
     const { pathname } = location
-    const HIDE_NAV_PATHS = [
-      '/mypage/setting',
-      '/mypage/notification',
-      '/mypage/terms',
-      '/mypage/privacy',
-      '/mypage/unregister',
-    ]
-    setIsNavVisible(!HIDE_NAV_PATHS.includes(pathname))
+    const currentRoute = routesConfig.find((route) => route.path === pathname)
+    const shouldHideNav = currentRoute?.hideNav ?? false
+    setIsNavVisible(!shouldHideNav)
   }, [location])
 
   return (

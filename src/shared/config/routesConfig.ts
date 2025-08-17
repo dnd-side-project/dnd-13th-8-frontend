@@ -12,6 +12,7 @@ export interface RouteConfig {
   component: React.ComponentType
   private?: boolean // private route 페이지
   isNotSuspense?: boolean // suspense 미적용 페이지
+  hideNav?: boolean // navbar 숨김 여부
 }
 
 export const routesConfig: RouteConfig[] = [
@@ -30,24 +31,42 @@ export const routesConfig: RouteConfig[] = [
   // { path: '/mycd/playlist', component: () => <></> },
 
   // 커스터마이징
-  // { path: '/customize', component: () => <></> },
+  // { path: '/customize', component: () => <></>, hideNav: true },
 
   // 마이페이지 (private)
   { path: '/mypage', component: MyPage, private: true },
   // { path: '/mypage/:albumId/playlist', component: () => <></>, private: true },
   // { path: '/mypage/:albumId/playlist/edit', component: () => <></>, private: true },
   // { path: '/mypage/create', component: () => <></>, private: true },
-  { path: '/mypage/setting', component: Setting, private: true, isNotSuspense: true },
-  // { path: '/mypage/notification', component: () => <></>, private: true },
-  { path: '/mypage/terms', component: Terms, private: true, isNotSuspense: true },
-  { path: '/mypage/privacy', component: Privacy, private: true, isNotSuspense: true },
-  { path: '/mypage/unregister', component: Unregister, private: true, isNotSuspense: true },
+  {
+    path: '/mypage/setting',
+    component: Setting,
+    private: true,
+    isNotSuspense: true,
+    hideNav: true,
+  },
+  // { path: '/mypage/notification', component: () => <></>, private: true, hideNav: true },
+  { path: '/mypage/terms', component: Terms, private: true, isNotSuspense: true, hideNav: true },
+  {
+    path: '/mypage/privacy',
+    component: Privacy,
+    private: true,
+    isNotSuspense: true,
+    hideNav: true,
+  },
+  {
+    path: '/mypage/unregister',
+    component: Unregister,
+    private: true,
+    isNotSuspense: true,
+    hideNav: true,
+  },
 
   // 로그인
-  // { path: '/login', component: () => <></>, isNotSuspense: true },
-  // { path: '/login/callback', component: () => <></>, isNotSuspense: true },
+  // { path: '/login', component: () => <></>, isNotSuspense: true, hideNav: true },
+  // { path: '/login/callback', component: () => <></>, isNotSuspense: true, hideNav: true },
 
   // 에러 페이지
-  // { path: '*', component: () => <div></div>, isNotSuspense: true },
-  // { path: '/error', component: () => <div></div>, isNotSuspense: true },
+  // { path: '*', component: () => <div></div>, isNotSuspense: true, hideNav: true },
+  // { path: '/error', component: () => <div></div>, isNotSuspense: true, hideNav: true },
 ]
