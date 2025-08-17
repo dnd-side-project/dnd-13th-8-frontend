@@ -1,21 +1,31 @@
 import styled from 'styled-components'
 
 import { flexRowCenter } from '@/shared/styles/mixins'
+import { Cd, Profile } from '@/shared/ui'
 
 interface SearchResultItemProps {
-  image: React.ReactNode
+  imageUrl?: string
+  type: 'playlist' | 'user'
   searchResult: string
-  userName?: string
+  userName?: string | null
   onClick: () => void
 }
 
-const SearchResultItem = ({ image, searchResult, userName, onClick }: SearchResultItemProps) => {
+const SearchResultItem = ({
+  imageUrl,
+  type,
+  searchResult,
+  userName,
+  onClick,
+}: SearchResultItemProps) => {
   return (
     <ItemContainer onClick={onClick}>
-      <Left>{image}</Left>
+      <Left>
+        {type === 'playlist' ? <Cd variant="xs" /> : <Profile size="M" profileUrl={imageUrl} />}
+      </Left>
       <Right>
         <SearchResult>{searchResult}</SearchResult>
-        <SmallText>{userName}</SmallText>
+        {userName && <SmallText>{userName}</SmallText>}
       </Right>
     </ItemContainer>
   )

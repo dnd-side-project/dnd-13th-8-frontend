@@ -13,12 +13,12 @@ const NavBar = () => {
 
   return (
     <NavButtonBox>
-      {NAV_ITEMS.map(({ icon: Icon, title, path }) => {
-        const isActive = location.pathname === path
+      {NAV_ITEMS.map(({ icon: Icon, title, paths }) => {
+        const isActive = paths.includes(location.pathname)
         const color = isActive ? theme.COLOR['primary-normal'] : theme.COLOR['gray-100']
 
         return (
-          <NavLink to={path} key={path}>
+          <NavLink to={paths[0]} key={title}>
             <NavItem $active={isActive}>
               <SvgButton width={24} height={24} icon={Icon} fill={color} />
               <span>{title}</span>

@@ -27,6 +27,7 @@ interface InputProps {
   onFocus?: FocusEventHandler<HTMLInputElement>
   onBlur?: FocusEventHandler<HTMLInputElement>
   onClickIcon?: () => void
+  onKeyDown?: React.KeyboardEventHandler<HTMLInputElement>
 }
 
 const Input = ({
@@ -44,6 +45,7 @@ const Input = ({
   onFocus,
   onBlur,
   onClickIcon,
+  onKeyDown,
 }: InputProps) => {
   return (
     <>
@@ -62,6 +64,7 @@ const Input = ({
           onChange={onChange}
           onFocus={onFocus}
           onBlur={onBlur}
+          onKeyDown={onKeyDown}
         />
       </InputContainer>
       {error && errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}

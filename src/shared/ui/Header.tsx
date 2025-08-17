@@ -19,10 +19,6 @@ const Header = ({ left, center, right }: HeaderProps) => (
 export default Header
 
 const HeaderContainer = styled.header`
-  /* main padding 상쇄 */
-  width: calc(100% + 40px);
-  margin: 0 -20px;
-
   ${flexRowCenter}
   height: 60px;
   padding: 18px 0px;
