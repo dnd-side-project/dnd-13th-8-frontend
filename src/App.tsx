@@ -1,27 +1,45 @@
+import { useState, useEffect } from 'react'
+import { useLocation } from 'react-router-dom'
+
 import styled from 'styled-components'
 
 import { AppRoutes } from '@app/routes/routes'
 
+import { routesConfig } from '@shared/config/routesConfig'
 import { useDevice, type DeviceType } from '@shared/hooks/useDevice'
 import { flexRowCenter } from '@shared/styles/mixins'
 import NavBar, { NAV_HEIGHT } from '@shared/ui/NavBar'
 
+const LAYOUT_BOTTOM_GAP = 34
+
 const App = () => {
   const deviceType = useDevice()
+  const location = useLocation()
+
+  const [isNavVisible, setIsNavVisible] = useState(true)
 
   const LAYOUT_WIDTH = deviceType === 'mobile' ? 'clamp(320px, 100dvw, 430px)' : '375px'
-  const LAYOUT_BOTTOM_GAP = 34
+
+  useEffect(() => {
+    const { pathname } = location
+    const currentRoute = routesConfig.find((route) => route.path === pathname)
+    const shouldHideNav = currentRoute?.hideNav ?? false
+    setIsNavVisible(!shouldHideNav)
+  }, [location])
 
   return (
     <MainLayout
       $deviceType={deviceType}
+      $isNavVisible={isNavVisible}
       $layoutWidth={LAYOUT_WIDTH}
       $layoutBottomGap={LAYOUT_BOTTOM_GAP}
     >
       <AppRoutes />
-      <NavContainer $layoutWidth={LAYOUT_WIDTH} $layoutBottomGap={LAYOUT_BOTTOM_GAP}>
-        <NavBar />
-      </NavContainer>
+      {isNavVisible && (
+        <NavContainer $layoutWidth={LAYOUT_WIDTH} $layoutBottomGap={LAYOUT_BOTTOM_GAP}>
+          <NavBar />
+        </NavContainer>
+      )}
     </MainLayout>
   )
 }
@@ -30,12 +48,16 @@ export default App
 
 const MainLayout = styled.main<{
   $deviceType: DeviceType
+  $isNavVisible: boolean
   $layoutWidth: string
   $layoutBottomGap: number
 }>`
   position: relative;
   margin: 0 auto;
-  padding: 0 20px ${({ $layoutBottomGap }) => NAV_HEIGHT + $layoutBottomGap}px 20px;
+  padding: 0 20px
+    ${({ $isNavVisible, $layoutBottomGap }) =>
+    $isNavVisible ? NAV_HEIGHT + $layoutBottomGap : '0'}px
+    20px;
   width: ${({ $layoutWidth }) => $layoutWidth};
   min-height: 100dvh;
   overflow-x: hidden;

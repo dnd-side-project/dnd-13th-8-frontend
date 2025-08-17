@@ -4,12 +4,9 @@ import styled, { css } from 'styled-components'
 
 import { Logo, Notification, Search } from '@/assets/icons'
 import { TITLE_TEXT } from '@/pages/homePage/config/messages'
-import LoopCarousel from '@/pages/homePage/ui/LoopCarousel'
-import Header from '@/shared/ui/Header'
-import ScrollCarousel from '@/shared/ui/ScrollCarousel'
-import SvgButton from '@/shared/ui/SvgButton'
-import Playlist from '@/widgets/playlist/Playlist'
-import PlaylistWithSong from '@/widgets/playlist/PlaylistWithSong'
+import { LoopCarousel } from '@/pages/homePage/ui'
+import { Header, SvgButton, ScrollCarousel } from '@/shared/ui'
+import { Playlist, PlaylistWithSong } from '@/widgets/playlist'
 
 const HomePage = () => {
   const navigate = useNavigate()

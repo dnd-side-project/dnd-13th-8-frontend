@@ -8,9 +8,10 @@ const meta: Meta<typeof SearchResultItem> = {
   component: SearchResultItem,
   tags: ['autodocs'],
   argTypes: {
-    image: { control: false },
+    imageUrl: { control: false },
     searchResult: { control: 'text' },
     userName: { control: 'text' },
+    type: { control: { type: 'radio' }, options: ['playlist', 'user'] },
     onClick: { action: 'clicked' },
   },
 }
@@ -23,24 +24,10 @@ const Container = styled.div`
   width: 335px;
 `
 
-const ProfileExample = styled.div`
-  width: 56px;
-  height: 56px;
-  background-color: ${({ theme }) => theme.COLOR['gray-400']};
-  border-radius: 50%;
-`
-
-const CdExample = styled.div`
-  width: 56px;
-  height: 56px;
-  background-color: ${({ theme }) => theme.COLOR['gray-400']};
-  border-radius: 6px;
-`
-
 export const PlaylistSearchResult: Story = {
   render: (args) => (
     <Container>
-      <SearchResultItem {...args} image={<CdExample />} />
+      <SearchResultItem {...args} type="playlist" />
     </Container>
   ),
   args: {
@@ -52,7 +39,7 @@ export const PlaylistSearchResult: Story = {
 export const UserSearchResult: Story = {
   render: (args) => (
     <Container>
-      <SearchResultItem {...args} image={<ProfileExample />} />
+      <SearchResultItem {...args} type="user" />
     </Container>
   ),
   args: {
