@@ -3,6 +3,8 @@ import { lazy } from 'react'
 const HomePage = lazy(() => import('@pages/homePage/HomePage'))
 const MyPage = lazy(() => import('@pages/myPage/ui'))
 const Setting = lazy(() => import('@pages/myPage/ui/setting'))
+const Terms = lazy(() => import('@pages/myPage/ui/terms'))
+const Privacy = lazy(() => import('@pages/myPage/ui/privacy'))
 
 export interface RouteConfig {
   path: string
@@ -34,10 +36,10 @@ export const routesConfig: RouteConfig[] = [
   // { path: '/mypage/:albumId/playlist', component: () => <></>, private: true },
   // { path: '/mypage/:albumId/playlist/edit', component: () => <></>, private: true },
   // { path: '/mypage/create', component: () => <></>, private: true },
-  { path: '/mypage/setting', component: Setting, private: true },
+  { path: '/mypage/setting', component: Setting, private: true, isNotSuspense: true },
   // { path: '/mypage/notification', component: () => <></>, private: true },
-  // { path: '/mypage/terms', component: () => <></>, private: true, isNotSuspense: true },
-  // { path: '/mypage/privacy', component: () => <></>, private: true, isNotSuspense: true },
+  { path: '/mypage/terms', component: Terms, private: true, isNotSuspense: true },
+  { path: '/mypage/privacy', component: Privacy, private: true, isNotSuspense: true },
   // { path: '/mypage/unregister', component: () => <></>, private: true, isNotSuspense: true },
 
   // 로그인

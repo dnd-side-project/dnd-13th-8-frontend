@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import styled from 'styled-components'
 
@@ -10,6 +11,8 @@ import { ToggleSwitch } from '@pages/myPage/ui/setting/components'
 import { RightArrow } from '@/assets/icons'
 
 const Setting = () => {
+  const navigate = useNavigate()
+
   const [isNotiOn, setIsNotiOn] = useState(false)
 
   return (
@@ -37,11 +40,21 @@ const Setting = () => {
         <ul>
           <SettingItem>
             <span>약관 및 개인정보 처리동의</span>
-            <SvgButton icon={RightArrow} width={16} height={20} />
+            <SvgButton
+              icon={RightArrow}
+              width={16}
+              height={20}
+              onClick={() => navigate('/mypage/terms')}
+            />
           </SettingItem>
           <SettingItem>
             <span>개인정보 처리방침</span>
-            <SvgButton icon={RightArrow} width={16} height={20} />
+            <SvgButton
+              icon={RightArrow}
+              width={16}
+              height={20}
+              onClick={() => navigate('/mypage/privacy')}
+            />
           </SettingItem>
         </ul>
       </SectionWrap>
