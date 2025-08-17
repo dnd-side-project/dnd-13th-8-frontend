@@ -9,7 +9,7 @@ import { BottomSheet, Button } from '@/shared/ui'
 import SvgButton from '@/shared/ui/SvgButton'
 
 interface ActionBarProps {
-  playlistId: string
+  playlistId: number
 }
 
 const ActionBar = ({ playlistId }: ActionBarProps) => {
