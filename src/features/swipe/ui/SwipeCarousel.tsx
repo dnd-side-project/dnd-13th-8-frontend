@@ -28,12 +28,12 @@ const SwipeCarousel = ({ children, data }: SwipeCarouselProps) => {
 
   // 슬라이드 선택 시 URL 업데이트
   const onSelect = useCallback(() => {
-    if (!emblaApi || !data) return
+    if (!emblaApi || data.length === 0) return
 
     const selectedIndex = emblaApi.selectedScrollSnap()
     const newId = data[selectedIndex]?.id
 
-    if (newId && playlistId !== String(newId)) {
+    if (newId != null && playlistId !== String(newId)) {
       navigate(`/discover/${newId}`, { replace: true })
     }
   }, [emblaApi, data, navigate, playlistId])
