@@ -10,12 +10,7 @@ const DiscoverPage = () => {
     <SwipeCarousel data={mockPlaylists}>
       {mockPlaylists.map((data) => (
         <Slide key={data.id}>
-          <PlaylistLayout
-            playlistData={data}
-            listenerNum={data.listeners}
-            isOnAir={data.isOnAir}
-            isLiked={data.liked}
-          />
+          <PlaylistLayout playlistData={data} listenerNum={data.listeners} isOnAir={data.isOnAir} />
         </Slide>
       ))}
     </SwipeCarousel>

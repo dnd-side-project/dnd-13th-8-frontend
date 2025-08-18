@@ -13,7 +13,6 @@ interface PlaylistLayoutProps {
   isOwner?: boolean
   listenerNum: number
   isOnAir: boolean
-  isLiked: boolean
 }
 
 const PlaylistLayout = ({
