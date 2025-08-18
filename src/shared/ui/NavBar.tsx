@@ -1,4 +1,4 @@
-import { useLocation, Link } from 'react-router-dom'
+import { useLocation, Link, matchPath } from 'react-router-dom'
 
 import styled, { useTheme } from 'styled-components'
 
@@ -15,7 +15,9 @@ const NavBar = () => {
     <NavButtonBox>
       {NAV_ITEMS.map(({ icon: Icon, title, paths }) => {
         const isActive = paths.some((path) =>
-          path === '/' ? location.pathname === '/' : location.pathname.startsWith(path)
+          path === '/'
+            ? location.pathname === '/'
+            : matchPath({ path, end: false }, location.pathname)
         )
 
         const color = isActive ? theme.COLOR['primary-normal'] : theme.COLOR['gray-100']
