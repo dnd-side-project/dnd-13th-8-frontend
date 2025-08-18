@@ -8,5 +8,6 @@
     { "title": "네 번째 곡", "duration": 150 },
     { "title": "다섯 번째 곡", "duration": 210 }
   ],
-  "listeners": 550
+  "listeners": 550,
+  "isOnAir": true
 }

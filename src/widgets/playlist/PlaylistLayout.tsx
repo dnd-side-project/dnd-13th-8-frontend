@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import styled from 'styled-components'
@@ -13,19 +12,18 @@ interface PlaylistLayoutProps {
   playlistData: PlaylistData
   isOwner?: boolean
   listenerNum: number
+  isOnAir: boolean
 }
 
-const PlaylistLayout = ({ playlistData, isOwner = false, listenerNum }: PlaylistLayoutProps) => {
+const PlaylistLayout = ({
+  playlistData,
+  isOwner = false,
+  listenerNum,
+  isOnAir,
+}: PlaylistLayoutProps) => {
   const navigate = useNavigate()
   const trackLengths = playlistData.tracks.map((t) => t.duration)
   const totalTime = trackLengths.reduce((sum, t) => sum + t, 0)
-  const [isOnAir, setIsOnAir] = useState(false)
-
-  const handleToggleOnAir = () => {
-    if (!isOwner) return
-    setIsOnAir((prev) => !prev)
-    // TODO: 필요하면 서버 API 호출
-  }
 
   // TODO: 실제 전송 로직으로 교체
   const handleSendMessage = () => {}
@@ -42,12 +40,7 @@ const PlaylistLayout = ({ playlistData, isOwner = false, listenerNum }: Playlist
       />
 
       <Container>
-        <LiveInfo
-          isOnAir={isOnAir}
-          listenerCount={listenerNum}
-          isOwner={isOwner}
-          onToggleOnAir={handleToggleOnAir}
-        />
+        <LiveInfo isOnAir={isOnAir} listenerCount={listenerNum} isOwner={isOwner} />
 
         {isOwner && (
           <Button size="S" state="primary" onClick={() => navigate('/customize')}>
