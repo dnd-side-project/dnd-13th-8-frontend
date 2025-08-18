@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
-import Loading from '@shared/ui/Loading'
+import { Loading } from '@shared/ui'
 
 const meta: Meta<typeof Loading> = {
   title: 'Shared/Loading',
