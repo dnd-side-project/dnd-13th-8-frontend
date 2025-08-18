@@ -5,7 +5,7 @@ import styled from 'styled-components'
 import { Header, SvgButton, ContentHeader } from '@shared/ui'
 
 import { Gear, Notification } from '@/assets/icons'
-import { Divider, PlaylistGrid, UserProfile } from '@/pages/myPage/ui/components'
+import { Divider, CdGrid, UserProfile } from '@/pages/myPage/ui/components'
 import { useSingleSelect } from '@/shared/hooks/useSingleSelect'
 import { flexRowCenter } from '@/shared/styles/mixins'
 import type { SortType } from '@/shared/ui/ContentHeader'
@@ -72,7 +72,7 @@ const MyPage = () => {
           currentSort={currentSort}
           onSortChange={setCurrentSort}
         />
-        <PlaylistGrid currentPlaylist={currentPlaylist} currentTab={currentTab} />
+        <CdGrid currentPlaylist={currentPlaylist} currentTab={currentTab} />
       </section>
     </>
   )
@@ -97,10 +97,13 @@ const TabItem = styled.li<{ $isActive: boolean }>`
   height: 44px;
   border-bottom: 2px solid
     ${({ theme, $isActive }) => ($isActive ? theme.COLOR['gray-100'] : 'transparent')};
-  ${({ theme }) => theme.FONT['body2-normal']}
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.0145em;
 
   & > button {
     width: 100%;
     height: 100%;
+    ${({ theme }) => theme.FONT['body2-normal']}
   }
 `
