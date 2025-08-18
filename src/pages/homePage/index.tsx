@@ -38,13 +38,13 @@ const HomePage = () => {
       <SecondSection>
         <h1>퇴근길, 귀에 붙는 노래</h1>
         <ScrollCarousel gap={14}>
-          {secondSectionData.map((item, index) => (
+          {secondSectionData.map((item) => (
             <Playlist
-              key={index}
+              key={item.id}
+              id={item.id}
               title={item.title}
               username={item.username}
-              liked={item.liked}
-              onClick={() => console.log(item.title)}
+              isLiked={item.liked}
             />
           ))}
         </ScrollCarousel>
@@ -150,10 +150,10 @@ const loopCarouselData = [
 ]
 
 const secondSectionData = [
-  { title: 'Playlist #1', username: 'deulak', liked: true },
-  { title: 'Playlist #2', username: 'deulak', liked: false },
-  { title: 'Playlist #3', username: 'deulak', liked: true },
-  { title: 'Playlist #4', username: 'deulak', liked: true },
+  { id: 1, title: 'Playlist #1', username: 'deulak', liked: true },
+  { id: 2, title: 'Playlist #2', username: 'deulak', liked: false },
+  { id: 3, title: 'Playlist #3', username: 'deulak', liked: true },
+  { id: 4, title: 'Playlist #4', username: 'deulak', liked: true },
 ]
 
 const thirdSectionData = [

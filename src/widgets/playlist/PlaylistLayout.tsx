@@ -13,6 +13,7 @@ interface PlaylistLayoutProps {
   isOwner?: boolean
   listenerNum: number
   isOnAir: boolean
+  isLiked: boolean
 }
 
 const PlaylistLayout = ({
@@ -50,7 +51,7 @@ const PlaylistLayout = ({
       </Container>
       <Wrapper>
         <Cd variant="xxl" bgColor="none" />
-        <ActionBar playlistId={Number(playlistData.id)} />
+        <ActionBar playlistId={Number(playlistData.id)} isLiked={playlistData.liked} />
       </Wrapper>
       <ProgressBar currentTime={300} duration={totalTime} trackLengths={trackLengths} />
       <ControlBar />

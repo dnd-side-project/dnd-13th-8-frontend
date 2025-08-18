@@ -1,25 +1,22 @@
-import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import styled, { useTheme } from 'styled-components'
 
 import { Heart, Playlist } from '@/assets/icons'
+import { useLike } from '@/features/like'
 import { ShareButton } from '@/features/share'
 import { flexRowCenter } from '@/shared/styles/mixins'
 import SvgButton from '@/shared/ui/SvgButton'
 
 interface ActionBarProps {
   playlistId: number
+  isLiked: boolean
 }
 
-const ActionBar = ({ playlistId }: ActionBarProps) => {
+const ActionBar = ({ playlistId, isLiked }: ActionBarProps) => {
   const theme = useTheme()
-  const [liked, setLiked] = useState(false)
   const navigate = useNavigate()
-
-  const handleLike = () => {
-    setLiked((prev) => !prev)
-  }
+  const { liked, handleLike } = useLike(playlistId, isLiked)
 
   const handleMovePlaylist = () => {
     navigate(`/discover/${playlistId}/playlist`)

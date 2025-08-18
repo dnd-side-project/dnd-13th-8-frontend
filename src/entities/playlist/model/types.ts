@@ -8,4 +8,5 @@ export interface PlaylistData {
   title: string
   tracks: TrackData[]
   listeners: number
+  liked: boolean
 }
