@@ -23,7 +23,7 @@ const SwipeCarousel = ({ children, data }: SwipeCarouselProps) => {
   const [emblaRef, emblaApi] = useEmblaCarousel({
     axis: 'y',
     loop: false,
-    startIndex: initialIndex,
+    startIndex: initialIndex > 0 ? initialIndex : 0, // 매치 실패 시 0번으로
   })
 
   // 슬라이드 선택 시 URL 업데이트
