@@ -13,7 +13,7 @@ export const NAV_ITEMS: NavItem[] = [
   {
     icon: Look,
     title: '둘러보기',
-    paths: ['/discover/:uniqueId', '/discover/:uniqueId/playlist'],
+    paths: ['/discover/:id', '/discover/:id/playlist'],
   },
   { icon: Music, title: '나의 CD', paths: ['/mycd'] },
   { icon: Person, title: '마이페이지', paths: ['/mypage'] },

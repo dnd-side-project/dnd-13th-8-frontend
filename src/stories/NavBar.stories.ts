@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
-import NavBar from '@/shared/ui/NavBar'
+import { NavBar } from '@/widgets/layout'
 
 const meta = {
   title: 'Shared/NavBar',

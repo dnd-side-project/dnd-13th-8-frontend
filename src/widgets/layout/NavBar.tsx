@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { useLocation, Link, matchPath } from 'react-router-dom'
 
 import styled, { useTheme } from 'styled-components'
@@ -5,11 +6,24 @@ import styled, { useTheme } from 'styled-components'
 import { NAV_ITEMS } from '@/shared/config/navItems'
 import SvgButton from '@/shared/ui/SvgButton'
 
+import mockPlaylists from '../../pages/discoverPage/mockData.json'
+
 export const NAV_HEIGHT = 64
 
 const NavBar = () => {
   const location = useLocation()
   const theme = useTheme()
+  const [discoverLink, setDiscoverLink] = useState('')
+
+  // 컴포넌트 마운트 시 첫 번째 항목의 id로 링크 설정
+  useEffect(() => {
+    // TODO : API 호출 로직으로 교체 예정
+    const firstPlaylistId = mockPlaylists[0]?.id
+
+    if (firstPlaylistId) {
+      setDiscoverLink(`/discover/${firstPlaylistId}`)
+    }
+  }, [])
 
   return (
     <NavButtonBox>
@@ -21,9 +35,10 @@ const NavBar = () => {
         )
 
         const color = isActive ? theme.COLOR['primary-normal'] : theme.COLOR['gray-100']
+        const linkTo = title === '둘러보기' && discoverLink ? discoverLink : paths[0]
 
         return (
-          <NavLink to={paths[0]} key={title}>
+          <NavLink to={linkTo} key={title}>
             <NavItem $active={isActive}>
               <SvgButton width={24} height={24} icon={Icon} fill={color} />
               <span>{title}</span>

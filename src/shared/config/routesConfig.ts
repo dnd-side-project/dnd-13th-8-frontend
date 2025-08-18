@@ -31,8 +31,8 @@ export const routesConfig: RouteConfig[] = [
   { path: '/searchResult', component: SearchResult },
 
   // 둘러보기
-  { path: '/discover/:uniqueId', component: DiscoverPage },
-  { path: '/discover/:uniqueId/playlist', component: PlaylistInfoPage },
+  { path: '/discover/:id', component: DiscoverPage },
+  { path: '/discover/:id/playlist', component: PlaylistInfoPage },
 
   // 나의 CD
   { path: '/mycd', component: DiscoverPage }, // TODO: 추추 험포넌트 수정 예정
