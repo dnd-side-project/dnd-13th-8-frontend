@@ -111,7 +111,7 @@ const Create = () => {
       setModal((prev) => ({
         ...prev,
         isOpen: true,
-        title: `최대 ${MAX_LINK_COUNT}개까지 추가할 수 있습니다`,
+        title: `최대 ${MAX_LINK_COUNT}개까지 추가할 수 있어요`,
         ctaType: 'single',
         confirmText: '확인',
         onConfirm: () => {
@@ -141,7 +141,7 @@ const Create = () => {
     const hasOnlyAllowedChars = ALLOWED_CHARS_REGEX.test(value)
 
     if (value && (!isValidYoutubeLink || !hasOnlyAllowedChars)) {
-      setLinkErrorMap((prev) => ({ ...prev, [id]: '유효하지 않은 YouTube URL입니다' }))
+      setLinkErrorMap((prev) => ({ ...prev, [id]: '유튜브 링크만 추가할 수 있어요' }))
       return
     }
     setLinkErrorMap((prev) => ({ ...prev, [id]: '' }))
