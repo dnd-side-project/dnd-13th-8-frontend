@@ -1,38 +1,35 @@
 import styled, { useTheme } from 'styled-components'
 
-import { Next, Prev, Start } from '@/assets/icons'
+import { Next, Pause, Prev, Start } from '@/assets/icons'
 import { SvgButton } from '@/shared/ui'
+import type { BackgroundPlayerHandle } from '@/widgets/playlist/BackgroundPlayer'
 
-const ControlBar = () => {
+interface ControlBarProps {
+  playerRef?: React.RefObject<BackgroundPlayerHandle | null>
+  isPlaying: boolean
+  onTogglePlay: () => void
+}
+
+const ControlBar = ({ playerRef, isPlaying, onTogglePlay }: ControlBarProps) => {
   const theme = useTheme()
 
-  const handlePrev = () => {
-    // TODO: 이전 플레이리스트로 이동하는 로직 작성
-  }
-
-  const handleStart = () => {
-    // TODO: 재생/일시정지 로직 작성
-  }
-
-  const handleNext = () => {
-    // TODO: 다음 플레이리스트로 이동하는 로직 작성
-  }
+  const handlePrev = () => playerRef?.current?.prevTrack()
+  const handleNext = () => playerRef?.current?.nextTrack()
 
   return (
     <Wrapper>
       <SvgButton icon={Prev} width={32} height={32} onClick={handlePrev} />
       <SvgButton
-        icon={Start}
+        icon={isPlaying ? Pause : Start}
         width={32}
         height={32}
-        onClick={handleStart}
+        onClick={onTogglePlay}
         fill={theme.COLOR['common-white']}
       />
       <SvgButton icon={Next} width={32} height={32} onClick={handleNext} />
     </Wrapper>
   )
 }
-
 export default ControlBar
 
 const Wrapper = styled.div`
