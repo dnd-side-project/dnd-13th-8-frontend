@@ -9,11 +9,15 @@ const meta: Meta<typeof LiveInfo> = {
   argTypes: {
     isOnAir: {
       control: 'boolean',
-      description: '현재 온에어 상태',
+      description: '현재 ON AIR 상태',
     },
     listenerCount: {
       control: 'number',
       description: '실시간 청취자 수',
+    },
+    isOwner: {
+      control: 'boolean',
+      description: '플레이리스트 소유자 여부 (ON AIR 버튼을 클릭하여 on/off 가능)',
     },
   },
 }
@@ -21,9 +25,18 @@ const meta: Meta<typeof LiveInfo> = {
 export default meta
 type Story = StoryObj<typeof LiveInfo>
 
-export const Default: Story = {
+export const Owner: Story = {
   args: {
     isOnAir: true,
     listenerCount: 550,
+    isOwner: true,
+  },
+}
+
+export const NotOwner: Story = {
+  args: {
+    isOnAir: true,
+    listenerCount: 550,
+    isOwner: false,
   },
 }

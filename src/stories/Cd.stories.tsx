@@ -46,12 +46,12 @@ export const NoBackground: Story = {
 export const Variants: Story = {
   render: () => (
     <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
-      <Cd variant="xxl" bgColor="default" />
-      <Cd variant="xl" bgColor="default" />
-      <Cd variant="lg" bgColor="default" />
-      <Cd variant="md" bgColor="default" />
-      <Cd variant="sm" bgColor="default" />
-      <Cd variant="xs" bgColor="default" />
+      <Cd variant="xxl" bgColor="none" />
+      <Cd variant="xl" bgColor="none" />
+      <Cd variant="lg" bgColor="none" />
+      <Cd variant="md" bgColor="none" />
+      <Cd variant="sm" bgColor="none" />
+      <Cd variant="xs" bgColor="none" />
     </div>
   ),
 }

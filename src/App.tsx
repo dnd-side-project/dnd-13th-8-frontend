@@ -8,7 +8,8 @@ import { AppRoutes } from '@app/routes/routes'
 import { routesConfig } from '@shared/config/routesConfig'
 import { useDevice, type DeviceType } from '@shared/hooks/useDevice'
 import { flexRowCenter } from '@shared/styles/mixins'
-import NavBar, { NAV_HEIGHT } from '@shared/ui/NavBar'
+
+import NavBar, { NAV_HEIGHT } from '@/widgets/layout/NavBar'
 
 const LAYOUT_BOTTOM_GAP = 34
 

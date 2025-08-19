@@ -1,11 +1,36 @@
-{
-  "id": 3232,
-  "title": "플레이리스트명",
-  "tracks": [
-    { "title": "첫 번째 곡", "duration": 180 },
-    { "title": "두 번째 곡", "duration": 240 },
-    { "title": "세 번째 곡", "duration": 10 },
-    { "title": "네 번째 곡", "duration": 150 },
-    { "title": "다섯 번째 곡", "duration": 210 }
-  ]
-}
+[
+  {
+    "id": 3232,
+    "title": "플레이리스트 A",
+    "tracks": [
+      { "title": "첫 번째 곡", "duration": 180 },
+      { "title": "두 번째 곡", "duration": 240 }
+    ],
+    "listeners": 550,
+    "isOnAir": true,
+    "liked": false
+  },
+  {
+    "id": 3233,
+    "title": "플레이리스트 B",
+    "tracks": [
+      { "title": "첫 번째 곡", "duration": 150 },
+      { "title": "두 번째 곡", "duration": 200 },
+      { "title": "세 번째 곡", "duration": 120 }
+    ],
+    "listeners": 123,
+    "isOnAir": false,
+    "liked": true
+  },
+  {
+    "id": 3234,
+    "title": "플레이리스트 C",
+    "tracks": [
+      { "title": "곡 1", "duration": 90 },
+      { "title": "곡 2", "duration": 180 }
+    ],
+    "listeners": 999,
+    "isOnAir": true,
+    "liked": true
+  }
+]
