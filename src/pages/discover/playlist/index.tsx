@@ -6,6 +6,7 @@ import { Cancel } from '@/assets/icons'
 import PlaylistData from '@/pages/discover/playlistData.json'
 import { flexColCenter } from '@/shared/styles/mixins'
 import { Header, Link, SvgButton } from '@/shared/ui'
+import { PlaylistHorizontal } from '@/widgets/playlist'
 
 const PlaylistInfoPage = () => {
   const navigate = useNavigate()
@@ -22,6 +23,11 @@ const PlaylistInfoPage = () => {
         right={<SvgButton icon={Cancel} onClick={() => navigate(-1)} />}
       />
       <Content>
+        <PlaylistHorizontal
+          genre={playlist?.genre || ''}
+          title={playlist?.title || ''}
+          username={playlist?.userName || ''}
+        />
         <TrackInfo>
           {playlist &&
             playlist.tracks.map((track, index) => (
@@ -40,7 +46,9 @@ const Wrapper = styled.div`
 `
 
 const Content = styled.section`
-  ${({ theme }) => theme.FONT['body2-normal']};
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
 `
 const TrackInfo = styled.div`
   display: flex;
