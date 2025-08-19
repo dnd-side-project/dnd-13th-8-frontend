@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import styled from 'styled-components'
 
-import SearchResultItem from '@/pages/searchPage/ui/SearchResultItem'
+import { SearchResultItem } from '@/widgets/search'
 
 const meta: Meta<typeof SearchResultItem> = {
   title: 'Pages/Search/SearchResultItem',

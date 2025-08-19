@@ -4,10 +4,10 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { LeftArrow, Search } from '@/assets/icons'
-import { SearchResultItem } from '@/pages/searchPage/ui'
 import { useSingleSelect } from '@/shared/lib/useSingleSelect'
 import { ContentHeader, Header, Input, SvgButton } from '@/shared/ui'
 import type { SortType } from '@/shared/ui/ContentHeader'
+import { SearchResultItem } from '@/widgets/search'
 
 const SearchResultPage = () => {
   const navigate = useNavigate()
