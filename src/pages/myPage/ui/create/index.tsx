@@ -64,14 +64,19 @@ const Create = () => {
       fetchLinks()
       return
     }
-    setLinkMap([{ id: 1, link: '' }])
+    setLinkMap([{ id: Date.now(), link: '' }])
   }, [])
+
+  useEffect(() => {
+    console.log('>>>> linkMap', linkMap)
+  }, [linkMap])
 
   // 다음 버튼 검증
   const isValidate = () => {
     const hasMetaEmpty = !metaGenre?.id || !metaTitle
     const hasLinkError = Object.values(linkErrorMap).some((error) => error)
-    return !hasMetaEmpty && !hasLinkError && linkMap.length > 0
+    const hasLinkEmpty = linkMap.some(({ link }) => !link.trim())
+    return !hasMetaEmpty && !hasLinkError && linkMap.length && !hasLinkEmpty
   }
 
   // current step별 header 뒤로가기 로직
@@ -123,28 +128,29 @@ const Create = () => {
 
     const hasLinkEmpty = linkMap.some(({ link }) => !link.trim())
     if (!hasLinkEmpty) {
-      setLinkMap((prev) => [...prev, { id: prev.length + 1, link: '' }])
+      setLinkMap((prev) => [...prev, { id: Date.now(), link: '' }])
     }
   }
 
-  // 링크 input onChange
-  const onLinkChange = (id: number, value: string) => {
-    setLinkMap((prev) => prev.map((l) => (l.id === id ? { ...l, link: value } : l)))
-  }
-
-  // 링크 input onBlur, 입력값 유효성 검증
-  const onLinkBlur = (id: number, value: string) => {
+  // 링크 input 입력값 유효성 검증
+  const checkLinkValid = (id: number, link: string) => {
     const YOUTUBE_LINK_REGEX = /^https:\/\/(www\.)?youtube\.com\/|^https:\/\/youtu\.be\//
     const ALLOWED_CHARS_REGEX = /^[a-zA-Z0-9\-_./?=&:%]*$/
 
-    const isValidYoutubeLink = YOUTUBE_LINK_REGEX.test(value)
-    const hasOnlyAllowedChars = ALLOWED_CHARS_REGEX.test(value)
+    const isValidYoutubeLink = YOUTUBE_LINK_REGEX.test(link)
+    const hasOnlyAllowedChars = ALLOWED_CHARS_REGEX.test(link)
 
-    if (value && (!isValidYoutubeLink || !hasOnlyAllowedChars)) {
+    if (link && (!isValidYoutubeLink || !hasOnlyAllowedChars)) {
       setLinkErrorMap((prev) => ({ ...prev, [id]: '유튜브 링크만 추가할 수 있어요' }))
       return
     }
     setLinkErrorMap((prev) => ({ ...prev, [id]: '' }))
+  }
+
+  // 링크 input onChange
+  const onLinkChange = (id: number, value: string) => {
+    checkLinkValid(id, value)
+    setLinkMap((prev) => prev.map((l) => (l.id === id ? { ...l, link: value } : l)))
   }
 
   // 링크 삭제
@@ -165,6 +171,7 @@ const Create = () => {
           <HeaderLeft>
             <SvgButton icon={LeftArrow} width={24} height={24} onClick={onHeaderPrevClick} />
             <StepContainer>
+              {/* TODO: step3 추가 예정, 디자인팀 기획/디자인 작업 중 */}
               {Array.from({ length: 2 }).map((_, idx) => (
                 <StepItem key={`tab-${idx}`} $isActive={currentStep === idx + 1}>
                   {idx + 1}
@@ -252,7 +259,7 @@ const Create = () => {
                 link={item}
                 linkError={linkErrorMap[item.id] || ''}
                 onLinkChange={onLinkChange}
-                onLinkBlur={onLinkBlur}
+                onLinkBlur={checkLinkValid}
                 onLinkRemoveClick={onLinkRemoveClick}
               />
             ))}
