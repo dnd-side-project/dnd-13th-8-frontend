@@ -9,8 +9,10 @@ import { Divider, CdGrid, UserProfile } from '@/pages/myPage/ui/components'
 import { useSingleSelect } from '@/shared/lib/useSingleSelect'
 import { flexRowCenter } from '@/shared/styles/mixins'
 import type { SortType } from '@/shared/ui/ContentHeader'
+import { SearchResultItem } from '@/widgets/search'
 
-import likePlaylist from '../mock/likePlaylist.json'
+// TODO: api 연동 후 실 데이터로 수정
+import likeUser from '../mock/likeUser.json'
 import myPlaylist from '../mock/myPlaylist.json'
 
 type TabType = 'album' | 'like'
@@ -20,14 +22,6 @@ const MyPage = () => {
 
   const { selected: currentTab, onSelect: setCurrentTab } = useSingleSelect<TabType>('album')
   const { selected: currentSort, onSelect: setCurrentSort } = useSingleSelect<SortType>('popular')
-
-  // TODO: api 연동 후 실 데이터로 수정
-  const currentPlaylist: {
-    id: number
-    title: string
-    username: string
-    isPrimary?: boolean
-  }[] = currentTab === 'album' ? myPlaylist : likePlaylist
 
   const TAB_LIST: { label: string; value: TabType }[] = [
     { label: 'MY 앨범', value: 'album' },
@@ -67,12 +61,29 @@ const MyPage = () => {
             </TabItem>
           ))}
         </TabContainer>
-        <ContentHeader
-          totalCount={currentPlaylist?.length}
-          currentSort={currentSort}
-          onSortChange={setCurrentSort}
-        />
-        <CdGrid currentPlaylist={currentPlaylist} currentTab={currentTab} />
+        {currentTab === 'album' ? (
+          <>
+            <ContentHeader
+              totalCount={myPlaylist?.length}
+              currentSort={currentSort}
+              onSortChange={setCurrentSort}
+            />
+            <CdGrid currentPlaylist={myPlaylist} currentTab={currentTab} />
+          </>
+        ) : (
+          <LikeUserContainer>
+            {likeUser.map((item) => (
+              <li key={item.id}>
+                <SearchResultItem
+                  type="user"
+                  searchResult={item.searchResult}
+                  imageUrl={item.imageUrl}
+                  onClick={() => navigate(`/discover/${item.id}`)}
+                />
+              </li>
+            ))}
+          </LikeUserContainer>
+        )}
       </section>
     </>
   )
@@ -106,4 +117,11 @@ const TabItem = styled.li<{ $isActive: boolean }>`
     height: 100%;
     ${({ theme }) => theme.FONT['body2-normal']}
   }
+`
+
+const LikeUserContainer = styled.ul`
+  padding-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 `
