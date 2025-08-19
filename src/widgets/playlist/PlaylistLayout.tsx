@@ -48,6 +48,18 @@ const PlaylistLayout = ({
     return () => clearInterval(interval)
   }, [playerRef])
 
+  // ProgressBar 클릭 시 전체 누적 시간 기준으로 이동
+  const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!playerRef?.current) return
+
+    const rect = e.currentTarget.getBoundingClientRect()
+    const clickX = e.clientX - rect.left
+    const ratio = clickX / rect.width
+    const seekTime = totalTime * ratio
+
+    playerRef.current.seekToTotal(seekTime)
+  }
+
   return (
     <div>
       <Header
@@ -68,11 +80,22 @@ const PlaylistLayout = ({
           </Button>
         )}
       </Container>
+
       <Wrapper>
         <Cd variant="xxl" bgColor="none" />
         <ActionBar playlistId={Number(playlistData.id)} isLiked={playlistData.liked} />
       </Wrapper>
-      <ProgressBar currentTime={currentTime} duration={totalTime} trackLengths={trackLengths} />
+
+      <ProgressBar
+        currentTime={currentTime}
+        duration={totalTime}
+        trackLengths={trackLengths}
+        onClick={handleProgressClick}
+        onClickMarker={(time) => {
+          if (!playerRef?.current) return
+          playerRef.current.seekToTotal(time)
+        }}
+      />
 
       <ControlBar playerRef={playerRef} isPlaying={isPlaying} onTogglePlay={onTogglePlay} />
 

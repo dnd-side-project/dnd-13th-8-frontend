@@ -24,6 +24,7 @@ export interface BackgroundPlayerHandle {
   prevTrack: () => void
   loadTracks: (tracks: Track[], playlistId: number) => void
   getAccTime: () => number
+  seekToTotal: (accSeconds: number) => void
 }
 
 const BackgroundPlayer = forwardRef<BackgroundPlayerHandle, BackgroundPlayerProps>(
@@ -32,8 +33,23 @@ const BackgroundPlayer = forwardRef<BackgroundPlayerHandle, BackgroundPlayerProp
     const currentTrackIndexRef = useRef(0)
     const currentTracksRef = useRef(tracks)
     const currentPlaylistIdRef = useRef(playlistId)
-    const playerDivId = `yt-player`
     const accTimeRef = useRef(0) // 누적 재생 시간
+    const playerDivId = `yt-player`
+    const trackStartTimesRef = useRef<number[]>([])
+
+    // 트랙 누적 시간 계산
+    const calculateTrackStartTimes = (tracks: Track[]) => {
+      const startTimes: number[] = []
+      tracks.reduce((acc, t) => {
+        startTimes.push(acc)
+        return acc + t.duration
+      }, 0)
+      trackStartTimesRef.current = startTimes
+    }
+
+    useEffect(() => {
+      calculateTrackStartTimes(tracks)
+    }, [tracks])
 
     // 유튜브 API 로드
     useEffect(() => {
@@ -96,11 +112,30 @@ const BackgroundPlayer = forwardRef<BackgroundPlayerHandle, BackgroundPlayerProp
       currentTracksRef.current = tracks
       currentPlaylistIdRef.current = playlistId
       currentTrackIndexRef.current = 0
+      accTimeRef.current = 0
+      calculateTrackStartTimes(tracks)
       playerRef.current?.loadVideoById(getVideoId(tracks[0].link))
     }
 
     const getAccTime = () => {
       return accTimeRef.current + (playerRef.current?.getCurrentTime() ?? 0)
+    }
+
+    // 전체 누적 시간 기준으로 트랙 + 트랙 내 시간 계산
+    const seekToTotal = (accSeconds: number) => {
+      const startTimes = trackStartTimesRef.current
+      let trackIndex = 0
+      for (let i = startTimes.length - 1; i >= 0; i--) {
+        if (accSeconds >= startTimes[i]) {
+          trackIndex = i
+          break
+        }
+      }
+      const timeInTrack = accSeconds - startTimes[trackIndex]
+      currentTrackIndexRef.current = trackIndex
+      playerRef.current?.loadVideoById(getVideoId(currentTracksRef.current[trackIndex].link))
+      playerRef.current?.seekTo(timeInTrack, true)
+      accTimeRef.current = startTimes[trackIndex] // 누적 시간 갱신
     }
 
     // 부모에서 사용할 수 있게 ref 전달
@@ -113,16 +148,15 @@ const BackgroundPlayer = forwardRef<BackgroundPlayerHandle, BackgroundPlayerProp
       prevTrack,
       loadTracks,
       getAccTime,
+      seekToTotal,
     }))
 
-    //  isActive에 따라 재생/정지
     useEffect(() => {
       if (!playerRef.current) return
       if (isActive) play()
       else pause()
     }, [isActive])
 
-    // 언마운트 시 플레이어 제거
     useEffect(() => {
       return () => {
         if (playerRef.current) {
