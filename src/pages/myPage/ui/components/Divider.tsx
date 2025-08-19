@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 
-import { useDevice, type DeviceType } from '@/shared/hooks/useDevice'
+import { useDevice, type DeviceType } from '@/shared/lib/useDevice'
 
 const Divider = () => {
   const deviceType = useDevice()

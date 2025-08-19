@@ -2,7 +2,7 @@ import Lottie from 'lottie-react'
 import styled from 'styled-components'
 
 import { LoadingLottie } from '@/assets/lottie'
-import { useDevice } from '@/shared/hooks/useDevice'
+import { useDevice } from '@/shared/lib/useDevice'
 import { flexRowCenter } from '@/shared/styles/mixins'
 import Overlay from '@/shared/ui/Overlay'
 

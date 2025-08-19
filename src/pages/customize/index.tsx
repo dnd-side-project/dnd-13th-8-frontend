@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom'
 
 import styled from 'styled-components'
 
-import { useDevice, type DeviceType } from '@shared/hooks/useDevice'
+import { useDevice, type DeviceType } from '@shared/lib/useDevice'
 import { Button, Header, SvgButton } from '@shared/ui'
 
 import { LeftArrow } from '@/assets/icons'

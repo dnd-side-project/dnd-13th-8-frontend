@@ -1,5 +1,5 @@
-import { TermsContainer, TermsItems } from '@pages/myPage/styles/common.styled'
 import { SubHeader } from '@pages/myPage/ui/components'
+import { TermsContainer, TermsItems } from '@pages/myPage/ui/styles'
 
 const Privacy = () => {
   return (

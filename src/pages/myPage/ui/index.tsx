@@ -6,7 +6,7 @@ import { Header, SvgButton, ContentHeader } from '@shared/ui'
 
 import { Gear, Notification } from '@/assets/icons'
 import { Divider, CdGrid, UserProfile } from '@/pages/myPage/ui/components'
-import { useSingleSelect } from '@/shared/hooks/useSingleSelect'
+import { useSingleSelect } from '@/shared/lib/useSingleSelect'
 import { flexRowCenter } from '@/shared/styles/mixins'
 import type { SortType } from '@/shared/ui/ContentHeader'
 
