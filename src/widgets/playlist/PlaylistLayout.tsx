@@ -32,9 +32,10 @@ const PlaylistLayout = ({
 }: PlaylistLayoutProps) => {
   const navigate = useNavigate()
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false)
-
-  const [currentTrackIndex] = useState(0)
   const [currentTime] = useState(0)
+
+  const trackLengths = playlistData.tracks.map((t) => t.duration)
+  const totalTime = trackLengths.reduce((sum, t) => sum + t, 0)
 
   return (
     <div>
@@ -60,11 +61,7 @@ const PlaylistLayout = ({
         <Cd variant="xxl" bgColor="none" />
         <ActionBar playlistId={Number(playlistData.id)} isLiked={playlistData.liked} />
       </Wrapper>
-      <ProgressBar
-        currentTime={currentTime}
-        duration={playlistData.tracks[currentTrackIndex].duration}
-        trackLengths={playlistData.tracks.map((t) => t.duration)}
-      />
+      <ProgressBar currentTime={currentTime} duration={totalTime} trackLengths={trackLengths} />
 
       <ControlBar playerRef={playerRef} isPlaying={isPlaying} onTogglePlay={onTogglePlay} />
 

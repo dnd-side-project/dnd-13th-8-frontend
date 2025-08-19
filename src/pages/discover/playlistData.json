@@ -5,22 +5,22 @@
     "tracks": [
       {
         "title": "첫 번째 곡",
-        "duration": 180,
+        "duration": 197,
         "link": "https://www.youtube.com/watch?v=TUd1VQGaCQM&list=RDTUd1VQGaCQM&start_radio=1"
       },
       {
         "title": "두 번째 곡",
-        "duration": 210,
+        "duration": 226,
         "link": "https://www.youtube.com/watch?v=SC4xMk98Pdc&list=RDSC4xMk98Pdc&start_radio=1"
       },
       {
         "title": "세 번째 곡",
-        "duration": 240,
+        "duration": 209,
         "link": "https://www.youtube.com/watch?v=BYwF8ODtpvo&list=RDBYwF8ODtpvo&start_radio=1"
       },
       {
         "title": "네 번째 곡",
-        "duration": 200,
+        "duration": 184,
         "link": "https://www.youtube.com/watch?v=ia2Ph61bYzc&list=RDia2Ph61bYzc&start_radio=1"
       }
     ],
