@@ -40,7 +40,7 @@ const PlaylistLayout = ({
   useEffect(() => {
     const interval = setInterval(() => {
       if (playerRef?.current) {
-        const time = Math.floor(playerRef.current.getCurrentTime())
+        const time = Math.floor(playerRef.current.getAccTime())
         setCurrentTime(time)
       }
     }, 1000)

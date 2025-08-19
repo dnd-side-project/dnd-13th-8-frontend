@@ -23,7 +23,7 @@ export interface BackgroundPlayerHandle {
   nextTrack: () => void
   prevTrack: () => void
   loadTracks: (tracks: Track[], playlistId: number) => void
-  getCurrentTime: () => number
+  getAccTime: () => number
 }
 
 const BackgroundPlayer = forwardRef<BackgroundPlayerHandle, BackgroundPlayerProps>(
@@ -33,6 +33,7 @@ const BackgroundPlayer = forwardRef<BackgroundPlayerHandle, BackgroundPlayerProp
     const currentTracksRef = useRef(tracks)
     const currentPlaylistIdRef = useRef(playlistId)
     const playerDivId = `yt-player`
+    const accTimeRef = useRef(0) // 누적 재생 시간
 
     // 유튜브 API 로드
     useEffect(() => {
@@ -55,6 +56,8 @@ const BackgroundPlayer = forwardRef<BackgroundPlayerHandle, BackgroundPlayerProp
               // 상태 변경 시 부모 컴포넌트의 콜백 함수 호출
               onStateChange(event.data)
               if (event.data === window.YT.PlayerState.ENDED) {
+                accTimeRef.current +=
+                  currentTracksRef.current[currentTrackIndexRef.current].duration
                 nextTrack()
               }
             },
@@ -96,7 +99,9 @@ const BackgroundPlayer = forwardRef<BackgroundPlayerHandle, BackgroundPlayerProp
       playerRef.current?.loadVideoById(getVideoId(tracks[0].link))
     }
 
-    const getCurrentTime = () => playerRef.current?.getCurrentTime() ?? 0
+    const getAccTime = () => {
+      return accTimeRef.current + (playerRef.current?.getCurrentTime() ?? 0)
+    }
 
     // 부모에서 사용할 수 있게 ref 전달
     useImperativeHandle(ref, () => ({
@@ -107,7 +112,7 @@ const BackgroundPlayer = forwardRef<BackgroundPlayerHandle, BackgroundPlayerProp
       nextTrack,
       prevTrack,
       loadTracks,
-      getCurrentTime,
+      getAccTime,
     }))
 
     //  isActive에 따라 재생/정지
