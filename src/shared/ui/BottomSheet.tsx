@@ -166,6 +166,7 @@ const Content = styled.div`
   padding: 24px 20px;
   height: 100%;
   overflow-y: auto;
+  overflow-x: hidden;
 `
 
 export default BottomSheet
