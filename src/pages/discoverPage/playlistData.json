@@ -1,0 +1,57 @@
+[
+  {
+    "id": 1,
+    "title": "케이팝 플리~",
+    "tracks": [
+      {
+        "title": "첫 번째 곡",
+        "duration": 180,
+        "link": "https://www.youtube.com/watch?v=TUd1VQGaCQM&list=RDTUd1VQGaCQM&start_radio=1"
+      },
+      {
+        "title": "두 번째 곡",
+        "duration": 210,
+        "link": "https://www.youtube.com/watch?v=SC4xMk98Pdc&list=RDSC4xMk98Pdc&start_radio=1"
+      },
+      {
+        "title": "세 번째 곡",
+        "duration": 240,
+        "link": "https://www.youtube.com/watch?v=BYwF8ODtpvo&list=RDBYwF8ODtpvo&start_radio=1"
+      },
+      {
+        "title": "네 번째 곡",
+        "duration": 200,
+        "link": "https://www.youtube.com/watch?v=ia2Ph61bYzc&list=RDia2Ph61bYzc&start_radio=1"
+      }
+    ],
+    "listeners": 123,
+    "isOnAir": false,
+    "liked": true,
+    "genre": "K-POP"
+  },
+  {
+    "id": 3233,
+    "title": "플레이리스트 B",
+    "tracks": [
+      { "title": "첫 번째 곡", "duration": 150 },
+      { "title": "두 번째 곡", "duration": 200 },
+      { "title": "세 번째 곡", "duration": 120 }
+    ],
+    "listeners": 123,
+    "isOnAir": false,
+    "liked": true,
+    "genre": "락"
+  },
+  {
+    "id": 3234,
+    "title": "플레이리스트 C",
+    "tracks": [
+      { "title": "곡 1", "duration": 90 },
+      { "title": "곡 2", "duration": 180 }
+    ],
+    "listeners": 999,
+    "isOnAir": true,
+    "liked": true,
+    "genre": "발라드"
+  }
+]

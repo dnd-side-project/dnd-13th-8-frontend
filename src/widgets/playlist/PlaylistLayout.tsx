@@ -1,11 +1,13 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import styled from 'styled-components'
 
 import type { PlaylistData } from '@/entities/playlist/model/types'
+import CommentMockData from '@/pages/discoverPage/commentData.json'
 import { flexColCenter } from '@/shared/styles/mixins'
 import { Button, Cd, Header, LiveInfo } from '@/shared/ui'
-import { ChatInput } from '@/widgets/chat'
+import { ChatBottomSheet, ChatInput } from '@/widgets/chat'
 import { ActionBar, ControlBar, ProgressBar } from '@/widgets/playlist'
 
 interface PlaylistLayoutProps {
@@ -22,11 +24,10 @@ const PlaylistLayout = ({
   isOnAir,
 }: PlaylistLayoutProps) => {
   const navigate = useNavigate()
-  const trackLengths = playlistData.tracks.map((t) => t.duration)
-  const totalTime = trackLengths.reduce((sum, t) => sum + t, 0)
+  const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false)
 
-  // TODO: 실제 전송 로직으로 교체
-  const handleSendMessage = () => {}
+  const [currentTrackIndex] = useState(0)
+  const [currentTime] = useState(0)
 
   return (
     <div>
@@ -52,9 +53,22 @@ const PlaylistLayout = ({
         <Cd variant="xxl" bgColor="none" />
         <ActionBar playlistId={Number(playlistData.id)} isLiked={playlistData.liked} />
       </Wrapper>
-      <ProgressBar currentTime={300} duration={totalTime} trackLengths={trackLengths} />
+      <ProgressBar
+        currentTime={currentTime}
+        duration={playlistData.tracks[currentTrackIndex].duration}
+        trackLengths={playlistData.tracks.map((t) => t.duration)}
+      />
       <ControlBar />
-      <ChatInput onSend={handleSendMessage} openBottomSheetOnFocus />
+
+      <ChatInput onFocus={() => setIsBottomSheetOpen(true)} />
+
+      {isBottomSheetOpen && (
+        <ChatBottomSheet
+          comments={CommentMockData}
+          isOpen={isBottomSheetOpen}
+          onClose={() => setIsBottomSheetOpen(false)}
+        />
+      )}
     </div>
   )
 }

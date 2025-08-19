@@ -3,12 +3,12 @@ import styled from 'styled-components'
 import { SwipeCarousel } from '@/features/swipe'
 import { PlaylistLayout } from '@/widgets/playlist'
 
-import mockPlaylists from './mockData.json'
+import PlaylistData from './playlistData.json'
 
 const DiscoverPage = () => {
   return (
-    <SwipeCarousel data={mockPlaylists}>
-      {mockPlaylists.map((data) => (
+    <SwipeCarousel data={PlaylistData}>
+      {PlaylistData.map((data) => (
         <Slide key={data.id}>
           <PlaylistLayout playlistData={data} listenerNum={data.listeners} isOnAir={data.isOnAir} />
         </Slide>

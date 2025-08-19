@@ -3,20 +3,19 @@ import React, { useState, useRef, useEffect } from 'react'
 import styled from 'styled-components'
 
 import { Send } from '@/assets/icons'
+import { sendMessage } from '@/features/chat'
 import { flexRowCenter } from '@/shared/styles/mixins'
-import { BottomSheet, SvgButton } from '@/shared/ui'
+import { SvgButton } from '@/shared/ui'
 
 interface ChatInputProps {
-  onSend: (message: string) => void
-  openBottomSheetOnFocus?: boolean
+  onFocus?: () => void
 }
 
 const LINE_HEIGHT = 16
 const MAX_LINES = 4
 
-const ChatInput = ({ onSend, openBottomSheetOnFocus }: ChatInputProps) => {
+const ChatInput = ({ onFocus }: ChatInputProps) => {
   const [message, setMessage] = useState('')
-  const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false)
   const [isExpanded, setIsExpanded] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
@@ -26,12 +25,7 @@ const ChatInput = ({ onSend, openBottomSheetOnFocus }: ChatInputProps) => {
   }
 
   const handleSend = () => {
-    if (message.trim() === '') return
-
-    // TODO: 실제 전송 로직으로 교체
-    console.log(message.trim())
-    onSend(message.trim())
-
+    sendMessage(message)
     setMessage('')
     adjustHeight()
   }
@@ -57,34 +51,18 @@ const ChatInput = ({ onSend, openBottomSheetOnFocus }: ChatInputProps) => {
   }, [])
 
   return (
-    <>
-      <Wrapper $isExpanded={isExpanded}>
-        <StyledInput
-          ref={textareaRef}
-          placeholder="실시간 채팅달기"
-          value={message}
-          onChange={handleChange}
-          onKeyDown={handleKeyPress}
-          onFocus={() => {
-            if (openBottomSheetOnFocus) setIsBottomSheetOpen(true)
-          }}
-          rows={1}
-        />
-        <SvgButton icon={Send} onClick={handleSend} />
-      </Wrapper>
-
-      <BottomSheet
-        isOpen={isBottomSheetOpen}
-        onClose={() => setIsBottomSheetOpen(false)}
-        height="50dvh"
-      >
-        <Title>실시간 채팅</Title>
-        <Message>
-          <EmptyText>아직 채팅이 없습니다</EmptyText>
-          <HighlightText>첫 채팅을 남겨 보세요!</HighlightText>
-        </Message>
-      </BottomSheet>
-    </>
+    <Wrapper $isExpanded={isExpanded}>
+      <StyledInput
+        ref={textareaRef}
+        placeholder="실시간 채팅달기"
+        value={message}
+        onChange={handleChange}
+        onKeyDown={handleKeyPress}
+        onFocus={onFocus}
+        rows={1}
+      />
+      <SvgButton icon={Send} onClick={handleSend} />
+    </Wrapper>
   )
 }
 
@@ -99,7 +77,6 @@ const Wrapper = styled.div<{ $isExpanded: boolean }>`
   width: 100%;
   height: fit-content;
   align-items: ${({ $isExpanded }) => ($isExpanded ? 'flex-end' : 'center')};
-  margin-bottom: 32px;
 `
 
 const StyledInput = styled.textarea`
@@ -111,31 +88,4 @@ const StyledInput = styled.textarea`
   overflow-y: auto;
   word-break: break-word;
   white-space: pre-wrap;
-`
-
-const Title = styled.h1`
-  ${({ theme }) => theme.FONT.headline1};
-  font-weight: 600;
-  color: ${({ theme }) => theme.COLOR['gray-10']};
-`
-
-const Message = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  text-align: center;
-  gap: 4px;
-`
-
-const EmptyText = styled.span`
-  color: ${({ theme }) => theme.COLOR['gray-50']};
-  font-weight: 600;
-  ${({ theme }) => theme.FONT.heading2};
-`
-
-const HighlightText = styled.span`
-  color: ${({ theme }) => theme.COLOR['gray-200']};
-  ${({ theme }) => theme.FONT['body1-normal']};
 `
