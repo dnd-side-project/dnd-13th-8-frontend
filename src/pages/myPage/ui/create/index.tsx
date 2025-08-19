@@ -1,23 +1,15 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, motion, Reorder } from 'framer-motion'
 import styled from 'styled-components'
 
-import { Button, Cd, Header, SvgButton, Input, BottomSheet } from '@shared/ui'
+import { Button, Cd, Header, SvgButton, Input, BottomSheet, Modal } from '@shared/ui'
+import type { ModalProps } from '@shared/ui/Modal'
 
-import {
-  LeftArrow,
-  DownArrow,
-  PencilPrimary,
-  Pin,
-  Share,
-  Trash,
-  HelpCircle,
-  Drag,
-  Cancel,
-} from '@/assets/icons'
+import { LeftArrow, DownArrow, Pin, PinPrimary, Share, Trash, HelpCircle } from '@/assets/icons'
 import { Divider } from '@/pages/myPage/ui/components'
+import { LinkItem } from '@/pages/myPage/ui/create/components'
 import { MUSIC_GENRES } from '@/shared/config/musicGenres'
 import type { MusicGenre } from '@/shared/config/musicGenres'
 import { flexColCenter, flexRowCenter } from '@/shared/styles/mixins'
@@ -25,47 +17,178 @@ import { flexColCenter, flexRowCenter } from '@/shared/styles/mixins'
 const Create = () => {
   const navigate = useNavigate()
 
+  const [isEditMode] = useState(false)
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false)
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false)
+  const [modal, setModal] = useState<ModalProps>({
+    isOpen: false,
+    title: '',
+    ctaType: 'single',
+    confirmText: '',
+    cancelText: '',
+    onClose: () => {
+      setModal((prev) => ({ ...prev, isOpen: false }))
+    },
+    onConfirm: () => {},
+    onCancel: () => {
+      setModal((prev) => ({ ...prev, isOpen: false }))
+    },
+  })
+
+  const [currentStep, setCurrentStep] = useState(1)
+
   const [metaGenre, setMetaGenre] = useState<MusicGenre | null>(null)
   const [metaTitle, setMetaTitle] = useState('')
-  const [link, setLink] = useState('')
-  const [isPopoverOpen, setIsPopoverOpen] = useState(false)
+  const [linkMap, setLinkMap] = useState<{ id: number; link: string }[]>([])
+  const [linkErrorMap, setLinkErrorMap] = useState<{ [key: number]: string }>({})
 
+  // TODO: UI 확인용 임시 데이터, api 연동 시 수정 예정
+  const [isPrimary, setIsPrimary] = useState(false)
+
+  // TODO: 최대 링크 개수 재확인 후 수정
+  const MAX_LINK_COUNT = 3
+
+  // TODO: api 연동 시 로직 수정
+  useEffect(() => {
+    if (isEditMode) {
+      const fetchLinks = async () => {
+        try {
+          const response = await fetch('/src/pages/myPage/mock/playlistLinks.json')
+          const data = await response.json()
+          setLinkMap(data)
+          setIsPrimary(true) // 비동기 작업 완료 후 상태 업데이트
+        } catch (error) {
+          console.error('링크를 불러오는 데 실패했습니다:', error)
+        }
+      }
+      fetchLinks()
+      return
+    }
+    setLinkMap([{ id: 1, link: '' }])
+  }, [])
+
+  // 다음 버튼 검증
   const isValidate = () => {
-    return metaGenre?.id && metaTitle && link
+    const hasMetaEmpty = !metaGenre?.id || !metaTitle
+    const hasLinkError = Object.values(linkErrorMap).some((error) => error)
+    return !hasMetaEmpty && !hasLinkError && linkMap.length > 0
   }
 
+  // current step별 header 뒤로가기 로직
+  const onHeaderPrevClick = () => {
+    if (currentStep === 2) {
+      setCurrentStep(currentStep - 1)
+      return
+    }
+    navigate(-1)
+  }
+
+  // 장르 선택
   const onGenreClick = (genre: MusicGenre) => {
     setMetaGenre(genre)
     setIsBottomSheetOpen(false)
   }
 
+  // 플레이리스트 삭제
+  const onListDeleteClick = () => {
+    setModal((prev) => ({
+      ...prev,
+      isOpen: true,
+      title: '플레이리스트를 삭제하시겠어요?',
+      ctaType: 'double',
+      confirmText: '삭제하기',
+      cancelText: '취소',
+      onConfirm: () => {
+        navigate('/mypage')
+        setModal((prev) => ({ ...prev, isOpen: false }))
+      },
+    }))
+  }
+
+  // 링크 추가
+  const onLinkAddClick = () => {
+    if (linkMap.length >= MAX_LINK_COUNT) {
+      setModal((prev) => ({
+        ...prev,
+        isOpen: true,
+        title: `최대 ${MAX_LINK_COUNT}개까지 추가할 수 있습니다`,
+        ctaType: 'single',
+        confirmText: '확인',
+        onConfirm: () => {
+          setModal((prev) => ({ ...prev, isOpen: false }))
+        },
+      }))
+      return
+    }
+
+    const hasLinkEmpty = linkMap.some(({ link }) => !link.trim())
+    if (!hasLinkEmpty) {
+      setLinkMap((prev) => [...prev, { id: prev.length + 1, link: '' }])
+    }
+  }
+
+  // 링크 input onChange
+  const onLinkChange = (id: number, value: string) => {
+    setLinkMap((prev) => prev.map((l) => (l.id === id ? { ...l, link: value } : l)))
+  }
+
+  // 링크 input onBlur, 입력값 유효성 검증
+  const onLinkBlur = (id: number, value: string) => {
+    const YOUTUBE_LINK_REGEX = /^https:\/\/(www\.)?youtube\.com\/|^https:\/\/youtu\.be\//
+    const ALLOWED_CHARS_REGEX = /^[a-zA-Z0-9\-_./?=&:%]*$/
+
+    const isValidYoutubeLink = YOUTUBE_LINK_REGEX.test(value)
+    const hasOnlyAllowedChars = ALLOWED_CHARS_REGEX.test(value)
+
+    if (value && (!isValidYoutubeLink || !hasOnlyAllowedChars)) {
+      setLinkErrorMap((prev) => ({ ...prev, [id]: '유효하지 않은 YouTube URL입니다' }))
+      return
+    }
+    setLinkErrorMap((prev) => ({ ...prev, [id]: '' }))
+  }
+
+  // 링크 삭제
+  const onLinkRemoveClick = (id: number) => {
+    setLinkMap((prev) => prev.filter((link) => link.id !== id))
+    setLinkErrorMap((prev) => ({ ...prev, [id]: '' }))
+  }
+
+  // 링크 순서 정렬
+  const onReSort = (newOrder: { id: number; link: string }[]) => {
+    setLinkMap(newOrder)
+  }
+
   return (
     <>
       <Header
-        left={<SvgButton icon={LeftArrow} width={24} height={24} onClick={() => navigate(-1)} />}
+        left={
+          <HeaderLeft>
+            <SvgButton icon={LeftArrow} width={24} height={24} onClick={onHeaderPrevClick} />
+            <StepContainer>
+              {Array.from({ length: 2 }).map((_, idx) => (
+                <StepItem key={`tab-${idx}`} $isActive={currentStep === idx + 1}>
+                  {idx + 1}
+                </StepItem>
+              ))}
+            </StepContainer>
+          </HeaderLeft>
+        }
         right={
-          <Button
-            state={isValidate() ? 'primary' : 'disabled'}
-            size="S"
-            onClick={() => navigate('/mypage')}
-          >
-            저장
-          </Button>
+          <HeaderRight>
+            <Button
+              state={isValidate() ? 'primary' : 'disabled'}
+              size="S"
+              onClick={() => navigate('/mypage')}
+            >
+              {currentStep === 1 ? '다음' : '저장'}
+            </Button>
+          </HeaderRight>
         }
       />
 
       <PlaylistControlWrap>
         <MetaContainer>
-          {/* TODO: 추후 develop merge 후 수정된 CD 컴포넌트로 교체 */}
-          <CdContainer>
-            <CdBackground>
-              <Cd variant="lg" />
-            </CdBackground>
-            <CdEditBtn type="button" onClick={() => navigate('/customize')}>
-              <PencilPrimary width={16} height={16} />
-            </CdEditBtn>
-          </CdContainer>
+          <Cd variant="lg" />
           <InfoContainer>
             <GenreSelect onClick={() => setIsBottomSheetOpen(true)}>
               <span>{metaGenre?.label || '장르'}</span>
@@ -81,16 +204,18 @@ const Create = () => {
           </InfoContainer>
         </MetaContainer>
 
-        <ControlContainer>
-          <LeftActions>
-            <SvgButton icon={Trash} width={20} height={20} />
-            <SvgButton icon={Share} width={20} height={20} />
-          </LeftActions>
-          <RightAction type="button">
-            <Pin />
-            <span>대표로 지정</span>
-          </RightAction>
-        </ControlContainer>
+        {isEditMode && (
+          <ControlContainer>
+            <LeftActions>
+              <SvgButton icon={Trash} width={20} height={20} onClick={onListDeleteClick} />
+              <SvgButton icon={Share} width={20} height={20} />
+            </LeftActions>
+            <RightAction type="button" onClick={() => setIsPrimary((prev) => !prev)}>
+              {isPrimary ? <PinPrimary /> : <Pin />}
+              <span>{isPrimary ? '대표 플리' : '대표로 지정'}</span>
+            </RightAction>
+          </ControlContainer>
+        )}
       </PlaylistControlWrap>
 
       <Divider />
@@ -115,20 +240,23 @@ const Create = () => {
           </AnimatePresence>
         </PopoverContainer>
 
-        <Button size="L" state="secondary">
+        <Button size="L" state="secondary" onClick={onLinkAddClick}>
           추가하기
         </Button>
 
         <LinksContainer>
-          <LinkItem>
-            <Input
-              type="url"
-              placeholder="링크를 입력해주세요"
-              onChange={(e) => setLink(e.target.value)}
-            />
-            <SvgButton icon={Drag} width={24} height={24} />
-            <SvgButton icon={Cancel} width={24} height={24} />
-          </LinkItem>
+          <Reorder.Group axis="y" values={linkMap} onReorder={onReSort}>
+            {linkMap.map((item) => (
+              <LinkItem
+                key={item.id}
+                link={item}
+                linkError={linkErrorMap[item.id] || ''}
+                onLinkChange={onLinkChange}
+                onLinkBlur={onLinkBlur}
+                onLinkRemoveClick={onLinkRemoveClick}
+              />
+            ))}
+          </Reorder.Group>
         </LinksContainer>
       </PlaylistAddWrap>
 
@@ -147,14 +275,68 @@ const Create = () => {
           </EachGenre>
         ))}
       </BottomSheet>
+
+      <Modal
+        isOpen={modal.isOpen}
+        title={modal.title}
+        ctaType={modal.ctaType}
+        confirmText={modal.confirmText}
+        cancelText={modal.cancelText}
+        onClose={modal.onClose}
+        onConfirm={modal.onConfirm}
+        onCancel={modal.onCancel}
+      />
     </>
   )
 }
 
 export default Create
 
+const HeaderLeft = styled.div`
+  ${flexRowCenter}
+  gap: 8px;
+`
+
+const StepContainer = styled.ol`
+  position: relative;
+  ${flexRowCenter}
+  gap: 10px;
+
+  &::before {
+    content: '';
+    z-index: 0;
+    position: absolute;
+    top: 50%;
+    left: 12px;
+    width: 20px;
+    height: 1px;
+    border-top: 1px dashed ${({ theme }) => theme.COLOR['gray-500']};
+  }
+`
+
+const StepItem = styled.li<{ $isActive: boolean }>`
+  z-index: 1;
+  ${flexRowCenter}
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  color: ${({ theme, $isActive }) =>
+    $isActive ? theme.COLOR['gray-800'] : theme.COLOR['common-white']};
+  background-color: ${({ theme, $isActive }) =>
+    $isActive ? theme.COLOR['primary-soft'] : theme.COLOR['gray-500']};
+  ${({ theme }) => theme.FONT['caption1']}
+  font-weight: 500;
+`
+
+const HeaderRight = styled.div`
+  & > button {
+    ${({ theme }) => theme.FONT['caption1']}
+  }
+`
+
 const PlaylistControlWrap = styled.section`
   ${flexColCenter}
+  margin-top: 16px;
 `
 
 const MetaContainer = styled.div`
@@ -163,48 +345,9 @@ const MetaContainer = styled.div`
   grid-template-rows: 1fr;
   gap: 16px;
   align-items: center;
+  margin-bottom: 20px;
   width: 100%;
   height: 124px;
-`
-
-const CdContainer = styled.div`
-  position: relative;
-  width: 124px;
-  height: 124px;
-`
-
-const CdBackground = styled.div`
-  position: relative;
-  ${flexRowCenter}
-  margin-bottom: 10px;
-
-  border-radius: 10px;
-  background-color: ${({ theme }) => theme.COLOR['gray-600']};
-
-  & > button {
-    width: 100%;
-    height: 100%;
-  }
-
-  & > span {
-    position: absolute;
-    top: 6px;
-    left: 6px;
-  }
-`
-
-const CdEditBtn = styled.button`
-  position: absolute;
-  bottom: 8px;
-  right: 8px;
-  ${flexRowCenter}
-  padding: 5px;
-  width: 24px;
-  height: 24px;
-  border: 1px solid ${({ theme }) => theme.COLOR['gray-700']};
-  border-radius: 999px;
-  background-color: ${({ theme }) => theme.COLOR['gray-800']};
-  z-index: 10;
 `
 
 const InfoContainer = styled.div`
@@ -219,7 +362,7 @@ const ControlContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px 0;
+  margin-bottom: 20px;
   width: 100%;
 `
 
@@ -283,7 +426,7 @@ const PopoverText = styled(motion.div)`
   z-index: 10;
   position: absolute;
   top: -35px;
-  left: 105px;
+  left: 30%;
   padding: 6px 12px;
   border: 1px solid ${({ theme }) => theme.COLOR['primary-normal']};
   border-radius: 6px;
@@ -291,16 +434,15 @@ const PopoverText = styled(motion.div)`
   ${({ theme }) => theme.FONT['caption1']}
 `
 
-const LinksContainer = styled.ul`
+const LinksContainer = styled.div`
   margin-top: 12px;
-  ${flexColCenter}
-  gap: 16px;
   width: 100%;
-  height: 100%;
-`
 
-const LinkItem = styled.li`
-  ${flexRowCenter}
-  gap: 6px;
-  width: 100%;
+  & > ul,
+  & > ul > li {
+    ${flexColCenter}
+    width: 100%;
+    height: 100%;
+    gap: 16px;
+  }
 `

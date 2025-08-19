@@ -1,14 +1,14 @@
-// TODO: 장르는 아직 확정 데이터 아니여서 임시로 넣어둠, 차주 변경 예정
 export const MUSIC_GENRES = [
-  { id: 'ballad', label: '발라드' },
-  { id: 'hiphop', label: '힙합' },
-  { id: 'pop', label: '팝' },
-  { id: 'rock', label: '락' },
-  { id: 'jazz', label: '재즈' },
-  { id: 'electronic', label: '일렉트로닉' },
-  { id: 'rnb', label: 'R&B' },
-  { id: 'country', label: '컨트리' },
-  { id: 'reggae', label: '레게' },
+  { id: 'focus', label: '공부·집중' },
+  { id: 'sleep', label: '수면·빗소리' },
+  { id: 'relax', label: '릴렉스·휴식' },
+  { id: 'workout', label: '운동·집중력 업' },
+  { id: 'drive', label: '출퇴근·드라이브' },
+  { id: 'party', label: '파티·모임' },
+  { id: 'refresh', label: '기분전환' },
+  { id: 'romance', label: '로맨스' },
+  { id: 'kpop', label: '케이팝' },
+  { id: 'sad', label: '슬픔·위로' },
 ] as const
 
 // 타입 추출

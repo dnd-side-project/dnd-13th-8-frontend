@@ -28,10 +28,10 @@ export const theme = {
       #ffffff 0deg,
       #c2fff4 68deg,
       #f8fccc 100deg,
-      #c5f3eb 180deg,
-      #ffe2fe 254deg,
-      #c0f9ef 275deg,
-      #fffbe9 300deg,
+      #c5f3eb 170deg,
+      #ffe2fe 250deg,
+      #c0f9ef 280deg,
+      #fffbe9 340deg,
       #ffffff 360deg
     )`,
     gradient1: `linear-gradient(

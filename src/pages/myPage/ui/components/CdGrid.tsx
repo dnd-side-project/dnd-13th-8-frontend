@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom'
 
 import styled from 'styled-components'
 
+import { flexColCenter } from '@shared/styles/mixins'
 import { SvgButton, Cd, Badge } from '@shared/ui'
 
 import { Plus } from '@/assets/icons'
@@ -50,11 +51,13 @@ const CdGrid = ({
 
 export default CdGrid
 
+const CD_CONTAINER_WIDTH = 104
+
 const CdGridWrap = styled.ul`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(100px, auto));
-  gap: 24px 12px;
-  justify-content: space-between;
+  gap: 24px 11px;
+  justify-content: space-around;
   margin: 14px auto;
   width: 100%;
 `
@@ -67,8 +70,8 @@ const CdAddContainer = styled.li`
   gap: 10px;
 
   & > button {
-    width: 104px;
-    height: 104px;
+    width: ${CD_CONTAINER_WIDTH}px;
+    height: ${CD_CONTAINER_WIDTH}px;
     border-radius: 10px;
     background-color: ${({ theme }) => theme.COLOR['gray-600']};
   }
@@ -82,6 +85,7 @@ const CdAddLabel = styled.p`
 
 const CdContainer = styled.li`
   position: relative;
+  ${flexColCenter}
 
   & > button {
     width: 100%;
@@ -99,7 +103,7 @@ const CdContainer = styled.li`
 const CdTitle = styled.span`
   display: -webkit-box;
   margin-top: 10px;
-  width: 100%;
+  width: ${CD_CONTAINER_WIDTH}px;
   max-height: 40px;
   color: ${({ theme }) => theme.COLOR['gray-50']};
   ${({ theme }) => theme.FONT['body2-normal']}
@@ -112,7 +116,7 @@ const CdTitle = styled.span`
 const CdCreator = styled.span`
   display: -webkit-box;
   margin-top: 4px;
-  width: 100%;
+  width: ${CD_CONTAINER_WIDTH}px;
   max-height: 32px;
   color: ${({ theme }) => theme.COLOR['gray-300']};
   ${({ theme }) => theme.FONT['caption1']}
