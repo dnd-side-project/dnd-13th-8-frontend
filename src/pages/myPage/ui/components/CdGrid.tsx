@@ -23,29 +23,22 @@ const CdGrid = ({
   const navigate = useNavigate()
 
   return (
-    <>
-      <CdGridWrap>
-        <CdAddContainer>
-          <SvgButton
-            icon={Plus}
-            width={40}
-            height={40}
-            onClick={() => navigate('/mypage/create')}
-          />
-          <CdAddLabel>추가하기</CdAddLabel>
-        </CdAddContainer>
-        {currentPlaylist?.map((item) => (
-          <CdContainer key={item.id}>
-            <Cd variant="md" />
-            {currentTab === 'album' && item?.isPrimary && <Badge size="small" text="대표" />}
-            <p>
-              <CdTitle>{item.title}</CdTitle>
-              <CdCreator>{item.username}</CdCreator>
-            </p>
-          </CdContainer>
-        ))}
-      </CdGridWrap>
-    </>
+    <CdGridWrap>
+      <CdAddContainer>
+        <SvgButton icon={Plus} width={40} height={40} onClick={() => navigate('/mypage/create')} />
+        <CdAddLabel>추가하기</CdAddLabel>
+      </CdAddContainer>
+      {currentPlaylist?.map((item) => (
+        <CdContainer key={item.id}>
+          <Cd variant="md" />
+          {currentTab === 'album' && item?.isPrimary && <Badge size="small" text="대표" />}
+          <p>
+            <CdTitle>{item.title}</CdTitle>
+            <CdCreator>{item.username}</CdCreator>
+          </p>
+        </CdContainer>
+      ))}
+    </CdGridWrap>
   )
 }
 

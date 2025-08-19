@@ -74,7 +74,7 @@ const Input = ({
 
 export default Input
 
-export const InputWrap = styled.div`
+const InputWrap = styled.div`
   display: flex;
   flex-direction: column;
   gap: 4px;
