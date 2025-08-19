@@ -1,6 +1,7 @@
 export interface TrackData {
   title: string
   duration: number // 초 단위
+  link: string
 }
 
 export interface PlaylistData {

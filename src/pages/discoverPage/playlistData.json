@@ -33,9 +33,21 @@
     "id": 3233,
     "title": "플레이리스트 B",
     "tracks": [
-      { "title": "첫 번째 곡", "duration": 150 },
-      { "title": "두 번째 곡", "duration": 200 },
-      { "title": "세 번째 곡", "duration": 120 }
+      {
+        "title": "첫 번째 곡",
+        "duration": 150,
+        "link": "https://www.youtube.com/watch?v=ia2Ph61bYzc&list=RDia2Ph61bYzc&start_radio=1"
+      },
+      {
+        "title": "두 번째 곡",
+        "duration": 200,
+        "link": "https://www.youtube.com/watch?v=ia2Ph61bYzc&list=RDia2Ph61bYzc&start_radio=1"
+      },
+      {
+        "title": "세 번째 곡",
+        "duration": 120,
+        "link": "https://www.youtube.com/watch?v=ia2Ph61bYzc&list=RDia2Ph61bYzc&start_radio=1"
+      }
     ],
     "listeners": 123,
     "isOnAir": false,
@@ -46,8 +58,16 @@
     "id": 3234,
     "title": "플레이리스트 C",
     "tracks": [
-      { "title": "곡 1", "duration": 90 },
-      { "title": "곡 2", "duration": 180 }
+      {
+        "title": "곡 1",
+        "duration": 90,
+        "link": "https://www.youtube.com/watch?v=ia2Ph61bYzc&list=RDia2Ph61bYzc&start_radio=1"
+      },
+      {
+        "title": "곡 2",
+        "duration": 180,
+        "link": "https://www.youtube.com/watch?v=ia2Ph61bYzc&list=RDia2Ph61bYzc&start_radio=1"
+      }
     ],
     "listeners": 999,
     "isOnAir": true,

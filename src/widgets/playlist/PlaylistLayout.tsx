@@ -8,13 +8,14 @@ import CommentMockData from '@/pages/discoverPage/commentData.json'
 import { flexColCenter } from '@/shared/styles/mixins'
 import { Button, Cd, Header, LiveInfo } from '@/shared/ui'
 import { ChatBottomSheet, ChatInput } from '@/widgets/chat'
-import { ActionBar, ControlBar, ProgressBar } from '@/widgets/playlist'
+import { ActionBar, BackgroundPlayer, ControlBar, ProgressBar } from '@/widgets/playlist'
 
 interface PlaylistLayoutProps {
   playlistData: PlaylistData
   isOwner?: boolean
   listenerNum: number
   isOnAir: boolean
+  isActive: boolean
 }
 
 const PlaylistLayout = ({
@@ -22,12 +23,22 @@ const PlaylistLayout = ({
   isOwner = false,
   listenerNum,
   isOnAir,
+  isActive,
 }: PlaylistLayoutProps) => {
   const navigate = useNavigate()
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false)
+  // const trackLengths = playlistData.tracks.map((t) => t.duration)
+  // const totalTime = trackLengths.reduce((sum, t) => sum + t, 0)
 
   const [currentTrackIndex] = useState(0)
   const [currentTime] = useState(0)
+  // const [isPlaying, setIsPlaying] = useState(false)
+
+  // const togglePlayPause = () => setIsPlaying((prev) => !prev)
+  // const playPrevTrack = () => setCurrentTrackIndex((i) => Math.max(i - 1, 0))
+  // const playNextTrack = () =>
+  //   setCurrentTrackIndex((i) => Math.min(i + 1, playlistData.tracks.length - 1))
+  // const handleSeek = (time: number) => setCurrentTime(time)
 
   return (
     <div>
@@ -50,6 +61,12 @@ const PlaylistLayout = ({
         )}
       </Container>
       <Wrapper>
+        {isActive && (
+          <BackgroundPlayer
+            playlistId={playlistData.id}
+            link={playlistData.tracks[currentTrackIndex].link}
+          />
+        )}
         <Cd variant="xxl" bgColor="none" />
         <ActionBar playlistId={Number(playlistData.id)} isLiked={playlistData.liked} />
       </Wrapper>
