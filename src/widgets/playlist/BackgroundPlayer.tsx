@@ -23,6 +23,7 @@ export interface BackgroundPlayerHandle {
   nextTrack: () => void
   prevTrack: () => void
   loadTracks: (tracks: Track[], playlistId: number) => void
+  getCurrentTime: () => number
 }
 
 const BackgroundPlayer = forwardRef<BackgroundPlayerHandle, BackgroundPlayerProps>(
@@ -95,6 +96,8 @@ const BackgroundPlayer = forwardRef<BackgroundPlayerHandle, BackgroundPlayerProp
       playerRef.current?.loadVideoById(getVideoId(tracks[0].link))
     }
 
+    const getCurrentTime = () => playerRef.current?.getCurrentTime() ?? 0
+
     // 부모에서 사용할 수 있게 ref 전달
     useImperativeHandle(ref, () => ({
       play,
@@ -104,6 +107,7 @@ const BackgroundPlayer = forwardRef<BackgroundPlayerHandle, BackgroundPlayerProp
       nextTrack,
       prevTrack,
       loadTracks,
+      getCurrentTime,
     }))
 
     //  isActive에 따라 재생/정지

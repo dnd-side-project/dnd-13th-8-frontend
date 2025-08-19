@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import styled from 'styled-components'
@@ -32,10 +32,21 @@ const PlaylistLayout = ({
 }: PlaylistLayoutProps) => {
   const navigate = useNavigate()
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false)
-  const [currentTime] = useState(0)
+  const [currentTime, setCurrentTime] = useState(0)
 
   const trackLengths = playlistData.tracks.map((t) => t.duration)
   const totalTime = trackLengths.reduce((sum, t) => sum + t, 0)
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (playerRef?.current) {
+        const time = Math.floor(playerRef.current.getCurrentTime())
+        setCurrentTime(time)
+      }
+    }, 1000)
+
+    return () => clearInterval(interval)
+  }, [playerRef])
 
   return (
     <div>
