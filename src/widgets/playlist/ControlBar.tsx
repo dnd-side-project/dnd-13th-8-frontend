@@ -16,6 +16,10 @@ const ControlBar = ({ playerRef, isPlaying, onTogglePlay }: ControlBarProps) => 
   const handlePrev = () => playerRef?.current?.prevTrack()
   const handleNext = () => playerRef?.current?.nextTrack()
 
+  const handleIconToggle = () => {
+    onTogglePlay()
+  }
+
   return (
     <Wrapper>
       <SvgButton icon={Prev} width={32} height={32} onClick={handlePrev} />
@@ -23,7 +27,7 @@ const ControlBar = ({ playerRef, isPlaying, onTogglePlay }: ControlBarProps) => 
         icon={isPlaying ? Pause : Start}
         width={32}
         height={32}
-        onClick={onTogglePlay}
+        onClick={handleIconToggle}
         fill={theme.COLOR['common-white']}
       />
       <SvgButton icon={Next} width={32} height={32} onClick={handleNext} />

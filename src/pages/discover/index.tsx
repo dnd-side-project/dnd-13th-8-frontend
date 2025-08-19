@@ -9,17 +9,29 @@ import type { BackgroundPlayerHandle } from '@/widgets/playlist/BackgroundPlayer
 
 import PlaylistData from './playlistData.json'
 
-
 const DiscoverPage = () => {
   const { id } = useParams()
   const initialIndex = PlaylistData.findIndex((p) => p.id === Number(id))
   const [activeIndex, setActiveIndex] = useState(initialIndex >= 0 ? initialIndex : 0)
   const playerRef = useRef<BackgroundPlayerHandle>(null)
 
+  const [isPlaying, setIsPlaying] = useState(false)
+
+  const handlePlayerStateChange = (state: YT.PlayerState) => {
+    if (state === window.YT.PlayerState.PLAYING) {
+      setIsPlaying(true)
+    } else {
+      setIsPlaying(false)
+    }
+  }
+
+  const onTogglePlay = () => {
+    playerRef?.current?.togglePlayPause()
+  }
+
   useEffect(() => {
     // 슬라이드 변경 시 BackgroundPlayer에 트랙 로드
     const currentData = PlaylistData[activeIndex]
-
     playerRef.current?.loadTracks(currentData.tracks, currentData.id)
   }, [activeIndex])
 
@@ -30,15 +42,18 @@ const DiscoverPage = () => {
         tracks={PlaylistData[activeIndex].tracks}
         playlistId={PlaylistData[activeIndex].id}
         isActive
+        onStateChange={handlePlayerStateChange}
       />
       <SwipeCarousel data={PlaylistData} onSelectIndexChange={setActiveIndex}>
-        {PlaylistData.map((data) => (
+        {PlaylistData.map((data, index) => (
           <Slide key={data.id}>
             <PlaylistLayout
               playlistData={data}
               listenerNum={data.listeners}
               isOnAir={data.isOnAir}
               playerRef={playerRef}
+              isPlaying={index === activeIndex ? isPlaying : false}
+              onTogglePlay={onTogglePlay}
             />
           </Slide>
         ))}

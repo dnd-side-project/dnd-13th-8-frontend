@@ -12,6 +12,7 @@ interface BackgroundPlayerProps {
   tracks: Track[]
   playlistId: number
   isActive: boolean
+  onStateChange: (state: YT.PlayerState) => void
 }
 
 export interface BackgroundPlayerHandle {
@@ -25,7 +26,7 @@ export interface BackgroundPlayerHandle {
 }
 
 const BackgroundPlayer = forwardRef<BackgroundPlayerHandle, BackgroundPlayerProps>(
-  ({ tracks, playlistId, isActive }, ref) => {
+  ({ tracks, playlistId, isActive, onStateChange }, ref) => {
     const playerRef = useRef<YT.Player | null>(null)
     const currentTrackIndexRef = useRef(0)
     const currentTracksRef = useRef(tracks)
@@ -50,6 +51,8 @@ const BackgroundPlayer = forwardRef<BackgroundPlayerHandle, BackgroundPlayerProp
           playerVars: { autoplay: 1, mute: 0 },
           events: {
             onStateChange: (event: YT.OnStateChangeEvent) => {
+              // 상태 변경 시 부모 컴포넌트의 콜백 함수 호출
+              onStateChange(event.data)
               if (event.data === window.YT.PlayerState.ENDED) {
                 nextTrack()
               }
@@ -57,9 +60,9 @@ const BackgroundPlayer = forwardRef<BackgroundPlayerHandle, BackgroundPlayerProp
           },
         })
       }
-    }, [])
+    }, [onStateChange])
 
-    // 플레이어 컨트롤 함수
+    // 플레이어 컨트롤 함수들
     const play = () => playerRef.current?.playVideo()
     const pause = () => playerRef.current?.pauseVideo()
     const togglePlayPause = () => {

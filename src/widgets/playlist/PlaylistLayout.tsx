@@ -17,6 +17,8 @@ interface PlaylistLayoutProps {
   listenerNum: number
   isOnAir: boolean
   playerRef?: React.RefObject<BackgroundPlayerHandle | null>
+  isPlaying: boolean
+  onTogglePlay: () => void
 }
 
 const PlaylistLayout = ({
@@ -25,18 +27,14 @@ const PlaylistLayout = ({
   listenerNum,
   isOnAir,
   playerRef,
+  isPlaying,
+  onTogglePlay,
 }: PlaylistLayoutProps) => {
   const navigate = useNavigate()
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false)
 
   const [currentTrackIndex] = useState(0)
   const [currentTime] = useState(0)
-  const [isPlaying, setIsPlaying] = useState(false)
-
-  const handleTogglePlay = () => {
-    playerRef?.current?.togglePlayPause()
-    setIsPlaying((prev) => !prev)
-  }
 
   return (
     <div>
@@ -68,7 +66,7 @@ const PlaylistLayout = ({
         trackLengths={playlistData.tracks.map((t) => t.duration)}
       />
 
-      <ControlBar playerRef={playerRef} isPlaying={isPlaying} onTogglePlay={handleTogglePlay} />
+      <ControlBar playerRef={playerRef} isPlaying={isPlaying} onTogglePlay={onTogglePlay} />
 
       <ChatInput onFocus={() => setIsBottomSheetOpen(true)} />
 
