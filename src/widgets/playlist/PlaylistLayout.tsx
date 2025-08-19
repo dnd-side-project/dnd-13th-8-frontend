@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
 import type { PlaylistData } from '@/entities/playlist/model/types'
-import CommentMockData from '@/pages/discoverPage/commentData.json'
+import CommentMockData from '@/pages/discover/commentData.json'
 import { flexColCenter } from '@/shared/styles/mixins'
 import { Button, Cd, Header, LiveInfo } from '@/shared/ui'
 import { ChatBottomSheet, ChatInput } from '@/widgets/chat'

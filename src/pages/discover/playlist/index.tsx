@@ -6,9 +6,6 @@ import { Cancel } from '@/assets/icons'
 import { flexColCenter } from '@/shared/styles/mixins'
 import { Header, SvgButton } from '@/shared/ui'
 
-
-
-
 const PlaylistInfoPage = () => {
   const navigate = useNavigate()
   return (

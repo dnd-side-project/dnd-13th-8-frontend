@@ -6,7 +6,7 @@ import styled, { useTheme } from 'styled-components'
 import { NAV_ITEMS } from '@/shared/config/navItems'
 import SvgButton from '@/shared/ui/SvgButton'
 
-import PlaylistData from '../../pages/discoverPage/playlistData.json'
+import PlaylistData from '../../pages/discover/playlistData.json'
 
 export const NAV_HEIGHT = 64
 
