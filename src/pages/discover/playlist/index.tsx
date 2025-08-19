@@ -1,20 +1,34 @@
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 import styled from 'styled-components'
 
 import { Cancel } from '@/assets/icons'
+import PlaylistData from '@/pages/discover/playlistData.json'
 import { flexColCenter } from '@/shared/styles/mixins'
-import { Header, SvgButton } from '@/shared/ui'
+import { Header, Link, SvgButton } from '@/shared/ui'
 
 const PlaylistInfoPage = () => {
   const navigate = useNavigate()
+
+  const { id } = useParams<{ id: string }>()
+
+  // TODO : 실제 서버 요청으로 변경 (현재는 로컬 JSON으로 테스트용)
+  const playlist = PlaylistData.find((p) => p.id === Number(id))
+
   return (
     <Wrapper>
       <Header
         left={<span>플레이리스트</span>}
         right={<SvgButton icon={Cancel} onClick={() => navigate(-1)} />}
       />
-      <Text>플레이리스트 상세 정보 출력</Text>
+      <Content>
+        <TrackInfo>
+          {playlist &&
+            playlist.tracks.map((track, index) => (
+              <Link key={index} data={track} variant="large" />
+            ))}
+        </TrackInfo>
+      </Content>
     </Wrapper>
   )
 }
@@ -25,7 +39,11 @@ const Wrapper = styled.div`
   ${flexColCenter}
 `
 
-const Text = styled.p`
-  padding: 100px 0;
+const Content = styled.section`
   ${({ theme }) => theme.FONT['body2-normal']};
+`
+const TrackInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 `
