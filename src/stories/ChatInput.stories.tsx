@@ -7,11 +7,10 @@ const meta: Meta<typeof ChatInput> = {
   component: ChatInput,
   tags: ['autodocs'],
   argTypes: {
-    openBottomSheetOnFocus: {
-      control: 'boolean',
-      description: '포커스 시 바텀시트 열기 여부',
+    onFocus: {
+      action: 'focused',
+      description: '채팅 입력창 포커스 시 호출',
     },
-    onSend: { action: 'messageSent', description: '메시지 전송 시 호출' },
   },
 }
 
@@ -19,15 +18,9 @@ export default meta
 type Story = StoryObj<typeof ChatInput>
 
 export const Default: Story = {
-  render: (args) => {
-    const handleSend = (msg: string) => {
-      alert(`전송 메시지 : ${msg}`)
-    }
-
-    return (
-      <div style={{ width: '335px' }}>
-        <ChatInput {...args} onSend={handleSend} />
-      </div>
-    )
-  },
+  render: (args) => (
+    <div style={{ width: '335px' }}>
+      <ChatInput {...args} />
+    </div>
+  ),
 }
