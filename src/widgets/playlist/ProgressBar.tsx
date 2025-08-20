@@ -7,6 +7,8 @@ interface ProgressBarProps {
   currentTime: number
   duration: number
   trackLengths: number[]
+  onClick?: (e: React.MouseEvent<HTMLDivElement>) => void
+  onClickMarker?: (time: number) => void
 }
 
 const formatTime = (time: number) => {
@@ -15,7 +17,13 @@ const formatTime = (time: number) => {
     .join(':')
 }
 
-const ProgressBar = ({ currentTime, duration, trackLengths }: ProgressBarProps) => {
+const ProgressBar = ({
+  currentTime,
+  duration,
+  trackLengths,
+  onClick,
+  onClickMarker,
+}: ProgressBarProps) => {
   const progressPercent = duration > 0 ? (currentTime / duration) * 100 : 0
 
   let sum = 0
@@ -28,8 +36,10 @@ const ProgressBar = ({ currentTime, duration, trackLengths }: ProgressBarProps) 
     .slice(1) // 첫 번째 값 제외
     .map((t) => (t / duration) * 100) // 퍼센트 변환
 
-  const handleClickMarker = () => {
-    // TODO: 해당 곡의 시작 지점부터 재생되도록
+  const handleClickMarker = (idx: number) => {
+    if (!onClickMarker) return
+    const time = trackLengths.slice(0, idx + 1).reduce((acc, cur) => acc + cur, 0)
+    onClickMarker(time)
   }
 
   return (
@@ -37,12 +47,12 @@ const ProgressBar = ({ currentTime, duration, trackLengths }: ProgressBarProps) 
       <Markers>
         {marks.map((percent, idx) => (
           <MarkItem key={idx} $percent={percent}>
-            <SvgButton icon={Mark} width={12} height={12} onClick={handleClickMarker} />
+            <SvgButton icon={Mark} width={12} height={12} onClick={() => handleClickMarker(idx)} />
           </MarkItem>
         ))}
       </Markers>
 
-      <BarContainer>
+      <BarContainer onClick={onClick}>
         <Progress $progress={progressPercent} />
       </BarContainer>
 

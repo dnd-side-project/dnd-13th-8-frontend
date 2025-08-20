@@ -1,15 +1,11 @@
 import styled from 'styled-components'
 
 import { Gallery } from '@/assets/icons'
+import type { TrackData } from '@/entities/playlist/model/types'
 
 interface LinkProps {
   variant?: 'large' | 'small'
-  data: Info
-}
-
-interface Info {
-  thumbnail?: string | null
-  title: string
+  data: TrackData
 }
 
 const Link = ({ variant = 'large', data }: LinkProps) => {
@@ -20,7 +16,9 @@ const Link = ({ variant = 'large', data }: LinkProps) => {
           <Gallery width={variant === 'large' ? 24 : 20} height={variant === 'large' ? 24 : 20} />
         )}
       </Thumbnail>
-      <Title $variant={variant}>{data.title}</Title>
+      <TextBox>
+        <Title $variant={variant}>{data.title}</Title>
+      </TextBox>
     </LinkBox>
   )
 }
@@ -63,4 +61,9 @@ const Title = styled.p<{ $variant?: 'large' | 'small' }>`
   color: ${({ theme }) => theme.COLOR['gray-50']};
   ${({ $variant, theme }) =>
     $variant === 'large' ? theme.FONT['body2-normal'] : theme.FONT.caption1};
+`
+
+const TextBox = styled.div`
+  display: flex;
+  align-items: center;
 `

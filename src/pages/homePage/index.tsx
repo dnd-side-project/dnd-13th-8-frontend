@@ -161,27 +161,27 @@ const thirdSectionData = [
     title: 'Chill Vibes',
     username: 'deulak',
     songs: [
-      { thumbnail: null, title: 'Sunset Lover' },
-      { thumbnail: null, title: 'Ocean Eyes' },
-      { thumbnail: null, title: 'Night Drive' },
+      { thumbnail: '', title: 'Sunset Lover', duration: 180, link: '' },
+      { thumbnail: '', title: 'Ocean Eyes', duration: 180, link: '' },
+      { thumbnail: '', title: 'Night Drive', duration: 180, link: '' },
     ],
   },
   {
     title: 'Workout Mix',
     username: 'deulak',
     songs: [
-      { thumbnail: null, title: 'Stronger' },
-      { thumbnail: null, title: 'Eye of the Tiger' },
-      { thumbnail: null, title: 'Power' },
+      { thumbnail: '', title: 'Sunset Lover', duration: 180, link: '' },
+      { thumbnail: '', title: 'Ocean Eyes', duration: 180, link: '' },
+      { thumbnail: '', title: 'Night Drive', duration: 180, link: '' },
     ],
   },
   {
     title: 'Top Hits',
     username: 'deulak',
     songs: [
-      { thumbnail: null, title: 'Levitating' },
-      { thumbnail: null, title: 'Blinding Lights' },
-      { thumbnail: null, title: 'Peaches' },
+      { thumbnail: '', title: 'Sunset Lover', duration: 180, link: '' },
+      { thumbnail: '', title: 'Ocean Eyes', duration: 180, link: '' },
+      { thumbnail: '', title: 'Night Drive', duration: 180, link: '' },
     ],
   },
 ]

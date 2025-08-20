@@ -9,9 +9,10 @@ import type { PlaylistData } from '@/entities/playlist/model/types'
 interface SwipeCarouselProps {
   children: React.ReactNode
   data: PlaylistData[]
+  onSelectIndexChange?: (activeIndex: number) => void
 }
 
-const SwipeCarousel = ({ children, data }: SwipeCarouselProps) => {
+const SwipeCarousel = ({ children, data, onSelectIndexChange }: SwipeCarouselProps) => {
   const navigate = useNavigate()
   const { id: playlistId } = useParams()
 
@@ -31,6 +32,7 @@ const SwipeCarousel = ({ children, data }: SwipeCarouselProps) => {
     if (!emblaApi || data.length === 0) return
 
     const selectedIndex = emblaApi.selectedScrollSnap()
+    onSelectIndexChange?.(selectedIndex) // 부모에 알림
     const newId = data[selectedIndex]?.id
 
     if (newId != null && playlistId !== String(newId)) {

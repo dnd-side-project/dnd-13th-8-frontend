@@ -19,13 +19,17 @@ type Story = StoryObj<typeof PlaylistWithSong>
 const defaultSongs = [
   {
     title: '플레이리스트 제목이 위치합니다. 길어질 경우 이렇게 말줄임표로 표시됩니다.',
-    thumbnail: null,
+    thumbnail: '',
+    duration: 180,
+    link: '',
   },
   {
     title: '플레이리스트 제목이 위치합니다. 길어질 경우 이렇게 말줄임표로 표시됩니다.',
-    thumbnail: null,
+    thumbnail: '',
+    duration: 180,
+    link: '',
   },
-  { title: '아래에서 썸네일을 적용해보세요 !', thumbnail: null },
+  { title: '아래에서 썸네일을 적용해보세요 !', thumbnail: '', duration: 180, link: '' },
 ]
 
 export const Interactive: Story = {

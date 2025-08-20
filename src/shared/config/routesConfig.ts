@@ -11,8 +11,8 @@ const Privacy = lazy(() => import('@pages/myPage/ui/privacy'))
 const Unregister = lazy(() => import('@/pages/myPage/ui/unregister'))
 const SearchPage = lazy(() => import('@/pages/searchPage'))
 const SearchResult = lazy(() => import('@/pages/searchPage/SearchResultPage'))
-const DiscoverPage = lazy(() => import('@/pages/discoverPage'))
-const PlaylistInfoPage = lazy(() => import('@/pages/discoverPage/PlaylistInfoPage'))
+const DiscoverPage = lazy(() => import('@/pages/discover'))
+const PlaylistInfoPage = lazy(() => import('@/pages/discover/playlist'))
 
 export interface RouteConfig {
   path: string

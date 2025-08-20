@@ -6,7 +6,7 @@ import styled, { useTheme } from 'styled-components'
 import { NAV_ITEMS } from '@/shared/config/navItems'
 import SvgButton from '@/shared/ui/SvgButton'
 
-import mockPlaylists from '../../pages/discoverPage/mockData.json'
+import PlaylistData from '../../pages/discover/playlistData.json'
 
 export const NAV_HEIGHT = 64
 
@@ -18,7 +18,7 @@ const NavBar = () => {
   // 컴포넌트 마운트 시 첫 번째 항목의 id로 링크 설정
   useEffect(() => {
     // TODO : API 호출 로직으로 교체 예정
-    const firstPlaylistId = mockPlaylists[0]?.id
+    const firstPlaylistId = PlaylistData[0]?.id
 
     if (firstPlaylistId) {
       setDiscoverLink(`/discover/${firstPlaylistId}`)

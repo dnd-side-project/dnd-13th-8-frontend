@@ -1,0 +1,1 @@
+export { getVideoId } from './getVideoId'
