@@ -2,9 +2,8 @@ import { lazy } from 'react'
 import type { ComponentType, LazyExoticComponent } from 'react'
 
 const HomePage = lazy(() => import('@pages/homePage'))
-const Customize = lazy(() => import('@pages/customize'))
 const MyPage = lazy(() => import('@pages/myPage/ui'))
-const Create = lazy(() => import('@pages/myPage/ui/create'))
+const Customize = lazy(() => import('@pages/myPage/ui/customize'))
 const Setting = lazy(() => import('@pages/myPage/ui/setting'))
 const Terms = lazy(() => import('@pages/myPage/ui/terms'))
 const Privacy = lazy(() => import('@pages/myPage/ui/privacy'))
@@ -35,17 +34,13 @@ export const routesConfig: RouteConfig[] = [
   { path: '/discover/:id/playlist', component: PlaylistInfoPage },
 
   // 나의 CD
-  { path: '/mycd', component: DiscoverPage }, // TODO: 추추 험포넌트 수정 예정
+  { path: '/mycd', component: DiscoverPage }, // TODO: 추추 컴포넌트 수정 예정
   // { path: '/mycd/playlist', component: () => <></> },
-
-  // 커스터마이징
-  { path: '/customize', component: Customize, hideNav: true },
 
   // 마이페이지 (private)
   { path: '/mypage', component: MyPage, isPrivate: true },
-  // { path: '/mypage/:albumId/playlist', component: () => <></>, isPrivate: true },
-  // { path: '/mypage/:albumId/playlist/edit', component: () => <></>, isPrivate: true },
-  { path: '/mypage/create', component: Create, isPrivate: true },
+  // { path: '/mypage/:id/playlist', component: () => <></>, isPrivate: true },
+  { path: '/mypage/customize', component: Customize, isPrivate: true, hideNav: true },
   {
     path: '/mypage/setting',
     component: Setting,

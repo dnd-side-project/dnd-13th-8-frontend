@@ -25,7 +25,12 @@ const CdGrid = ({
   return (
     <CdGridWrap>
       <CdAddContainer>
-        <SvgButton icon={Plus} width={40} height={40} onClick={() => navigate('/mypage/create')} />
+        <SvgButton
+          icon={Plus}
+          width={40}
+          height={40}
+          onClick={() => navigate('/mypage/customize')}
+        />
         <CdAddLabel>추가하기</CdAddLabel>
       </CdAddContainer>
       {currentPlaylist?.map((item) => (
