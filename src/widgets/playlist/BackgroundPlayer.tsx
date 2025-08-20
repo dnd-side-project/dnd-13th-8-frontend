@@ -92,21 +92,19 @@ const BackgroundPlayer = forwardRef<BackgroundPlayerHandle, BackgroundPlayerProp
     }
 
     const seekTo = (seconds: number) => playerRef.current?.seekTo(seconds, true)
-    const nextTrack = () => {
-      currentTrackIndexRef.current =
-        (currentTrackIndexRef.current + 1) % currentTracksRef.current.length
-      playerRef.current?.loadVideoById(
-        getVideoId(currentTracksRef.current[currentTrackIndexRef.current].link)
-      )
+
+    const changeTrack = (step: number) => {
+      const length = currentTracksRef.current.length
+      currentTrackIndexRef.current = (currentTrackIndexRef.current + step + length) % length // 음수 대비
+      const idx = currentTrackIndexRef.current
+      accTimeRef.current = trackStartTimesRef.current[idx] ?? 0
+
+      const videoId = getVideoId(currentTracksRef.current[idx].link)
+      playerRef.current?.loadVideoById({ videoId, startSeconds: 0 })
     }
-    const prevTrack = () => {
-      currentTrackIndexRef.current =
-        (currentTrackIndexRef.current - 1 + currentTracksRef.current.length) %
-        currentTracksRef.current.length
-      playerRef.current?.loadVideoById(
-        getVideoId(currentTracksRef.current[currentTrackIndexRef.current].link)
-      )
-    }
+
+    const nextTrack = () => changeTrack(1)
+    const prevTrack = () => changeTrack(-1)
 
     const loadTracks = (tracks: Track[], playlistId: number) => {
       currentTracksRef.current = tracks
