@@ -66,10 +66,6 @@ const Create = () => {
     setLinkMap([{ id: Date.now(), link: '' }])
   }, [])
 
-  useEffect(() => {
-    console.log('>>>> linkMap', linkMap)
-  }, [linkMap])
-
   // 다음 버튼 검증
   const isValidate = () => {
     const hasMetaEmpty = !metaGenre?.id || !metaTitle
@@ -98,7 +94,7 @@ const Create = () => {
     setModal((prev) => ({
       ...prev,
       isOpen: true,
-      title: '플레이리스트를 삭제하시겠어요?',
+      title: '이 플레이리스트를 삭제할까요?',
       ctaType: 'double',
       confirmText: '삭제하기',
       cancelText: '취소',
