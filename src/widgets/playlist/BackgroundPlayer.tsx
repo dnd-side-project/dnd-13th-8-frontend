@@ -131,9 +131,12 @@ const BackgroundPlayer = forwardRef<BackgroundPlayerHandle, BackgroundPlayerProp
       }
       const timeInTrack = accSeconds - startTimes[trackIndex]
       currentTrackIndexRef.current = trackIndex
-      playerRef.current?.loadVideoById(getVideoId(currentTracksRef.current[trackIndex].link))
-      playerRef.current?.seekTo(timeInTrack, true)
       accTimeRef.current = startTimes[trackIndex] // 누적 시간 갱신
+
+      playerRef.current?.loadVideoById({
+        videoId: getVideoId(currentTracksRef.current[trackIndex].link),
+        startSeconds: timeInTrack, // 시작 위치 지정
+      })
     }
 
     // 부모에서 사용할 수 있게 ref 전달
