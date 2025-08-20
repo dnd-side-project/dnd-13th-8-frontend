@@ -2,10 +2,10 @@ import { useNavigate } from 'react-router-dom'
 
 import styled from 'styled-components'
 
-import { TermsContainer, TermsItems } from '@pages/myPage/styles/common.styled'
 import { SubHeader } from '@pages/myPage/ui/components'
 
 import { flexRowCenter } from '@/shared/styles/mixins'
+import { TermsContainer, TermsItems } from '@/shared/styles/terms'
 import { Button } from '@/shared/ui'
 
 const Unregister = () => {

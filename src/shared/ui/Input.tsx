@@ -48,7 +48,7 @@ const Input = ({
   onKeyDown,
 }: InputProps) => {
   return (
-    <>
+    <InputWrap>
       <InputContainer $width={width ?? '100%'} $error={error} $iconPosition={iconPosition}>
         {icon && onClickIcon ? (
           <SvgButton icon={icon} onClick={onClickIcon} />
@@ -68,11 +68,18 @@ const Input = ({
         />
       </InputContainer>
       {error && errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
-    </>
+    </InputWrap>
   )
 }
 
 export default Input
+
+const InputWrap = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+`
 
 const InputContainer = styled.div<{
   $width: string

@@ -6,6 +6,17 @@ import Overlay from '@/shared/ui/Overlay'
 
 type CtaType = 'single' | 'double'
 
+export interface ModalProps {
+  isOpen: boolean
+  title: string
+  ctaType: CtaType
+  confirmText?: string
+  cancelText?: string
+  onClose: () => void
+  onConfirm: () => void
+  onCancel?: () => void
+}
+
 const Modal = ({
   isOpen,
   title,
@@ -15,16 +26,7 @@ const Modal = ({
   onClose,
   onConfirm,
   onCancel,
-}: {
-  isOpen: boolean
-  title: string
-  ctaType: CtaType
-  confirmText?: string
-  cancelText?: string
-  onClose: () => void
-  onConfirm: () => void
-  onCancel?: () => void
-}) => {
+}: ModalProps) => {
   return (
     <Overlay isOpen={isOpen} onClose={onClose}>
       <ModalContainer>

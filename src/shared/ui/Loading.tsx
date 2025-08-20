@@ -2,7 +2,7 @@ import Lottie from 'lottie-react'
 import styled from 'styled-components'
 
 import { LoadingLottie } from '@/assets/lottie'
-import { useDevice } from '@/shared/hooks/useDevice'
+import { useDevice } from '@/shared/lib/useDevice'
 import { flexRowCenter } from '@/shared/styles/mixins'
 import Overlay from '@/shared/ui/Overlay'
 
@@ -12,7 +12,7 @@ interface LoadingProps {
   height?: string
 }
 
-const Loading = ({ isLoading, width, height = 'auto' }: LoadingProps) => {
+const Loading = ({ isLoading, width = '210px', height = 'auto' }: LoadingProps) => {
   const deviceType = useDevice()
 
   const maxWidth = deviceType === 'mobile' ? 'clamp(320px, 100dvw, 430px)' : '375px'
@@ -34,7 +34,7 @@ const LoadingContainer = styled.div<{
   $height?: string
 }>`
   ${flexRowCenter}
-  width: ${({ $width, $maxWidth }) => $width || $maxWidth};
+  width: ${({ $width }) => $width || '100%'};
   max-width: ${({ $maxWidth }) => $maxWidth};
   height: ${({ $height }) => $height};
   min-height: 100px;

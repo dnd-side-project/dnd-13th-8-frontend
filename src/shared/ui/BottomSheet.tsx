@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import type { PanInfo } from 'framer-motion'
 import styled from 'styled-components'
 
-import { useDevice, type DeviceType } from '@/shared/hooks/useDevice'
+import { useDevice, type DeviceType } from '@/shared/lib/useDevice'
 import Overlay from '@/shared/ui/Overlay'
 
 const BOTTOM_SHEET_CONSTANTS = {

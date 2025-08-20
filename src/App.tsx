@@ -6,7 +6,7 @@ import styled from 'styled-components'
 import { AppRoutes } from '@app/routes/routes'
 
 import { routesConfig } from '@shared/config/routesConfig'
-import { useDevice, type DeviceType } from '@shared/hooks/useDevice'
+import { useDevice, type DeviceType } from '@shared/lib/useDevice'
 import { flexRowCenter } from '@shared/styles/mixins'
 
 import NavBar, { NAV_HEIGHT } from '@/widgets/layout/NavBar'

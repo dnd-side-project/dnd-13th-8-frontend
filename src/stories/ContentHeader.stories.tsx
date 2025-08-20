@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
-import { useSingleSelect } from '@/shared/hooks/useSingleSelect'
+import { useSingleSelect } from '@/shared/lib/useSingleSelect'
 import ContentHeader from '@/shared/ui/ContentHeader'
 import type { SortType } from '@/shared/ui/ContentHeader'
 

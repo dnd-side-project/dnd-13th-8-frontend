@@ -25,7 +25,7 @@ const ContentHeader = ({ totalCount, currentSort, onSortChange }: ContentHeaderP
       <HeaderContainer>
         <span>총 {totalCount ?? 0}개</span>
         <FilterButton type="button" onClick={() => setIsOpen(true)}>
-          <Filter />
+          <Filter width={24} height={24} />
           <span>{currentSort === 'latest' ? '최신순' : '인기순'}</span>
         </FilterButton>
       </HeaderContainer>
@@ -58,7 +58,6 @@ const HeaderContainer = styled.div`
   align-items: center;
   height: 24px;
   color: ${({ theme }) => theme.COLOR['gray-100']};
-  ${({ theme }) => theme.FONT['body2-normal']}
 `
 
 const FilterButton = styled.button`
@@ -66,6 +65,10 @@ const FilterButton = styled.button`
   align-items: center;
   justify-content: flex-end;
   gap: 2px;
+
+  & > span {
+    ${({ theme }) => theme.FONT['body2-normal']}
+  }
 `
 
 const SortButton = styled.button<{ $active: boolean }>`
