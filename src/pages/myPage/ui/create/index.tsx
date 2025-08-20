@@ -45,8 +45,7 @@ const Create = () => {
   // TODO: UI 확인용 임시 데이터, api 연동 시 수정 예정
   const [isPrimary, setIsPrimary] = useState(false)
 
-  // TODO: 최대 링크 개수 재확인 후 수정
-  const MAX_LINK_COUNT = 3
+  const MAX_LINK_COUNT = 10
 
   // TODO: api 연동 시 로직 수정
   useEffect(() => {
