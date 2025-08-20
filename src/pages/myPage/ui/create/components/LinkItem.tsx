@@ -26,6 +26,9 @@ const LinkItem = ({
   return (
     <Reorder.Item value={link} dragListener={false} dragControls={dragControls}>
       <LinkItemWrap>
+        <DragHandle type="button" as={motion.button} onPointerDown={(e) => dragControls.start(e)}>
+          <Drag width={24} height={24} />
+        </DragHandle>
         <Input
           type="url"
           placeholder="링크를 입력해주세요"
@@ -42,14 +45,6 @@ const LinkItem = ({
             }
           }}
         />
-        <DragHandle
-          type="button"
-          as={motion.button}
-          whileTap={{ scale: 0.95 }}
-          onPointerDown={(e) => dragControls.start(e)}
-        >
-          <Drag />
-        </DragHandle>
         <SvgButton
           icon={Cancel}
           width={24}
@@ -76,8 +71,10 @@ const LinkItemWrap = styled.div`
 const DragHandle = styled.button`
   ${flexRowCenter}
   width: 24px;
-  height: 24px;
+  height: 100%;
   cursor: grab;
+  touch-action: none; // 모바일 터치 동작 방지
+  user-select: none; // 텍스트 선택 방지
 
   &:active {
     cursor: grabbing;
