@@ -84,7 +84,7 @@ const UserProfile = () => {
               aria-label="프로필 이미지 수정"
               onClick={() => fileInputRef.current?.click()}
             >
-              <Camera width={12} height={12} />
+              <Camera width={14} height={14} />
             </ProfileImgEditBtn>
             <input type="file" ref={fileInputRef} accept="image/*" onChange={onFileChange} hidden />
           </>
@@ -115,7 +115,10 @@ const UserProfile = () => {
 export default UserProfile
 
 const ProfileWrapper = styled.section`
-  ${flexColCenter}
+  /* ${flexColCenter} */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   gap: 8px;
   margin-bottom: 32px;
 `
@@ -144,8 +147,8 @@ const ProfileImgEditBtn = styled.button`
   right: 0;
   ${flexRowCenter}
   padding: 4px;
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   border: 1px solid ${({ theme }) => theme.COLOR['gray-700']};
   border-radius: 50%;
   background-color: ${({ theme }) => theme.COLOR['gray-800']};
