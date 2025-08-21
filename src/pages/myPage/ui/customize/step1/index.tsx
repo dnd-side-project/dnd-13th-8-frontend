@@ -9,7 +9,7 @@ import type { ModalProps } from '@shared/ui/Modal'
 
 import { DownArrow, Pin, PinPrimary, Share, Trash, HelpCircle, Drag, Cancel } from '@/assets/icons'
 import { Divider } from '@/pages/myPage/ui/components'
-import type { CustomizeStep, CustomizeStepProps } from '@/pages/myPage/ui/customize'
+import type { CustomizeStepProps } from '@/pages/myPage/ui/customize'
 import { StepHeader } from '@/pages/myPage/ui/customize/step1/components'
 import { MUSIC_GENRES } from '@/shared/config/musicGenres'
 import type { MusicGenre } from '@/shared/config/musicGenres'
@@ -68,22 +68,6 @@ const CustomizeStep1 = ({ currentStep, setCurrentStep, setModal }: CustomizeStep
     const hasLinkError = Object.values(linkErrorMap).some((error) => error)
     const hasLinkEmpty = linkMap.some(({ link }) => !link.trim())
     return !hasMetaEmpty && !hasLinkError && linkMap.length > 0 && !hasLinkEmpty
-  }
-
-  // current step별 header 뒤로가기 로직
-  const onHeaderPrevClick = () => {
-    if (currentStep === 1 || !currentStep) {
-      navigate('/mypage')
-      return
-    }
-    setCurrentStep((currentStep - 1) as CustomizeStep)
-  }
-
-  // current step별 header 다음 버튼 로직
-  const onHeaderNextClick = () => {
-    if (isValidate()) {
-      setCurrentStep((currentStep - 1) as CustomizeStep)
-    }
   }
 
   // 장르 선택
@@ -178,8 +162,7 @@ const CustomizeStep1 = ({ currentStep, setCurrentStep, setModal }: CustomizeStep
     <>
       <StepHeader
         currentStep={currentStep}
-        onPrevClick={onHeaderPrevClick}
-        onNextClick={onHeaderNextClick}
+        setCurrentStep={setCurrentStep}
         isValidate={isValidate()}
       />
 
