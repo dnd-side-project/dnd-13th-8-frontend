@@ -1,1 +1,1 @@
-export { default as StepGuide } from './StepGuide'
+export { default as StepHeader } from './StepHeader'

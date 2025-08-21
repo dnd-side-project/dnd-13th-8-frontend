@@ -1,30 +1,45 @@
 import styled from 'styled-components'
 
-import { SvgButton } from '@shared/ui'
+import { Button, Header, SvgButton } from '@shared/ui'
 
 import { LeftArrow } from '@/assets/icons'
 import type { CustomizeStep } from '@/pages/myPage/ui/customize'
 import { flexRowCenter } from '@/shared/styles/mixins'
 
-const StepGuide = ({
+const StepHeader = ({
   currentStep,
   onPrevClick,
+  onNextClick,
+  isValidate,
 }: {
   currentStep: CustomizeStep
   onPrevClick: () => void
+  onNextClick: () => void
+  isValidate: boolean
 }) => {
   return (
-    <HeaderLeftWrap>
-      <SvgButton icon={LeftArrow} width={24} height={24} onClick={onPrevClick} />
-      <StepContainer>
-        <StepItem $isActive={currentStep === 1}>1</StepItem>
-        <StepItem $isActive={currentStep === 2}>2</StepItem>
-      </StepContainer>
-    </HeaderLeftWrap>
+    <Header
+      left={
+        <HeaderLeftWrap>
+          <SvgButton icon={LeftArrow} width={24} height={24} onClick={onPrevClick} />
+          <StepContainer>
+            <StepItem $isActive={currentStep === 1}>1</StepItem>
+            <StepItem $isActive={currentStep === 2}>2</StepItem>
+          </StepContainer>
+        </HeaderLeftWrap>
+      }
+      right={
+        <HeaderRight>
+          <Button state={isValidate ? 'primary' : 'disabled'} size="S" onClick={onNextClick}>
+            {currentStep === 1 ? '다음' : '저장'}
+          </Button>
+        </HeaderRight>
+      }
+    />
   )
 }
 
-export default StepGuide
+export default StepHeader
 
 const HeaderLeftWrap = styled.div`
   ${flexRowCenter}
@@ -60,4 +75,10 @@ const StepItem = styled.li<{ $isActive: boolean }>`
     $isActive ? theme.COLOR['primary-soft'] : theme.COLOR['gray-500']};
   ${({ theme }) => theme.FONT['caption1']}
   font-weight: 500;
+`
+
+const HeaderRight = styled.div`
+  & > button {
+    ${({ theme }) => theme.FONT['caption1']}
+  }
 `

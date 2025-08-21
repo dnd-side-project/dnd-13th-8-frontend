@@ -4,13 +4,13 @@ import { useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion, Reorder, useDragControls } from 'framer-motion'
 import styled from 'styled-components'
 
-import { Button, Cd, Header, SvgButton, Input, BottomSheet } from '@shared/ui'
+import { Button, Cd, SvgButton, Input, BottomSheet } from '@shared/ui'
 import type { ModalProps } from '@shared/ui/Modal'
 
 import { DownArrow, Pin, PinPrimary, Share, Trash, HelpCircle, Drag, Cancel } from '@/assets/icons'
 import { Divider } from '@/pages/myPage/ui/components'
 import type { CustomizeStep, CustomizeStepProps } from '@/pages/myPage/ui/customize'
-import { StepGuide } from '@/pages/myPage/ui/customize/step1/components'
+import { StepHeader } from '@/pages/myPage/ui/customize/step1/components'
 import { MUSIC_GENRES } from '@/shared/config/musicGenres'
 import type { MusicGenre } from '@/shared/config/musicGenres'
 import { flexColCenter, flexRowCenter } from '@/shared/styles/mixins'
@@ -67,7 +67,7 @@ const CustomizeStep1 = ({ currentStep, setCurrentStep, setModal }: CustomizeStep
     const hasMetaEmpty = !metaGenre?.id || !metaTitle
     const hasLinkError = Object.values(linkErrorMap).some((error) => error)
     const hasLinkEmpty = linkMap.some(({ link }) => !link.trim())
-    return !hasMetaEmpty && !hasLinkError && linkMap.length && !hasLinkEmpty
+    return !hasMetaEmpty && !hasLinkError && linkMap.length > 0 && !hasLinkEmpty
   }
 
   // current step별 header 뒤로가기 로직
@@ -77,6 +77,13 @@ const CustomizeStep1 = ({ currentStep, setCurrentStep, setModal }: CustomizeStep
       return
     }
     setCurrentStep((currentStep - 1) as CustomizeStep)
+  }
+
+  // current step별 header 다음 버튼 로직
+  const onHeaderNextClick = () => {
+    if (isValidate()) {
+      setCurrentStep((currentStep - 1) as CustomizeStep)
+    }
   }
 
   // 장르 선택
@@ -169,19 +176,11 @@ const CustomizeStep1 = ({ currentStep, setCurrentStep, setModal }: CustomizeStep
 
   return (
     <>
-      <Header
-        left={<StepGuide currentStep={currentStep} onPrevClick={onHeaderPrevClick} />}
-        right={
-          <HeaderRight>
-            <Button
-              state={isValidate() ? 'primary' : 'disabled'}
-              size="S"
-              onClick={() => navigate('/mypage')}
-            >
-              {currentStep === 1 ? '다음' : '저장'}
-            </Button>
-          </HeaderRight>
-        }
+      <StepHeader
+        currentStep={currentStep}
+        onPrevClick={onHeaderPrevClick}
+        onNextClick={onHeaderNextClick}
+        isValidate={isValidate()}
       />
 
       <PlaylistControlWrap>
@@ -308,12 +307,6 @@ const CustomizeStep1 = ({ currentStep, setCurrentStep, setModal }: CustomizeStep
 }
 
 export default CustomizeStep1
-
-const HeaderRight = styled.div`
-  & > button {
-    ${({ theme }) => theme.FONT['caption1']}
-  }
-`
 
 const PlaylistControlWrap = styled.section`
   ${flexColCenter}
