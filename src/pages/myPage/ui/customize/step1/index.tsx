@@ -32,6 +32,11 @@ const CustomizeStep1 = ({ currentStep, setCurrentStep, setModal }: CustomizeStep
   const [isPrimary, setIsPrimary] = useState(false)
 
   const MAX_LINK_COUNT = 10
+  const VALID_YOUTUBE_URLS = [
+    'https://youtu.be/',
+    'https://www.youtube.com/watch?v=',
+    'https://music.youtube.com/watch?v=',
+  ]
 
   // TODO: api 연동 시 로직 수정
   useEffect(() => {
@@ -51,6 +56,11 @@ const CustomizeStep1 = ({ currentStep, setCurrentStep, setModal }: CustomizeStep
     }
     setLinkMap([{ id: Date.now(), link: '' }])
   }, [])
+
+  // 모달 close
+  const onModalClose = () => {
+    setModal({ isOpen: false } as ModalProps)
+  }
 
   // 다음 버튼 검증
   const isValidate = () => {
@@ -77,17 +87,34 @@ const CustomizeStep1 = ({ currentStep, setCurrentStep, setModal }: CustomizeStep
 
   // 플레이리스트 삭제
   const onListDeleteClick = () => {
+    // TODO: 화면 구현용 임시 value, 추후 api 응답값 추가
+    const tmpPlaylistCount = 3
+
+    if (isEditMode && tmpPlaylistCount <= 1) {
+      setModal({
+        isOpen: true,
+        title: '플레이리스트가 2개 이상이어야 삭제할 수 있어요',
+        ctaType: 'single',
+        confirmText: '확인',
+        onClose: () => onModalClose(),
+        onConfirm: () => onModalClose(),
+      } as ModalProps)
+      return
+    }
+
     setModal({
       isOpen: true,
       title: '이 플레이리스트를 삭제할까요?',
       ctaType: 'double',
       confirmText: '삭제하기',
       cancelText: '취소',
-      onClose: () => setModal({ isOpen: false } as ModalProps),
+      onClose: () => onModalClose(),
       onConfirm: () => {
         navigate('/mypage')
-        setModal({ isOpen: false } as ModalProps)
+        onModalClose()
+        return
       },
+      onCancel: () => onModalClose(),
     } as ModalProps)
   }
 
@@ -99,10 +126,8 @@ const CustomizeStep1 = ({ currentStep, setCurrentStep, setModal }: CustomizeStep
         title: `최대 ${MAX_LINK_COUNT}개까지 추가할 수 있어요`,
         ctaType: 'single',
         confirmText: '확인',
-        onClose: () => setModal({ isOpen: false } as ModalProps),
-        onConfirm: () => {
-          setModal({ isOpen: false } as ModalProps)
-        },
+        onClose: onModalClose,
+        onConfirm: onModalClose,
       } as ModalProps)
       return
     }
@@ -115,11 +140,8 @@ const CustomizeStep1 = ({ currentStep, setCurrentStep, setModal }: CustomizeStep
 
   // 링크 input 입력값 유효성 검증
   const checkLinkValid = (id: number, link: string) => {
-    const YOUTUBE_LINK_REGEX = /^https:\/\/(www\.)?youtube\.com\/|^https:\/\/youtu\.be\//
-    const ALLOWED_CHARS_REGEX = /^[a-zA-Z0-9\-_./?=&:%]*$/
-
-    const isValidYoutubeLink = YOUTUBE_LINK_REGEX.test(link)
-    const hasOnlyAllowedChars = ALLOWED_CHARS_REGEX.test(link)
+    const isValidYoutubeLink = VALID_YOUTUBE_URLS.some((url) => link.startsWith(url))
+    const hasOnlyAllowedChars = /^[a-zA-Z0-9\-_./?=&:%]*$/.test(link)
 
     if (link && (!isValidYoutubeLink || !hasOnlyAllowedChars)) {
       setLinkErrorMap((prev) => ({ ...prev, [id]: '유튜브 링크만 추가할 수 있어요' }))
