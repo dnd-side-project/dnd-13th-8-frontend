@@ -3,19 +3,11 @@ import { useNavigate } from 'react-router-dom'
 
 import styled from 'styled-components'
 
-import type { CommentData } from '@/entities/comment'
 import type { PlaylistData } from '@/entities/playlist/model/types'
-import CommentMockData from '@/pages/discover/commentData.json'
 import { flexColCenter } from '@/shared/styles/mixins'
 import { Button, Cd, Header, LiveInfo } from '@/shared/ui'
-import { ChatBottomSheet, ChatInput } from '@/widgets/chat'
 import { ActionBar, ControlBar, ProgressBar } from '@/widgets/playlist'
 import type { BackgroundPlayerHandle } from '@/widgets/playlist/BackgroundPlayer'
-
-const Data: CommentData[] = CommentMockData.map((c) => ({
-  ...c,
-  role: c.role as 'owner' | 'mine' | 'other',
-}))
 
 interface PlaylistLayoutProps {
   playlistData: PlaylistData
@@ -37,7 +29,6 @@ const PlaylistLayout = ({
   onTogglePlay,
 }: PlaylistLayoutProps) => {
   const navigate = useNavigate()
-  const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false)
   const [currentTime, setCurrentTime] = useState(0)
 
   const trackLengths = playlistData.tracks.map((t) => t.duration)
@@ -104,16 +95,6 @@ const PlaylistLayout = ({
       />
 
       <ControlBar playerRef={playerRef} isPlaying={isPlaying} onTogglePlay={onTogglePlay} />
-
-      <ChatInput onFocus={() => setIsBottomSheetOpen(true)} />
-
-      {isBottomSheetOpen && (
-        <ChatBottomSheet
-          comments={Data}
-          isOpen={isBottomSheetOpen}
-          onClose={() => setIsBottomSheetOpen(false)}
-        />
-      )}
     </div>
   )
 }

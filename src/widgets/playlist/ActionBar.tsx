@@ -7,6 +7,7 @@ import { useLike } from '@/features/like'
 import { ShareButton } from '@/features/share'
 import { flexRowCenter } from '@/shared/styles/mixins'
 import SvgButton from '@/shared/ui/SvgButton'
+import { ChatButton } from '@/widgets/chat'
 
 interface ActionBarProps {
   playlistId: number
@@ -34,6 +35,7 @@ const ActionBar = ({ playlistId, isLiked }: ActionBarProps) => {
       />
       <ShareButton playlistId={playlistId} />
       <SvgButton icon={Playlist} width={24} height={24} onClick={handleMovePlaylist} />
+      <ChatButton />
     </Wrapper>
   )
 }
