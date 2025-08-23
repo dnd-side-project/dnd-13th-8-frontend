@@ -1,34 +1,17 @@
-import styled, { useTheme } from 'styled-components'
+import styled from 'styled-components'
 
-import { Like } from '@/assets/icons'
-import { useLike } from '@/features/like'
 import Cd from '@/shared/ui/Cd'
-import SvgButton from '@/shared/ui/SvgButton'
 
 interface PlaylistProps {
-  id: number
   title: string
   username: string
-  isLiked: boolean
 }
 
-const Playlist = ({ id, title, username, isLiked }: PlaylistProps) => {
-  const theme = useTheme()
-  const { liked, handleLike } = useLike(id, isLiked)
-
+const Playlist = ({ title, username }: PlaylistProps) => {
   return (
     <Wrapper>
       <CdBox>
         <Cd variant="xl" />
-        <LikeButton $opacity={liked ? 1 : 0.2}>
-          <SvgButton
-            icon={Like}
-            onClick={handleLike}
-            width={20}
-            height={20}
-            fill={liked ? theme.COLOR['primary-normal'] : theme.COLOR['gray-200']}
-          />
-        </LikeButton>
       </CdBox>
       <InfoBox>
         <Title>{title}</Title>
@@ -56,14 +39,6 @@ const CdBox = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-`
-
-const LikeButton = styled.div<{ $opacity?: number }>`
-  position: absolute;
-  top: 6px;
-  right: 6px;
-
-  opacity: ${({ $opacity }) => $opacity};
 `
 
 const Title = styled.h3`

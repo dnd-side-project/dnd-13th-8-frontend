@@ -80,7 +80,12 @@ const PlaylistLayout = ({
 
       <Wrapper>
         <Cd variant="xxl" bgColor="none" />
-        <ActionBar playlistId={Number(playlistData.id)} isLiked={playlistData.liked} />
+        <ActionBar
+          userId={playlistData.userId}
+          playlistId={Number(playlistData.id)}
+          isFollowing={playlistData.liked}
+          userName={playlistData.userName}
+        />
       </Wrapper>
 
       <ProgressBar
