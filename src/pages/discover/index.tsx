@@ -30,7 +30,7 @@ const DiscoverPage = () => {
   const [showCoachmark, setShowCoachmark] = useState(false)
 
   useEffect(() => {
-    setShowCoachmark(true) // 페이지 들어올 때 한번만
+    setShowCoachmark(true)
   }, [])
 
   // 현재 재생 시간 업데이트
@@ -127,7 +127,7 @@ const DiscoverPage = () => {
         ))}
       </SwipeCarousel>
 
-      {videoId && (
+      {!showCoachmark && videoId && (
         <YoutubePlayer
           videoId={videoId}
           onReady={(event) => {
