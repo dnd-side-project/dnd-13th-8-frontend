@@ -31,7 +31,7 @@ const DiscoverPage = () => {
   } = usePlaylist()
   const playerRef = useRef<YT.Player | null>(null)
 
-  // 플레이어에서 현재 재생 시간 업데이트
+  // 현재 재생 시간 업데이트
   useEffect(() => {
     const intervalId = setInterval(() => {
       if (playerRef.current) {
@@ -53,17 +53,16 @@ const DiscoverPage = () => {
     }
   }, [isPlaying])
 
-  // URL ID에 따라 플레이리스트 초기 설정
+  // 첫 로딩 시에만 초기화
   useEffect(() => {
     const id = Number(playlistId)
     if (!currentPlaylist && id > 0) {
       const initialPlaylist = playlistData.find((p) => p.id === id)
       if (initialPlaylist) {
-        // 첫 렌더링 시에만 플레이리스트를 설정
-        setPlaylist(initialPlaylist, 0)
+        setPlaylist(initialPlaylist, 0, 0)
       }
     }
-  }, [playlistId, setPlaylist, currentPlaylist])
+  }, [playlistId, currentPlaylist, setPlaylist])
 
   // 캐러셀 스와이프 시 현재 플레이리스트 업데이트
   const handleSelectPlaylist = useCallback(
@@ -91,7 +90,6 @@ const DiscoverPage = () => {
 
   const handlePlayPause = () => {
     if (isPlaying) {
-      console.log(isPlaying)
       pause()
     } else {
       play()
@@ -162,7 +160,6 @@ const DiscoverPage = () => {
 
       {videoId && (
         <YoutubePlayer
-          key={`${videoId}-${currentTrackIndex}`}
           videoId={videoId}
           onReady={(event) => {
             playerRef.current = event.target

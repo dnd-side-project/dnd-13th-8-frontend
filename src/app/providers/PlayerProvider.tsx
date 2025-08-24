@@ -17,7 +17,7 @@ type PlaylistContextType = {
   currentTrackIndex: number
   currentTime: number
   isPlaying: boolean
-  setPlaylist: (playlist: Playlist, trackIndex?: number) => void
+  setPlaylist: (playlist: Playlist, trackIndex?: number, time?: number) => void
   play: () => void
   pause: () => void
   nextTrack: () => void
@@ -37,10 +37,10 @@ const PlaylistProvider = ({ children }: PlaylistProviderProps) => {
   const [isPlaying, setIsPlaying] = useState<boolean>(false)
   const [currentTime, setCurrentTime] = useState<number>(0)
 
-  const setPlaylist = (playlist: Playlist, trackIndex = 0) => {
+  const setPlaylist = (playlist: Playlist, trackIndex?: number, time?: number) => {
     setCurrentPlaylist(playlist)
-    setCurrentTrackIndex(trackIndex)
-    setCurrentTime(0)
+    if (trackIndex !== undefined) setCurrentTrackIndex(trackIndex)
+    if (time !== undefined) setCurrentTime(time)
     setIsPlaying(true)
   }
 
