@@ -41,7 +41,8 @@
     "react-dom": "^19.1.0",
     "react-router-dom": "^7.8.0",
     "styled-components": "^6.1.19",
-    "styled-reset": "^4.5.2"
+    "styled-reset": "^4.5.2",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^4.1.0",
@@ -56,6 +57,7 @@
     "@storybook/react-vite": "^9.1.1",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
+    "@types/uuid": "^10.0.0",
     "@types/youtube": "^0.1.2",
     "@vitejs/plugin-react": "^4.6.0",
     "@vitest/browser": "^3.2.4",
