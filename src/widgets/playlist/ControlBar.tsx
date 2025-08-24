@@ -2,35 +2,28 @@ import styled, { useTheme } from 'styled-components'
 
 import { Next, Pause, Prev, Start } from '@/assets/icons'
 import { SvgButton } from '@/shared/ui'
-import type { BackgroundPlayerHandle } from '@/widgets/playlist/BackgroundPlayer'
 
 interface ControlBarProps {
-  playerRef?: React.RefObject<BackgroundPlayerHandle | null>
   isPlaying: boolean
   onTogglePlay: () => void
+  onNext: () => void
+  onPrev: () => void
 }
 
-const ControlBar = ({ playerRef, isPlaying, onTogglePlay }: ControlBarProps) => {
+const ControlBar = ({ isPlaying, onTogglePlay, onNext, onPrev }: ControlBarProps) => {
   const theme = useTheme()
-
-  const handlePrev = () => playerRef?.current?.prevTrack()
-  const handleNext = () => playerRef?.current?.nextTrack()
-
-  const handleIconToggle = () => {
-    onTogglePlay()
-  }
 
   return (
     <Wrapper>
-      <SvgButton icon={Prev} width={32} height={32} onClick={handlePrev} />
+      <SvgButton icon={Prev} width={32} height={32} onClick={onPrev} />
       <SvgButton
         icon={isPlaying ? Pause : Start}
         width={32}
         height={32}
-        onClick={handleIconToggle}
+        onClick={onTogglePlay}
         fill={theme.COLOR['common-white']}
       />
-      <SvgButton icon={Next} width={32} height={32} onClick={handleNext} />
+      <SvgButton icon={Next} width={32} height={32} onClick={onNext} />
     </Wrapper>
   )
 }
@@ -42,3 +35,36 @@ const Wrapper = styled.div`
   justify-content: space-between;
   padding: 32px 60px 40px 60px;
 `
+
+// import styled, { useTheme } from 'styled-components'
+// import { Next, Pause, Prev, Start } from '@/assets/icons'
+// import { SvgButton } from '@/shared/ui'
+// import { usePlayerContext } from '@/pages/discover/PlayerContext'
+
+// const ControlBar = () => {
+//   const theme = useTheme()
+//   const { state, nextTrack, prevTrack, togglePlayPause } = usePlayerContext()
+
+//   return (
+//     <Wrapper>
+//       <SvgButton icon={Prev} width={32} height={32} onClick={prevTrack} />
+//       <SvgButton
+//         icon={state.isPlaying ? Pause : Start}
+//         width={32}
+//         height={32}
+//         onClick={togglePlayPause}
+//         fill={theme.COLOR['common-white']}
+//       />
+//       <SvgButton icon={Next} width={32} height={32} onClick={nextTrack} />
+//     </Wrapper>
+//   )
+// }
+
+// export default ControlBar
+
+// const Wrapper = styled.div`
+//   display: flex;
+//   width: 100%;
+//   justify-content: space-between;
+//   padding: 32px 60px 40px 60px;
+// `

@@ -13,4 +13,5 @@ export interface PlaylistData {
   liked: boolean
   userName: string
   userId: number
+  isOnAir: boolean
 }
