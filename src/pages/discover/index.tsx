@@ -6,9 +6,8 @@ import styled from 'styled-components'
 
 import { usePlaylist } from '@/app/providers/PlayerProvider'
 import { SwipeCarousel } from '@/features/swipe'
-import YoutubePlayer from '@/pages/discover/YoutubePlayer'
 import { getVideoId } from '@/shared/lib'
-import { PlaylistLayout } from '@/widgets/playlist'
+import { PlaylistLayout, YoutubePlayer } from '@/widgets/playlist'
 
 import playlistData from './playlistData.json'
 
