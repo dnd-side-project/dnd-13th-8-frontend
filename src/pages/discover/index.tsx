@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import type { YouTubeEvent } from 'react-youtube'
 
@@ -6,6 +6,7 @@ import styled from 'styled-components'
 
 import { usePlaylist } from '@/app/providers/PlayerProvider'
 import { SwipeCarousel } from '@/features/swipe'
+import { DiscoverCoachMark } from '@/pages/discover/ui'
 import { getVideoId } from '@/shared/lib'
 import { PlaylistLayout, YoutubePlayer } from '@/widgets/playlist'
 
@@ -26,6 +27,11 @@ const DiscoverPage = () => {
     updateCurrentTime,
   } = usePlaylist()
   const playerRef = useRef<YT.Player | null>(null)
+  const [showCoachmark, setShowCoachmark] = useState(false)
+
+  useEffect(() => {
+    setShowCoachmark(true) // 페이지 들어올 때 한번만
+  }, [])
 
   // 현재 재생 시간 업데이트
   useEffect(() => {
@@ -93,7 +99,9 @@ const DiscoverPage = () => {
   }
 
   return (
-    <div>
+    <Page>
+      {showCoachmark && <DiscoverCoachMark onClick={() => setShowCoachmark(false)} />}
+
       <SwipeCarousel data={playlistData} onSelectIndexChange={handleSelectPlaylist}>
         {playlistData.map((data) => (
           <Slide key={data.id}>
@@ -136,7 +144,7 @@ const DiscoverPage = () => {
           onStateChange={handlePlayerStateChange}
         />
       )}
-    </div>
+    </Page>
   )
 }
 
@@ -144,4 +152,8 @@ export default DiscoverPage
 
 const Slide = styled.div`
   flex: 0 0 100%;
+`
+
+const Page = styled.div`
+  position: relative;
 `
