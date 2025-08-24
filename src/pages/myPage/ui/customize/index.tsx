@@ -4,6 +4,7 @@ import { Modal } from '@shared/ui'
 import type { ModalProps } from '@shared/ui/Modal'
 
 import CustomizeStep1 from '@/pages/myPage/ui/customize/step1'
+import CustomizeStep2 from '@/pages/myPage/ui/customize/step2'
 
 export type CustomizeStep = 1 | 2 | 3
 
@@ -14,7 +15,7 @@ export interface CustomizeStepProps {
 }
 
 const Customize = () => {
-  const [currentStep, setCurrentStep] = useState<CustomizeStep>(1)
+  const [currentStep, setCurrentStep] = useState<CustomizeStep>(2)
   const [modal, setModal] = useState<ModalProps>({
     isOpen: false,
     title: '',
@@ -34,6 +35,14 @@ const Customize = () => {
     <>
       {currentStep === 1 && (
         <CustomizeStep1
+          currentStep={currentStep}
+          setCurrentStep={setCurrentStep}
+          setModal={setModal}
+        />
+      )}
+
+      {currentStep === 2 && (
+        <CustomizeStep2
           currentStep={currentStep}
           setCurrentStep={setCurrentStep}
           setModal={setModal}

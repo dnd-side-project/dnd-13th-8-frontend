@@ -18,7 +18,7 @@ const CdGrid = ({
     username: string
     isPrimary?: boolean
   }[]
-  currentTab: 'album' | 'like'
+  currentTab: 'cd' | 'following'
 }) => {
   const navigate = useNavigate()
 
@@ -36,7 +36,7 @@ const CdGrid = ({
       {currentPlaylist?.map((item) => (
         <CdContainer key={item.id}>
           <Cd variant="md" />
-          {currentTab === 'album' && item?.isPrimary && <Badge size="small" text="대표" />}
+          {currentTab === 'cd' && item?.isPrimary && <Badge size="small" text="대표" />}
           <p>
             <CdTitle>{item.title}</CdTitle>
             <CdCreator>{item.username}</CdCreator>

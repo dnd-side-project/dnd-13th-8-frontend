@@ -62,6 +62,14 @@ const CustomizeStep1 = ({ currentStep, setCurrentStep, setModal }: CustomizeStep
     setModal({ isOpen: false } as ModalProps)
   }
 
+  // 헤더 다음 버튼 클릭
+  const onHeaderNextClick = () => {
+    if (isValidate()) {
+      // TODO: 플레이리스트 저장/수정 api 호출
+      setCurrentStep(2)
+    }
+  }
+
   // 다음 버튼 검증
   const isValidate = () => {
     const hasMetaEmpty = !metaGenre?.id || !metaTitle
@@ -164,6 +172,7 @@ const CustomizeStep1 = ({ currentStep, setCurrentStep, setModal }: CustomizeStep
         currentStep={currentStep}
         setCurrentStep={setCurrentStep}
         isValidate={isValidate()}
+        onHeaderNextClick={onHeaderNextClick}
       />
 
       <PlaylistControlWrap>

@@ -12,10 +12,12 @@ const StepHeader = ({
   currentStep,
   setCurrentStep,
   isValidate,
+  onHeaderNextClick,
 }: {
   currentStep: CustomizeStep
   setCurrentStep: (step: CustomizeStep) => void
   isValidate: boolean
+  onHeaderNextClick: () => void
 }) => {
   const navigate = useNavigate()
 
@@ -26,13 +28,6 @@ const StepHeader = ({
       return
     }
     setCurrentStep((currentStep - 1) as CustomizeStep)
-  }
-
-  // current step별 header 다음 버튼 로직
-  const onHeaderNextClick = () => {
-    if (isValidate) {
-      setCurrentStep((currentStep - 1) as CustomizeStep)
-    }
   }
 
   return (

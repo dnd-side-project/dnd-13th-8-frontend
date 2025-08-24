@@ -15,17 +15,17 @@ import { SearchResultItem } from '@/widgets/search'
 import likeUser from '../mock/likeUser.json'
 import myPlaylist from '../mock/myPlaylist.json'
 
-type TabType = 'album' | 'like'
+type TabType = 'cd' | 'following'
 
 const MyPage = () => {
   const navigate = useNavigate()
 
-  const { selected: currentTab, onSelect: setCurrentTab } = useSingleSelect<TabType>('album')
+  const { selected: currentTab, onSelect: setCurrentTab } = useSingleSelect<TabType>('cd')
   const { selected: currentSort, onSelect: setCurrentSort } = useSingleSelect<SortType>('popular')
 
   const TAB_LIST: { label: string; value: TabType }[] = [
-    { label: 'MY 앨범', value: 'album' },
-    { label: 'MY 좋아요', value: 'like' },
+    { label: '나의 CD', value: 'cd' },
+    { label: '나의 팔로잉', value: 'following' },
   ]
 
   return (
@@ -61,7 +61,7 @@ const MyPage = () => {
             </TabItem>
           ))}
         </TabContainer>
-        {currentTab === 'album' ? (
+        {currentTab === 'cd' ? (
           <>
             <ContentHeader
               totalCount={myPlaylist?.length}
