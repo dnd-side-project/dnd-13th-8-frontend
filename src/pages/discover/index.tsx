@@ -30,8 +30,16 @@ const DiscoverPage = () => {
   const [showCoachmark, setShowCoachmark] = useState(false)
 
   useEffect(() => {
-    setShowCoachmark(true)
+    const seen = localStorage.getItem('hasSeenDiscoverCoachmark')
+    if (!seen) {
+      setShowCoachmark(true)
+    }
   }, [])
+
+  const handleCloseCoachmark = () => {
+    setShowCoachmark(false)
+    localStorage.setItem('hasSeenDiscoverCoachmark', 'true')
+  }
 
   // 현재 재생 시간 업데이트
   useEffect(() => {
@@ -100,7 +108,7 @@ const DiscoverPage = () => {
 
   return (
     <Page>
-      {showCoachmark && <DiscoverCoachMark onClick={() => setShowCoachmark(false)} />}
+      {showCoachmark && <DiscoverCoachMark onClick={handleCloseCoachmark} />}
 
       <SwipeCarousel data={playlistData} onSelectIndexChange={handleSelectPlaylist}>
         {playlistData.map((data) => (
