@@ -4,7 +4,7 @@ import { Overlay } from '@/assets/icons'
 import { flexRowCenter } from '@/shared/styles/mixins'
 
 interface CdProps {
-  variant: 'xxl' | 'xl' | 'lg' | 'md' | 'sm' | 'xs'
+  variant: 'xxl' | 'xl' | 'lg' | 'md' | 'sm' | 'xs' | 'share'
   bgColor?: 'none' | 'default' | 'dark'
 }
 
@@ -33,6 +33,7 @@ const sizeMap = {
   md: { container: 104, base: 88, borderRadius: 10 },
   sm: { container: 88, base: 72, borderRadius: 10 },
   xs: { container: 56, base: 48, borderRadius: 6 },
+  share: { container: 280, base: 220, borderRadius: 24 },
 } as const
 
 interface StyleProps {

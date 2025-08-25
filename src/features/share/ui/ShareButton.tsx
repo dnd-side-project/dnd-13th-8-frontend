@@ -4,6 +4,7 @@ import styled from 'styled-components'
 
 import { useToast } from '@/app/providers/ToastProvider'
 import { Share } from '@/assets/icons'
+import ShareImage from '@/features/share/ui/ShareImage'
 import { flexColCenter, flexRowCenter } from '@/shared/styles/mixins'
 import { BottomSheet, Button, SvgButton } from '@/shared/ui'
 
@@ -63,7 +64,7 @@ const ShareButton = ({ playlistId }: ShareButtonProps) => {
         height="fit-content"
       >
         <BottomSheetWrapper>
-          <ImagePreview />
+          <ShareImage />
           <ButtonBar>
             <Button onClick={handleSaveImage} size="M" state="secondary">
               이미지로 저장
@@ -83,13 +84,6 @@ export default ShareButton
 const BottomSheetWrapper = styled.div`
   ${flexColCenter}
   gap: 24px;
-`
-
-const ImagePreview = styled.div`
-  width: 280px;
-  height: 280px;
-  border-radius: 24px;
-  background-color: ${({ theme }) => theme.COLOR['gray-900']};
 `
 
 const ButtonBar = styled.div`
