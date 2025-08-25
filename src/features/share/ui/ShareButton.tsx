@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 
+import { toPng } from 'html-to-image'
 import styled from 'styled-components'
 
 import { useToast } from '@/app/providers/ToastProvider'
@@ -15,13 +16,25 @@ interface ShareButtonProps {
 const ShareButton = ({ playlistId }: ShareButtonProps) => {
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false)
   const { toast } = useToast()
+  const shareRef = useRef<HTMLDivElement>(null)
 
   const handleShare = () => {
     setIsBottomSheetOpen(true)
   }
 
-  // TODO: 이미지 저장 기능 구현
-  const handleSaveImage = () => {}
+  const handleSaveImage = async () => {
+    if (!shareRef.current) return
+    try {
+      const dataUrl = await toPng(shareRef.current)
+      const link = document.createElement('a')
+      link.href = dataUrl
+      link.download = `playlist-${playlistId}.png`
+      link.click()
+      toast('IMAGE')
+    } catch (e) {
+      console.error(e)
+    }
+  }
 
   const copyToClipboard = (text: string) => {
     if (navigator.clipboard?.writeText) {
@@ -64,7 +77,9 @@ const ShareButton = ({ playlistId }: ShareButtonProps) => {
         height="fit-content"
       >
         <BottomSheetWrapper>
-          <ShareImage />
+          <div ref={shareRef}>
+            <ShareImage />
+          </div>
           <ButtonBar>
             <Button onClick={handleSaveImage} size="M" state="secondary">
               이미지로 저장
