@@ -2,6 +2,7 @@ import { useState } from 'react'
 
 import styled from 'styled-components'
 
+import { useToast } from '@/app/providers/ToastProvider'
 import { Share } from '@/assets/icons'
 import { flexColCenter, flexRowCenter } from '@/shared/styles/mixins'
 import { BottomSheet, Button, SvgButton } from '@/shared/ui'
@@ -12,6 +13,7 @@ interface ShareButtonProps {
 
 const ShareButton = ({ playlistId }: ShareButtonProps) => {
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false)
+  const { toast } = useToast()
 
   const handleShare = () => {
     setIsBottomSheetOpen(true)
@@ -22,7 +24,9 @@ const ShareButton = ({ playlistId }: ShareButtonProps) => {
 
   const handleCopyLink = () => {
     const link = `${window.location.origin}/discover/${playlistId}`
-    navigator.clipboard.writeText(link)
+    navigator.clipboard.writeText(link).then(() => {
+      toast('LINK')
+    })
   }
 
   return (
