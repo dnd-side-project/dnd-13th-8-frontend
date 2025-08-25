@@ -1,0 +1,32 @@
+{
+  "id": 1,
+  "title": "mycd playlist",
+  "tracks": [
+    {
+      "title": "첫 번째 곡",
+      "duration": 10,
+      "link": "https://www.youtube.com/watch?v=9--KAnocsTY"
+    },
+    {
+      "title": "두 번째 곡",
+      "duration": 226,
+      "link": "https://www.youtube.com/watch?v=SC4xMk98Pdc&list=RDSC4xMk98Pdc&start_radio=1"
+    },
+    {
+      "title": "세 번째 곡",
+      "duration": 209,
+      "link": "https://www.youtube.com/watch?v=BYwF8ODtpvo&list=RDBYwF8ODtpvo&start_radio=1"
+    },
+    {
+      "title": "네 번째 곡",
+      "duration": 184,
+      "link": "https://www.youtube.com/watch?v=ia2Ph61bYzc&list=RDia2Ph61bYzc&start_radio=1"
+    }
+  ],
+  "listeners": 123,
+  "isOnAir": false,
+  "liked": false,
+  "genre": "K-POP",
+  "userName": "김들락",
+  "userId": 12344
+}
