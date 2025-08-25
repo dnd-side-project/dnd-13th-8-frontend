@@ -1,6 +1,8 @@
+import Lottie from 'lottie-react'
 import styled from 'styled-components'
 
-import { Cancel, Coach } from '@/assets/icons'
+import { Cancel } from '@/assets/icons'
+import { SwipeLottie } from '@/assets/lottie'
 import { flexColCenter } from '@/shared/styles/mixins'
 import { SvgButton } from '@/shared/ui'
 
@@ -22,7 +24,7 @@ const DiscoverCoachMark = ({ onClick }: DiscoverCoachMarkProps) => {
             <Highlight>화면을 위로</Highlight> 올려보세요!
           </p>
         </Content>
-        <Coach />
+        <Lottie animationData={SwipeLottie} loop autoplay />
       </ContentWrapper>
     </Overlay>
   )
