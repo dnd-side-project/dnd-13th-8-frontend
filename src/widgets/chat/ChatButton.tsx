@@ -2,7 +2,8 @@ import { useState } from 'react'
 
 import { Message } from '@/assets/icons'
 import { SvgButton } from '@/shared/ui'
-import { ChatBottomSheet } from '@/widgets/chat'
+
+import ChatBottomSheet from './ChatBottomSheet'
 
 const ChatButton = () => {
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false)
