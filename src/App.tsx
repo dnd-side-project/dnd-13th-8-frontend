@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useLocation } from 'react-router-dom'
+import { matchPath, useLocation } from 'react-router-dom'
 
 import styled from 'styled-components'
 
@@ -23,7 +23,9 @@ const App = () => {
 
   useEffect(() => {
     const { pathname } = location
-    const currentRoute = routesConfig.find((route) => route.path === pathname)
+    const currentRoute = routesConfig.find((route) =>
+      matchPath({ path: route.path, end: true }, pathname)
+    )
     const shouldHideNav = currentRoute?.hideNav ?? false
     setIsNavVisible(!shouldHideNav)
   }, [location])

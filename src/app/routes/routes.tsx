@@ -24,10 +24,11 @@ const withWrapper = (
   return isPrivate ? <PrivateRoute>{element}</PrivateRoute> : element
 }
 
-export const AppRoutes = () => (
-  <Routes>
-    {routesConfig.map(({ path, component: Component, isPrivate, isNotSuspense }) => (
-      <Route key={path} path={path} element={withWrapper(Component, isPrivate, isNotSuspense)} />
-    ))}
-  </Routes>
-)
+const renderRoutes = (routes: typeof routesConfig) =>
+  routes.map(({ path, component: Component, isPrivate, isNotSuspense, children }) => (
+    <Route key={path} path={path} element={withWrapper(Component, isPrivate, isNotSuspense)}>
+      {children && renderRoutes(children)}
+    </Route>
+  ))
+
+export const AppRoutes = () => <Routes>{renderRoutes(routesConfig)}</Routes>

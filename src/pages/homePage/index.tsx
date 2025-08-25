@@ -39,13 +39,7 @@ const HomePage = () => {
         <h1>퇴근길, 귀에 붙는 노래</h1>
         <ScrollCarousel gap={14}>
           {secondSectionData.map((item) => (
-            <Playlist
-              key={item.id}
-              id={item.id}
-              title={item.title}
-              username={item.username}
-              isLiked={item.liked}
-            />
+            <Playlist key={item.id} title={item.title} username={item.username} />
           ))}
         </ScrollCarousel>
       </SecondSection>

@@ -4,43 +4,61 @@ import { Mark } from '@/assets/icons'
 import { SvgButton } from '@/shared/ui'
 
 interface ProgressBarProps {
-  currentTime: number
-  duration: number
   trackLengths: number[]
-  onClick?: (e: React.MouseEvent<HTMLDivElement>) => void
-  onClickMarker?: (time: number) => void
+  currentTime: number
+  onClick?: (trackIndex: number, seconds: number) => void
 }
 
 const formatTime = (time: number) => {
-  return [Math.floor(time / 3600), Math.floor(time / 60) % 60, time % 60]
+  return [Math.floor(time / 3600), Math.floor(time / 60) % 60, Math.floor(time % 60)]
     .map((n) => n.toString().padStart(2, '0'))
     .join(':')
 }
 
-const ProgressBar = ({
-  currentTime,
-  duration,
-  trackLengths,
-  onClick,
-  onClickMarker,
-}: ProgressBarProps) => {
-  const progressPercent = duration > 0 ? (currentTime / duration) * 100 : 0
+const ProgressBar = ({ trackLengths, currentTime, onClick }: ProgressBarProps) => {
+  const duration = trackLengths.reduce((acc, cur) => acc + cur, 0)
 
+  // 마커 퍼센트 계산
   let sum = 0
   const marks = trackLengths
     .map((len) => {
       const start = sum
       sum += len
-      return start // 시작 지점 구하기
+      return start
     })
-    .slice(1) // 첫 번째 값 제외
-    .map((t) => (t / duration) * 100) // 퍼센트 변환
+    .slice(1)
+    .map((t) => (t / duration) * 100)
 
   const handleClickMarker = (idx: number) => {
-    if (!onClickMarker) return
-    const time = trackLengths.slice(0, idx + 1).reduce((acc, cur) => acc + cur, 0)
-    onClickMarker(time)
+    onClick?.(idx + 1, 0)
   }
+
+  const handleBarClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    // 바 클릭 위치를 계산하여 총 재생 시간으로 변환
+    const rect = e.currentTarget.getBoundingClientRect()
+    const clickX = e.clientX - rect.left
+    const progress = clickX / rect.width
+    const seekTime = progress * duration
+
+    // 클릭된 시간이 어떤 트랙에 속하는지 계산
+    let currentTotal = 0
+    let trackIndex = 0
+    let localTime = 0
+
+    for (let i = 0; i < trackLengths.length; i++) {
+      currentTotal += trackLengths[i]
+      if (seekTime < currentTotal) {
+        trackIndex = i
+        // 해당 곡 내에서의 시간을 계산
+        localTime = seekTime - (currentTotal - trackLengths[i])
+        break
+      }
+    }
+
+    onClick?.(trackIndex, localTime)
+  }
+
+  const progressPercent = duration > 0 ? (currentTime / duration) * 100 : 0
 
   return (
     <Wrapper>
@@ -52,7 +70,7 @@ const ProgressBar = ({
         ))}
       </Markers>
 
-      <BarContainer onClick={onClick}>
+      <BarContainer onClick={handleBarClick}>
         <Progress $progress={progressPercent} />
       </BarContainer>
 
@@ -92,6 +110,7 @@ const BarContainer = styled.div`
   width: 100%;
   border-radius: 20px;
   overflow: hidden;
+  cursor: pointer;
 `
 
 const Progress = styled.div<{ $progress: number }>`
@@ -105,4 +124,8 @@ const TimeBox = styled.div`
   justify-content: space-between;
   ${({ theme }) => theme.FONT.caption2};
   color: ${({ theme }) => theme.COLOR['gray-200']};
+
+  span {
+    min-width: 50px;
+  }
 `

@@ -10,7 +10,8 @@ const Privacy = lazy(() => import('@pages/myPage/ui/privacy'))
 const Unregister = lazy(() => import('@/pages/myPage/ui/unregister'))
 const SearchPage = lazy(() => import('@/pages/searchPage'))
 const SearchResult = lazy(() => import('@/pages/searchPage/SearchResultPage'))
-const DiscoverPage = lazy(() => import('@/pages/discover'))
+const DiscoverLayout = lazy(() => import('@/pages/discover/DiscoverLayout'))
+const DiscoverCarousel = lazy(() => import('@/pages/discover/index'))
 const PlaylistInfoPage = lazy(() => import('@/pages/discover/playlist'))
 
 export interface RouteConfig {
@@ -19,6 +20,7 @@ export interface RouteConfig {
   isPrivate?: boolean // private route 페이지
   isNotSuspense?: boolean // suspense 미적용 페이지
   hideNav?: boolean // navbar 숨김 여부
+  children?: RouteConfig[] // nested route 용
 }
 
 export const routesConfig: RouteConfig[] = [
@@ -30,11 +32,18 @@ export const routesConfig: RouteConfig[] = [
   { path: '/searchResult', component: SearchResult },
 
   // 둘러보기
-  { path: '/discover/:id', component: DiscoverPage },
-  { path: '/discover/:id/playlist', component: PlaylistInfoPage },
+  {
+    path: '/discover/:id',
+    component: DiscoverLayout,
+    isNotSuspense: true,
+    children: [
+      { path: '', component: DiscoverCarousel },
+      { path: 'playlist', component: PlaylistInfoPage },
+    ],
+  },
 
   // 나의 CD
-  { path: '/mycd', component: DiscoverPage }, // TODO: 추추 컴포넌트 수정 예정
+  // { path: '/mycd', component: DiscoverPage }, // TODO: 추추 험포넌트 수정 예정
   // { path: '/mycd/playlist', component: () => <></> },
 
   // 마이페이지 (private)
