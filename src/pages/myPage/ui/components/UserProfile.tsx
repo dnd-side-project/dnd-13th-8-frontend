@@ -7,7 +7,7 @@ import type { ProfileUrl } from '@shared/ui/Profile'
 
 import { Camera } from '@/assets/icons'
 import { useAuth } from '@/entities/user/model/useAuth'
-import { flexColCenter, flexRowCenter } from '@/shared/styles/mixins'
+import { flexRowCenter } from '@/shared/styles/mixins'
 
 const UserProfile = () => {
   const { userInfo } = useAuth()
@@ -115,7 +115,6 @@ const UserProfile = () => {
 export default UserProfile
 
 const ProfileWrapper = styled.section`
-  /* ${flexColCenter} */
   display: flex;
   flex-direction: column;
   align-items: center;
