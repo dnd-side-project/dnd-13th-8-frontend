@@ -9,6 +9,7 @@ import { routesConfig } from '@shared/config/routesConfig'
 import { useDevice, type DeviceType } from '@shared/lib/useDevice'
 import { flexRowCenter } from '@shared/styles/mixins'
 
+import { ToastProvider } from '@/app/providers'
 import NavBar, { NAV_HEIGHT } from '@/widgets/layout/NavBar'
 
 const LAYOUT_BOTTOM_GAP = 34
@@ -37,12 +38,14 @@ const App = () => {
       $layoutWidth={LAYOUT_WIDTH}
       $layoutBottomGap={LAYOUT_BOTTOM_GAP}
     >
-      <AppRoutes />
-      {isNavVisible && (
-        <NavContainer $layoutWidth={LAYOUT_WIDTH} $layoutBottomGap={LAYOUT_BOTTOM_GAP}>
-          <NavBar />
-        </NavContainer>
-      )}
+      <ToastProvider>
+        <AppRoutes />
+        {isNavVisible && (
+          <NavContainer $layoutWidth={LAYOUT_WIDTH} $layoutBottomGap={LAYOUT_BOTTOM_GAP}>
+            <NavBar />
+          </NavContainer>
+        )}
+      </ToastProvider>
     </MainLayout>
   )
 }

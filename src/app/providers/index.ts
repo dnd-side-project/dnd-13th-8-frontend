@@ -1,5 +1,6 @@
 import { default as PlayerProvider } from './PlayerProvider'
 import QueryProvider from './QueryProvider'
 import ThemeProvider from './ThemeProvider'
+import { ToastProvider } from './ToastProvider'
 
-export { QueryProvider, ThemeProvider, PlayerProvider }
+export { QueryProvider, ThemeProvider, PlayerProvider, ToastProvider }
