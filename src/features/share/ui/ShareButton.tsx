@@ -22,10 +22,34 @@ const ShareButton = ({ playlistId }: ShareButtonProps) => {
   // TODO: 이미지 저장 기능 구현
   const handleSaveImage = () => {}
 
+  const copyToClipboard = (text: string) => {
+    if (navigator.clipboard?.writeText) {
+      return navigator.clipboard.writeText(text)
+    } else {
+      // 사파리 or 모바일 브라우저
+      const textarea = document.createElement('textarea')
+      textarea.value = text
+      textarea.style.position = 'fixed'
+      textarea.style.opacity = '0'
+      document.body.appendChild(textarea)
+      textarea.focus()
+      textarea.select()
+      try {
+        document.execCommand('copy')
+      } catch (e) {
+        console.error(e)
+      }
+      document.body.removeChild(textarea)
+      return Promise.resolve()
+    }
+  }
+
   const handleCopyLink = () => {
     const link = `${window.location.origin}/discover/${playlistId}`
-    navigator.clipboard.writeText(link).then(() => {
+    copyToClipboard(link).then(() => {
+      console.log(link)
       toast('LINK')
+      console.log('copied', link)
     })
   }
 
