@@ -5,7 +5,8 @@ import { v4 as uuidv4 } from 'uuid'
 
 import type { ModalProps } from '@shared/ui/Modal'
 
-import { Trash, Plus, Overlay } from '@/assets/icons'
+import { Trash, Plus } from '@/assets/icons'
+import overlayUrl from '@/assets/icons/icn_overlay.svg?url'
 import { ExpandBtn, TrashBtn } from '@/assets/images'
 import { getCurrentThemeImages, STICKER_THEME_LIST } from '@/pages/myPage/lib/customizeTheme'
 import type { StickerThemeType } from '@/pages/myPage/types/mypage'
@@ -20,6 +21,7 @@ interface Sticker {
   src: string
   x: number
   y: number
+  z: number
   width: number
   height: number
   scale: number
@@ -39,7 +41,7 @@ const CustomizeStep2 = ({ currentStep, setCurrentStep, setModal }: CustomizeStep
   const [resizeMode, setResizeMode] = useState<'move' | 'resize' | null>(null)
   const DELETE_BUTTON_SIZE = 20
 
-  // 테마 이미지 URLs (Vite glob 결과를 정렬하여 일관된 순서 보장)
+  // 테마 이미지 URL (Vite glob 결과를 정렬하여 일관된 순서 보장)
   const stickerUrls = useMemo(() => {
     const images = getCurrentThemeImages(currentThemeId) as Record<string, { default: string }>
     const sortedKeys = Object.keys(images).sort()
@@ -137,6 +139,12 @@ const CustomizeStep2 = ({ currentStep, setCurrentStep, setModal }: CustomizeStep
     setModal({ isOpen: false } as ModalProps)
   }
 
+  // 새 스티커 추가 시 다음 z 계산
+  const getNextZIndex = () => {
+    if (stickers.length === 0) return 1
+    return Math.max(...stickers.map((s) => s.z)) + 1
+  }
+
   // 스티커 업로드
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -177,6 +185,7 @@ const CustomizeStep2 = ({ currentStep, setCurrentStep, setModal }: CustomizeStep
         src: dataUrl,
         x: center.x - width / 2 + 85,
         y: center.y - height / 2,
+        z: getNextZIndex(),
         width,
         height,
         scale: 1,
@@ -226,6 +235,7 @@ const CustomizeStep2 = ({ currentStep, setCurrentStep, setModal }: CustomizeStep
       src,
       x: center.x - width / 2 + 85,
       y: center.y - height / 2,
+      z: getNextZIndex(),
       width,
       height,
       scale: 1,
@@ -761,12 +771,11 @@ const CdCustomContainer = styled.div`
   touch-action: none;
 `
 
-const CdOverlay = styled(Overlay)`
+const CdOverlay = styled.div`
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
+  background: url(${overlayUrl}) no-repeat center/cover;
+  mix-blend-mode: multiply;
   pointer-events: none;
 `
 
