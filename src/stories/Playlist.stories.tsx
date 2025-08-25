@@ -13,18 +13,14 @@ type Story = StoryObj<typeof Playlist>
 
 export const Default: Story = {
   args: {
-    id: 1,
     title: '작업할 때 듣기 좋은 플레이리스트. 길어지면 말줄임표가 나온답니다',
     username: 'Team 8樂8樂',
-    isLiked: false,
   },
 }
 
 export const Liked: Story = {
   args: {
-    id: 2,
     title: '이미 좋아요 된 플레이리스트 예시',
     username: 'Team 8樂8樂',
-    isLiked: true,
   },
 }

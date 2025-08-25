@@ -1,22 +1,24 @@
 import { useNavigate } from 'react-router-dom'
 
-import styled, { useTheme } from 'styled-components'
+import styled from 'styled-components'
 
-import { Heart, Playlist } from '@/assets/icons'
-import { useLike } from '@/features/like'
+import { Playlist } from '@/assets/icons'
+import { FollowButton } from '@/features/follow'
 import { ShareButton } from '@/features/share'
 import { flexRowCenter } from '@/shared/styles/mixins'
 import SvgButton from '@/shared/ui/SvgButton'
+import { ChatButton } from '@/widgets/chat'
 
 interface ActionBarProps {
   playlistId: number
-  isLiked: boolean
+  isFollowing: boolean
+  userId: number
+  userName: string
+  profile?: string
 }
 
-const ActionBar = ({ playlistId, isLiked }: ActionBarProps) => {
-  const theme = useTheme()
+const ActionBar = ({ playlistId, isFollowing, userName, profile, userId }: ActionBarProps) => {
   const navigate = useNavigate()
-  const { liked, handleLike } = useLike(playlistId, isLiked)
 
   const handleMovePlaylist = () => {
     navigate(`/discover/${playlistId}/playlist`)
@@ -24,16 +26,15 @@ const ActionBar = ({ playlistId, isLiked }: ActionBarProps) => {
 
   return (
     <Wrapper>
-      <SvgButton
-        icon={Heart}
-        width={24}
-        height={24}
-        fill={liked ? theme.COLOR['primary-normal'] : 'none'}
-        stroke={liked ? theme.COLOR['primary-normal'] : theme.COLOR['gray-200']}
-        onClick={handleLike}
+      <FollowButton
+        isFollowing={isFollowing}
+        userName={userName}
+        profile={profile}
+        userId={userId}
       />
       <ShareButton playlistId={playlistId} />
       <SvgButton icon={Playlist} width={24} height={24} onClick={handleMovePlaylist} />
+      <ChatButton />
     </Wrapper>
   )
 }

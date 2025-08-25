@@ -1,120 +1,89 @@
-import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useMemo, useCallback } from 'react'
 
 import styled from 'styled-components'
 
-import type { CommentData } from '@/entities/comment'
 import type { PlaylistData } from '@/entities/playlist/model/types'
-import CommentMockData from '@/pages/discover/commentData.json'
 import { flexColCenter } from '@/shared/styles/mixins'
-import { Button, Cd, Header, LiveInfo } from '@/shared/ui'
-import { ChatBottomSheet, ChatInput } from '@/widgets/chat'
-import { ActionBar, ControlBar, ProgressBar } from '@/widgets/playlist'
-import type { BackgroundPlayerHandle } from '@/widgets/playlist/BackgroundPlayer'
+import { Cd, Header, LiveInfo } from '@/shared/ui'
+import { ActionBar, ProgressBar } from '@/widgets/playlist'
+import ControlBar from '@/widgets/playlist/ControlBar'
 
-const Data: CommentData[] = CommentMockData.map((c) => ({
-  ...c,
-  role: c.role as 'owner' | 'mine' | 'other',
-}))
-
-interface PlaylistLayoutProps {
-  playlistData: PlaylistData
-  isOwner?: boolean
-  listenerNum: number
-  isOnAir: boolean
-  playerRef?: React.RefObject<BackgroundPlayerHandle | null>
+interface PlaylistSlideProps {
+  data: PlaylistData
+  currentPlaylist: PlaylistData | null
+  currentTrackIndex: number
+  currentTime: number
   isPlaying: boolean
-  onTogglePlay: () => void
+  onPlayPause: () => void
+  onNext: () => void
+  onPrev: () => void
+  onSelectTrack: (trackIndex: number, time?: number) => void
 }
 
 const PlaylistLayout = ({
-  playlistData,
-  isOwner = false,
-  listenerNum,
-  isOnAir,
-  playerRef,
+  data,
+  currentPlaylist,
+  currentTrackIndex,
+  currentTime,
   isPlaying,
-  onTogglePlay,
-}: PlaylistLayoutProps) => {
-  const navigate = useNavigate()
-  const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false)
-  const [currentTime, setCurrentTime] = useState(0)
+  onPlayPause,
+  onNext,
+  onPrev,
+  onSelectTrack,
+}: PlaylistSlideProps) => {
+  // 누적 시간 계산
+  const accumulatedTime = useMemo(() => {
+    if (!currentPlaylist) return 0
+    return (
+      currentPlaylist.tracks
+        .slice(0, currentTrackIndex)
+        .reduce((acc, track) => acc + track.duration, 0) + currentTime
+    )
+  }, [currentPlaylist, currentTrackIndex, currentTime])
 
-  const trackLengths = playlistData.tracks.map((t) => t.duration)
-  const totalTime = trackLengths.reduce((sum, t) => sum + t, 0)
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (playerRef?.current) {
-        const time = Math.floor(playerRef.current.getAccTime())
-        setCurrentTime(time)
-      }
-    }, 1000)
-
-    return () => clearInterval(interval)
-  }, [playerRef])
-
-  // ProgressBar 클릭 시 전체 누적 시간 기준으로 이동
-  const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!playerRef?.current) return
-
-    const rect = e.currentTarget.getBoundingClientRect()
-    const clickX = e.clientX - rect.left
-    const ratio = clickX / rect.width
-    const seekTime = totalTime * ratio
-
-    playerRef.current.seekToTotal(seekTime)
-  }
+  const handleProgressClick = useCallback(
+    (trackIndex: number, seconds: number) => {
+      onSelectTrack(trackIndex, seconds)
+    },
+    [onSelectTrack]
+  )
 
   return (
-    <div>
+    <>
       <Header
         center={
           <>
-            <span>{playlistData.title}</span>
-            <span>{playlistData.tracks[0].title}</span>
+            <span>{data.title}</span>
+            <span>{currentPlaylist?.tracks[currentTrackIndex]?.title}</span>
           </>
         }
       />
-
       <Container>
-        <LiveInfo isOnAir={isOnAir} listenerCount={listenerNum} isOwner={isOwner} />
-
-        {isOwner && (
-          <Button size="S" state="primary" onClick={() => navigate('/customize')}>
-            꾸미기
-          </Button>
-        )}
+        <LiveInfo isOnAir={data.isOnAir} listenerCount={data.listeners} isOwner={false} />
       </Container>
-
       <Wrapper>
         <Cd variant="xxl" bgColor="none" />
-        <ActionBar playlistId={Number(playlistData.id)} isLiked={playlistData.liked} />
+        <ActionBar
+          playlistId={data.id}
+          isFollowing={false}
+          userId={data.userId}
+          userName={data.userName}
+        />
       </Wrapper>
 
       <ProgressBar
-        currentTime={currentTime}
-        duration={totalTime}
-        trackLengths={trackLengths}
+        trackLengths={currentPlaylist?.tracks.map((t) => t.duration) || []}
+        currentTime={accumulatedTime}
         onClick={handleProgressClick}
-        onClickMarker={(time) => {
-          if (!playerRef?.current) return
-          playerRef.current.seekToTotal(time)
-        }}
       />
 
-      <ControlBar playerRef={playerRef} isPlaying={isPlaying} onTogglePlay={onTogglePlay} />
-
-      <ChatInput onFocus={() => setIsBottomSheetOpen(true)} />
-
-      {isBottomSheetOpen && (
-        <ChatBottomSheet
-          comments={Data}
-          isOpen={isBottomSheetOpen}
-          onClose={() => setIsBottomSheetOpen(false)}
-        />
-      )}
-    </div>
+      <ControlBar
+        isPlaying={isPlaying}
+        onTogglePlay={onPlayPause}
+        onNext={onNext}
+        onPrev={onPrev}
+      />
+    </>
   )
 }
 

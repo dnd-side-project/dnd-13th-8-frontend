@@ -8,7 +8,7 @@ interface SearchResultItemProps {
   type: 'playlist' | 'user'
   searchResult: string
   userName?: string | null
-  onClick: () => void
+  onClick?: () => void
 }
 
 const SearchResultItem = ({
@@ -36,7 +36,7 @@ export default SearchResultItem
 const ItemContainer = styled.button`
   display: flex;
   gap: 12px;
-  width: 335px;
+  max-width: 335px;
 `
 
 const Left = styled.div`

@@ -26,9 +26,10 @@
     ],
     "listeners": 123,
     "isOnAir": false,
-    "liked": true,
+    "liked": false,
     "genre": "K-POP",
-    "userName": "김들락"
+    "userName": "김들락",
+    "userId": 12344
   },
   {
     "id": 3233,
@@ -54,7 +55,8 @@
     "isOnAir": false,
     "liked": true,
     "genre": "락",
-    "userName": "박들락"
+    "userName": "박들락",
+    "userId": 32123
   },
   {
     "id": 3234,
@@ -75,6 +77,7 @@
     "isOnAir": true,
     "liked": true,
     "genre": "발라드",
-    "userName": "최들락"
+    "userName": "최들락",
+    "userId": 3212222
   }
 ]
