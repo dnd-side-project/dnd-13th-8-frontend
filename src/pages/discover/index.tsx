@@ -79,7 +79,7 @@ const DiscoverPage = () => {
     (index: number) => {
       const selectedPlaylist = playlistData[index]
       if (selectedPlaylist && currentPlaylist?.id !== selectedPlaylist.id) {
-        setPlaylist(selectedPlaylist, 0)
+        setPlaylist(selectedPlaylist, 0, 0)
       }
     },
     [setPlaylist, currentPlaylist]
