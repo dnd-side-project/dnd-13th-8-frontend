@@ -29,7 +29,11 @@ const ActionBar = ({
   const navigate = useNavigate()
 
   const handleMovePlaylist = () => {
-    navigate(`/discover/${playlistId}/playlist`)
+    if (showFollow) {
+      navigate(`/discover/${playlistId}/playlist`)
+    } else {
+      navigate(`/mycd/playlist`)
+    }
   }
 
   return (
