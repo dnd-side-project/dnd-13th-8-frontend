@@ -4,7 +4,7 @@ import PlaylistProvider from '@/app/providers/PlayerProvider'
 
 const MyCdLayout = () => {
   return (
-    <PlaylistProvider>
+    <PlaylistProvider key="my-cd">
       <Outlet />
     </PlaylistProvider>
   )
