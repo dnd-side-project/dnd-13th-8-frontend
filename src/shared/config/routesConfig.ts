@@ -13,6 +13,8 @@ const SearchResult = lazy(() => import('@/pages/searchPage/SearchResultPage'))
 const DiscoverLayout = lazy(() => import('@/pages/discover/DiscoverLayout'))
 const DiscoverCarousel = lazy(() => import('@/pages/discover/index'))
 const PlaylistInfoPage = lazy(() => import('@/pages/discover/playlist'))
+const NotFoundPage = lazy(() => import('@/pages/notFound'))
+const ErrorPage = lazy(() => import('@/pages/error'))
 
 export interface RouteConfig {
   path: string
@@ -79,6 +81,6 @@ export const routesConfig: RouteConfig[] = [
   // { path: '/login/callback', component: () => <></>, isNotSuspense: true, hideNav: true },
 
   // 에러 페이지
-  // { path: '*', component: () => <div></div>, isNotSuspense: true, hideNav: true },
-  // { path: '/error', component: () => <div></div>, isNotSuspense: true, hideNav: true },
+  { path: '*', component: NotFoundPage, isNotSuspense: true, hideNav: true },
+  { path: '/error', component: ErrorPage, isNotSuspense: true, hideNav: true },
 ]
