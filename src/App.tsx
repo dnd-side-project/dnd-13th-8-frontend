@@ -19,7 +19,7 @@ const App = () => {
   const deviceType = useDevice()
   const location = useLocation()
 
-  const { user, isLogin } = useAuthStore()
+  const { isLogin } = useAuthStore()
   const { mutate } = useAnonymousLogin()
 
   const [isNavVisible, setIsNavVisible] = useState(true)
@@ -29,7 +29,7 @@ const App = () => {
   // 비회원일 경우 API 호출을 위한 익명 토큰 발급
   // TODO: 토큰 만료됐을 경우 응답 체크해서 해당 값일 경우 토큰 재발급
   const checkAnonymousLogin = () => {
-    if (!user || !isLogin) {
+    if (!isLogin) {
       mutate(undefined, {
         onSuccess: (response) => {
           const token = `${response}` || ''

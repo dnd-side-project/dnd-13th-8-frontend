@@ -3,14 +3,18 @@ export interface LoginPayload {
   codeVerifier: string
 }
 
-export interface LoginResponse {
+export interface UserInfo {
   userId: string
   username: string
+}
+
+export interface LoginResponse extends UserInfo {
   jwtAccessToken: string
 }
 
 export interface AuthState {
-  user: LoginResponse | null
+  userInfo: UserInfo
+  accessToken: string
   isLogin: boolean
   setLogin: (data: LoginResponse) => void
   setLogout: () => void

@@ -1,6 +1,8 @@
 import axios, { AxiosError } from 'axios'
 import type { AxiosResponse, InternalAxiosRequestConfig } from 'axios'
 
+import { useAuthStore } from '@/features/auth/store/authStore'
+
 export const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
   timeout: 5000,
@@ -12,8 +14,7 @@ export const axiosInstance = axios.create({
 // 요청 시 token 추가
 axiosInstance.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    // TODO: 토큰 추가
-    const accessToken = ''
+    const { accessToken } = useAuthStore.getState()
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`
     }
