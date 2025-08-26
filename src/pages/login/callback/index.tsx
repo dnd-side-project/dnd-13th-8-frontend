@@ -1,13 +1,13 @@
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import { useLoginMutation } from '@/features/auth/model/useAuth'
+import { useLogin } from '@/features/auth/model/useAuth'
 import { useAuthStore } from '@/features/auth/store/authStore'
 import { Loading } from '@/shared/ui'
 
 const LoginCallbackPage = () => {
   const navigate = useNavigate()
-  const { mutate, isSuccess } = useLoginMutation()
+  const { mutate, isSuccess } = useLogin()
 
   const { setLogin, setLogout } = useAuthStore()
 

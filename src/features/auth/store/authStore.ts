@@ -9,20 +9,24 @@ export const useAuthStore = create<AuthState>()(
       user: null,
       isLogin: false,
 
-      setLogin: (data) =>
+      setLogin: (data) => {
+        localStorage.removeItem('anonymous_token')
         set({
           user: data,
           isLogin: true,
-        }),
+        })
+      },
 
-      setLogout: () =>
+      setLogout: () => {
+        localStorage.removeItem('deulak_auth')
         set({
           user: null,
           isLogin: false,
-        }),
+        })
+      },
     }),
     {
-      name: 'deulak-auth',
+      name: 'deulak_auth',
       partialize: (state) => ({
         user: state.user,
         isLogin: state.isLogin,
