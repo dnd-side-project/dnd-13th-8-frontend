@@ -16,12 +16,10 @@ const LoginCallbackPage = () => {
     const code = urlParams.get('code')
     const codeVerifier = sessionStorage.getItem('pkce_code_verifier')
 
-    console.log({ code, codeVerifier })
-
     const goToError = () => {
       sessionStorage.removeItem('pkce_code_verifier')
       setLogout()
-      // navigate('/error', { replace: true })
+      navigate('/error', { replace: true })
     }
 
     if (!code || !codeVerifier) {
@@ -33,9 +31,8 @@ const LoginCallbackPage = () => {
       { code, codeVerifier },
       {
         onSuccess: (response) => {
-          console.log('로그인 성공:', response.data)
-          setLogin(response.data)
           sessionStorage.removeItem('pkce_code_verifier')
+          setLogin(response.data)
           navigate('/', { replace: true })
         },
         onError: (error) => {
