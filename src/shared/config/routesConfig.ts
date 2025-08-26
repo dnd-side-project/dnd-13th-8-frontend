@@ -81,6 +81,6 @@ export const routesConfig: RouteConfig[] = [
   // { path: '/login/callback', component: () => <></>, isNotSuspense: true, hideNav: true },
 
   // 에러 페이지
-  { path: '*', component: NotFoundPage, isNotSuspense: true, hideNav: true },
-  { path: '/error', component: ErrorPage, isNotSuspense: true, hideNav: true },
+  { path: '*', component: NotFoundPage, isNotSuspense: true },
+  { path: '/error', component: ErrorPage, isNotSuspense: true },
 ]
