@@ -43,7 +43,8 @@
     "react-youtube": "^10.1.0",
     "styled-components": "^6.1.19",
     "styled-reset": "^4.5.2",
-    "uuid": "^11.1.0"
+    "uuid": "^11.1.0",
+    "zustand": "^5.0.8"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^4.1.0",
