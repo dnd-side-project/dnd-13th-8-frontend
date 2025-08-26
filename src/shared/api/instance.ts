@@ -14,9 +14,10 @@ export const axiosInstance = axios.create({
 // 요청 시 token 추가
 axiosInstance.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    const { accessToken } = useAuthStore.getState()
-    if (accessToken) {
-      config.headers.Authorization = `Bearer ${accessToken}`
+    const { isLogin, accessToken } = useAuthStore.getState()
+    const token = isLogin ? accessToken : localStorage.getItem('anonymous_token')
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`
     }
     return config
   },
