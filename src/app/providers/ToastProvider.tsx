@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, type ReactNode } from 'react'
+import { createContext, useCallback, useContext, useState, type ReactNode } from 'react'
 
 import styled from 'styled-components'
 
@@ -22,10 +22,10 @@ const ToastContext = createContext<ToastContextType | undefined>(undefined)
 export const ToastProvider = ({ children }: { children: ReactNode }) => {
   const [toastState, setToastState] = useState<{ message: string; type: ToastType } | null>(null)
 
-  const toast = (type: ToastType) => {
+  const toast = useCallback((type: ToastType) => {
     setToastState({ message: TOAST_MESSAGES[type], type })
     setTimeout(() => setToastState(null), 1500)
-  }
+  }, [])
 
   return (
     <ToastContext.Provider value={{ toast }}>
