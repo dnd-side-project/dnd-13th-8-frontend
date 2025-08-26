@@ -1,10 +1,11 @@
 import { useMemo, useCallback } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import styled from 'styled-components'
 
 import type { PlaylistData } from '@/entities/playlist/model/types'
 import { flexColCenter } from '@/shared/styles/mixins'
-import { Cd, Header, LiveInfo } from '@/shared/ui'
+import { Button, Cd, Header, LiveInfo } from '@/shared/ui'
 import { ActionBar, ProgressBar } from '@/widgets/playlist'
 import ControlBar from '@/widgets/playlist/ControlBar'
 
@@ -18,6 +19,7 @@ interface PlaylistSlideProps {
   onNext: () => void
   onPrev: () => void
   onSelectTrack: (trackIndex: number, time?: number) => void
+  type?: 'My' | 'Discover'
 }
 
 const PlaylistLayout = ({
@@ -30,7 +32,9 @@ const PlaylistLayout = ({
   onNext,
   onPrev,
   onSelectTrack,
+  type = 'Discover',
 }: PlaylistSlideProps) => {
+  const navigate = useNavigate()
   // 누적 시간 계산
   const accumulatedTime = useMemo(() => {
     if (!currentPlaylist) return 0
@@ -60,6 +64,12 @@ const PlaylistLayout = ({
       />
       <Container>
         <LiveInfo isOnAir={data.isOnAir} listenerCount={data.listeners} isOwner={false} />
+
+        {type === 'My' && (
+          <Button size="S" state="primary" onClick={() => navigate('/mypage/customize')}>
+            꾸미기
+          </Button>
+        )}
       </Container>
       <Wrapper>
         <Cd variant="xxl" bgColor="none" />
@@ -68,6 +78,7 @@ const PlaylistLayout = ({
           isFollowing={false}
           userId={data.userId}
           userName={data.userName}
+          showFollow={type !== 'My'}
         />
       </Wrapper>
 

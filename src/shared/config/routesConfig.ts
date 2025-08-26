@@ -11,10 +11,15 @@ const Unregister = lazy(() => import('@/pages/myPage/ui/unregister'))
 const SearchPage = lazy(() => import('@/pages/searchPage'))
 const SearchResult = lazy(() => import('@/pages/searchPage/SearchResultPage'))
 const DiscoverLayout = lazy(() => import('@/pages/discover/DiscoverLayout'))
-const DiscoverCarousel = lazy(() => import('@/pages/discover/index'))
+const MyCdLayout = lazy(() => import('@/pages/mycd/MyCdLayout'))
+const DiscoverCarousel = lazy(() => import('@/pages/discover'))
 const PlaylistInfoPage = lazy(() => import('@/pages/discover/playlist'))
 const LoginPage = lazy(() => import('@/pages/login'))
 const LoginCallbackPage = lazy(() => import('@/pages/login/callback'))
+const MyCdPage = lazy(() => import('@/pages/mycd'))
+const MyCdInfoPage = lazy(() => import('@/pages/mycd/playlist'))
+const NotFoundPage = lazy(() => import('@/pages/notFound'))
+const ErrorPage = lazy(() => import('@/pages/error'))
 
 export interface RouteConfig {
   path: string
@@ -45,8 +50,15 @@ export const routesConfig: RouteConfig[] = [
   },
 
   // 나의 CD
-  // { path: '/mycd', component: DiscoverPage }, // TODO: 추추 험포넌트 수정 예정
-  // { path: '/mycd/playlist', component: () => <></> },
+  {
+    path: '/mycd',
+    component: MyCdLayout,
+    isNotSuspense: true,
+    children: [
+      { path: '', component: MyCdPage },
+      { path: 'playlist', component: MyCdInfoPage },
+    ],
+  },
 
   // 마이페이지 (private)
   { path: '/mypage', component: MyPage, isPrivate: true },
@@ -81,6 +93,6 @@ export const routesConfig: RouteConfig[] = [
   { path: '/login/callback', component: LoginCallbackPage, isNotSuspense: true, hideNav: true },
 
   // 에러 페이지
-  // { path: '*', component: () => <div></div>, isNotSuspense: true, hideNav: true },
-  // { path: '/error', component: () => <div></div>, isNotSuspense: true, hideNav: true },
+  { path: '*', component: NotFoundPage, isNotSuspense: true },
+  { path: '/error', component: ErrorPage, isNotSuspense: true },
 ]
