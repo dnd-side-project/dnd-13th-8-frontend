@@ -37,7 +37,6 @@ const LoginCallbackPage = () => {
       { code, codeVerifier },
       {
         onSuccess: (response) => {
-          console.log('response', response)
           sessionStorage.removeItem('pkce_code_verifier')
           setLogin(response as unknown as LoginResponse)
           navigate('/', { replace: true })
