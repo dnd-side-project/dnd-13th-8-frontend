@@ -6,9 +6,7 @@ import { Cd } from '@/shared/ui'
 const ShareImage = () => {
   return (
     <ImagePreview>
-      <CenteredCd>
-        <Cd variant="share" bgColor="none" />
-      </CenteredCd>
+      <Cd variant="share" bgColor="none" />
       <WaterMarkWrapper>
         <WaterMark />
       </WaterMarkWrapper>
@@ -19,18 +17,14 @@ const ShareImage = () => {
 export default ShareImage
 
 const ImagePreview = styled.div`
+  display: grid;
+  place-items: center;
   width: 280px;
   height: 280px;
   border-radius: 24px;
   background-color: ${({ theme }) => theme.COLOR['gray-900']};
   position: relative;
-`
-
-const CenteredCd = styled.div`
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  overflow: hidden;
 `
 
 const WaterMarkWrapper = styled.div`

@@ -59,4 +59,5 @@ const Base = styled.div<StyleProps>`
   height: ${({ $variant }) => sizeMap[$variant].base}px;
   border-radius: 100%;
   background: ${({ theme }) => theme.GRADIENT.hologram};
+  overflow: hidden;
 `
