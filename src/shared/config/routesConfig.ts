@@ -2,9 +2,8 @@ import { lazy } from 'react'
 import type { ComponentType, LazyExoticComponent } from 'react'
 
 const HomePage = lazy(() => import('@pages/homePage'))
-const Customize = lazy(() => import('@pages/customize'))
 const MyPage = lazy(() => import('@pages/myPage/ui'))
-const Create = lazy(() => import('@pages/myPage/ui/create'))
+const Customize = lazy(() => import('@pages/myPage/ui/customize'))
 const Setting = lazy(() => import('@pages/myPage/ui/setting'))
 const Terms = lazy(() => import('@pages/myPage/ui/terms'))
 const Privacy = lazy(() => import('@pages/myPage/ui/privacy'))
@@ -17,6 +16,8 @@ const DiscoverCarousel = lazy(() => import('@/pages/discover'))
 const PlaylistInfoPage = lazy(() => import('@/pages/discover/playlist'))
 const MyCdPage = lazy(() => import('@/pages/mycd'))
 const MyCdInfoPage = lazy(() => import('@/pages/mycd/playlist'))
+const NotFoundPage = lazy(() => import('@/pages/notFound'))
+const ErrorPage = lazy(() => import('@/pages/error'))
 
 export interface RouteConfig {
   path: string
@@ -57,14 +58,10 @@ export const routesConfig: RouteConfig[] = [
     ],
   },
 
-  // 커스터마이징
-  { path: '/customize', component: Customize, hideNav: true },
-
   // 마이페이지 (private)
   { path: '/mypage', component: MyPage, isPrivate: true },
-  // { path: '/mypage/:albumId/playlist', component: () => <></>, isPrivate: true },
-  // { path: '/mypage/:albumId/playlist/edit', component: () => <></>, isPrivate: true },
-  { path: '/mypage/create', component: Create, isPrivate: true },
+  // { path: '/mypage/:id/playlist', component: () => <></>, isPrivate: true },
+  { path: '/mypage/customize', component: Customize, isPrivate: true, hideNav: true },
   {
     path: '/mypage/setting',
     component: Setting,
@@ -94,6 +91,6 @@ export const routesConfig: RouteConfig[] = [
   // { path: '/login/callback', component: () => <></>, isNotSuspense: true, hideNav: true },
 
   // 에러 페이지
-  // { path: '*', component: () => <div></div>, isNotSuspense: true, hideNav: true },
-  // { path: '/error', component: () => <div></div>, isNotSuspense: true, hideNav: true },
+  { path: '*', component: NotFoundPage, isNotSuspense: true },
+  { path: '/error', component: ErrorPage, isNotSuspense: true },
 ]

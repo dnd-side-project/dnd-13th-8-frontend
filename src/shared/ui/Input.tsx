@@ -48,8 +48,8 @@ const Input = ({
   onKeyDown,
 }: InputProps) => {
   return (
-    <InputWrap>
-      <InputContainer $width={width ?? '100%'} $error={error} $iconPosition={iconPosition}>
+    <InputWrap $width={width ?? '100%'}>
+      <InputContainer $error={error} $iconPosition={iconPosition}>
         {icon && onClickIcon ? (
           <SvgButton icon={icon} onClick={onClickIcon} />
         ) : (
@@ -74,15 +74,14 @@ const Input = ({
 
 export default Input
 
-const InputWrap = styled.div`
+const InputWrap = styled.div<{ $width: string }>`
   display: flex;
   flex-direction: column;
   gap: 4px;
-  width: 100%;
+  width: ${({ $width }) => $width};
 `
 
 const InputContainer = styled.div<{
-  $width: string
   $error: boolean
   $iconPosition: IconPosition
 }>`
@@ -91,7 +90,6 @@ const InputContainer = styled.div<{
   align-items: center;
   padding: 14px 11px;
   gap: 8px;
-  width: ${({ $width }) => $width};
   height: 42px;
   border: 1px solid
     ${({ theme, $error }) => ($error ? theme.COLOR['common-error'] : theme.COLOR['gray-700'])};

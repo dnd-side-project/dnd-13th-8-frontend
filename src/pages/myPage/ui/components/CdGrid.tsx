@@ -18,20 +18,25 @@ const CdGrid = ({
     username: string
     isPrimary?: boolean
   }[]
-  currentTab: 'album' | 'like'
+  currentTab: 'cd' | 'following'
 }) => {
   const navigate = useNavigate()
 
   return (
     <CdGridWrap>
       <CdAddContainer>
-        <SvgButton icon={Plus} width={40} height={40} onClick={() => navigate('/mypage/create')} />
+        <SvgButton
+          icon={Plus}
+          width={40}
+          height={40}
+          onClick={() => navigate('/mypage/customize')}
+        />
         <CdAddLabel>추가하기</CdAddLabel>
       </CdAddContainer>
       {currentPlaylist?.map((item) => (
         <CdContainer key={item.id}>
           <Cd variant="md" />
-          {currentTab === 'album' && item?.isPrimary && <Badge size="small" text="대표" />}
+          {currentTab === 'cd' && item?.isPrimary && <Badge size="small" text="대표" />}
           <p>
             <CdTitle>{item.title}</CdTitle>
             <CdCreator>{item.username}</CdCreator>

@@ -43,7 +43,8 @@
     "react-router-dom": "^7.8.0",
     "react-youtube": "^10.1.0",
     "styled-components": "^6.1.19",
-    "styled-reset": "^4.5.2"
+    "styled-reset": "^4.5.2",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^4.1.0",
