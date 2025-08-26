@@ -3,7 +3,7 @@ import { useRef, useState } from 'react'
 import { toPng } from 'html-to-image'
 import styled from 'styled-components'
 
-import { useToast } from '@/app/providers/ToastProvider'
+import { useToast } from '@/app/providers'
 import { Share } from '@/assets/icons'
 import ShareImage from '@/features/share/ui/ShareImage'
 import { flexColCenter, flexRowCenter } from '@/shared/styles/mixins'
