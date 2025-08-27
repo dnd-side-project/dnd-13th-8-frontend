@@ -4,6 +4,7 @@ import styled, { css } from 'styled-components'
 
 import { CARD_IMAGES_LARGE } from '@/assets/card'
 import { Logo, Notification, Search } from '@/assets/icons'
+import { useAuthStore } from '@/features/auth/store/authStore'
 import {
   useRecommendationsByRecent,
   useRecommendationsByFollow,
@@ -16,7 +17,7 @@ import { Playlist, PlaylistWithSong } from '@/widgets/playlist'
 
 const HomePage = () => {
   const navigate = useNavigate()
-  const isAuth = false // TODO : 실제 로그인 상태를 가져오는 로직으로 교체
+  const { isLogin } = useAuthStore()
 
   const handleNotiClick = () => navigate('/mypage/notification')
   const handleSearchClick = () => navigate('/search')
@@ -47,8 +48,8 @@ const HomePage = () => {
       />
 
       <FirstSection>
-        <h1>{isAuth ? TITLE_TEXT.MEMBER : TITLE_TEXT.GUEST}</h1>
-        <LoopCarousel data={loopCarouselData} isAuth={isAuth} />
+        <h1>{isLogin ? TITLE_TEXT.MEMBER : TITLE_TEXT.GUEST}</h1>
+        <LoopCarousel data={loopCarouselData} isAuth={isLogin} />
       </FirstSection>
 
       <SecondSection>
