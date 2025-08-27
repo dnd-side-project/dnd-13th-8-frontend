@@ -4,7 +4,7 @@ import useEmblaCarousel from 'embla-carousel-react'
 import styled, { css } from 'styled-components'
 
 import CharacterImg from '@/assets/images/img_character.png'
-import { BUTTON_TEXT } from '@/pages/homePage/config/messages'
+import { BUTTON_TEXT } from '@/pages/home/config/messages'
 import { flexColCenter, flexRowCenter } from '@/shared/styles/mixins'
 import Badge from '@/shared/ui/Badge'
 import Button from '@/shared/ui/Button'

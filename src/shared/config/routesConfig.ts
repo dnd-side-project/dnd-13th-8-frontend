@@ -1,7 +1,7 @@
 import { lazy } from 'react'
 import type { ComponentType, LazyExoticComponent } from 'react'
 
-const HomePage = lazy(() => import('@pages/homePage'))
+const HomePage = lazy(() => import('@pages/home'))
 const MyPage = lazy(() => import('@pages/myPage/ui'))
 const Customize = lazy(() => import('@pages/myPage/ui/customize'))
 const Setting = lazy(() => import('@pages/myPage/ui/setting'))

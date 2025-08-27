@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 
 import { Logo, Notification, Search } from '@/assets/icons'
-import { TITLE_TEXT } from '@/pages/homePage/config/messages'
-import { LoopCarousel } from '@/pages/homePage/ui'
+import { TITLE_TEXT } from '@/pages/home/config/messages'
+import { LoopCarousel } from '@/pages/home/ui'
 import { Header, SvgButton, ScrollCarousel } from '@/shared/ui'
 import { Playlist, PlaylistWithSong } from '@/widgets/playlist'
 
