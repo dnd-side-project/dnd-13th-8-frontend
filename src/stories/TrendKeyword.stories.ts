@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
-import { TrendKeyword } from '@/pages/searchPage/ui'
+import { TrendKeyword } from '@/pages/search/ui'
 
 const meta: Meta<typeof TrendKeyword> = {
   title: 'Shared/TrendKeyword',

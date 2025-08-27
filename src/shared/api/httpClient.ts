@@ -3,7 +3,7 @@ import type { AxiosRequestConfig } from 'axios'
 import { axiosInstance } from './instance'
 
 export const api = {
-  get: <T>(url: string, config?: AxiosRequestConfig) => axiosInstance.get<T>(url, config),
+  get: <T>(url: string, config?: AxiosRequestConfig): Promise<T> => axiosInstance.get(url, config),
 
   post: <T>(url: string, data?: unknown, config?: AxiosRequestConfig) =>
     axiosInstance.post<T>(url, data, config),

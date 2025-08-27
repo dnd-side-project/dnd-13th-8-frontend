@@ -29,7 +29,7 @@ const FollowButton = ({ isFollowing, userId, userName, profile }: FollowButtonPr
           height="fit-content"
         >
           <UserInfoRow>
-            <SearchResultItem type="user" searchResult={userName} imageUrl={profile} />
+            <SearchResultItem type="USER" searchResult={userName} imageUrl={profile} />
             <Button size="S" state={following ? 'secondary' : 'primary'} onClick={toggleFollow}>
               {following ? '팔로잉' : '팔로우'}
             </Button>
