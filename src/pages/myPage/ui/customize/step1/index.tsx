@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 
 import { AnimatePresence, motion, Reorder, useDragControls } from 'framer-motion'
 import styled from 'styled-components'
@@ -19,6 +19,8 @@ import { flexColCenter, flexRowCenter } from '@/shared/styles/mixins'
 
 const CustomizeStep1 = ({ currentStep, setCurrentStep, setModal }: CustomizeStepProps) => {
   const navigate = useNavigate()
+  const location = useLocation()
+  const routeState = location.state as { isPrimary: boolean }
   const dragControls = useDragControls()
 
   const { mutate } = useTempSavePlaylist()
@@ -32,8 +34,7 @@ const CustomizeStep1 = ({ currentStep, setCurrentStep, setModal }: CustomizeStep
   const [linkMap, setLinkMap] = useState<{ id: string; link: string }[]>([])
   const [linkErrorMap, setLinkErrorMap] = useState<{ [key: string]: string }>({})
 
-  // TODO: UI 확인용 임시 데이터, api 연동 시 수정 예정
-  const [isPrimary, setIsPrimary] = useState(false)
+  const [isPrimary, setIsPrimary] = useState(routeState?.isPrimary ?? false)
 
   const MAX_LINK_COUNT = 10
   const VALID_YOUTUBE_URLS = [
@@ -82,9 +83,7 @@ const CustomizeStep1 = ({ currentStep, setCurrentStep, setModal }: CustomizeStep
         },
         {
           onSuccess: () => {
-            // TODO: 백엔드 수정되는대로 onSuccess response 추가 및 cdId 받아서 step2로 이동
-            console.log('success')
-            // setCurrentStep(2)
+            setCurrentStep(2)
           },
           onError: (error) => {
             console.error('플레이리스트 저장 실패:', error)

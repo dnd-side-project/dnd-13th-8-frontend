@@ -37,7 +37,12 @@ const CdGrid = ({
           key={item.paylistId}
           as="button"
           type="button"
-          onClick={() => navigate(`/mypage/${item.paylistId}/playlist`)}
+          onClick={() =>
+            navigate(`/mypage/${item.paylistId}/playlist`, {
+              // 최초 생성일 경우 대표 플리 지정
+              state: { isPrimary: currentPlaylist.length === 0 },
+            })
+          }
         >
           <Cd variant="md" />
           {currentTab === 'cd' && item?.isRepresentative && <Badge size="small" text="대표" />}
