@@ -6,11 +6,11 @@ import { Profile, Input } from '@shared/ui'
 import type { ProfileUrl } from '@shared/ui/Profile'
 
 import { Camera } from '@/assets/icons'
-import { useAuth } from '@/entities/user/model/useAuth'
+import { useAuthStore } from '@/features/auth/store/authStore'
 import { flexRowCenter } from '@/shared/styles/mixins'
 
 const UserProfile = () => {
-  const { userInfo } = useAuth()
+  const { userInfo } = useAuthStore()
 
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -19,8 +19,8 @@ const UserProfile = () => {
     nickname: string
     profileImg: ProfileUrl
   }>({
-    nickname: userInfo.nickname,
-    profileImg: userInfo.profileImg,
+    nickname: userInfo.username,
+    profileImg: userInfo?.profileImgUrl || null,
   })
   const [isFileError, setIsFileError] = useState(false)
 
@@ -45,8 +45,8 @@ const UserProfile = () => {
     setIsEditMode(false)
     setIsFileError(false)
     setUpdatedProfile({
-      nickname: userInfo.nickname,
-      profileImg: userInfo.profileImg,
+      nickname: userInfo.username,
+      profileImg: userInfo?.profileImgUrl || null,
     })
   }
 
@@ -61,7 +61,7 @@ const UserProfile = () => {
       if (fileInputRef.current) {
         fileInputRef.current.value = ''
       }
-      setUpdatedProfile((prev) => ({ ...prev, profileImg: userInfo.profileImg }))
+      setUpdatedProfile((prev) => ({ ...prev, profileImg: userInfo?.profileImgUrl || null }))
       return
     }
 
@@ -75,7 +75,7 @@ const UserProfile = () => {
       <ProfileImgContainer>
         <Profile
           size="L"
-          profileUrl={isEditMode ? updatedProfile.profileImg : userInfo.profileImg}
+          profileUrl={isEditMode ? updatedProfile.profileImg : userInfo?.profileImgUrl || null}
         />
         {isEditMode && (
           <>
@@ -92,7 +92,7 @@ const UserProfile = () => {
       </ProfileImgContainer>
       {isFileError && <FileErrMsg>5MB 이하의 파일만 업로드 가능해요</FileErrMsg>}
       {!isEditMode ? (
-        <ProfileName>{userInfo.nickname}</ProfileName>
+        <ProfileName>{userInfo.username}</ProfileName>
       ) : (
         <Input
           type="text"
