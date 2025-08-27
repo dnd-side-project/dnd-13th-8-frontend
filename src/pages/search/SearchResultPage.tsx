@@ -21,13 +21,13 @@ const SearchResultPage = () => {
 
   const [inputValue, setInputValue] = useState(keyword)
   const [searchValue, setSearchValue] = useState(keyword)
-  const { selected, onSelect } = useSingleSelect<SortType>('popular')
+  const { selected, onSelect } = useSingleSelect<SortType>('POPULAR')
 
   // 검색 API 호출
   const keywordSearchData = useSearchPlaylist(
     {
       query: searchValue,
-      sort: selected.toUpperCase() === 'POPULAR' ? 'POPULAR' : 'RECENT',
+      sort: selected,
       limit: 10,
     },
     type === 'keyword'
@@ -46,7 +46,7 @@ const SearchResultPage = () => {
         | 'ROMANCE'
         | 'KPOP'
         | 'SAD',
-      sort: selected.toUpperCase() === 'POPULAR' ? 'POPULAR' : 'RECENT',
+      sort: selected,
       limit: 10,
     },
     type === 'category'
@@ -121,30 +121,30 @@ const SearchResultPage = () => {
             <ResultList>
               {type === 'keyword'
                 ? keywordSearchResult?.map((item: Playlist) => (
-                  <SearchResultItem
-                    key={item.playlistId}
-                    type={item.type}
-                    searchResult={item.type === 'USER' ? item.username : item.playlistName}
-                    imageUrl={item.tracks?.[0]?.youtubeThumbnail ?? ''}
-                    userName={item.type === 'PLAYLIST' ? item.username : undefined}
-                    onClick={() => handleItemClick(item.playlistId)}
-                  />
-                ))
+                    <SearchResultItem
+                      key={item.playlistId}
+                      type={item.type}
+                      searchResult={item.type === 'USER' ? item.username : item.playlistName}
+                      imageUrl={item.tracks?.[0]?.youtubeThumbnail ?? ''}
+                      userName={item.type === 'PLAYLIST' ? item.username : undefined}
+                      onClick={() => handleItemClick(item.playlistId)}
+                    />
+                  ))
                 : categorySearchResult?.map(
-                  (item: {
+                    (item: {
                       playlistId: number
                       playlistName: string
                       creatorNickname: string
                     }) => (
-                    <SearchResultItem
-                      key={item.playlistId}
-                      type="PLAYLIST"
-                      searchResult={item.playlistName}
-                      userName={item.creatorNickname}
-                      onClick={() => handleItemClick(item.playlistId)}
-                    />
-                  )
-                )}
+                      <SearchResultItem
+                        key={item.playlistId}
+                        type="PLAYLIST"
+                        searchResult={item.playlistName}
+                        userName={item.creatorNickname}
+                        onClick={() => handleItemClick(item.playlistId)}
+                      />
+                    )
+                  )}
             </ResultList>
           </>
         ) : (

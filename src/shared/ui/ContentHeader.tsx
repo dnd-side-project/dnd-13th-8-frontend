@@ -5,7 +5,7 @@ import styled from 'styled-components'
 import { Filter } from '@/assets/icons'
 import BottomSheet from '@/shared/ui/BottomSheet'
 
-export type SortType = 'popular' | 'latest'
+export type SortType = 'POPULAR' | 'RECENT'
 interface ContentHeaderProps {
   totalCount: number
   currentSort: SortType
@@ -26,22 +26,22 @@ const ContentHeader = ({ totalCount, currentSort, onSortChange }: ContentHeaderP
         <span>총 {totalCount ?? 0}개</span>
         <FilterButton type="button" onClick={() => setIsOpen(true)}>
           <Filter width={24} height={24} />
-          <span>{currentSort === 'latest' ? '최신순' : '인기순'}</span>
+          <span>{currentSort === 'RECENT' ? '최신순' : '인기순'}</span>
         </FilterButton>
       </HeaderContainer>
 
       <BottomSheet isOpen={isOpen} onClose={() => setIsOpen(false)} height="200px">
         <SortButton
           type="button"
-          $active={currentSort === 'latest'}
-          onClick={() => handleSortChange('latest')}
+          $active={currentSort === 'RECENT'}
+          onClick={() => handleSortChange('RECENT')}
         >
           최신순
         </SortButton>
         <SortButton
           type="button"
-          $active={currentSort === 'popular'}
-          onClick={() => handleSortChange('popular')}
+          $active={currentSort === 'POPULAR'}
+          onClick={() => handleSortChange('POPULAR')}
         >
           인기순
         </SortButton>

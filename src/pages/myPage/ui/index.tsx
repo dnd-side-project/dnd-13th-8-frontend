@@ -21,7 +21,7 @@ const MyPage = () => {
   const navigate = useNavigate()
 
   const { selected: currentTab, onSelect: setCurrentTab } = useSingleSelect<TabType>('cd')
-  const { selected: currentSort, onSelect: setCurrentSort } = useSingleSelect<SortType>('popular')
+  const { selected: currentSort, onSelect: setCurrentSort } = useSingleSelect<SortType>('POPULAR')
 
   const TAB_LIST: { label: string; value: TabType }[] = [
     { label: '나의 CD', value: 'cd' },
