@@ -33,8 +33,7 @@ const App = () => {
     if (!isLogin) {
       mutate(undefined, {
         onSuccess: (response) => {
-          const token = `${response}` || ''
-          localStorage.setItem('anonymous_token', token)
+          localStorage.setItem('anonymous_token', response)
         },
       })
     }
@@ -85,7 +84,7 @@ const MainLayout = styled.main<{
   margin: 0 auto;
   padding: 0 20px
     ${({ $isNavVisible, $layoutBottomGap }) =>
-    $isNavVisible ? NAV_HEIGHT + $layoutBottomGap : '0'}px
+      $isNavVisible ? NAV_HEIGHT + $layoutBottomGap : '0'}px
     20px;
   width: ${({ $layoutWidth }) => $layoutWidth};
   min-height: 100dvh;

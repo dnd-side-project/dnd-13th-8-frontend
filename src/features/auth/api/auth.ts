@@ -8,5 +8,5 @@ export const postLogin = (payload: LoginPayload) => {
 
 // 비회원 토큰 발급용 로그인
 export const getAnonymousLogin = () => {
-  return api.get('/auth/anonymous')
+  return api.get<string>('/auth/anonymous')
 }

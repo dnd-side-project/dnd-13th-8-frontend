@@ -8,6 +8,7 @@ import type {
 
 export const useTempSavePlaylist = () => {
   return useMutation({
+    mutationKey: ['tempSavePlaylist'],
     mutationFn: async ({
       videoPayload,
       metaInfo,
