@@ -2,31 +2,41 @@ import { useNavigate } from 'react-router-dom'
 
 import styled from 'styled-components'
 
-import { Header, SvgButton, ContentHeader } from '@shared/ui'
+import { Header, SvgButton, ContentHeader, Loading, Error } from '@shared/ui'
 
 import { Gear } from '@/assets/icons'
+import { useMyCdList, useMyFollowingList } from '@/entities/playlist/model/useMyPlaylist'
+import type { MyPageTabType } from '@/pages/myPage/types/mypage'
 import { Divider, CdGrid, UserProfile } from '@/pages/myPage/ui/components'
 import { useSingleSelect } from '@/shared/lib/useSingleSelect'
 import { flexRowCenter } from '@/shared/styles/mixins'
 import type { SortType } from '@/shared/ui/ContentHeader'
 import { SearchResultItem } from '@/widgets/search'
 
-// TODO: api 연동 후 실 데이터로 수정
-import likeUser from '../mock/likeUser.json'
-import myPlaylist from '../mock/myPlaylist.json'
-
-type TabType = 'cd' | 'following'
-
 const MyPage = () => {
   const navigate = useNavigate()
 
-  const { selected: currentTab, onSelect: setCurrentTab } = useSingleSelect<TabType>('cd')
+  const { selected: currentTab, onSelect: setCurrentTab } = useSingleSelect<MyPageTabType>('cd')
   const { selected: currentSort, onSelect: setCurrentSort } = useSingleSelect<SortType>('POPULAR')
 
-  const TAB_LIST: { label: string; value: TabType }[] = [
+  const TAB_LIST: { label: string; value: MyPageTabType }[] = [
     { label: '나의 CD', value: 'cd' },
     { label: '나의 팔로잉', value: 'following' },
   ]
+
+  const {
+    data: myCdList,
+    isLoading: isMyCdListLoading,
+    isError: isMyCdListError,
+    isSuccess: isMyCdListSuccess,
+  } = useMyCdList(currentSort)
+
+  const {
+    data: myFollowingList,
+    isLoading: isMyFollowingListLoading,
+    isError: isMyFollowingListError,
+    isSuccess: isMyFollowingListSuccess,
+  } = useMyFollowingList()
 
   return (
     <>
@@ -64,26 +74,39 @@ const MyPage = () => {
         </TabContainer>
         {currentTab === 'cd' ? (
           <>
-            <ContentHeader
-              totalCount={myPlaylist?.length}
-              currentSort={currentSort}
-              onSortChange={setCurrentSort}
-            />
-            <CdGrid currentPlaylist={myPlaylist} currentTab={currentTab} />
+            {isMyCdListLoading && <Loading isLoading={isMyCdListLoading} />}
+            {isMyCdListError && <Error />}
+            {isMyCdListSuccess && (
+              <>
+                <ContentHeader
+                  totalCount={myCdList?.length ?? 0}
+                  currentSort={currentSort}
+                  onSortChange={setCurrentSort}
+                />
+                <CdGrid currentPlaylist={myCdList} currentTab={currentTab} />
+              </>
+            )}
           </>
         ) : (
-          <LikeUserContainer>
-            {likeUser.map((item) => (
-              <li key={item.id}>
-                <SearchResultItem
-                  type="USER"
-                  searchResult={item.searchResult}
-                  imageUrl={item.imageUrl}
-                  onClick={() => navigate(`/discover/${item.id}`)}
-                />
-              </li>
-            ))}
-          </LikeUserContainer>
+          <>
+            {isMyFollowingListLoading && <Loading isLoading={isMyFollowingListLoading} />}
+            {isMyFollowingListError && <Error />}
+            {isMyFollowingListSuccess &&
+              myFollowingList?.followPlaylistDto?.map((data) => (
+                // TODO: 백엔드 서버 복구 시 following size ui 영역 추가
+                <LikeUserContainer key={data.creatorId}>
+                  <li>
+                    <SearchResultItem
+                      type="USER"
+                      searchResult={data.creatorNickname}
+                      imageUrl={data?.creatorProfileImageUrl}
+                      // TODO: data.creatorId가 공유 url 맞는지 백엔드 확인 필요
+                      onClick={() => navigate(`/discover/${data.creatorId}`)}
+                    />
+                  </li>
+                </LikeUserContainer>
+              ))}
+          </>
         )}
       </section>
     </>

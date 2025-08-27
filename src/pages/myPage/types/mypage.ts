@@ -8,3 +8,5 @@ export type StickerThemeType =
   | 'transport'
   | '3d'
   | 'metal'
+
+export type MyPageTabType = 'cd' | 'following'

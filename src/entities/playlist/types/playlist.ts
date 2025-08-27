@@ -15,3 +15,23 @@ export interface PlaylistData {
   userId: number
   isOnAir: boolean
 }
+
+export interface MyCdInfo {
+  paylistId: number
+  playlistName: string
+  isRepresentative: boolean
+}
+
+export type MyCdListResponse = MyCdInfo[]
+
+export interface MyFollowingInfo {
+  myLikeCreator: number
+  creatorId: string
+  creatorNickname: string
+  creatorProfileImageUrl: string | null
+}
+
+export interface MyFollowingListResponse {
+  size: number
+  followPlaylistDto: MyFollowingInfo[]
+}

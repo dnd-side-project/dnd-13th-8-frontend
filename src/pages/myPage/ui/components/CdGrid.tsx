@@ -6,21 +6,19 @@ import { flexColCenter } from '@shared/styles/mixins'
 import { SvgButton, Cd, Badge } from '@shared/ui'
 
 import { Plus } from '@/assets/icons'
+import type { MyCdListResponse } from '@/entities/playlist/types/playlist'
+import { useAuthStore } from '@/features/auth/store/authStore'
+import type { MyPageTabType } from '@/pages/myPage/types/mypage'
 
-// TODO: api 연동 후 실 데이터로 수정
 const CdGrid = ({
   currentPlaylist,
   currentTab,
 }: {
-  currentPlaylist: {
-    id: number
-    title: string
-    username: string
-    isPrimary?: boolean
-  }[]
-  currentTab: 'cd' | 'following'
+  currentPlaylist: MyCdListResponse
+  currentTab: MyPageTabType
 }) => {
   const navigate = useNavigate()
+  const { userInfo } = useAuthStore()
 
   return (
     <CdGridWrap>
@@ -34,12 +32,18 @@ const CdGrid = ({
         <CdAddLabel>추가하기</CdAddLabel>
       </CdAddContainer>
       {currentPlaylist?.map((item) => (
-        <CdContainer key={item.id}>
+        // TODO: 백엔드 서버 복구 시 as button 스타일링 확인
+        <CdContainer
+          key={item.paylistId}
+          as="button"
+          type="button"
+          onClick={() => navigate(`/mypage/${item.paylistId}/playlist`)}
+        >
           <Cd variant="md" />
-          {currentTab === 'cd' && item?.isPrimary && <Badge size="small" text="대표" />}
+          {currentTab === 'cd' && item?.isRepresentative && <Badge size="small" text="대표" />}
           <p>
-            <CdTitle>{item.title}</CdTitle>
-            <CdCreator>{item.username}</CdCreator>
+            <CdTitle>{item.playlistName}</CdTitle>
+            <CdCreator>{userInfo.username}</CdCreator>
           </p>
         </CdContainer>
       ))}
@@ -84,6 +88,7 @@ const CdAddLabel = styled.p`
 const CdContainer = styled.li`
   position: relative;
   ${flexColCenter}
+  cursor: pointer;
 
   & > button {
     width: 100%;
