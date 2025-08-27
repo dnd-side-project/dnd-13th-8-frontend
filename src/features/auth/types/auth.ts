@@ -6,6 +6,7 @@ export interface LoginPayload {
 export interface UserInfo {
   userId: string
   username: string
+  userProfileImageUrl: string | null
 }
 
 export interface LoginResponse extends UserInfo {

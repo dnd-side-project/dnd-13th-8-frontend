@@ -20,7 +20,7 @@ const UserProfile = () => {
     profileImg: ProfileUrl
   }>({
     nickname: userInfo.username,
-    profileImg: userInfo?.profileImgUrl || null,
+    profileImg: userInfo?.userProfileImageUrl || null,
   })
   const [isFileError, setIsFileError] = useState(false)
 
@@ -46,7 +46,7 @@ const UserProfile = () => {
     setIsFileError(false)
     setUpdatedProfile({
       nickname: userInfo.username,
-      profileImg: userInfo?.profileImgUrl || null,
+      profileImg: userInfo?.userProfileImageUrl || null,
     })
   }
 
@@ -61,7 +61,7 @@ const UserProfile = () => {
       if (fileInputRef.current) {
         fileInputRef.current.value = ''
       }
-      setUpdatedProfile((prev) => ({ ...prev, profileImg: userInfo?.profileImgUrl || null }))
+      setUpdatedProfile((prev) => ({ ...prev, profileImg: userInfo?.userProfileImageUrl || null }))
       return
     }
 
@@ -75,7 +75,9 @@ const UserProfile = () => {
       <ProfileImgContainer>
         <Profile
           size="L"
-          profileUrl={isEditMode ? updatedProfile.profileImg : userInfo?.profileImgUrl || null}
+          profileUrl={
+            isEditMode ? updatedProfile.profileImg : userInfo?.userProfileImageUrl || null
+          }
         />
         {isEditMode && (
           <>

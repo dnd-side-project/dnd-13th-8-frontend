@@ -6,15 +6,15 @@ import type { AuthState } from '@/features/auth/types/auth'
 export const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({
-      userInfo: { userId: '', username: '' },
+      userInfo: { userId: '', username: '', userProfileImageUrl: null },
       isLogin: false,
       accessToken: '',
 
       setLogin: (response) => {
         localStorage.removeItem('anonymous_token')
-        const { userId, username, jwtAccessToken } = response
+        const { userId, username, userProfileImageUrl, jwtAccessToken } = response
         set({
-          userInfo: { userId, username },
+          userInfo: { userId, username, userProfileImageUrl },
           accessToken: jwtAccessToken,
           isLogin: true,
         })
@@ -23,7 +23,7 @@ export const useAuthStore = create<AuthState>()(
       setLogout: () => {
         localStorage.removeItem('deulak_auth')
         set({
-          userInfo: { userId: '', username: '' },
+          userInfo: { userId: '', username: '', userProfileImageUrl: null },
           accessToken: '',
           isLogin: false,
         })
