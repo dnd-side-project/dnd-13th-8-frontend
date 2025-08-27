@@ -1,7 +1,15 @@
 import { useQuery } from '@tanstack/react-query'
 
-import { getCategoryPlaylist, getSearchResult } from '@/features/search/api/search'
-import type { CategoryPlaylistParams, SearchParams } from '@/features/search/types/search'
+import {
+  getCategoryPlaylist,
+  getPopularKeyword,
+  getSearchResult,
+} from '@/features/search/api/search'
+import type {
+  CategoryPlaylistParams,
+  PopularKeywordParams,
+  SearchParams,
+} from '@/features/search/types/search'
 
 export const useSearchPlaylist = (params: SearchParams, enabled = true) => {
   return useQuery({
@@ -16,5 +24,12 @@ export const useCategoryPlaylist = (params: CategoryPlaylistParams, enabled = tr
     queryKey: ['categoryPlaylist', params],
     queryFn: () => getCategoryPlaylist(params),
     enabled,
+  })
+}
+
+export const usePopularKeyword = (params: PopularKeywordParams) => {
+  return useQuery({
+    queryKey: ['popularKeywords', params],
+    queryFn: () => getPopularKeyword(params),
   })
 }

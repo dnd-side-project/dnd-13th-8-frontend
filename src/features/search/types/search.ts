@@ -20,6 +20,11 @@ export interface CategoryPlaylistParams {
   limit?: number
 }
 
+export interface PopularKeywordParams {
+  range: 'today' | '7d' | '30d'
+  limit?: number
+}
+
 export interface Track {
   id: number
   title: string
@@ -46,4 +51,15 @@ export interface CategoryPlaylistItem {
   playlistName: string
   creatorId: string
   creatorNickname: string
+}
+
+export interface PopularKeywordItem {
+  term: string
+  score: number
+}
+
+export interface PopularKeywordResponse {
+  range: string
+  limit: number
+  keywords: PopularKeywordItem[]
 }
