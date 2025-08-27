@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 
 import {
   getRecommendationsbyRecent,
-  getRecommendationsByGenre,
+  getRecommendedGenres,
   getRecommendationsbyFollow,
 } from '@/features/recommend/api/recommend'
 
@@ -20,9 +20,9 @@ export const useRecommendationsByFollow = () => {
   })
 }
 
-export const useRecommendationsByGenre = () => {
+export const useRecommendedGenres = () => {
   return useQuery({
     queryKey: ['recommendations', 'genre'],
-    queryFn: () => getRecommendationsByGenre(),
+    queryFn: () => getRecommendedGenres(),
   })
 }

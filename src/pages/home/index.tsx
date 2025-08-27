@@ -1,9 +1,13 @@
-import { useNavigate } from 'react-router-dom'
+import { createSearchParams, useNavigate } from 'react-router-dom'
 
 import styled, { css } from 'styled-components'
 
 import { Logo, Notification, Search } from '@/assets/icons'
-import { useRecommendationsByRecent, useRecommendationsByFollow } from '@/features/recommend'
+import {
+  useRecommendationsByRecent,
+  useRecommendationsByFollow,
+  useRecommendedGenres,
+} from '@/features/recommend'
 import { TITLE_TEXT } from '@/pages/home/config/messages'
 import { LoopCarousel } from '@/pages/home/ui'
 import { Header, SvgButton, ScrollCarousel } from '@/shared/ui'
@@ -18,8 +22,17 @@ const HomePage = () => {
 
   const { data: RecentData } = useRecommendationsByRecent()
   const { data: FollowData } = useRecommendationsByFollow()
-  // const { data: GenreData } = useRecommendationsByGenre()
+  const { data: GenreData } = useRecommendedGenres()
 
+  const handleKeywordSearch = (genreCode: string) => {
+    navigate({
+      pathname: '/searchResult',
+      search: `?${createSearchParams({
+        keyword: genreCode,
+        keywordType: 'category',
+      })}`,
+    })
+  }
   return (
     <PageLayout>
       <Header
@@ -64,29 +77,34 @@ const HomePage = () => {
         </ScrollCarousel>
       </ThirdSection>
 
-      {/* <FourthSection>
-        <h1>오늘은 이런 기분 여기가 장르 기반</h1>
+      <FourthSection>
+        <h1>오늘은 이런 기분</h1>
         <ScrollCarousel gap={12}>
-          {genreItems.map((item, index) => (
-            <Slide key={index}>{item.genreName}</Slide>
+          {GenreData?.map((item, index) => (
+            <Slide key={index} onClick={() => handleKeywordSearch(item.code)}>
+              {item.displayName}
+            </Slide>
           ))}
         </ScrollCarousel>
-      </FourthSection> */}
+      </FourthSection>
     </PageLayout>
   )
 }
 
-// const Slide = styled.div`
-//   border-radius: 10px;
-//   width: 160px;
-//   height: 200px;
-//   background-color: ${({ theme }) => theme.COLOR['gray-600']};
-//   display: flex;
-//   align-items: center;
-//   justify-content: center;
-// `
-
 export default HomePage
+
+const Slide = styled.button`
+  border-radius: 10px;
+  width: 160px;
+  height: 200px;
+  color: ${({ theme }) => theme.COLOR['gray-100']};
+  ${({ theme }) => theme.FONT['body1-normal']};
+  background-color: ${({ theme }) => theme.COLOR['gray-600']};
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+`
 
 const PageLayout = styled.div`
   display: flex;
@@ -124,10 +142,10 @@ const ThirdSection = styled.section`
   padding: 16px 20px 40px 20px;
 `
 
-// const FourthSection = styled.section`
-//   ${sectionCommonLayout}
-//   padding: 16px 20px 48px 20px;
-// `
+const FourthSection = styled.section`
+  ${sectionCommonLayout}
+  padding: 16px 20px 48px 20px;
+`
 
 // mock data
 const loopCarouselData = [

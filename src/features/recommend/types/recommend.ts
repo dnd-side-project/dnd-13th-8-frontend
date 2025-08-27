@@ -9,3 +9,10 @@ export interface Playlist {
 }
 
 export type RecommendationsResponse = Playlist[]
+
+export interface GenreInfo {
+  code: string
+  displayName: string
+}
+
+export type RecommendedGenresResponse = GenreInfo[]
