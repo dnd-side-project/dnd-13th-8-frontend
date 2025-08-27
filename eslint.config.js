@@ -55,7 +55,7 @@ export default tseslint.config(
     // 개별 ESLint 규칙의 설정
     rules: {
       // 일반적인 코드 스타일 및 잠재적 오류 규칙
-      indent: ['error', 2, { SwitchCase: 1 }],
+      indent: 'off', // 들여쓰기 규칙 비활성화 (Prettier에서 처리)
       semi: 'off', // 세미콜론 규칙 비활성화 (Prettier에서 처리)
       'no-console': ['warn', { allow: ['warn', 'error'] }], // console.log 사용 시 경고
       camelcase: ['error', { properties: 'never' }], // 객체 속성은 camelCase 강제하지 않음
