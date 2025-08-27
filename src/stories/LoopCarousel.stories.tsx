@@ -7,7 +7,7 @@ const meta: Meta<typeof LoopCarousel> = {
   title: 'Pages/Home/LoopCarousel',
   component: LoopCarousel,
   argTypes: {
-    isAuth: {
+    isLogin: {
       control: { type: 'boolean' },
       defaultValue: false,
     },
@@ -32,7 +32,7 @@ const StoryContainer = styled.div`
 export const Default: Story = {
   args: {
     data: mockData,
-    isAuth: false,
+    isLogin: false,
   },
   decorators: [
     (Story) => (
