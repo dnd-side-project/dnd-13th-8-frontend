@@ -41,7 +41,7 @@ const PlaylistLayout = ({
     return (
       currentPlaylist.tracks
         .slice(0, currentTrackIndex)
-        .reduce((acc, track) => acc + track.duration, 0) + currentTime
+        .reduce((acc, track) => acc + track.youtubeLength, 0) + currentTime
     )
   }, [currentPlaylist, currentTrackIndex, currentTime])
 
@@ -77,13 +77,13 @@ const PlaylistLayout = ({
           playlistId={data.id}
           isFollowing={false}
           userId={data.userId}
-          userName={data.userName}
+          userName={data.username}
           showFollow={type !== 'My'}
         />
       </Wrapper>
 
       <ProgressBar
-        trackLengths={currentPlaylist?.tracks.map((t) => t.duration) || []}
+        trackLengths={currentPlaylist?.tracks.map((t) => t.youtubeLength) || []}
         currentTime={accumulatedTime}
         onClick={handleProgressClick}
       />

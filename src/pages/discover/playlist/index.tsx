@@ -26,7 +26,7 @@ const PlaylistInfoPage = () => {
         <PlaylistHorizontal
           genre={playlist?.genre || ''}
           title={playlist?.title || ''}
-          username={playlist?.userName || ''}
+          username={playlist?.username || ''}
         />
         <TrackInfo>
           {playlist &&

@@ -12,7 +12,7 @@ export interface PlaylistData {
   tracks: Track[]
   listeners: number
   liked: boolean
-  userName: string
+  username: string
   userId: number
   isOnAir: boolean
 }

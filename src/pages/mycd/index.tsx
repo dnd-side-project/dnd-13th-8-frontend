@@ -54,7 +54,7 @@ const MyCdPage = () => {
   )
 
   const videoId = currentPlaylist
-    ? getVideoId(currentPlaylist.tracks[currentTrackIndex]?.link)
+    ? getVideoId(currentPlaylist.tracks[currentTrackIndex]?.youtubeUrl)
     : null
 
   const handlePlayPause = () => {
