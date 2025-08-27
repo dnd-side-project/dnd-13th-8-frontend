@@ -40,8 +40,8 @@ const PlaylistWithSong = ({ id, title, username, songs }: PlaylistWithSongProps)
         </InfoBox>
       </TopContainer>
       <SongsBox>
-        {songs.slice(0, 3).map((song, idx) => (
-          <Link key={idx} variant="small" data={song} />
+        {songs.slice(0, 3).map((song) => (
+          <Link key={song.id} variant="small" data={song} />
         ))}
       </SongsBox>
     </Wrapper>

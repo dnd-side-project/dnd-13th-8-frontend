@@ -69,9 +69,9 @@ const HomePage = () => {
       <ThirdSection>
         <h1>친구가 추천한 그 곡</h1>
         <ScrollCarousel gap={16}>
-          {FollowData?.map((playlist, idx) => (
+          {FollowData?.map((playlist) => (
             <PlaylistWithSong
-              key={idx}
+              key={playlist.playlistId}
               id={playlist.playlistId}
               title={playlist.playlistName}
               username={playlist.creatorNickname}
@@ -84,9 +84,9 @@ const HomePage = () => {
       <FourthSection>
         <h1>오늘은 이런 기분</h1>
         <ScrollCarousel gap={12}>
-          {GenreData?.map((item, index) => (
+          {GenreData?.map((item) => (
             <Slide
-              key={index}
+              key={item.code}
               $bgImage={CARD_IMAGES_LARGE[item.code as keyof typeof CARD_IMAGES_LARGE]}
               onClick={() => handleKeywordSearch(item.code)}
             >
