@@ -15,7 +15,7 @@ export interface CustomizeStepProps {
 }
 
 const Customize = () => {
-  const [currentStep, setCurrentStep] = useState<CustomizeStep>(2)
+  const [currentStep, setCurrentStep] = useState<CustomizeStep>(1)
   const [modal, setModal] = useState<ModalProps>({
     isOpen: false,
     title: '',
