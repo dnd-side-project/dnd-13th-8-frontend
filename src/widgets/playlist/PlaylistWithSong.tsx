@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import styled, { useTheme } from 'styled-components'
 
 import { Play } from '@/assets/icons'
-import type { TrackData } from '@/entities/playlist/model/types'
+import type { Track } from '@/entities/playlist/model/types'
 import { flexRowCenter } from '@/shared/styles/mixins'
 import Cd from '@/shared/ui/Cd'
 import Link from '@/shared/ui/Link'
@@ -12,7 +12,7 @@ import SvgButton from '@/shared/ui/SvgButton'
 interface PlaylistWithSongProps {
   title: string
   username: string
-  songs: TrackData[]
+  songs: Track[]
 }
 
 const PlaylistWithSong = ({ title, username, songs }: PlaylistWithSongProps) => {
@@ -39,7 +39,7 @@ const PlaylistWithSong = ({ title, username, songs }: PlaylistWithSongProps) => 
         </InfoBox>
       </TopContainer>
       <SongsBox>
-        {songs.map((song, idx) => (
+        {songs.slice(0, 3).map((song, idx) => (
           <Link key={idx} variant="small" data={song} />
         ))}
       </SongsBox>
