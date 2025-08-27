@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 
 import { Logo, Notification, Search } from '@/assets/icons'
+import { useRecommendationsByRecent, useRecommendationsByFollow } from '@/features/recommend'
 import { TITLE_TEXT } from '@/pages/home/config/messages'
 import { LoopCarousel } from '@/pages/home/ui'
 import { Header, SvgButton, ScrollCarousel } from '@/shared/ui'
@@ -12,13 +13,12 @@ const HomePage = () => {
   const navigate = useNavigate()
   const isAuth = false // TODO : 실제 로그인 상태를 가져오는 로직으로 교체
 
-  const handleNotiClick = () => {
-    navigate('/mypage/notification')
-  }
+  const handleNotiClick = () => navigate('/mypage/notification')
+  const handleSearchClick = () => navigate('/search')
 
-  const handleSearchClick = () => {
-    navigate('/search')
-  }
+  const { data: RecentData } = useRecommendationsByRecent()
+  const { data: FollowData } = useRecommendationsByFollow()
+  // const { data: GenreData } = useRecommendationsByGenre()
 
   return (
     <PageLayout>
@@ -31,52 +31,60 @@ const HomePage = () => {
           </>
         }
       />
+
       <FirstSection>
         <h1>{isAuth ? TITLE_TEXT.MEMBER : TITLE_TEXT.GUEST}</h1>
         <LoopCarousel data={loopCarouselData} isAuth={isAuth} />
       </FirstSection>
+
       <SecondSection>
         <h1>퇴근길, 귀에 붙는 노래</h1>
         <ScrollCarousel gap={14}>
-          {secondSectionData.map((item) => (
-            <Playlist key={item.id} title={item.title} username={item.username} />
+          {RecentData?.map((item) => (
+            <Playlist
+              key={item.playlistId}
+              title={item.playlistName}
+              username={item.creatorNickname}
+            />
           ))}
         </ScrollCarousel>
       </SecondSection>
+
       <ThirdSection>
         <h1>친구가 추천한 그 곡</h1>
         <ScrollCarousel gap={16}>
-          {thirdSectionData.map((playlist, idx) => (
+          {FollowData?.map((playlist, idx) => (
             <PlaylistWithSong
               key={idx}
-              title={playlist.title}
-              username={playlist.username}
+              title={playlist.playlistName}
+              username={playlist.creatorNickname}
               songs={playlist.songs}
             />
           ))}
         </ScrollCarousel>
       </ThirdSection>
-      <FourthSection>
-        <h1>오늘은 이런 기분</h1>
+
+      {/* <FourthSection>
+        <h1>오늘은 이런 기분 여기가 장르 기반</h1>
         <ScrollCarousel gap={12}>
-          {[1, 2, 3, 4, 5, 6].map((index) => (
-            <Slide key={index}>{index}</Slide>
+          {genreItems.map((item, index) => (
+            <Slide key={index}>{item.genreName}</Slide>
           ))}
         </ScrollCarousel>
-      </FourthSection>
+      </FourthSection> */}
     </PageLayout>
   )
 }
 
-const Slide = styled.div`
-  border-radius: 10px;
-  width: 160px;
-  height: 200px;
-  background-color: ${({ theme }) => theme.COLOR['gray-600']};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`
+// const Slide = styled.div`
+//   border-radius: 10px;
+//   width: 160px;
+//   height: 200px;
+//   background-color: ${({ theme }) => theme.COLOR['gray-600']};
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+// `
 
 export default HomePage
 
@@ -98,8 +106,6 @@ const sectionCommonLayout = css`
   gap: 12px;
   background-color: ${({ theme }) => theme.COLOR['gray-800']};
   ${({ theme }) => theme.FONT.headline1};
-
-  /* main padding 상쇄 */
   width: calc(100% + 40px);
   margin: 0 -20px;
 
@@ -118,10 +124,10 @@ const ThirdSection = styled.section`
   padding: 16px 20px 40px 20px;
 `
 
-const FourthSection = styled.section`
-  ${sectionCommonLayout}
-  padding: 16px 20px 48px 20px;
-`
+// const FourthSection = styled.section`
+//   ${sectionCommonLayout}
+//   padding: 16px 20px 48px 20px;
+// `
 
 // mock data
 const loopCarouselData = [
@@ -140,42 +146,5 @@ const loopCarouselData = [
   {
     title: '플레이리스트 #4',
     genre: '클래식',
-  },
-]
-
-const secondSectionData = [
-  { id: 1, title: 'Playlist #1', username: 'deulak', liked: true },
-  { id: 2, title: 'Playlist #2', username: 'deulak', liked: false },
-  { id: 3, title: 'Playlist #3', username: 'deulak', liked: true },
-  { id: 4, title: 'Playlist #4', username: 'deulak', liked: true },
-]
-
-const thirdSectionData = [
-  {
-    title: 'Chill Vibes',
-    username: 'deulak',
-    songs: [
-      { thumbnail: '', title: 'Sunset Lover', duration: 180, link: '' },
-      { thumbnail: '', title: 'Ocean Eyes', duration: 180, link: '' },
-      { thumbnail: '', title: 'Night Drive', duration: 180, link: '' },
-    ],
-  },
-  {
-    title: 'Workout Mix',
-    username: 'deulak',
-    songs: [
-      { thumbnail: '', title: 'Sunset Lover', duration: 180, link: '' },
-      { thumbnail: '', title: 'Ocean Eyes', duration: 180, link: '' },
-      { thumbnail: '', title: 'Night Drive', duration: 180, link: '' },
-    ],
-  },
-  {
-    title: 'Top Hits',
-    username: 'deulak',
-    songs: [
-      { thumbnail: '', title: 'Sunset Lover', duration: 180, link: '' },
-      { thumbnail: '', title: 'Ocean Eyes', duration: 180, link: '' },
-      { thumbnail: '', title: 'Night Drive', duration: 180, link: '' },
-    ],
   },
 ]

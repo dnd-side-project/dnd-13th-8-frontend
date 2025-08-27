@@ -1,18 +1,18 @@
 import styled from 'styled-components'
 
 import { Gallery } from '@/assets/icons'
-import type { TrackData } from '@/entities/playlist/model/types'
+import type { Track } from '@/entities/playlist/model/types'
 
 interface LinkProps {
   variant?: 'large' | 'small'
-  data: TrackData
+  data: Track
 }
 
 const Link = ({ variant = 'large', data }: LinkProps) => {
   return (
     <LinkBox $variant={variant}>
-      <Thumbnail $thumbnail={data.thumbnail ?? undefined} $variant={variant}>
-        {!data.thumbnail && (
+      <Thumbnail $thumbnail={data.youtubeThumbnail ?? undefined} $variant={variant}>
+        {!data.youtubeThumbnail && (
           <Gallery width={variant === 'large' ? 24 : 20} height={variant === 'large' ? 24 : 20} />
         )}
       </Thumbnail>
