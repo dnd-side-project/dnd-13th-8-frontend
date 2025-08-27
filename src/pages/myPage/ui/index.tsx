@@ -75,7 +75,7 @@ const MyPage = () => {
             {likeUser.map((item) => (
               <li key={item.id}>
                 <SearchResultItem
-                  type="user"
+                  type="USER"
                   searchResult={item.searchResult}
                   imageUrl={item.imageUrl}
                   onClick={() => navigate(`/discover/${item.id}`)}
