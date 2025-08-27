@@ -18,10 +18,10 @@ interface SlideData {
 
 interface LoopCarouselProps {
   data: SlideData[]
-  isAuth: boolean
+  isLogin: boolean
 }
 
-const LoopCarousel = ({ data, isAuth }: LoopCarouselProps) => {
+const LoopCarousel = ({ data, isLogin }: LoopCarouselProps) => {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true })
   const [activeIndex, setActiveIndex] = useState(0)
   const navigate = useNavigate()
@@ -50,9 +50,9 @@ const LoopCarousel = ({ data, isAuth }: LoopCarouselProps) => {
                 <Button
                   size="S"
                   state="primary"
-                  onClick={() => (isAuth ? navigate('/mypage/customize') : navigate('/login'))}
+                  onClick={() => (isLogin ? navigate('/mypage/customize') : navigate('/login'))}
                 >
-                  {isAuth ? BUTTON_TEXT.MEMBER : BUTTON_TEXT.GUEST}
+                  {isLogin ? BUTTON_TEXT.MEMBER : BUTTON_TEXT.GUEST}
                 </Button>
               </FirstContent>
             </Slide>

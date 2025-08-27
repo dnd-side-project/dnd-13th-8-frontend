@@ -49,7 +49,7 @@ const HomePage = () => {
 
       <FirstSection>
         <h1>{isLogin ? TITLE_TEXT.MEMBER(userInfo.username) : TITLE_TEXT.GUEST}</h1>
-        <LoopCarousel data={loopCarouselData} isAuth={isLogin} />
+        <LoopCarousel data={loopCarouselData} isLogin={isLogin} />
       </FirstSection>
 
       <SecondSection>
