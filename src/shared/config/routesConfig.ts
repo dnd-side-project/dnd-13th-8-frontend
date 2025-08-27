@@ -14,6 +14,8 @@ const DiscoverLayout = lazy(() => import('@/pages/discover/DiscoverLayout'))
 const MyCdLayout = lazy(() => import('@/pages/mycd/MyCdLayout'))
 const DiscoverCarousel = lazy(() => import('@/pages/discover'))
 const PlaylistInfoPage = lazy(() => import('@/pages/discover/playlist'))
+const LoginPage = lazy(() => import('@/pages/login'))
+const LoginCallbackPage = lazy(() => import('@/pages/login/callback'))
 const MyCdPage = lazy(() => import('@/pages/mycd'))
 const MyCdInfoPage = lazy(() => import('@/pages/mycd/playlist'))
 const NotFoundPage = lazy(() => import('@/pages/notFound'))
@@ -87,8 +89,8 @@ export const routesConfig: RouteConfig[] = [
   },
 
   // 로그인
-  // { path: '/login', component: () => <></>, isNotSuspense: true, hideNav: true },
-  // { path: '/login/callback', component: () => <></>, isNotSuspense: true, hideNav: true },
+  { path: '/login', component: LoginPage, isNotSuspense: true, hideNav: true },
+  { path: '/login/callback', component: LoginCallbackPage, isNotSuspense: true, hideNav: true },
 
   // 에러 페이지
   { path: '*', component: NotFoundPage, isNotSuspense: true },

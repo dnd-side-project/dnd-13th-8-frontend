@@ -10,6 +10,8 @@ import { routesConfig } from '@shared/config/routesConfig'
 import { useDevice, type DeviceType } from '@shared/lib/useDevice'
 import { flexRowCenter } from '@shared/styles/mixins'
 
+import { useAnonymousLogin } from '@/features/auth/model/useAuth'
+import { useAuthStore } from '@/features/auth/store/authStore'
 import NavBar, { NAV_HEIGHT } from '@/widgets/layout/NavBar'
 
 const LAYOUT_BOTTOM_GAP = 34
@@ -18,18 +20,39 @@ const App = () => {
   const deviceType = useDevice()
   const location = useLocation()
 
+  const { isLogin } = useAuthStore()
+  const { mutate } = useAnonymousLogin()
+
   const [isNavVisible, setIsNavVisible] = useState(true)
 
   const LAYOUT_WIDTH = deviceType === 'mobile' ? 'clamp(320px, 100dvw, 430px)' : '375px'
 
+  // 비회원일 경우 API 호출을 위한 익명 토큰 발급
+  // TODO: 토큰 만료됐을 경우 응답 체크해서 해당 값일 경우 토큰 재발급
+  const checkAnonymousLogin = () => {
+    if (!isLogin) {
+      mutate(undefined, {
+        onSuccess: (response) => {
+          const token = `${response}` || ''
+          localStorage.setItem('anonymous_token', token)
+        },
+      })
+    }
+  }
+
   useEffect(() => {
     const { pathname } = location
+    if (['/login', '/login/callback'].includes(pathname)) {
+      localStorage.removeItem('anonymous_token')
+    } else {
+      checkAnonymousLogin()
+    }
     const currentRoute = routesConfig.find((route) =>
       matchPath({ path: route.path, end: true }, pathname)
     )
     const shouldHideNav = currentRoute?.hideNav ?? false
     setIsNavVisible(!shouldHideNav)
-  }, [location])
+  }, [location.pathname])
 
   return (
     <MainLayout
