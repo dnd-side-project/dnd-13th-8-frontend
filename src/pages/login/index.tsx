@@ -45,7 +45,9 @@ const LoginPage = () => {
             <Kakao width={20} height={20} />
             <span>카카오로 시작하기</span>
           </LoginButton>
-          <GuestButton type="button">비회원으로 둘러보기</GuestButton>
+          <GuestButton type="button" onClick={() => navigate(-1)}>
+            비회원으로 둘러보기
+          </GuestButton>
         </CtaContainer>
       </LoginWrap>
     </>
