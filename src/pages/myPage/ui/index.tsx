@@ -4,7 +4,7 @@ import styled from 'styled-components'
 
 import { Header, SvgButton, ContentHeader } from '@shared/ui'
 
-import { Gear, Notification } from '@/assets/icons'
+import { Gear } from '@/assets/icons'
 import { Divider, CdGrid, UserProfile } from '@/pages/myPage/ui/components'
 import { useSingleSelect } from '@/shared/lib/useSingleSelect'
 import { flexRowCenter } from '@/shared/styles/mixins'
@@ -34,12 +34,13 @@ const MyPage = () => {
         left={<PageHeader>마이페이지</PageHeader>}
         right={
           <>
-            <SvgButton
+            {/* TODO: 알림 기능 추가 후 주석 해제, 1차 배포 후 구현 예정 */}
+            {/* <SvgButton
               icon={Notification}
               width={24}
               height={24}
               onClick={() => navigate('/mypage/notification')}
-            />
+            /> */}
             <SvgButton
               icon={Gear}
               width={24}
