@@ -17,7 +17,7 @@ import { Playlist, PlaylistWithSong } from '@/widgets/playlist'
 
 const HomePage = () => {
   const navigate = useNavigate()
-  const { isLogin } = useAuthStore()
+  const { isLogin, userInfo } = useAuthStore()
 
   const handleNotiClick = () => navigate('/mypage/notification')
   const handleSearchClick = () => navigate('/search')
@@ -48,7 +48,7 @@ const HomePage = () => {
       />
 
       <FirstSection>
-        <h1>{isLogin ? TITLE_TEXT.MEMBER : TITLE_TEXT.GUEST}</h1>
+        <h1>{isLogin ? TITLE_TEXT.MEMBER(userInfo.username) : TITLE_TEXT.GUEST}</h1>
         <LoopCarousel data={loopCarouselData} isAuth={isLogin} />
       </FirstSection>
 
