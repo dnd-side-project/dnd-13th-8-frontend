@@ -4,11 +4,11 @@ import {
 } from '@/features/recommend/types/recommend'
 import { api } from '@/shared/api/httpClient'
 
-export const getRecommendationsbyRecent = () => {
+export const getRecommendationsByRecent = () => {
   return api.get<RecommendationsResponse>('/main/playlists/recommendations/playlist')
 }
 
-export const getRecommendationsbyFollow = () => {
+export const getRecommendationsByFollow = () => {
   return api.get<RecommendationsResponse>('/main/playlists/recommendations/follow')
 }
 
