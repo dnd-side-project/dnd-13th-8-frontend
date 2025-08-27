@@ -2,6 +2,7 @@ import { createSearchParams, useNavigate } from 'react-router-dom'
 
 import styled, { css } from 'styled-components'
 
+import { CARD_IMAGES_LARGE } from '@/assets/card'
 import { Logo, Notification, Search } from '@/assets/icons'
 import {
   useRecommendationsByRecent,
@@ -81,7 +82,11 @@ const HomePage = () => {
         <h1>오늘은 이런 기분</h1>
         <ScrollCarousel gap={12}>
           {GenreData?.map((item, index) => (
-            <Slide key={index} onClick={() => handleKeywordSearch(item.code)}>
+            <Slide
+              key={index}
+              $bgImage={CARD_IMAGES_LARGE[item.code as keyof typeof CARD_IMAGES_LARGE]}
+              onClick={() => handleKeywordSearch(item.code)}
+            >
               {item.displayName}
             </Slide>
           ))}
@@ -93,13 +98,16 @@ const HomePage = () => {
 
 export default HomePage
 
-const Slide = styled.button`
+const Slide = styled.button<{ $bgImage?: string }>`
   border-radius: 10px;
   width: 160px;
   height: 200px;
   color: ${({ theme }) => theme.COLOR['gray-100']};
   ${({ theme }) => theme.FONT['body1-normal']};
   background-color: ${({ theme }) => theme.COLOR['gray-600']};
+  background-image: url(${({ $bgImage }) => $bgImage});
+  background-size: cover;
+  background-position: center;
   padding: 12px;
   display: flex;
   flex-direction: column;

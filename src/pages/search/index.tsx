@@ -3,7 +3,7 @@ import { createSearchParams, useNavigate } from 'react-router-dom'
 
 import styled, { css } from 'styled-components'
 
-import { CARD_IMAGES } from '@/assets/card'
+import { CARD_IMAGES_SMALL } from '@/assets/card'
 import { LeftArrow, Search } from '@/assets/icons'
 import { TrendKeyword } from '@/pages/search/ui'
 import { MUSIC_GENRES } from '@/shared/config/musicGenres'
@@ -71,7 +71,7 @@ const SearchPage = () => {
               key={genre.id}
               text={genre.label}
               size="small"
-              bgImage={CARD_IMAGES[genre.id]}
+              bgImage={CARD_IMAGES_SMALL[genre.id]}
               onClick={() =>
                 navigate({
                   pathname: '/searchResult',
