@@ -2,10 +2,11 @@ import styled from 'styled-components'
 
 interface TrendKeywordProps {
   text: string
+  onClick?: () => void
 }
 
-const TrendKeyword = ({ text }: TrendKeywordProps) => {
-  return <StyledButton>{text}</StyledButton>
+const TrendKeyword = ({ text, onClick }: TrendKeywordProps) => {
+  return <StyledButton onClick={onClick}>{text}</StyledButton>
 }
 
 export default TrendKeyword

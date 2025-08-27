@@ -11,7 +11,7 @@ const meta: Meta<typeof SearchResultItem> = {
     imageUrl: { control: false },
     searchResult: { control: 'text' },
     userName: { control: 'text' },
-    type: { control: { type: 'radio' }, options: ['playlist', 'user'] },
+    type: { control: { type: 'radio' }, options: ['PLAYLIST', 'USER'] },
     onClick: { action: 'clicked' },
   },
 }
@@ -27,7 +27,7 @@ const Container = styled.div`
 export const PlaylistSearchResult: Story = {
   render: (args) => (
     <Container>
-      <SearchResultItem {...args} type="playlist" />
+      <SearchResultItem {...args} type="PLAYLIST" />
     </Container>
   ),
   args: {
@@ -39,7 +39,7 @@ export const PlaylistSearchResult: Story = {
 export const UserSearchResult: Story = {
   render: (args) => (
     <Container>
-      <SearchResultItem {...args} type="user" />
+      <SearchResultItem {...args} type="USER" />
     </Container>
   ),
   args: {

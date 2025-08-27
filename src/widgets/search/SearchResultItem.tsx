@@ -5,7 +5,7 @@ import { Cd, Profile } from '@/shared/ui'
 
 interface SearchResultItemProps {
   imageUrl?: string
-  type: 'playlist' | 'user'
+  type: 'PLAYLIST' | 'USER'
   searchResult: string
   userName?: string | null
   onClick?: () => void
@@ -21,11 +21,11 @@ const SearchResultItem = ({
   return (
     <ItemContainer onClick={onClick}>
       <Left>
-        {type === 'playlist' ? <Cd variant="xs" /> : <Profile size="M" profileUrl={imageUrl} />}
+        {type === 'PLAYLIST' ? <Cd variant="xs" /> : <Profile size="M" profileUrl={imageUrl} />}
       </Left>
       <Right>
         <SearchResult>{searchResult}</SearchResult>
-        {userName && <SmallText>{userName}</SmallText>}
+        {type === 'PLAYLIST' && userName && <SmallText>{userName}</SmallText>}
       </Right>
     </ItemContainer>
   )
