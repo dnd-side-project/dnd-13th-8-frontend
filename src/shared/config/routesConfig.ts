@@ -2,6 +2,7 @@ import { lazy } from 'react'
 import type { ComponentType, LazyExoticComponent } from 'react'
 
 const HomePage = lazy(() => import('@pages/homePage'))
+const MyPageLayout = lazy(() => import('@pages/myPage/ui/MyPageLayout'))
 const MyPage = lazy(() => import('@pages/myPage/ui'))
 const Customize = lazy(() => import('@pages/myPage/ui/customize'))
 const Setting = lazy(() => import('@pages/myPage/ui/setting'))
@@ -14,6 +15,7 @@ const DiscoverLayout = lazy(() => import('@/pages/discover/DiscoverLayout'))
 const MyCdLayout = lazy(() => import('@/pages/mycd/MyCdLayout'))
 const DiscoverCarousel = lazy(() => import('@/pages/discover'))
 const PlaylistInfoPage = lazy(() => import('@/pages/discover/playlist'))
+const LoginLayout = lazy(() => import('@/pages/login/LoginLayout'))
 const LoginPage = lazy(() => import('@/pages/login'))
 const LoginCallbackPage = lazy(() => import('@/pages/login/callback'))
 const MyCdPage = lazy(() => import('@/pages/mycd'))
@@ -54,43 +56,41 @@ export const routesConfig: RouteConfig[] = [
     path: '/mycd',
     component: MyCdLayout,
     isNotSuspense: true,
+    isPrivate: true,
     children: [
       { path: '', component: MyCdPage },
       { path: 'playlist', component: MyCdInfoPage },
     ],
   },
 
-  // 마이페이지 (private)
-  { path: '/mypage', component: MyPage, isPrivate: true },
-  // { path: '/mypage/:id/playlist', component: () => <></>, isPrivate: true },
-  { path: '/mypage/customize', component: Customize, isPrivate: true, hideNav: true },
+  // 마이페이지
   {
-    path: '/mypage/setting',
-    component: Setting,
+    path: '/mypage',
+    component: MyPageLayout,
     isPrivate: true,
-    isNotSuspense: true,
     hideNav: true,
-  },
-  // { path: '/mypage/notification', component: () => <></>, isPrivate: true, hideNav: true },
-  { path: '/mypage/terms', component: Terms, isPrivate: true, isNotSuspense: true, hideNav: true },
-  {
-    path: '/mypage/privacy',
-    component: Privacy,
-    isPrivate: true,
     isNotSuspense: true,
-    hideNav: true,
-  },
-  {
-    path: '/mypage/unregister',
-    component: Unregister,
-    isPrivate: true,
-    isNotSuspense: true,
-    hideNav: true,
+    children: [
+      { path: '', component: MyPage, hideNav: false, isNotSuspense: false },
+      { path: 'customize', component: Customize, isNotSuspense: false },
+      { path: 'setting', component: Setting },
+      { path: 'terms', component: Terms },
+      { path: 'privacy', component: Privacy },
+      { path: 'unregister', component: Unregister },
+    ],
   },
 
   // 로그인
-  { path: '/login', component: LoginPage, isNotSuspense: true, hideNav: true },
-  { path: '/login/callback', component: LoginCallbackPage, isNotSuspense: true, hideNav: true },
+  {
+    path: '/login',
+    component: LoginLayout,
+    isNotSuspense: true,
+    hideNav: true,
+    children: [
+      { path: '', component: LoginPage },
+      { path: 'callback', component: LoginCallbackPage },
+    ],
+  },
 
   // 에러 페이지
   { path: '*', component: NotFoundPage, isNotSuspense: true },
