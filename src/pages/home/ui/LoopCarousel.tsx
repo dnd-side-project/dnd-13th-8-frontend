@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import useEmblaCarousel from 'embla-carousel-react'
 import styled, { css } from 'styled-components'
@@ -6,8 +7,7 @@ import styled, { css } from 'styled-components'
 import CharacterImg from '@/assets/images/img_character.png'
 import { BUTTON_TEXT } from '@/pages/home/config/messages'
 import { flexColCenter, flexRowCenter } from '@/shared/styles/mixins'
-import Badge from '@/shared/ui/Badge'
-import Button from '@/shared/ui/Button'
+import { Button, Badge } from '@/shared/ui'
 
 import { DotButton, useDotButton } from './DotButton'
 
@@ -24,6 +24,7 @@ interface LoopCarouselProps {
 const LoopCarousel = ({ data, isAuth }: LoopCarouselProps) => {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true })
   const [activeIndex, setActiveIndex] = useState(0)
+  const navigate = useNavigate()
 
   useEffect(() => {
     if (!emblaApi) return
@@ -46,7 +47,11 @@ const LoopCarousel = ({ data, isAuth }: LoopCarouselProps) => {
             <Slide $active={activeIndex === 0}>
               <FirstContent>
                 <Image src={CharacterImg} alt="Deulak character" width={160} height={160} />
-                <Button size="S" state="primary">
+                <Button
+                  size="S"
+                  state="primary"
+                  onClick={() => (isAuth ? navigate('/mypage/customize') : navigate('/login'))}
+                >
                   {isAuth ? BUTTON_TEXT.MEMBER : BUTTON_TEXT.GUEST}
                 </Button>
               </FirstContent>
