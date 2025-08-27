@@ -8,5 +8,5 @@ export const getMyCdList = (sort: string) => {
 
 // 나의 팔로잉 리스트 조회
 export const getMyFollowingList = (sort: string) => {
-  return api.get<MyFollowingListResponse>(`/main/mypage/followings?sort=${sort}`)
+  return api.get<MyFollowingListResponse>(`/main/mypage/playlists/follows?sort=${sort}`)
 }
