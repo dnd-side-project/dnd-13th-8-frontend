@@ -57,6 +57,7 @@ const HomePage = () => {
         <ScrollCarousel gap={14}>
           {RecentData?.map((item) => (
             <Playlist
+              id={item.playlistId}
               key={item.playlistId}
               title={item.playlistName}
               username={item.creatorNickname}
@@ -71,6 +72,7 @@ const HomePage = () => {
           {FollowData?.map((playlist, idx) => (
             <PlaylistWithSong
               key={idx}
+              id={playlist.playlistId}
               title={playlist.playlistName}
               username={playlist.creatorNickname}
               songs={playlist.songs}

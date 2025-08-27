@@ -11,16 +11,17 @@ import SvgButton from '@/shared/ui/SvgButton'
 
 interface PlaylistWithSongProps {
   title: string
+  id: number
   username: string
   songs: Track[]
 }
 
-const PlaylistWithSong = ({ title, username, songs }: PlaylistWithSongProps) => {
+const PlaylistWithSong = ({ id, title, username, songs }: PlaylistWithSongProps) => {
   const navigate = useNavigate()
   const theme = useTheme()
 
   const handlePlayClick = () => {
-    navigate('/discover') // TODO : 추후 루트 수정
+    navigate(`/discover/${id}`)
   }
 
   return (
