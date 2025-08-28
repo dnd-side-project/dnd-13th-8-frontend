@@ -3,15 +3,15 @@ import { useNavigate } from 'react-router-dom'
 
 import styled from 'styled-components'
 
-import type { PlaylistData } from '@/entities/playlist/model/types'
+import type { PlaylistInfo } from '@/entities/playlist'
 import { flexColCenter } from '@/shared/styles/mixins'
 import { Button, Cd, Header, LiveInfo } from '@/shared/ui'
 import { ActionBar, ProgressBar } from '@/widgets/playlist'
 import ControlBar from '@/widgets/playlist/ControlBar'
 
 interface PlaylistSlideProps {
-  data: PlaylistData
-  currentPlaylist: PlaylistData | null
+  data: PlaylistInfo
+  currentPlaylist: PlaylistInfo | null
   currentTrackIndex: number
   currentTime: number
   isPlaying: boolean
@@ -35,11 +35,12 @@ const PlaylistLayout = ({
   type = 'Discover',
 }: PlaylistSlideProps) => {
   const navigate = useNavigate()
+
   // 누적 시간 계산
   const accumulatedTime = useMemo(() => {
     if (!currentPlaylist) return 0
     return (
-      currentPlaylist.tracks
+      currentPlaylist.songs
         .slice(0, currentTrackIndex)
         .reduce((acc, track) => acc + track.youtubeLength, 0) + currentTime
     )
@@ -57,14 +58,14 @@ const PlaylistLayout = ({
       <Header
         center={
           <>
-            <span>{data.title}</span>
-            <span>{currentPlaylist?.tracks[currentTrackIndex]?.title}</span>
+            <span>{data.playlistName}</span>
+            <span>{currentPlaylist?.songs[currentTrackIndex]?.title}</span>
           </>
         }
       />
       <Container>
-        <LiveInfo isOnAir={data.isOnAir} listenerCount={data.listeners} isOwner={false} />
-
+        {/* listenerCount 추후 수정 필요 */}
+        <LiveInfo isOnAir={data.representative} listenerCount={data.playlistId} isOwner={false} />
         {type === 'My' && (
           <Button size="S" state="primary" onClick={() => navigate('/mypage/customize')}>
             꾸미기
@@ -74,16 +75,16 @@ const PlaylistLayout = ({
       <Wrapper>
         <Cd variant="xxl" bgColor="none" />
         <ActionBar
-          playlistId={data.id}
+          playlistId={data.cardId}
           isFollowing={false}
-          userId={data.userId}
-          userName={data.username}
+          userId={3}
+          userName={data.playlistName}
           showFollow={type !== 'My'}
         />
       </Wrapper>
 
       <ProgressBar
-        trackLengths={currentPlaylist?.tracks.map((t) => t.youtubeLength) || []}
+        trackLengths={currentPlaylist?.songs.map((t) => t.youtubeLength) || []}
         currentTime={accumulatedTime}
         onClick={handleProgressClick}
       />

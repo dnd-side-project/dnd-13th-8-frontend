@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
 import { useLocation, Link, matchPath } from 'react-router-dom'
 
+import type { InfiniteData } from '@tanstack/react-query'
 import styled, { useTheme } from 'styled-components'
 
+import { usePlaylists, type Cursor, type PlaylistResponse } from '@/entities/playlist'
 import { NAV_ITEMS } from '@/shared/config/navItems'
 import SvgButton from '@/shared/ui/SvgButton'
-
-import PlaylistData from '../../pages/discover/playlistData.json'
 
 export const NAV_HEIGHT = 64
 
@@ -15,15 +15,20 @@ const NavBar = () => {
   const theme = useTheme()
   const [discoverLink, setDiscoverLink] = useState('')
 
+  const { data } = usePlaylists()
+
+  const playlists =
+    (data as unknown as InfiniteData<PlaylistResponse, Cursor>)?.pages.flatMap(
+      (page) => page.content
+    ) || []
+  const firstCardId = playlists[0]?.cardId
+
   // 컴포넌트 마운트 시 첫 번째 항목의 id로 링크 설정
   useEffect(() => {
-    // TODO : API 호출 로직으로 교체 예정
-    const firstPlaylistId = PlaylistData[0]?.id
-
-    if (firstPlaylistId) {
-      setDiscoverLink(`/discover/${firstPlaylistId}`)
+    if (firstCardId) {
+      setDiscoverLink(`/discover/${firstCardId}`)
     }
-  }, [])
+  }, [firstCardId])
 
   return (
     <NavButtonBox>

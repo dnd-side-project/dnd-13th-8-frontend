@@ -1,13 +1,13 @@
 import { createContext, useState, useContext, type ReactNode } from 'react'
 
-import type { PlaylistData } from '@/entities/playlist/model/types'
+import type { PlaylistInfo } from '@/entities/playlist'
 
 type PlaylistContextType = {
-  currentPlaylist: PlaylistData | null
+  currentPlaylist: PlaylistInfo | null
   currentTrackIndex: number
   currentTime: number
   isPlaying: boolean
-  setPlaylist: (playlist: PlaylistData, trackIndex?: number, time?: number) => void
+  setPlaylist: (playlist: PlaylistInfo, trackIndex?: number, time?: number) => void
   play: () => void
   pause: () => void
   nextTrack: () => void
@@ -22,12 +22,12 @@ interface PlaylistProviderProps {
 const PlaylistContext = createContext<PlaylistContextType | undefined>(undefined)
 
 const PlaylistProvider = ({ children }: PlaylistProviderProps) => {
-  const [currentPlaylist, setCurrentPlaylist] = useState<PlaylistData | null>(null)
+  const [currentPlaylist, setCurrentPlaylist] = useState<PlaylistInfo | null>(null)
   const [currentTrackIndex, setCurrentTrackIndex] = useState<number>(0)
   const [isPlaying, setIsPlaying] = useState<boolean>(false)
   const [currentTime, setCurrentTime] = useState<number>(0)
 
-  const setPlaylist = (playlist: PlaylistData, trackIndex?: number, time?: number) => {
+  const setPlaylist = (playlist: PlaylistInfo, trackIndex?: number, time?: number) => {
     setCurrentPlaylist(playlist)
     if (trackIndex !== undefined) setCurrentTrackIndex(trackIndex)
     if (time !== undefined) setCurrentTime(time)
@@ -38,7 +38,7 @@ const PlaylistProvider = ({ children }: PlaylistProviderProps) => {
   const pause = () => setIsPlaying(false)
 
   const nextTrack = () => {
-    if (currentPlaylist && currentTrackIndex < currentPlaylist.tracks.length - 1) {
+    if (currentPlaylist && currentTrackIndex < currentPlaylist.songs.length - 1) {
       setCurrentTrackIndex((prevIndex) => prevIndex + 1)
       setCurrentTime(0)
     }

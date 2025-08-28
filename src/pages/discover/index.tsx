@@ -2,15 +2,16 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import type { YouTubeEvent } from 'react-youtube'
 
+import type { InfiniteData } from '@tanstack/react-query'
 import styled from 'styled-components'
 
 import { usePlaylist } from '@/app/providers/PlayerProvider'
+import { usePlaylists, type Cursor, type PlaylistResponse } from '@/entities/playlist'
 import { SwipeCarousel } from '@/features/swipe'
 import { DiscoverCoachMark } from '@/pages/discover/ui'
 import { getVideoId } from '@/shared/lib'
 import { PlaylistLayout, YoutubePlayer } from '@/widgets/playlist'
 
-import playlistData from './playlistData.json'
 
 const DiscoverPage = () => {
   const { id: playlistId } = useParams()
@@ -29,6 +30,7 @@ const DiscoverPage = () => {
   const playerRef = useRef<YT.Player | null>(null)
   const [showCoachmark, setShowCoachmark] = useState(false)
 
+  // 코치마크
   useEffect(() => {
     const seen = localStorage.getItem('hasSeenDiscoverCoachmark')
     if (!seen) {
@@ -40,6 +42,13 @@ const DiscoverPage = () => {
     setShowCoachmark(false)
     localStorage.setItem('hasSeenDiscoverCoachmark', 'true')
   }
+
+  const { data } = usePlaylists()
+
+  const playlists =
+    (data as unknown as InfiniteData<PlaylistResponse, Cursor>)?.pages.flatMap(
+      (page) => page.content
+    ) || []
 
   // 현재 재생 시간 업데이트
   useEffect(() => {
@@ -67,7 +76,7 @@ const DiscoverPage = () => {
   useEffect(() => {
     const id = Number(playlistId)
     if (!currentPlaylist && id > 0) {
-      const initialPlaylist = playlistData.find((p) => p.id === id)
+      const initialPlaylist = playlists.find((p) => p.cardId === id)
       if (initialPlaylist) {
         setPlaylist(initialPlaylist, 0, 0)
       }
@@ -77,8 +86,8 @@ const DiscoverPage = () => {
   // 캐러셀 스와이프 시 현재 플레이리스트 업데이트
   const handleSelectPlaylist = useCallback(
     (index: number) => {
-      const selectedPlaylist = playlistData[index]
-      if (selectedPlaylist && currentPlaylist?.id !== selectedPlaylist.id) {
+      const selectedPlaylist = playlists[index]
+      if (selectedPlaylist && currentPlaylist?.cardId !== selectedPlaylist.cardId) {
         setPlaylist(selectedPlaylist, 0, 0)
       }
     },
@@ -95,7 +104,7 @@ const DiscoverPage = () => {
   )
 
   const videoId = currentPlaylist
-    ? getVideoId(currentPlaylist.tracks[currentTrackIndex]?.youtubeUrl)
+    ? getVideoId(currentPlaylist.songs[currentTrackIndex]?.youtubeUrl)
     : null
 
   const handlePlayPause = () => {
@@ -110,11 +119,11 @@ const DiscoverPage = () => {
     <Page>
       {showCoachmark && <DiscoverCoachMark onClick={handleCloseCoachmark} />}
 
-      <SwipeCarousel data={playlistData} onSelectIndexChange={handleSelectPlaylist}>
-        {playlistData.map((data) => (
-          <Slide key={data.id}>
+      <SwipeCarousel data={playlists} onSelectIndexChange={handleSelectPlaylist}>
+        {playlists.map((data) => (
+          <Slide key={data.cardId}>
             <PlaylistLayout
-              key={data.id}
+              key={data.cardId}
               data={data}
               currentPlaylist={currentPlaylist}
               currentTrackIndex={currentTrackIndex}

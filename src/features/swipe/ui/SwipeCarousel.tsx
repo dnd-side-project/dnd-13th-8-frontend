@@ -4,11 +4,11 @@ import { useNavigate, useParams } from 'react-router-dom'
 import useEmblaCarousel from 'embla-carousel-react'
 import styled from 'styled-components'
 
-import type { PlaylistData } from '@/entities/playlist/model/types'
+import type { PlaylistInfo } from '@/entities/playlist'
 
 interface SwipeCarouselProps {
   children: React.ReactNode
-  data: PlaylistData[]
+  data: PlaylistInfo[]
   onSelectIndexChange?: (activeIndex: number) => void
 }
 
@@ -18,7 +18,7 @@ const SwipeCarousel = ({ children, data, onSelectIndexChange }: SwipeCarouselPro
 
   const initialIndex =
     !isNaN(Number(playlistId)) && Number(playlistId) > 0
-      ? data.findIndex((p) => p.id === Number(playlistId))
+      ? data.findIndex((p) => p.cardId === Number(playlistId))
       : 0
 
   const [emblaRef, emblaApi] = useEmblaCarousel({
@@ -33,7 +33,7 @@ const SwipeCarousel = ({ children, data, onSelectIndexChange }: SwipeCarouselPro
 
     const selectedIndex = emblaApi.selectedScrollSnap()
     onSelectIndexChange?.(selectedIndex) // 부모에 알림
-    const newId = data[selectedIndex]?.id
+    const newId = data[selectedIndex]?.cardId
 
     if (newId != null && playlistId !== String(newId)) {
       navigate(`/discover/${newId}`, { replace: true })

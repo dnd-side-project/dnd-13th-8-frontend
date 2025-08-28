@@ -3,7 +3,6 @@ import { useNavigate, useParams } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { Cancel } from '@/assets/icons'
-import PlaylistData from '@/pages/discover/playlistData.json'
 import { flexColCenter } from '@/shared/styles/mixins'
 import { Header, Link, SvgButton } from '@/shared/ui'
 import { PlaylistHorizontal } from '@/widgets/playlist'
