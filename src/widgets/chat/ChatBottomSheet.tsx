@@ -1,6 +1,10 @@
+import { useState } from 'react'
+
 import styled from 'styled-components'
 
 import { Comment, type CommentData } from '@/entities/comment'
+import { useUserInfo } from '@/features/auth/model/useAuth'
+import { useChatSocket } from '@/features/chat/model/sendMessage'
 import { flexColCenter } from '@/shared/styles/mixins'
 import { BottomSheet } from '@/shared/ui'
 import ChatInput from '@/widgets/chat/ChatInput'
@@ -11,21 +15,28 @@ interface ChatBottomSheetProps {
   isOpen: boolean
   onClose: () => void
   comments?: CommentData[]
+  roomId: string
 }
 
-const ChatBottomSheet = ({ isOpen, onClose, comments }: ChatBottomSheetProps) => {
+const ChatBottomSheet = ({ isOpen, onClose, roomId }: ChatBottomSheetProps) => {
+  const [input, setInput] = useState('')
+  const { messages, sendMessage } = useChatSocket(roomId)
+
+  const { data } = useUserInfo()
+  console.log(data)
+
   return (
     <BottomSheet isOpen={isOpen} onClose={onClose} height="fit-content">
       <Title>실시간 채팅</Title>
       <CommentSection>
-        {comments && comments.length > 0 ? (
-          comments.map((msg) => (
+        {messages.length > 0 ? (
+          messages.map((msg) => (
             <Comment
-              key={msg.id}
-              profileUrl={msg.profileImg}
-              name={msg.userName}
+              key={msg.senderId + msg.sentAt}
+              // profileUrl={msg?.username || null}
+              name={msg.username || '익명'}
               comment={msg.content}
-              role={msg.role}
+              role={msg.systemMessage ? 'mine' : 'owner'}
             />
           ))
         ) : (
@@ -37,7 +48,17 @@ const ChatBottomSheet = ({ isOpen, onClose, comments }: ChatBottomSheetProps) =>
       </CommentSection>
       <BottomSection>
         <EmojiCarousel />
-        <ChatInput />
+        <ChatInput
+          value={input}
+          onChange={setInput}
+          onSend={() => {
+            if (input.trim()) {
+              // TODO : 랜덤 이름 프론트에서 보내야 하는지 백엔드에서 생성하는 지 체크
+              sendMessage(data?.userId || 'anonymous', data?.username || '익명', input)
+              setInput('')
+            }
+          }}
+        />
       </BottomSection>
     </BottomSheet>
   )

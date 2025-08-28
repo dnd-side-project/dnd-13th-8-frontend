@@ -3,37 +3,32 @@ import React, { useState, useRef, useEffect } from 'react'
 import styled from 'styled-components'
 
 import { Send } from '@/assets/icons'
-import { sendMessage } from '@/features/chat'
 import { flexRowCenter } from '@/shared/styles/mixins'
 import { SvgButton } from '@/shared/ui'
 
 interface ChatInputProps {
+  value: string
+  onChange: (val: string) => void
+  onSend: () => void
   onFocus?: () => void
 }
 
 const LINE_HEIGHT = 16
 const MAX_LINES = 4
 
-const ChatInput = ({ onFocus }: ChatInputProps) => {
-  const [message, setMessage] = useState('')
+const ChatInput = ({ value, onChange, onSend, onFocus }: ChatInputProps) => {
   const [isExpanded, setIsExpanded] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setMessage(e.target.value)
-    adjustHeight()
-  }
-
-  const handleSend = () => {
-    sendMessage(message)
-    setMessage('')
+    onChange(e.target.value)
     adjustHeight()
   }
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
-      handleSend()
+      onSend()
     }
   }
 
@@ -55,13 +50,13 @@ const ChatInput = ({ onFocus }: ChatInputProps) => {
       <StyledInput
         ref={textareaRef}
         placeholder="실시간 채팅달기"
-        value={message}
+        value={value}
         onChange={handleChange}
         onKeyDown={handleKeyPress}
         onFocus={onFocus}
         rows={1}
       />
-      <SvgButton icon={Send} onClick={handleSend} />
+      <SvgButton icon={Send} onClick={onSend} />
     </Wrapper>
   )
 }

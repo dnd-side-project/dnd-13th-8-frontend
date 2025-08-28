@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
 import type { PlaylistInfo } from '@/entities/playlist'
+import { useChatSocket } from '@/features/chat/model/sendMessage'
 import { flexColCenter } from '@/shared/styles/mixins'
 import { Button, Cd, Header, LiveInfo } from '@/shared/ui'
 import { ActionBar, ProgressBar } from '@/widgets/playlist'
@@ -35,6 +36,7 @@ const PlaylistLayout = ({
   type = 'Discover',
 }: PlaylistSlideProps) => {
   const navigate = useNavigate()
+  const { participantCount: listenersNum } = useChatSocket(String(data.playlistId))
 
   // 누적 시간 계산
   const accumulatedTime = useMemo(() => {
@@ -64,8 +66,7 @@ const PlaylistLayout = ({
         }
       />
       <Container>
-        {/* TODO : listenerCount 추후 수정 필요 */}
-        <LiveInfo isOnAir={data.representative} listenerCount={data.playlistId} isOwner={false} />
+        <LiveInfo isOnAir={listenersNum > 0} listenerCount={listenersNum} isOwner={false} />
         {type === 'My' && (
           <Button size="S" state="primary" onClick={() => navigate('/mypage/customize')}>
             꾸미기

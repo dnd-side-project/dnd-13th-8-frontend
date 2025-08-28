@@ -40,7 +40,7 @@ const ActionBar = ({ playlistId, isFollowing, userName, profile, showFollow }: A
       )}
       <ShareButton playlistId={playlistId} />
       <SvgButton icon={Playlist} width={24} height={24} onClick={handleMovePlaylist} />
-      <ChatButton />
+      <ChatButton roomId={playlistId} />
     </Wrapper>
   )
 }
