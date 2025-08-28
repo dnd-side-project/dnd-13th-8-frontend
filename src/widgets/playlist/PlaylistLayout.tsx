@@ -64,7 +64,7 @@ const PlaylistLayout = ({
         }
       />
       <Container>
-        {/* listenerCount 추후 수정 필요 */}
+        {/* TODO : listenerCount 추후 수정 필요 */}
         <LiveInfo isOnAir={data.representative} listenerCount={data.playlistId} isOwner={false} />
         {type === 'My' && (
           <Button size="S" state="primary" onClick={() => navigate('/mypage/customize')}>
@@ -75,10 +75,10 @@ const PlaylistLayout = ({
       <Wrapper>
         <Cd variant="xxl" bgColor="none" />
         <ActionBar
-          playlistId={data.cardId}
+          playlistId={data.playlistId}
           isFollowing={false}
-          userId={3}
-          userName={data.playlistName}
+          userId={Number(data.creatorId)}
+          userName={data.creatorNickname}
           showFollow={type !== 'My'}
         />
       </Wrapper>

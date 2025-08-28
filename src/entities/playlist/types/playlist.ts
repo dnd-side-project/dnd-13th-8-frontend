@@ -6,16 +6,14 @@ export interface Track {
   youtubeLength: number
 }
 
-export interface Creator {
-  creatorId: string
-  creatorNickname: string
-}
+export interface Creator {}
 
 export interface PlaylistDetailResponse {
   playlistId: number
   playlistName: string
   genre: string
-  creator?: Creator
+  creatorId: string
+  creatorNickname: string
   songs: Track[]
   representative: boolean
 }

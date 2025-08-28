@@ -75,7 +75,7 @@ const DiscoverPage = () => {
   useEffect(() => {
     const id = Number(playlistId)
     if (!currentPlaylist && id > 0) {
-      const initialPlaylist = playlists.find((p) => p.cardId === id)
+      const initialPlaylist = playlists.find((p) => p.playlistId === id)
       if (initialPlaylist) {
         setPlaylist(initialPlaylist, 0, 0)
       }
@@ -86,7 +86,7 @@ const DiscoverPage = () => {
   const handleSelectPlaylist = useCallback(
     (index: number) => {
       const selectedPlaylist = playlists[index]
-      if (selectedPlaylist && currentPlaylist?.cardId !== selectedPlaylist.cardId) {
+      if (selectedPlaylist && currentPlaylist?.playlistId !== selectedPlaylist.playlistId) {
         setPlaylist(selectedPlaylist, 0, 0)
       }
     },
@@ -120,9 +120,9 @@ const DiscoverPage = () => {
 
       <SwipeCarousel data={playlists} onSelectIndexChange={handleSelectPlaylist}>
         {playlists.map((data) => (
-          <Slide key={data.cardId}>
+          <Slide key={data.playlistId}>
             <PlaylistLayout
-              key={data.cardId}
+              key={data.playlistId}
               data={data}
               currentPlaylist={currentPlaylist}
               currentTrackIndex={currentTrackIndex}

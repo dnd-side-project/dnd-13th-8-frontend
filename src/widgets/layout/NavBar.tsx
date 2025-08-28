@@ -21,14 +21,14 @@ const NavBar = () => {
     (data as unknown as InfiniteData<PlaylistResponse, Cursor>)?.pages.flatMap(
       (page) => page.content
     ) || []
-  const firstCardId = playlists[0]?.cardId
+  const firstPlaylistId = playlists[0]?.playlistId
 
   // 컴포넌트 마운트 시 첫 번째 항목의 id로 링크 설정
   useEffect(() => {
-    if (firstCardId) {
-      setDiscoverLink(`/discover/${firstCardId}`)
+    if (firstPlaylistId) {
+      setDiscoverLink(`/discover/${firstPlaylistId}`)
     }
-  }, [firstCardId])
+  }, [firstPlaylistId])
 
   return (
     <NavButtonBox>

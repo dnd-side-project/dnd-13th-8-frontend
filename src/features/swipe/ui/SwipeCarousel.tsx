@@ -18,7 +18,7 @@ const SwipeCarousel = ({ children, data, onSelectIndexChange }: SwipeCarouselPro
 
   const initialIndex =
     !isNaN(Number(playlistId)) && Number(playlistId) > 0
-      ? data.findIndex((p) => p.cardId === Number(playlistId))
+      ? data.findIndex((p) => p.playlistId === Number(playlistId))
       : 0
 
   const [emblaRef, emblaApi] = useEmblaCarousel({
@@ -33,7 +33,7 @@ const SwipeCarousel = ({ children, data, onSelectIndexChange }: SwipeCarouselPro
 
     const selectedIndex = emblaApi.selectedScrollSnap()
     onSelectIndexChange?.(selectedIndex) // 부모에 알림
-    const newId = data[selectedIndex]?.cardId
+    const newId = data[selectedIndex]?.playlistId
 
     if (newId != null && playlistId !== String(newId)) {
       navigate(`/discover/${newId}`, { replace: true })

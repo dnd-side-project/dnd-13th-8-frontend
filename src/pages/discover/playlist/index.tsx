@@ -1,9 +1,10 @@
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 import styled from 'styled-components'
 
 import { Cancel } from '@/assets/icons'
 import { usePlaylistDetail } from '@/entities/playlist'
+import { getGenreLabel } from '@/shared/lib'
 import { flexColCenter } from '@/shared/styles/mixins'
 import { Error, Header, Link, Loading, SvgButton } from '@/shared/ui'
 import { PlaylistHorizontal } from '@/widgets/playlist'
@@ -11,9 +12,9 @@ import { PlaylistHorizontal } from '@/widgets/playlist'
 const PlaylistInfoPage = () => {
   const navigate = useNavigate()
 
-  // const { id } = useParams<{ id: string }>()
+  const { id } = useParams<{ id: string }>()
 
-  const { data: playlistData, isLoading, isError } = usePlaylistDetail(25) // TODO: id로 수정
+  const { data: playlistData, isLoading, isError } = usePlaylistDetail(Number(id))
 
   if (isError || !playlistData) {
     return (
@@ -41,9 +42,9 @@ const PlaylistInfoPage = () => {
       />
       <Content>
         <PlaylistHorizontal
-          genre={playlistData?.genre || ''}
+          genre={getGenreLabel(playlistData?.genre || '')}
           title={playlistData?.playlistName || ''}
-          username={playlistData?.playlistName || ''}
+          username={playlistData?.creatorNickname || ''}
         />
         <TrackInfo>
           {playlistData.songs &&
