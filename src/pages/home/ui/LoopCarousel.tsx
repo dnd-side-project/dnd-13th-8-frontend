@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import useEmblaCarousel from 'embla-carousel-react'
 import styled, { css } from 'styled-components'
 
-import CharacterImg from '@/assets/images/img_character.png'
-import { BUTTON_TEXT } from '@/pages/homePage/config/messages'
+import { Character } from '@/assets/icons'
+import { BUTTON_TEXT } from '@/pages/home/config/messages'
 import { flexColCenter, flexRowCenter } from '@/shared/styles/mixins'
-import Badge from '@/shared/ui/Badge'
-import Button from '@/shared/ui/Button'
+import { Button, Badge } from '@/shared/ui'
 
 import { DotButton, useDotButton } from './DotButton'
 
@@ -18,12 +18,13 @@ interface SlideData {
 
 interface LoopCarouselProps {
   data: SlideData[]
-  isAuth: boolean
+  isLogin: boolean
 }
 
-const LoopCarousel = ({ data, isAuth }: LoopCarouselProps) => {
+const LoopCarousel = ({ data, isLogin }: LoopCarouselProps) => {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true })
   const [activeIndex, setActiveIndex] = useState(0)
+  const navigate = useNavigate()
 
   useEffect(() => {
     if (!emblaApi) return
@@ -45,9 +46,13 @@ const LoopCarousel = ({ data, isAuth }: LoopCarouselProps) => {
           <EmblaSlide key="image">
             <Slide $active={activeIndex === 0}>
               <FirstContent>
-                <Image src={CharacterImg} alt="Deulak character" width={160} height={160} />
-                <Button size="S" state="primary">
-                  {isAuth ? BUTTON_TEXT.MEMBER : BUTTON_TEXT.GUEST}
+                <Character />
+                <Button
+                  size="S"
+                  state="primary"
+                  onClick={() => (isLogin ? navigate('/mypage/customize') : navigate('/login'))}
+                >
+                  {isLogin ? BUTTON_TEXT.MEMBER : BUTTON_TEXT.GUEST}
                 </Button>
               </FirstContent>
             </Slide>
@@ -122,10 +127,6 @@ const Slide = styled.div<{ $active: boolean }>`
           padding-box,
         linear-gradient(to bottom right, rgba(230, 255, 248, 0.5), rgb(24, 25, 32, 0.8)) border-box;
     `}
-`
-
-const Image = styled.img`
-  object-fit: cover;
 `
 
 const EmblaControls = styled.div`

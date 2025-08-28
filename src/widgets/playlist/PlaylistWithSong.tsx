@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import styled, { useTheme } from 'styled-components'
 
 import { Play } from '@/assets/icons'
-import type { TrackData } from '@/entities/playlist/types/playlist'
+import type { Track } from '@/entities/playlist/model/types'
 import { flexRowCenter } from '@/shared/styles/mixins'
 import Cd from '@/shared/ui/Cd'
 import Link from '@/shared/ui/Link'
@@ -11,16 +11,17 @@ import SvgButton from '@/shared/ui/SvgButton'
 
 interface PlaylistWithSongProps {
   title: string
+  id: number
   username: string
-  songs: TrackData[]
+  songs: Track[]
 }
 
-const PlaylistWithSong = ({ title, username, songs }: PlaylistWithSongProps) => {
+const PlaylistWithSong = ({ id, title, username, songs }: PlaylistWithSongProps) => {
   const navigate = useNavigate()
   const theme = useTheme()
 
   const handlePlayClick = () => {
-    navigate('/discover') // TODO : 추후 루트 수정
+    navigate(`/discover/${id}`)
   }
 
   return (
@@ -39,8 +40,8 @@ const PlaylistWithSong = ({ title, username, songs }: PlaylistWithSongProps) => 
         </InfoBox>
       </TopContainer>
       <SongsBox>
-        {songs.map((song, idx) => (
-          <Link key={idx} variant="small" data={song} />
+        {songs.slice(0, 3).map((song) => (
+          <Link key={song.id} variant="small" data={song} />
         ))}
       </SongsBox>
     </Wrapper>

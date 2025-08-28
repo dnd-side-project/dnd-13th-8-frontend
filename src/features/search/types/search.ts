@@ -1,7 +1,10 @@
+import type { Track } from '@/entities/playlist'
+
 export interface SearchParams {
   query: string
   sort?: 'RECENT' | 'POPULAR'
   limit?: number
+  page?: number
 }
 
 export interface CategoryPlaylistParams {
@@ -18,32 +21,49 @@ export interface CategoryPlaylistParams {
     | 'SAD'
   sort?: 'POPULAR' | 'RECENT'
   limit?: number
+  cursorId?: number
 }
 
-export interface Track {
-  id: number
-  title: string
-  youtubeUrl: string
-  youtubeThumbnail: string
-  youtubeLength: string
+export interface PopularKeywordParams {
+  range: 'today' | '7d' | '30d'
+  limit?: number
 }
 
 export interface Playlist {
   playlistId: number
   playlistName: string
-  userId: string
-  username: string
+  creatorId: string
+  creatorNickname: string
   tracks: Track[]
   type: 'USER' | 'PLAYLIST'
 }
 
 export type SearchPlaylistResponse = {
-  results: Playlist[]
+  content: {
+    results: Playlist[]
+  }
+  page: number
+  size: number
+  hasNext: boolean
+  totalCount: number
 }
 
 export interface CategoryPlaylistItem {
-  playlistId: number
-  playlistName: string
-  creatorId: string
-  creatorNickname: string
+  content: Playlist[]
+  hasNext: boolean
+  page: number
+  size: number
+  nextCursor: string | null
+  totalCount: number
+}
+
+export interface PopularKeywordItem {
+  term: string
+  score: number
+}
+
+export interface PopularKeywordResponse {
+  range: PopularKeywordParams['range']
+  limit: number
+  keywords: PopularKeywordItem[]
 }

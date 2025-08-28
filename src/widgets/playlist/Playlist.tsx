@@ -1,3 +1,5 @@
+import { useNavigate } from 'react-router-dom'
+
 import styled from 'styled-components'
 
 import Cd from '@/shared/ui/Cd'
@@ -5,11 +7,18 @@ import Cd from '@/shared/ui/Cd'
 interface PlaylistProps {
   title: string
   username: string
+  id: number
 }
 
-const Playlist = ({ title, username }: PlaylistProps) => {
+const Playlist = ({ id, title, username }: PlaylistProps) => {
+  const navigate = useNavigate()
+
+  const handleClick = () => {
+    navigate(`/discover/${id}`)
+  }
+
   return (
-    <Wrapper>
+    <Wrapper onClick={handleClick}>
       <CdBox>
         <Cd variant="xl" />
       </CdBox>
@@ -28,6 +37,7 @@ const Wrapper = styled.div`
   flex-direction: column;
   gap: 12px;
   width: 140px;
+  cursor: pointer;
 `
 
 const CdBox = styled.div`
