@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
 
 import {
   getCategoryPlaylist,
@@ -12,9 +12,17 @@ import type {
 } from '@/features/search/types/search'
 
 export const useSearchPlaylist = (params: SearchParams, enabled = true) => {
-  return useQuery({
+  return useInfiniteQuery({
     queryKey: ['searchPlaylist', params],
-    queryFn: () => getSearchResult(params),
+    queryFn: ({ pageParam = 0 }) => getSearchResult({ ...params, page: pageParam }),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage) => {
+      if (lastPage.hasNext) {
+        return lastPage.page + 1
+      }
+      return undefined
+    },
+
     enabled,
   })
 }

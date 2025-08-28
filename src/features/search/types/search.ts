@@ -2,6 +2,7 @@ export interface SearchParams {
   query: string
   sort?: 'RECENT' | 'POPULAR'
   limit?: number
+  page?: number
 }
 
 export interface CategoryPlaylistParams {
@@ -45,11 +46,12 @@ export interface Playlist {
 export type SearchPlaylistResponse = {
   content: {
     results: Playlist[]
-    hasNext: boolean
-    page: number
-    size: number
   }
+  page: number
+  size: number
+  hasNext: boolean
 }
+
 export interface CategoryPlaylistItem {
   content: Playlist[]
   hasNext: boolean

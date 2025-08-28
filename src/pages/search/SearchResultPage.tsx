@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 import styled from 'styled-components'
 
 import { LeftArrow, Search } from '@/assets/icons'
-import { useSearchPlaylist, useCategoryPlaylist, type Playlist } from '@/features/search'
+import { useSearchPlaylist, type Playlist, type SearchParams } from '@/features/search'
 import { MUSIC_GENRES } from '@/shared/config/musicGenres'
 import { useSingleSelect } from '@/shared/lib/useSingleSelect'
 import { ContentHeader, Error, Header, Input, Loading, NoData, SvgButton } from '@/shared/ui'
@@ -14,6 +14,7 @@ import { SearchResultItem } from '@/widgets/search'
 const SearchResultPage = () => {
   const navigate = useNavigate()
   const location = useLocation()
+  const listRef = useRef<HTMLDivElement>(null)
 
   const queryParams = new URLSearchParams(location.search)
   const keyword = queryParams.get('keyword') ?? ''
@@ -23,46 +24,67 @@ const SearchResultPage = () => {
   const [searchValue, setSearchValue] = useState(keyword)
   const { selected, onSelect } = useSingleSelect<SortType>('popular')
 
-  // 검색 API 호출
-  const keywordSearchData = useSearchPlaylist(
-    {
-      query: searchValue,
-      sort: selected.toUpperCase() === 'POPULAR' ? 'POPULAR' : 'RECENT',
-      limit: 10,
-    },
-    type === 'keyword'
-  )
+  const commonParams: SearchParams = {
+    query: searchValue,
+    sort: selected.toUpperCase() === 'POPULAR' ? 'POPULAR' : 'RECENT',
+  }
 
-  const categorySearchData = useCategoryPlaylist(
-    {
-      genre: searchValue as
-        | 'STUDY'
-        | 'SLEEP'
-        | 'RELAX'
-        | 'WORKOUT'
-        | 'DRIVE'
-        | 'PARTY'
-        | 'MOOD'
-        | 'ROMANCE'
-        | 'KPOP'
-        | 'SAD',
-      sort: selected.toUpperCase() === 'POPULAR' ? 'POPULAR' : 'RECENT',
-      limit: 10,
-    },
-    type === 'category'
-  )
+  const keywordSearchData = useSearchPlaylist(commonParams, type === 'keyword')
+
+  // const categorySearchData = useCategoryPlaylist(
+  //   {
+  //     ...commonParams,
+  //     genre: searchValue as
+  //       | 'STUDY'
+  //       | 'SLEEP'
+  //       | 'RELAX'
+  //       | 'WORKOUT'
+  //       | 'DRIVE'
+  //       | 'PARTY'
+  //       | 'MOOD'
+  //       | 'ROMANCE'
+  //       | 'KPOP'
+  //       | 'SAD',
+  //   },
+  //   type === 'category'
+  // )
+
+  const {
+    data: keywordData,
+    fetchNextPage: fetchNextKeywordPage,
+    hasNextPage: hasNextKeywordPage,
+    isFetchingNextPage: isFetchingNextKeywordPage,
+    isError: isKeywordError,
+    isLoading: isKeywordLoading,
+  } = keywordSearchData
+
+  console.log(hasNextKeywordPage)
+
+  // const {
+  //   data: categoryData,
+  //   fetchNextPage: fetchNextCategoryPage,
+  //   hasNextPage: hasNextCategoryPage,
+  //   isFetchingNextPage: isFetchingNextCategoryPage,
+  //   isError: isCategoryError,
+  //   isLoading: isCategoryLoading,
+  // } = categorySearchData
 
   const keywordSearchResult: Playlist[] =
-    type === 'keyword' ? (keywordSearchData.data?.content.results ?? []) : []
-  const categorySearchResult: Playlist[] =
-    type === 'category' ? (categorySearchData.data?.content ?? []) : []
+    type === 'keyword' ? (keywordData?.pages.flatMap((page) => page.content.results) ?? []) : []
 
-  const totalCount = keywordSearchResult.length + categorySearchResult.length
+  // const categorySearchResult: Playlist[] =
+  //   type === 'category' ? (categoryData?.pages.flatMap((page) => page.content.results) ?? []) : []
 
-  const isError = type === 'keyword' ? keywordSearchData.isError : categorySearchData.isError
+  // NOTE: Category API 응답에 content.results가 있다고 가정
+
+  const totalCount = keywordSearchResult.length // + categorySearchResult.length
+
+  const isError = type === 'keyword' ? isKeywordError : isKeywordError
   const isLoading =
-    (type === 'keyword' && keywordSearchData.isLoading) ||
-    (type === 'category' && categorySearchData.isLoading)
+    (type === 'keyword' && isKeywordLoading) || (type === 'category' && isKeywordLoading)
+  const isFetchingNextPage =
+    type === 'keyword' ? isFetchingNextKeywordPage : isFetchingNextKeywordPage
+  const hasNextPage = type === 'keyword' ? hasNextKeywordPage : hasNextKeywordPage
 
   useEffect(() => {
     setSearchValue(keyword)
@@ -71,6 +93,22 @@ const SearchResultPage = () => {
 
   const handleItemClick = (id: number) => {
     navigate(`/discover/${id}`)
+  }
+
+  const handleScroll = () => {
+    if (!listRef.current) return
+
+    const { scrollTop, scrollHeight, clientHeight } = listRef.current
+    const isAtBottom = scrollHeight - scrollTop <= clientHeight + 100 // 100px 여유를 줌
+
+    if (isAtBottom && hasNextPage && !isFetchingNextPage) {
+      console.log('실행')
+      if (type === 'keyword') {
+        fetchNextKeywordPage()
+      } else {
+        // fetchNextCategoryPage()
+      }
+    }
   }
 
   if (isError) {
@@ -94,53 +132,64 @@ const SearchResultPage = () => {
 
   return (
     <>
-      <Header
-        left={<SvgButton icon={LeftArrow} onClick={() => navigate(-1)} />}
-        center={<span>{genreLabel}</span>}
-      />
-
-      {type === 'keyword' && (
-        <Input
-          type="search"
-          placeholder="플레이리스트명 또는 닉네임으로 검색"
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          icon={Search}
-          iconPosition="left"
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              setSearchValue(inputValue)
-              navigate(`/searchResult?keyword=${encodeURIComponent(inputValue)}`)
-            }
-          }}
+      <TopWrapper>
+        <Header
+          left={<SvgButton icon={LeftArrow} onClick={() => navigate(-1)} />}
+          center={<span>{genreLabel}</span>}
         />
-      )}
-      <Result>
+        {type === 'keyword' && (
+          <Input
+            type="search"
+            placeholder="플레이리스트명 또는 닉네임으로 검색"
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            icon={Search}
+            iconPosition="left"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                setSearchValue(inputValue)
+                navigate(`/searchResult?keyword=${encodeURIComponent(inputValue)}`)
+              }
+            }}
+          />
+        )}
+      </TopWrapper>
+      <Result ref={listRef} onScroll={handleScroll}>
         {totalCount > 0 ? (
           <>
             <ContentHeader totalCount={totalCount} currentSort={selected} onSortChange={onSelect} />
             <ResultList>
-              {type === 'keyword'
-                ? keywordSearchResult?.map((item: Playlist) => (
-                  <SearchResultItem
-                    key={item.playlistId}
-                    type={item.type}
-                    searchResult={item.type === 'USER' ? item.creatorNickname : item.playlistName}
-                    imageUrl={item.tracks?.[0]?.youtubeThumbnail ?? ''}
-                    userName={item.type === 'PLAYLIST' ? item.creatorNickname : undefined}
-                    onClick={() => handleItemClick(item.playlistId)}
-                  />
-                ))
-                : categorySearchResult.map((item: Playlist) => (
-                  <SearchResultItem
-                    key={item.playlistId}
-                    type="PLAYLIST"
-                    searchResult={item.playlistName}
-                    userName={item.creatorNickname}
-                    onClick={() => handleItemClick(item.playlistId)}
-                  />
-                ))}
+              {
+                type === 'keyword' ? (
+                  keywordSearchResult?.map((item: Playlist) => (
+                    <SearchResultItem
+                      key={item.playlistId}
+                      type={item.type}
+                      searchResult={item.type === 'USER' ? item.creatorNickname : item.playlistName}
+                      imageUrl={item.tracks?.[0]?.youtubeThumbnail ?? ''}
+                      userName={item.type === 'PLAYLIST' ? item.creatorNickname : undefined}
+                      onClick={() => handleItemClick(item.playlistId)}
+                    />
+                  ))
+                ) : (
+                  <div />
+                )
+                // : categorySearchResult.map((item: Playlist) => (
+                //     <SearchResultItem
+                //       key={item.playlistId}
+                //       type="PLAYLIST"
+                //       searchResult={item.playlistName}
+                //       userName={item.creatorNickname}
+                //       onClick={() => handleItemClick(item.playlistId)}
+                //     />
+                //   ))}
+              }
             </ResultList>
+            {isFetchingNextPage && (
+              <LoadingWrapper>
+                <Loading isLoading />
+              </LoadingWrapper>
+            )}
           </>
         ) : (
           <NoDataWrapper>
@@ -158,8 +207,8 @@ const Result = styled.section`
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding-top: 24px;
-  min-height: 100vh;
+  overflow-y: auto;
+  height: calc(100vh - 100px);
 `
 
 const ResultList = styled.div`
@@ -173,4 +222,15 @@ const NoDataWrapper = styled.div`
   justify-content: center;
   align-items: center;
   height: 60dvh;
+`
+
+const LoadingWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px 0;
+`
+
+const TopWrapper = styled.div`
+  padding-bottom: 16px;
 `
