@@ -9,6 +9,7 @@ const Setting = lazy(() => import('@pages/myPage/ui/setting'))
 const Terms = lazy(() => import('@pages/myPage/ui/terms'))
 const Privacy = lazy(() => import('@pages/myPage/ui/privacy'))
 const Unregister = lazy(() => import('@/pages/myPage/ui/unregister'))
+const Notification = lazy(() => import('@/pages/myPage/ui/notification'))
 const SearchPage = lazy(() => import('@/pages/search'))
 const SearchResult = lazy(() => import('@/pages/search/SearchResultPage'))
 const DiscoverLayout = lazy(() => import('@/pages/discover/DiscoverLayout'))
@@ -77,6 +78,7 @@ export const routesConfig: RouteConfig[] = [
       { path: 'terms', component: Terms },
       { path: 'privacy', component: Privacy },
       { path: 'unregister', component: Unregister },
+      { path: 'notification', component: Notification },
     ],
   },
 
