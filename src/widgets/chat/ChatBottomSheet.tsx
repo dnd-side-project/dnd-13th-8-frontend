@@ -5,7 +5,7 @@ import styled from 'styled-components'
 import { Comment } from '@/entities/comment'
 import { useUserInfo } from '@/features/auth/model/useAuth'
 import { useChatSocket } from '@/features/chat/model/sendMessage'
-import { useChatHistory } from '@/features/chat/model/useChat'
+import { useInfiniteChatHistory } from '@/features/chat/model/useChat'
 import { flexColCenter } from '@/shared/styles/mixins'
 import { BottomSheet } from '@/shared/ui'
 import ChatInput from '@/widgets/chat/ChatInput'
@@ -28,7 +28,7 @@ const ChatBottomSheet = ({ isOpen, onClose, roomId }: ChatBottomSheetProps) => {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useChatHistory(roomId)
+  } = useInfiniteChatHistory(roomId)
   const { data: userData } = useUserInfo()
 
   const historyMessages = historyData?.pages.flatMap((page) => page.messages) ?? []
