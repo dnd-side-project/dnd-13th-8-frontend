@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import type { YouTubeEvent } from 'react-youtube'
 
 import type { InfiniteData } from '@tanstack/react-query'
@@ -28,6 +28,7 @@ const DiscoverPage = () => {
   } = usePlaylist()
   const playerRef = useRef<YT.Player | null>(null)
   const [showCoachmark, setShowCoachmark] = useState(false)
+  const navigate = useNavigate()
 
   // 코치마크
   useEffect(() => {
@@ -61,6 +62,16 @@ const DiscoverPage = () => {
       setPlaylist(initialPlaylist, 0, 0)
     }
   }, [playlists, currentPlaylist, playlistId, setPlaylist])
+
+  // URL을 현재 선택된 플레이리스트로 동기화
+  useEffect(() => {
+    if (currentPlaylist) {
+      const id = currentPlaylist.playlistId
+      if (Number(playlistId) !== id) {
+        navigate(`/discover/${id}`, { replace: true })
+      }
+    }
+  }, [currentPlaylist, playlistId, navigate])
 
   // 현재 재생 시간 업데이트
   useEffect(() => {
