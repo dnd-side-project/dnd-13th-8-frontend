@@ -2,6 +2,7 @@ import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tansta
 
 import {
   getPlaylistDetail,
+  getPlaylistViewCounts,
   getSufflePlaylists,
   postPlaylistConfirm,
   postPlaylistStart,
@@ -59,5 +60,12 @@ export const usePlaylistConfirmMutation = () => {
     onSuccess: (_, playlistId) => {
       queryClient.invalidateQueries({ queryKey: ['playlistViewCounts', playlistId] })
     },
+  })
+}
+
+export const usePlaylistViewCounts = (playlistId: number) => {
+  return useQuery({
+    queryKey: ['playlistViewCounts', playlistId],
+    queryFn: () => getPlaylistViewCounts(playlistId),
   })
 }

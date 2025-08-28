@@ -9,6 +9,7 @@ import { usePlaylist } from '@/app/providers/PlayerProvider'
 import {
   usePlaylistConfirmMutation,
   usePlaylistStartMutation,
+  usePlaylistViewCounts,
   useSufflePlaylists,
   type Cursor,
   type PlaylistResponse,
@@ -35,7 +36,6 @@ const DiscoverPage = () => {
   const playerRef = useRef<YT.Player | null>(null)
   const [showCoachmark, setShowCoachmark] = useState(false)
   const navigate = useNavigate()
-  const isFirstPlay = useRef(false) // 최초 재생 여부
 
   // 코치마크
   useEffect(() => {
@@ -53,6 +53,7 @@ const DiscoverPage = () => {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useSufflePlaylists()
   const { mutate: startPlaylist } = usePlaylistStartMutation()
   const { mutate: confirmPlaylist } = usePlaylistConfirmMutation()
+  const { refetch: refetchViewCounts } = usePlaylistViewCounts(currentPlaylist?.playlistId || 0)
 
   const playlists =
     (data as unknown as InfiniteData<PlaylistResponse, Cursor>)?.pages.flatMap(
@@ -83,18 +84,26 @@ const DiscoverPage = () => {
   }, [currentPlaylist, playlistId, navigate])
 
   useEffect(() => {
-    if (!currentPlaylist || !isPlaying || isFirstPlay.current) return
+    if (!currentPlaylist || !isPlaying) return
 
     startPlaylist(currentPlaylist.playlistId)
-    isFirstPlay.current = true
 
-    const timer = setTimeout(() => {
-      console.log('15초 confirm 호출')
+    const confirmTimer = setTimeout(() => {
       confirmPlaylist(currentPlaylist.playlistId)
     }, 15000)
 
-    return () => clearTimeout(timer)
-  }, [currentPlaylist, isPlaying, startPlaylist, confirmPlaylist])
+    // 재생 중일 때 10초마다 refetch
+    const viewCountTimer = setInterval(() => {
+      if (isPlaying) {
+        refetchViewCounts()
+      }
+    }, 10000)
+
+    return () => {
+      clearTimeout(confirmTimer)
+      clearInterval(viewCountTimer)
+    }
+  }, [currentPlaylist, isPlaying, startPlaylist, confirmPlaylist, refetchViewCounts])
 
   // 현재 재생 시간 업데이트
   useEffect(() => {

@@ -21,6 +21,6 @@ export const postPlaylistConfirm = (playlistId: number) => {
   return api.post(`/main/browse/playlists/confirm`, null, { params: { playlistId } })
 }
 
-export const postPlaylistViewCounts = (playlistIds: number[]) => {
-  return api.post(`/main/browse/playlists/view-counts`, playlistIds)
+export const getPlaylistViewCounts = (playlistId: number) => {
+  return api.get(`/main/browse/playlists/view-counts/${playlistId}`)
 }
