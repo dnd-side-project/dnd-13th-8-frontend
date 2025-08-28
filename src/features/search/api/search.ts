@@ -13,7 +13,7 @@ export const getSearchResult = (params: SearchParams) => {
 }
 
 export const getCategoryPlaylist = (params: CategoryPlaylistParams) => {
-  return api.get<CategoryPlaylistItem[]>('/main/playlist/search/genre', { params })
+  return api.get<CategoryPlaylistItem>('/main/playlist/search/genre', { params })
 }
 
 export const getPopularKeyword = (params: PopularKeywordParams) => {

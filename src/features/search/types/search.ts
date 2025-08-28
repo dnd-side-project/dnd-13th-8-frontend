@@ -36,21 +36,25 @@ export interface Track {
 export interface Playlist {
   playlistId: number
   playlistName: string
-  userId: string
-  username: string
+  creatorId: string
+  creatorNickname: string
   tracks: Track[]
   type: 'USER' | 'PLAYLIST'
 }
 
 export type SearchPlaylistResponse = {
-  results: Playlist[]
+  content: {
+    results: Playlist[]
+    hasNext: boolean
+    page: number
+    size: number
+  }
 }
-
 export interface CategoryPlaylistItem {
-  playlistId: number
-  playlistName: string
-  creatorId: string
-  creatorNickname: string
+  content: Playlist[]
+  hasNext: boolean
+  page: number
+  size: number
 }
 
 export interface PopularKeywordItem {

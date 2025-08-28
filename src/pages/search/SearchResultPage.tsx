@@ -52,9 +52,12 @@ const SearchResultPage = () => {
     type === 'category'
   )
 
-  const keywordSearchResult = type === 'keyword' ? keywordSearchData.data?.results : []
+  const keywordSearchResult: Playlist[] =
+    type === 'keyword' ? (keywordSearchData.data?.content.results ?? []) : []
+  const categorySearchResult: Playlist[] =
+    type === 'category' ? (categorySearchData.data?.content ?? []) : []
 
-  const categorySearchResult = type === 'category' ? categorySearchData.data : []
+  const totalCount = keywordSearchResult.length + categorySearchResult.length
 
   const isError = type === 'keyword' ? keywordSearchData.isError : categorySearchData.isError
   const isLoading =
@@ -85,8 +88,6 @@ const SearchResultPage = () => {
       </NoDataWrapper>
     )
   }
-  const totalCount =
-    (keywordSearchData.data?.results?.length ?? 0) + (categorySearchResult?.length ?? 0)
 
   const genreLabel =
     type === 'category' ? MUSIC_GENRES.find((genre) => genre.id === searchValue)?.label : '검색'
@@ -124,27 +125,21 @@ const SearchResultPage = () => {
                   <SearchResultItem
                     key={item.playlistId}
                     type={item.type}
-                    searchResult={item.type === 'USER' ? item.username : item.playlistName}
+                    searchResult={item.type === 'USER' ? item.creatorNickname : item.playlistName}
                     imageUrl={item.tracks?.[0]?.youtubeThumbnail ?? ''}
-                    userName={item.type === 'PLAYLIST' ? item.username : undefined}
+                    userName={item.type === 'PLAYLIST' ? item.creatorNickname : undefined}
                     onClick={() => handleItemClick(item.playlistId)}
                   />
                 ))
-                : categorySearchResult?.map(
-                  (item: {
-                      playlistId: number
-                      playlistName: string
-                      creatorNickname: string
-                    }) => (
-                    <SearchResultItem
-                      key={item.playlistId}
-                      type="PLAYLIST"
-                      searchResult={item.playlistName}
-                      userName={item.creatorNickname}
-                      onClick={() => handleItemClick(item.playlistId)}
-                    />
-                  )
-                )}
+                : categorySearchResult.map((item: Playlist) => (
+                  <SearchResultItem
+                    key={item.playlistId}
+                    type="PLAYLIST"
+                    searchResult={item.playlistName}
+                    userName={item.creatorNickname}
+                    onClick={() => handleItemClick(item.playlistId)}
+                  />
+                ))}
             </ResultList>
           </>
         ) : (
