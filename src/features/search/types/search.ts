@@ -19,6 +19,7 @@ export interface CategoryPlaylistParams {
     | 'SAD'
   sort?: 'POPULAR' | 'RECENT'
   limit?: number
+  cursorId?: number
 }
 
 export interface PopularKeywordParams {
@@ -57,6 +58,7 @@ export interface CategoryPlaylistItem {
   hasNext: boolean
   page: number
   size: number
+  nextCursor: string | null
 }
 
 export interface PopularKeywordItem {

@@ -4,7 +4,12 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { LeftArrow, Search } from '@/assets/icons'
-import { useSearchPlaylist, type Playlist, type SearchParams } from '@/features/search'
+import {
+  useSearchPlaylist,
+  useCategoryPlaylist,
+  type Playlist,
+  type SearchParams,
+} from '@/features/search'
 import { MUSIC_GENRES } from '@/shared/config/musicGenres'
 import { useSingleSelect } from '@/shared/lib/useSingleSelect'
 import { ContentHeader, Error, Header, Input, Loading, NoData, SvgButton } from '@/shared/ui'
@@ -29,25 +34,31 @@ const SearchResultPage = () => {
     sort: selected.toUpperCase() === 'POPULAR' ? 'POPULAR' : 'RECENT',
   }
 
-  const keywordSearchData = useSearchPlaylist(commonParams, type === 'keyword')
+  const keywordSearchData = useSearchPlaylist(
+    {
+      ...commonParams,
+      query: searchValue,
+    },
+    type === 'keyword'
+  )
 
-  // const categorySearchData = useCategoryPlaylist(
-  //   {
-  //     ...commonParams,
-  //     genre: searchValue as
-  //       | 'STUDY'
-  //       | 'SLEEP'
-  //       | 'RELAX'
-  //       | 'WORKOUT'
-  //       | 'DRIVE'
-  //       | 'PARTY'
-  //       | 'MOOD'
-  //       | 'ROMANCE'
-  //       | 'KPOP'
-  //       | 'SAD',
-  //   },
-  //   type === 'category'
-  // )
+  const categorySearchData = useCategoryPlaylist(
+    {
+      ...commonParams,
+      genre: searchValue as
+        | 'STUDY'
+        | 'SLEEP'
+        | 'RELAX'
+        | 'WORKOUT'
+        | 'DRIVE'
+        | 'PARTY'
+        | 'MOOD'
+        | 'ROMANCE'
+        | 'KPOP'
+        | 'SAD',
+    },
+    type === 'category'
+  )
 
   const {
     data: keywordData,
@@ -58,33 +69,28 @@ const SearchResultPage = () => {
     isLoading: isKeywordLoading,
   } = keywordSearchData
 
-  console.log(hasNextKeywordPage)
-
-  // const {
-  //   data: categoryData,
-  //   fetchNextPage: fetchNextCategoryPage,
-  //   hasNextPage: hasNextCategoryPage,
-  //   isFetchingNextPage: isFetchingNextCategoryPage,
-  //   isError: isCategoryError,
-  //   isLoading: isCategoryLoading,
-  // } = categorySearchData
+  const {
+    data: categoryData,
+    fetchNextPage: fetchNextCategoryPage,
+    hasNextPage: hasNextCategoryPage,
+    isFetchingNextPage: isFetchingNextCategoryPage,
+    isError: isCategoryError,
+    isLoading: isCategoryLoading,
+  } = categorySearchData
 
   const keywordSearchResult: Playlist[] =
     type === 'keyword' ? (keywordData?.pages.flatMap((page) => page.content.results) ?? []) : []
+  const categorySearchResult: Playlist[] =
+    type === 'category' ? (categoryData?.pages.flatMap((page) => page.content) ?? []) : []
 
-  // const categorySearchResult: Playlist[] =
-  //   type === 'category' ? (categoryData?.pages.flatMap((page) => page.content.results) ?? []) : []
+  const totalCount = type === 'keyword' ? keywordSearchResult.length : categorySearchResult.length
 
-  // NOTE: Category API 응답에 content.results가 있다고 가정
-
-  const totalCount = keywordSearchResult.length // + categorySearchResult.length
-
-  const isError = type === 'keyword' ? isKeywordError : isKeywordError
+  const isError = type === 'keyword' ? isKeywordError : isCategoryError
   const isLoading =
-    (type === 'keyword' && isKeywordLoading) || (type === 'category' && isKeywordLoading)
+    (type === 'keyword' && isKeywordLoading) || (type === 'category' && isCategoryLoading)
   const isFetchingNextPage =
-    type === 'keyword' ? isFetchingNextKeywordPage : isFetchingNextKeywordPage
-  const hasNextPage = type === 'keyword' ? hasNextKeywordPage : hasNextKeywordPage
+    type === 'keyword' ? isFetchingNextKeywordPage : isFetchingNextCategoryPage
+  const hasNextPage = type === 'keyword' ? hasNextKeywordPage : hasNextCategoryPage
 
   useEffect(() => {
     setSearchValue(keyword)
@@ -102,11 +108,10 @@ const SearchResultPage = () => {
     const isAtBottom = scrollHeight - scrollTop <= clientHeight + 100 // 100px 여유를 줌
 
     if (isAtBottom && hasNextPage && !isFetchingNextPage) {
-      console.log('실행')
       if (type === 'keyword') {
         fetchNextKeywordPage()
       } else {
-        // fetchNextCategoryPage()
+        fetchNextCategoryPage()
       }
     }
   }
@@ -159,31 +164,26 @@ const SearchResultPage = () => {
           <>
             <ContentHeader totalCount={totalCount} currentSort={selected} onSortChange={onSelect} />
             <ResultList>
-              {
-                type === 'keyword' ? (
-                  keywordSearchResult?.map((item: Playlist) => (
-                    <SearchResultItem
-                      key={item.playlistId}
-                      type={item.type}
-                      searchResult={item.type === 'USER' ? item.creatorNickname : item.playlistName}
-                      imageUrl={item.tracks?.[0]?.youtubeThumbnail ?? ''}
-                      userName={item.type === 'PLAYLIST' ? item.creatorNickname : undefined}
-                      onClick={() => handleItemClick(item.playlistId)}
-                    />
-                  ))
-                ) : (
-                  <div />
-                )
-                // : categorySearchResult.map((item: Playlist) => (
-                //     <SearchResultItem
-                //       key={item.playlistId}
-                //       type="PLAYLIST"
-                //       searchResult={item.playlistName}
-                //       userName={item.creatorNickname}
-                //       onClick={() => handleItemClick(item.playlistId)}
-                //     />
-                //   ))}
-              }
+              {type === 'keyword'
+                ? keywordSearchResult?.map((item: Playlist) => (
+                  <SearchResultItem
+                    key={item.playlistId}
+                    type={item.type}
+                    searchResult={item.type === 'USER' ? item.creatorNickname : item.playlistName}
+                    imageUrl={item.tracks?.[0]?.youtubeThumbnail ?? ''}
+                    userName={item.type === 'PLAYLIST' ? item.creatorNickname : undefined}
+                    onClick={() => handleItemClick(item.playlistId)}
+                  />
+                ))
+                : categorySearchResult.map((item: Playlist) => (
+                  <SearchResultItem
+                    key={item.playlistId}
+                    type="PLAYLIST"
+                    searchResult={item.playlistName}
+                    userName={item.creatorNickname}
+                    onClick={() => handleItemClick(item.playlistId)}
+                  />
+                ))}
             </ResultList>
             {isFetchingNextPage && (
               <LoadingWrapper>

@@ -1,4 +1,4 @@
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
+import { useInfiniteQuery, useQuery, type InfiniteData } from '@tanstack/react-query'
 
 import {
   getCategoryPlaylist,
@@ -6,6 +6,7 @@ import {
   getSearchResult,
 } from '@/features/search/api/search'
 import type {
+  CategoryPlaylistItem,
   CategoryPlaylistParams,
   PopularKeywordParams,
   SearchParams,
@@ -28,11 +29,22 @@ export const useSearchPlaylist = (params: SearchParams, enabled = true) => {
 }
 
 export const useCategoryPlaylist = (params: CategoryPlaylistParams, enabled = true) => {
-  return useQuery({
-    queryKey: ['categoryPlaylist', params],
-    queryFn: () => getCategoryPlaylist(params),
-    enabled,
-  })
+  return useInfiniteQuery<
+    CategoryPlaylistItem,
+    Error,
+    InfiniteData<CategoryPlaylistItem, string | null>,
+    (string | CategoryPlaylistParams)[],
+    string | null // pageParam 타입
+      >({
+        queryKey: ['categoryPlaylist', params],
+        initialPageParam: null,
+        queryFn: ({ pageParam }) => {
+          const cursorId = pageParam ? Number(pageParam) : undefined
+          return getCategoryPlaylist({ ...params, cursorId })
+        },
+        getNextPageParam: (lastPage) => lastPage.nextCursor ?? null,
+        enabled,
+      })
 }
 
 export const usePopularKeyword = (params: PopularKeywordParams) => {
