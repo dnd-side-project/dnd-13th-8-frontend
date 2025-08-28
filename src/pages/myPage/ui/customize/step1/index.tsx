@@ -5,7 +5,7 @@ import { AnimatePresence, motion, Reorder, useDragControls } from 'framer-motion
 import styled from 'styled-components'
 import { v4 as uuidv4 } from 'uuid'
 
-import { Button, Cd, SvgButton, Input, BottomSheet } from '@shared/ui'
+import { Button, Cd, SvgButton, Input, BottomSheet, Loading } from '@shared/ui'
 import type { ModalProps } from '@shared/ui/Modal'
 
 import { DownArrow, Pin, PinPrimary, Share, Trash, HelpCircle, Drag, Cancel } from '@/assets/icons'
@@ -23,7 +23,7 @@ const CustomizeStep1 = ({ currentStep, setCurrentStep, setModal }: CustomizeStep
   const routeState = location.state as { isPrimary: boolean }
   const dragControls = useDragControls()
 
-  const { mutate } = useTempSavePlaylist()
+  const { mutate, isPending } = useTempSavePlaylist()
 
   const [isEditMode] = useState(false)
   const [isPopoverOpen, setIsPopoverOpen] = useState(false)
@@ -200,6 +200,10 @@ const CustomizeStep1 = ({ currentStep, setCurrentStep, setModal }: CustomizeStep
   // 링크 순서 정렬
   const onReSort = (newOrder: { id: string; link: string }[]) => {
     setLinkMap(newOrder)
+  }
+
+  if (isPending) {
+    return <Loading isLoading />
   }
 
   return (

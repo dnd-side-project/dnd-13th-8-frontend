@@ -27,22 +27,21 @@ const CdGrid = ({
           icon={Plus}
           width={40}
           height={40}
-          onClick={() => navigate('/mypage/customize')}
+          onClick={() =>
+            navigate('/mypage/customize', {
+              // 최초 생성일 경우 대표 플리 지정
+              state: { isPrimary: !currentPlaylist?.length },
+            })
+          }
         />
         <CdAddLabel>추가하기</CdAddLabel>
       </CdAddContainer>
       {currentPlaylist?.map((item) => (
-        // TODO: 백엔드 서버 복구 시 as button 스타일링 확인
         <CdContainer
           key={item.paylistId}
           as="button"
           type="button"
-          onClick={() =>
-            navigate(`/mypage/${item.paylistId}/playlist`, {
-              // 최초 생성일 경우 대표 플리 지정
-              state: { isPrimary: currentPlaylist.length === 0 },
-            })
-          }
+          onClick={() => navigate(`/mypage/${item.paylistId}/playlist`)}
         >
           <Cd variant="md" />
           {currentTab === 'cd' && item?.isRepresentative && <Badge size="small" text="대표" />}
