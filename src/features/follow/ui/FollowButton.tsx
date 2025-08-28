@@ -26,6 +26,7 @@ const FollowButton = ({ isFollowing, playlistId, userName, profile }: FollowButt
   const handleFollowClick = () => {
     if (isLogin) {
       toggleFollow()
+      setIsBottomSheetOpen(false)
     } else {
       setIsModalOpen(true)
     }

@@ -5,6 +5,7 @@ import styled from 'styled-components'
 
 import type { PlaylistInfo } from '@/entities/playlist'
 import { useChatSocket } from '@/features/chat/model/sendMessage'
+import { useFollowStatus } from '@/features/follow/model/useFollow'
 import { flexColCenter } from '@/shared/styles/mixins'
 import { Button, Cd, Header, LiveInfo } from '@/shared/ui'
 import { ActionBar, ProgressBar } from '@/widgets/playlist'
@@ -37,6 +38,9 @@ const PlaylistLayout = ({
 }: PlaylistSlideProps) => {
   const navigate = useNavigate()
   const { participantCount: listenersNum } = useChatSocket(String(data.playlistId))
+  const { data: isFollowing } = useFollowStatus(data.playlistId)
+
+  console.log(isFollowing)
 
   // 누적 시간 계산
   const accumulatedTime = useMemo(() => {
@@ -77,7 +81,7 @@ const PlaylistLayout = ({
         <Cd variant="xxl" bgColor="none" />
         <ActionBar
           playlistId={data.playlistId}
-          isFollowing={false} // TODO : 실제 정보로 바꿔야 됨
+          isFollowing={!!isFollowing}
           userName={data.creator.creatorNickname}
           showFollow={type !== 'My'}
         />

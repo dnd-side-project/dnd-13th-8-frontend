@@ -1,8 +1,8 @@
 import { useState } from 'react'
 
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
-import { postFollow, deleteFollow } from '@/features/follow/api/follow'
+import { postFollow, deleteFollow, getFollowStatus } from '@/features/follow/api/follow'
 
 const useFollow = (playlistId: number, initialIsFollowing: boolean) => {
   const queryClient = useQueryClient()
@@ -36,3 +36,11 @@ const useFollow = (playlistId: number, initialIsFollowing: boolean) => {
 }
 
 export default useFollow
+
+export const useFollowStatus = (playlistId: number) => {
+  return useQuery({
+    queryKey: ['followStatus', playlistId],
+    queryFn: () => getFollowStatus(playlistId),
+    staleTime: 0,
+  })
+}

@@ -7,3 +7,7 @@ export const postFollow = (playlistId: number) => {
 export const deleteFollow = (playlistId: number) => {
   return api.delete(`/main/browse/playlists/${playlistId}/follow`)
 }
+
+export const getFollowStatus = (playlistId: number) => {
+  return api.get(`/main/browse/playlists/${playlistId}/follow`)
+}
