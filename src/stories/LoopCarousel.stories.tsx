@@ -1,13 +1,13 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import styled from 'styled-components'
 
-import LoopCarousel from '@/pages/homePage/ui/LoopCarousel'
+import LoopCarousel from '@/pages/home/ui/LoopCarousel'
 
 const meta: Meta<typeof LoopCarousel> = {
   title: 'Pages/Home/LoopCarousel',
   component: LoopCarousel,
   argTypes: {
-    isAuth: {
+    isLogin: {
       control: { type: 'boolean' },
       defaultValue: false,
     },
@@ -32,7 +32,7 @@ const StoryContainer = styled.div`
 export const Default: Story = {
   args: {
     data: mockData,
-    isAuth: false,
+    isLogin: false,
   },
   decorators: [
     (Story) => (

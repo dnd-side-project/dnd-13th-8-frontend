@@ -1,17 +1,18 @@
-export interface TrackData {
+export interface Track {
+  id: number
   title: string
-  duration: number // 초 단위
-  link: string
-  thumbnail?: string
+  youtubeUrl: string
+  youtubeThumbnail: string
+  youtubeLength: number
 }
 
 export interface PlaylistData {
   id: number
   title: string
-  tracks: TrackData[]
+  tracks: Track[]
   listeners: number
   liked: boolean
-  userName: string
+  username: string
   userId: number
   isOnAir: boolean
 }

@@ -1,25 +1,40 @@
-import { useNavigate } from 'react-router-dom'
+import { createSearchParams, useNavigate } from 'react-router-dom'
 
 import styled, { css } from 'styled-components'
 
+import { CARD_IMAGES_LARGE } from '@/assets/card'
 import { Logo, Notification, Search } from '@/assets/icons'
-import { TITLE_TEXT } from '@/pages/homePage/config/messages'
-import { LoopCarousel } from '@/pages/homePage/ui'
+import { useAuthStore } from '@/features/auth/store/authStore'
+import {
+  useRecommendationsByRecent,
+  useRecommendationsByFollow,
+  useRecommendedGenres,
+} from '@/features/recommend'
+import { TITLE_TEXT } from '@/pages/home/config/messages'
+import { LoopCarousel } from '@/pages/home/ui'
 import { Header, SvgButton, ScrollCarousel } from '@/shared/ui'
 import { Playlist, PlaylistWithSong } from '@/widgets/playlist'
 
 const HomePage = () => {
   const navigate = useNavigate()
-  const isAuth = false // TODO : 실제 로그인 상태를 가져오는 로직으로 교체
+  const { isLogin, userInfo } = useAuthStore()
 
-  const handleNotiClick = () => {
-    navigate('/mypage/notification')
+  const handleNotiClick = () => navigate('/mypage/notification')
+  const handleSearchClick = () => navigate('/search')
+
+  const { data: RecentData } = useRecommendationsByRecent()
+  const { data: FollowData } = useRecommendationsByFollow()
+  const { data: GenreData } = useRecommendedGenres()
+
+  const handleKeywordSearch = (genreCode: string) => {
+    navigate({
+      pathname: '/searchResult',
+      search: `?${createSearchParams({
+        keyword: genreCode,
+        keywordType: 'category',
+      })}`,
+    })
   }
-
-  const handleSearchClick = () => {
-    navigate('/search')
-  }
-
   return (
     <PageLayout>
       <Header
@@ -31,36 +46,52 @@ const HomePage = () => {
           </>
         }
       />
+
       <FirstSection>
-        <h1>{isAuth ? TITLE_TEXT.MEMBER : TITLE_TEXT.GUEST}</h1>
-        <LoopCarousel data={loopCarouselData} isAuth={isAuth} />
+        <h1>{isLogin ? TITLE_TEXT.MEMBER(userInfo.username) : TITLE_TEXT.GUEST}</h1>
+        <LoopCarousel data={loopCarouselData} isLogin={isLogin} />
       </FirstSection>
+
       <SecondSection>
         <h1>퇴근길, 귀에 붙는 노래</h1>
         <ScrollCarousel gap={14}>
-          {secondSectionData.map((item) => (
-            <Playlist key={item.id} title={item.title} username={item.username} />
+          {RecentData?.map((item) => (
+            <Playlist
+              id={item.playlistId}
+              key={item.playlistId}
+              title={item.playlistName}
+              username={item.creatorNickname}
+            />
           ))}
         </ScrollCarousel>
       </SecondSection>
+
       <ThirdSection>
         <h1>친구가 추천한 그 곡</h1>
         <ScrollCarousel gap={16}>
-          {thirdSectionData.map((playlist, idx) => (
+          {FollowData?.map((playlist) => (
             <PlaylistWithSong
-              key={idx}
-              title={playlist.title}
-              username={playlist.username}
+              key={playlist.playlistId}
+              id={playlist.playlistId}
+              title={playlist.playlistName}
+              username={playlist.creatorNickname}
               songs={playlist.songs}
             />
           ))}
         </ScrollCarousel>
       </ThirdSection>
+
       <FourthSection>
         <h1>오늘은 이런 기분</h1>
         <ScrollCarousel gap={12}>
-          {[1, 2, 3, 4, 5, 6].map((index) => (
-            <Slide key={index}>{index}</Slide>
+          {GenreData?.map((item) => (
+            <Slide
+              key={item.code}
+              $bgImage={CARD_IMAGES_LARGE[item.code as keyof typeof CARD_IMAGES_LARGE]}
+              onClick={() => handleKeywordSearch(item.code)}
+            >
+              {item.displayName}
+            </Slide>
           ))}
         </ScrollCarousel>
       </FourthSection>
@@ -68,17 +99,23 @@ const HomePage = () => {
   )
 }
 
-const Slide = styled.div`
+export default HomePage
+
+const Slide = styled.button<{ $bgImage?: string }>`
   border-radius: 10px;
   width: 160px;
   height: 200px;
+  color: ${({ theme }) => theme.COLOR['gray-100']};
+  ${({ theme }) => theme.FONT['body1-normal']};
   background-color: ${({ theme }) => theme.COLOR['gray-600']};
+  background-image: url(${({ $bgImage }) => $bgImage});
+  background-size: cover;
+  background-position: center;
+  padding: 12px;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
+  align-items: flex-start;
 `
-
-export default HomePage
 
 const PageLayout = styled.div`
   display: flex;
@@ -98,8 +135,6 @@ const sectionCommonLayout = css`
   gap: 12px;
   background-color: ${({ theme }) => theme.COLOR['gray-800']};
   ${({ theme }) => theme.FONT.headline1};
-
-  /* main padding 상쇄 */
   width: calc(100% + 40px);
   margin: 0 -20px;
 
@@ -140,42 +175,5 @@ const loopCarouselData = [
   {
     title: '플레이리스트 #4',
     genre: '클래식',
-  },
-]
-
-const secondSectionData = [
-  { id: 1, title: 'Playlist #1', username: 'deulak', liked: true },
-  { id: 2, title: 'Playlist #2', username: 'deulak', liked: false },
-  { id: 3, title: 'Playlist #3', username: 'deulak', liked: true },
-  { id: 4, title: 'Playlist #4', username: 'deulak', liked: true },
-]
-
-const thirdSectionData = [
-  {
-    title: 'Chill Vibes',
-    username: 'deulak',
-    songs: [
-      { thumbnail: '', title: 'Sunset Lover', duration: 180, link: '' },
-      { thumbnail: '', title: 'Ocean Eyes', duration: 180, link: '' },
-      { thumbnail: '', title: 'Night Drive', duration: 180, link: '' },
-    ],
-  },
-  {
-    title: 'Workout Mix',
-    username: 'deulak',
-    songs: [
-      { thumbnail: '', title: 'Sunset Lover', duration: 180, link: '' },
-      { thumbnail: '', title: 'Ocean Eyes', duration: 180, link: '' },
-      { thumbnail: '', title: 'Night Drive', duration: 180, link: '' },
-    ],
-  },
-  {
-    title: 'Top Hits',
-    username: 'deulak',
-    songs: [
-      { thumbnail: '', title: 'Sunset Lover', duration: 180, link: '' },
-      { thumbnail: '', title: 'Ocean Eyes', duration: 180, link: '' },
-      { thumbnail: '', title: 'Night Drive', duration: 180, link: '' },
-    ],
   },
 ]

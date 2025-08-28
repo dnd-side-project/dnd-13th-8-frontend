@@ -1,3 +1,5 @@
+import type { Track } from '@/entities/playlist'
+
 export interface SearchParams {
   query: string
   sort?: 'RECENT' | 'POPULAR'
@@ -18,14 +20,6 @@ export interface CategoryPlaylistParams {
     | 'SAD'
   sort?: 'POPULAR' | 'RECENT'
   limit?: number
-}
-
-export interface Track {
-  id: number
-  title: string
-  youtubeUrl: string
-  youtubeThumbnail: string
-  youtubeLength: string
 }
 
 export interface Playlist {
