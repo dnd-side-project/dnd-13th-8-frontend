@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 
 import { Gallery } from '@/assets/icons'
-import type { TrackData } from '@/entities/playlist/model/playlist'
+import type { TrackData } from '@/entities/playlist/types/playlist'
 
 interface LinkProps {
   variant?: 'large' | 'small'
