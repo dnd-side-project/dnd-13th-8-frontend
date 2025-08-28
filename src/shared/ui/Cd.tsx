@@ -1,16 +1,77 @@
 import styled from 'styled-components'
 
 import { Overlay } from '@/assets/icons'
+import type { CdCustomData } from '@/entities/playlist/types/playlist'
+import { THEME_IMAGES_MAP } from '@/pages/myPage/lib/customizeTheme'
+import { THEME_PROP_ID_OFFSET } from '@/pages/myPage/types/mypage'
 import { flexRowCenter } from '@/shared/styles/mixins'
 
 interface CdProps {
-  variant: 'xxl' | 'xl' | 'lg' | 'md' | 'sm' | 'xs' | 'share'
+  variant: 'xxl' | 'xl' | 'lg' | 'md' | 'sm' | 'xs' | 'share' | 'customize'
   bgColor?: 'none' | 'default' | 'dark'
+  stickers?: CdCustomData[]
 }
 
-const Cd = ({ variant, bgColor = 'default' }: CdProps) => {
+const Cd = ({ variant, bgColor = 'default', stickers }: CdProps) => {
+  const getImagePath = (info: CdCustomData) => {
+    const { imageUrl, theme, propId } = info
+    if (imageUrl !== 'DEFAULT') return imageUrl
+
+    const convertThemeName =
+      theme === 'NEONOBJECT'
+        ? 'neonObject'
+        : theme === 'PEOPLE&ANIMALS'
+          ? 'people&animals'
+          : theme.toLowerCase()
+
+    const images = THEME_IMAGES_MAP[convertThemeName as keyof typeof THEME_IMAGES_MAP]
+    if (!images) {
+      console.warn('Unknown theme:', theme)
+      return ''
+    }
+
+    const offset = THEME_PROP_ID_OFFSET[convertThemeName as keyof typeof THEME_PROP_ID_OFFSET]
+    const localIndex = propId - offset
+    const fileName = localIndex.toString().padStart(2, '0') + '.png'
+
+    const key = Object.keys(images).find((k) => k.endsWith('/' + fileName))
+    if (!key) {
+      console.warn(`Image not found for theme=${convertThemeName}, propId=${propId}`)
+      return ''
+    }
+
+    const mod = images[key]
+    return typeof mod === 'string' ? mod : (mod as { default: string }).default
+  }
+
+  const baseSize = sizeMap[variant].base
+  const ratio = baseSize / 280
+
   const Content = (
     <Base $variant={variant}>
+      {stickers?.map((sticker) => {
+        const { cdItemId, xCoordinate, yCoordinate, width, height, scale, angle } = sticker
+        const src = getImagePath(sticker)
+        if (!src) return null
+
+        return (
+          <img
+            key={`${cdItemId}-${xCoordinate}-${yCoordinate}`}
+            src={src}
+            alt="cd-sticker"
+            style={{
+              position: 'absolute',
+              left: xCoordinate * ratio,
+              top: yCoordinate * ratio,
+              width: width * ratio,
+              height: height * ratio,
+              transform: `scale(${scale}) rotate(${angle}rad)`,
+              transformOrigin: 'top left',
+              pointerEvents: 'none',
+            }}
+          />
+        )
+      })}
       <Overlay width="100%" height="100%" />
     </Base>
   )
@@ -34,6 +95,7 @@ const sizeMap = {
   sm: { container: 88, base: 72, borderRadius: 10 },
   xs: { container: 56, base: 48, borderRadius: 6 },
   share: { container: 280, base: 220, borderRadius: 24 },
+  customize: { container: 220, base: 220, borderRadius: 0 },
 } as const
 
 interface StyleProps {
