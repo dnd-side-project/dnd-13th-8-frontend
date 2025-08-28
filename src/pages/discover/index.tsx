@@ -6,12 +6,11 @@ import type { InfiniteData } from '@tanstack/react-query'
 import styled from 'styled-components'
 
 import { usePlaylist } from '@/app/providers/PlayerProvider'
-import { usePlaylists, type Cursor, type PlaylistResponse } from '@/entities/playlist'
+import { useSufflePlaylists, type Cursor, type PlaylistResponse } from '@/entities/playlist'
 import { SwipeCarousel } from '@/features/swipe'
 import { DiscoverCoachMark } from '@/pages/discover/ui'
 import { getVideoId } from '@/shared/lib'
 import { PlaylistLayout, YoutubePlayer } from '@/widgets/playlist'
-
 
 const DiscoverPage = () => {
   const { id: playlistId } = useParams()
@@ -43,7 +42,7 @@ const DiscoverPage = () => {
     localStorage.setItem('hasSeenDiscoverCoachmark', 'true')
   }
 
-  const { data } = usePlaylists()
+  const { data } = useSufflePlaylists()
 
   const playlists =
     (data as unknown as InfiniteData<PlaylistResponse, Cursor>)?.pages.flatMap(

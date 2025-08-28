@@ -1,9 +1,9 @@
-import { useInfiniteQuery } from '@tanstack/react-query'
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
 
-import { getSufflePlaylists } from '@/entities/playlist/api/playlist'
+import { getPlaylistDetail, getSufflePlaylists } from '@/entities/playlist/api/playlist'
 import type { Cursor, PlaylistResponse } from '@/entities/playlist/types/playlist'
 
-export const usePlaylists = () => {
+export const useSufflePlaylists = () => {
   return useInfiniteQuery<
     PlaylistResponse, // queryFn 반환 타입
     Error, // 에러 타입
@@ -25,5 +25,12 @@ export const usePlaylists = () => {
       }
       return undefined
     },
+  })
+}
+
+export const usePlaylistDetail = (playlistId: number) => {
+  return useQuery({
+    queryKey: ['playlistDetail', playlistId],
+    queryFn: () => getPlaylistDetail(playlistId),
   })
 }

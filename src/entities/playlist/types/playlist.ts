@@ -11,17 +11,19 @@ export interface Creator {
   creatorNickname: string
 }
 
-export interface PlaylistInfo {
-  cardId: number
-  position: number
+export interface PlaylistDetailResponse {
   playlistId: number
   playlistName: string
   genre: string
-  creator: Creator
+  creator?: Creator
   songs: Track[]
   representative: boolean
+}
+
+export interface PlaylistInfo extends PlaylistDetailResponse {
+  cardId: number
+  position: number
   shareUrl: string
-  // TODO : 추후 cdItem 추가 필요
   totalTime: string
 }
 

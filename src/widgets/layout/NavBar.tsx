@@ -4,7 +4,7 @@ import { useLocation, Link, matchPath } from 'react-router-dom'
 import type { InfiniteData } from '@tanstack/react-query'
 import styled, { useTheme } from 'styled-components'
 
-import { usePlaylists, type Cursor, type PlaylistResponse } from '@/entities/playlist'
+import { useSufflePlaylists, type Cursor, type PlaylistResponse } from '@/entities/playlist'
 import { NAV_ITEMS } from '@/shared/config/navItems'
 import SvgButton from '@/shared/ui/SvgButton'
 
@@ -15,7 +15,7 @@ const NavBar = () => {
   const theme = useTheme()
   const [discoverLink, setDiscoverLink] = useState('')
 
-  const { data } = usePlaylists()
+  const { data } = useSufflePlaylists()
 
   const playlists =
     (data as unknown as InfiniteData<PlaylistResponse, Cursor>)?.pages.flatMap(
