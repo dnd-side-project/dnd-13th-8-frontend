@@ -69,7 +69,7 @@ export interface PopularKeywordItem {
 }
 
 export interface PopularKeywordResponse {
-  range: string
+  range: PopularKeywordParams['range']
   limit: number
   keywords: PopularKeywordItem[]
 }
