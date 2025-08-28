@@ -12,3 +12,15 @@ export const getSufflePlaylists = (params: PlaylistParams) => {
 export const getPlaylistDetail = (playlistId: number) => {
   return api.get<PlaylistDetailResponse>(`/main/playlists/${playlistId}`)
 }
+
+export const postPlaylistStart = (playlistId: number) => {
+  return api.post(`/main/browse/playlists/start`, null, { params: { playlistId } })
+}
+
+export const postPlaylistConfirm = (playlistId: number) => {
+  return api.post(`/main/browse/playlists/confirm`, null, { params: { playlistId } })
+}
+
+export const postPlaylistViewCounts = (playlistIds: number[]) => {
+  return api.post(`/main/browse/playlists/view-counts`, playlistIds)
+}

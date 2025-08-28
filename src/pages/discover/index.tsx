@@ -6,7 +6,13 @@ import type { InfiniteData } from '@tanstack/react-query'
 import styled from 'styled-components'
 
 import { usePlaylist } from '@/app/providers/PlayerProvider'
-import { useSufflePlaylists, type Cursor, type PlaylistResponse } from '@/entities/playlist'
+import {
+  usePlaylistConfirmMutation,
+  usePlaylistStartMutation,
+  useSufflePlaylists,
+  type Cursor,
+  type PlaylistResponse,
+} from '@/entities/playlist'
 import { SwipeCarousel } from '@/features/swipe'
 import { DiscoverCoachMark } from '@/pages/discover/ui'
 import { getVideoId } from '@/shared/lib'
@@ -29,6 +35,7 @@ const DiscoverPage = () => {
   const playerRef = useRef<YT.Player | null>(null)
   const [showCoachmark, setShowCoachmark] = useState(false)
   const navigate = useNavigate()
+  const isFirstPlay = useRef(false) // 최초 재생 여부
 
   // 코치마크
   useEffect(() => {
@@ -44,6 +51,8 @@ const DiscoverPage = () => {
   }
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useSufflePlaylists()
+  const { mutate: startPlaylist } = usePlaylistStartMutation()
+  const { mutate: confirmPlaylist } = usePlaylistConfirmMutation()
 
   const playlists =
     (data as unknown as InfiniteData<PlaylistResponse, Cursor>)?.pages.flatMap(
@@ -62,6 +71,13 @@ const DiscoverPage = () => {
       setPlaylist(initialPlaylist, 0, 0)
     }
   }, [playlists, currentPlaylist, playlistId, setPlaylist])
+
+  useEffect(() => {
+    if (currentPlaylist && isPlaying && !isFirstPlay.current) {
+      startPlaylist(currentPlaylist.playlistId)
+      isFirstPlay.current = true
+    }
+  }, [currentPlaylist, isPlaying, startPlaylist])
 
   // URL을 현재 선택된 플레이리스트로 동기화
   useEffect(() => {
@@ -117,8 +133,24 @@ const DiscoverPage = () => {
   )
 
   const handlePlayPause = () => {
-    if (isPlaying) pause()
-    else play()
+    if (isPlaying) {
+      pause()
+    } else {
+      play()
+
+      if (!isFirstPlay.current && currentPlaylist) {
+        console.log('실행 !')
+        startPlaylist(currentPlaylist.playlistId)
+        isFirstPlay.current = true
+      }
+
+      if (currentPlaylist) {
+        setTimeout(() => {
+          console.log('15초이상 !')
+          confirmPlaylist(currentPlaylist.playlistId)
+        }, 15000)
+      }
+    }
   }
 
   const isCurrentlyPlaying = (() => {

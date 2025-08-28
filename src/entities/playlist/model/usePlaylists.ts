@@ -1,6 +1,11 @@
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
-import { getPlaylistDetail, getSufflePlaylists } from '@/entities/playlist/api/playlist'
+import {
+  getPlaylistDetail,
+  getSufflePlaylists,
+  postPlaylistConfirm,
+  postPlaylistStart,
+} from '@/entities/playlist/api/playlist'
 import type { Cursor, PlaylistResponse } from '@/entities/playlist/types/playlist'
 
 export const useSufflePlaylists = () => {
@@ -32,5 +37,27 @@ export const usePlaylistDetail = (playlistId: number) => {
   return useQuery({
     queryKey: ['playlistDetail', playlistId],
     queryFn: () => getPlaylistDetail(playlistId),
+  })
+}
+
+export const usePlaylistStartMutation = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (playlistId: number) => postPlaylistStart(playlistId),
+    onSuccess: (_, playlistId) => {
+      queryClient.invalidateQueries({ queryKey: ['playlistViewCounts', playlistId] })
+    },
+  })
+}
+
+export const usePlaylistConfirmMutation = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (playlistId: number) => postPlaylistConfirm(playlistId),
+    onSuccess: (_, playlistId) => {
+      queryClient.invalidateQueries({ queryKey: ['playlistViewCounts', playlistId] })
+    },
   })
 }
