@@ -4,6 +4,7 @@ import styled from 'styled-components'
 
 import { Comment } from '@/entities/comment'
 import { useUserInfo } from '@/features/auth/model/useAuth'
+import { parseMessage } from '@/features/chat'
 import { useChatSocket } from '@/features/chat/model/sendMessage'
 import { useInfiniteChatHistory } from '@/features/chat/model/useChat'
 import { flexColCenter } from '@/shared/styles/mixins'
@@ -58,16 +59,20 @@ const ChatBottomSheet = ({ isOpen, onClose, roomId }: ChatBottomSheetProps) => {
       <Title>실시간 채팅</Title>
       <CommentSection ref={scrollRef} onScroll={handleScroll}>
         {allMessages.length > 0 ? (
-          allMessages.map((msg) => (
+          allMessages.map((msg) => {
+            const { Icon, text } = parseMessage(msg.content)
             // TODO : profileUrl, role 실제 값으로 변경 필요
-            <Comment
-              profileUrl=""
-              key={msg.sentAt}
-              name={msg.username || '익명'}
-              comment={msg.content}
-              role={msg.systemMessage ? 'mine' : 'owner'}
-            />
-          ))
+            return (
+              <Comment
+                profileUrl=""
+                key={msg.sentAt}
+                name={msg.username || '익명'}
+                comment={text}
+                Icon={Icon || undefined}
+                role={msg.systemMessage ? 'mine' : 'owner'}
+              />
+            )
+          })
         ) : (
           <Message>
             <EmptyText>아직 채팅이 없습니다</EmptyText>
@@ -76,7 +81,13 @@ const ChatBottomSheet = ({ isOpen, onClose, roomId }: ChatBottomSheetProps) => {
         )}
       </CommentSection>
       <BottomSection>
-        <EmojiCarousel />
+        {/* TODO : anonymous, 익명 수정 필요 */}
+        <EmojiCarousel
+          onClick={(value) => {
+            if (!value) return
+            sendMessage(userData?.userId || 'anonymous', userData?.username || '익명', value)
+          }}
+        />
         <ChatInput
           value={input}
           onChange={setInput}

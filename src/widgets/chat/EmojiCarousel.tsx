@@ -4,25 +4,34 @@ import * as ChatEmojis from '@/assets/icons/chat'
 import { flexRowCenter } from '@/shared/styles/mixins'
 import ScrollCarousel from '@/shared/ui/ScrollCarousel'
 
-const ChatEmojiCarousel = () => {
+interface ChatEmojiCarouselProps {
+  onClick?: (value: string) => void
+}
+
+const ChatEmojiCarousel = ({ onClick }: ChatEmojiCarouselProps) => {
   const emojis = [
-    { icon: ChatEmojis.Smile, label: '안녕하세요' },
-    { icon: ChatEmojis.SmileyInLove, label: '좋아요' },
-    { icon: ChatEmojis.SmileyCool },
-    { icon: ChatEmojis.Party },
-    { icon: ChatEmojis.SmileyDrool },
-    { icon: ChatEmojis.Tears },
-    { icon: ChatEmojis.Fire },
-    { icon: ChatEmojis.Ghost },
-    { icon: ChatEmojis.Heartbeat },
-    { icon: ChatEmojis.Music },
+    { icon: ChatEmojis.Smile, label: '안녕하세요', name: 'Smile' },
+    { icon: ChatEmojis.SmileyInLove, label: '좋아요', name: 'SmileyInLove' },
+    { icon: ChatEmojis.SmileyCool, name: 'SmileyCool' },
+    { icon: ChatEmojis.Party, name: 'Party' },
+    { icon: ChatEmojis.SmileyDrool, name: 'SmileyDrool' },
+    { icon: ChatEmojis.Tears, name: 'Tears' },
+    { icon: ChatEmojis.Fire, name: 'Fire' },
+    { icon: ChatEmojis.Ghost, name: 'Ghost' },
+    { icon: ChatEmojis.Heartbeat, name: 'Heartbeat' },
+    { icon: ChatEmojis.Music, name: 'Music' },
   ]
+
+  const handleClick = (name: string, label?: string) => {
+    const value = `/${name}/ ${label ?? ''}`
+    if (onClick) onClick(value)
+  }
 
   return (
     <CarouselWrapper>
       <ScrollCarousel gap={8}>
-        {emojis.map(({ icon: Emoji, label }, idx) => (
-          <EmojiWrapper key={idx}>
+        {emojis.map(({ icon: Emoji, label, name }, idx) => (
+          <EmojiWrapper key={idx} onClick={() => handleClick(name, label)}>
             <Emoji />
             {label && <Label>{label}</Label>}
           </EmojiWrapper>
