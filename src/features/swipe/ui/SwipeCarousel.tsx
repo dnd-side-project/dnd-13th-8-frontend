@@ -4,7 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import useEmblaCarousel from 'embla-carousel-react'
 import styled from 'styled-components'
 
-import type { PlaylistData } from '@/entities/playlist/types/playlist'
+import type { PlaylistData } from '@/entities/playlist/model/types'
 
 interface SwipeCarouselProps {
   children: React.ReactNode

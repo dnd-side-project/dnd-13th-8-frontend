@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 
 import styled from 'styled-components'
 
-import type { PlaylistData } from '@/entities/playlist/types/playlist'
+import type { PlaylistData } from '@/entities/playlist/model/types'
 import { flexColCenter } from '@/shared/styles/mixins'
 import { Button, Cd, Header, LiveInfo } from '@/shared/ui'
 import { ActionBar, ProgressBar } from '@/widgets/playlist'

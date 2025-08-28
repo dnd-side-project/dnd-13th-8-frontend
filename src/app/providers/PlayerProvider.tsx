@@ -1,6 +1,6 @@
 import { createContext, useState, useContext, type ReactNode } from 'react'
 
-import type { PlaylistData } from '@/entities/playlist/types/playlist'
+import type { PlaylistData } from '@/entities/playlist/model/types'
 
 type PlaylistContextType = {
   currentPlaylist: PlaylistData | null
