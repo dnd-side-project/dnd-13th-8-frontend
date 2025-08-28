@@ -72,13 +72,6 @@ const DiscoverPage = () => {
     }
   }, [playlists, currentPlaylist, playlistId, setPlaylist])
 
-  useEffect(() => {
-    if (currentPlaylist && isPlaying && !isFirstPlay.current) {
-      startPlaylist(currentPlaylist.playlistId)
-      isFirstPlay.current = true
-    }
-  }, [currentPlaylist, isPlaying, startPlaylist])
-
   // URL을 현재 선택된 플레이리스트로 동기화
   useEffect(() => {
     if (currentPlaylist) {
@@ -88,6 +81,20 @@ const DiscoverPage = () => {
       }
     }
   }, [currentPlaylist, playlistId, navigate])
+
+  useEffect(() => {
+    if (!currentPlaylist || !isPlaying || isFirstPlay.current) return
+
+    startPlaylist(currentPlaylist.playlistId)
+    isFirstPlay.current = true
+
+    const timer = setTimeout(() => {
+      console.log('15초 confirm 호출')
+      confirmPlaylist(currentPlaylist.playlistId)
+    }, 15000)
+
+    return () => clearTimeout(timer)
+  }, [currentPlaylist, isPlaying, startPlaylist, confirmPlaylist])
 
   // 현재 재생 시간 업데이트
   useEffect(() => {
@@ -99,25 +106,18 @@ const DiscoverPage = () => {
 
   // 재생, 일시정지
   useEffect(() => {
-    if (playerRef.current) {
-      if (isPlaying) {
-        playerRef.current.playVideo()
-      } else {
-        playerRef.current.pauseVideo()
-      }
-    }
+    if (!playerRef.current) return
+    if (isPlaying) playerRef.current.playVideo()
+    else playerRef.current.pauseVideo()
   }, [isPlaying])
 
   // 캐러셀 스와이프 시 현재 플레이리스트 업데이트
   const handleSelectPlaylist = useCallback(
     (index: number) => {
       const selectedPlaylist = playlists[index]
-
       if (selectedPlaylist && currentPlaylist?.playlistId !== selectedPlaylist.playlistId) {
         setPlaylist(selectedPlaylist, 0, 0)
       }
-
-      // 마지막 카드 도달 시 다음 페이지 요청
       if (index === playlists.length - 1 && hasNextPage && !isFetchingNextPage) {
         fetchNextPage()
       }
@@ -133,24 +133,8 @@ const DiscoverPage = () => {
   )
 
   const handlePlayPause = () => {
-    if (isPlaying) {
-      pause()
-    } else {
-      play()
-
-      if (!isFirstPlay.current && currentPlaylist) {
-        console.log('실행 !')
-        startPlaylist(currentPlaylist.playlistId)
-        isFirstPlay.current = true
-      }
-
-      if (currentPlaylist) {
-        setTimeout(() => {
-          console.log('15초이상 !')
-          confirmPlaylist(currentPlaylist.playlistId)
-        }, 15000)
-      }
-    }
+    if (isPlaying) pause()
+    else play()
   }
 
   const isCurrentlyPlaying = (() => {
@@ -192,7 +176,6 @@ const DiscoverPage = () => {
           videoId={videoId}
           onReady={(event) => {
             playerRef.current = event.target
-
             if (isPlaying) {
               playerRef.current?.seekTo(currentTime, true)
               playerRef.current?.playVideo()
