@@ -42,7 +42,7 @@ const DiscoverPage = () => {
     localStorage.setItem('hasSeenDiscoverCoachmark', 'true')
   }
 
-  const { data } = useSufflePlaylists()
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useSufflePlaylists()
 
   const playlists =
     (data as unknown as InfiniteData<PlaylistResponse, Cursor>)?.pages.flatMap(
@@ -89,8 +89,13 @@ const DiscoverPage = () => {
       if (selectedPlaylist && currentPlaylist?.playlistId !== selectedPlaylist.playlistId) {
         setPlaylist(selectedPlaylist, 0, 0)
       }
+
+      // 마지막 카드 도달 시 다음 페이지 요청
+      if (index === playlists.length - 1 && hasNextPage && !isFetchingNextPage) {
+        fetchNextPage()
+      }
     },
-    [setPlaylist, currentPlaylist]
+    [setPlaylist, currentPlaylist, playlists, fetchNextPage, hasNextPage, isFetchingNextPage]
   )
 
   const handlePlayerStateChange = useCallback(

@@ -7,7 +7,7 @@ export const useSufflePlaylists = () => {
   return useInfiniteQuery<
     PlaylistResponse, // queryFn 반환 타입
     Error, // 에러 타입
-    PlaylistResponse, // PlaylistResponse, // select 후 데이터 타입
+    PlaylistResponse, // select 후 데이터 타입
     ['playlists'], // queryKey 타입
     Cursor | undefined // pageParam 타입
   >({
