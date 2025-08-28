@@ -49,18 +49,28 @@ const DiscoverPage = () => {
       (page) => page.content
     ) || []
 
+  const videoId = currentPlaylist
+    ? getVideoId(currentPlaylist.songs[currentTrackIndex]?.youtubeUrl)
+    : null
+
+  // 최초 playlist 초기화
+  useEffect(() => {
+    if (!currentPlaylist && playlists.length > 0) {
+      const initialPlaylist =
+        playlists.find((p) => p.playlistId === Number(playlistId)) || playlists[0]
+      setPlaylist(initialPlaylist, 0, 0)
+    }
+  }, [playlists, currentPlaylist, playlistId, setPlaylist])
+
   // 현재 재생 시간 업데이트
   useEffect(() => {
     const intervalId = setInterval(() => {
-      if (playerRef.current) {
-        const time = playerRef.current.getCurrentTime()
-        updateCurrentTime(time)
-      }
+      if (playerRef.current) updateCurrentTime(playerRef.current.getCurrentTime())
     }, 1000)
-
     return () => clearInterval(intervalId)
   }, [updateCurrentTime])
 
+  // 재생, 일시정지
   useEffect(() => {
     if (playerRef.current) {
       if (isPlaying) {
@@ -71,21 +81,11 @@ const DiscoverPage = () => {
     }
   }, [isPlaying])
 
-  // 첫 로딩 시에만 초기화
-  useEffect(() => {
-    const id = Number(playlistId)
-    if (!currentPlaylist && id > 0) {
-      const initialPlaylist = playlists.find((p) => p.playlistId === id)
-      if (initialPlaylist) {
-        setPlaylist(initialPlaylist, 0, 0)
-      }
-    }
-  }, [playlistId, currentPlaylist, setPlaylist])
-
   // 캐러셀 스와이프 시 현재 플레이리스트 업데이트
   const handleSelectPlaylist = useCallback(
     (index: number) => {
       const selectedPlaylist = playlists[index]
+
       if (selectedPlaylist && currentPlaylist?.playlistId !== selectedPlaylist.playlistId) {
         setPlaylist(selectedPlaylist, 0, 0)
       }
@@ -100,24 +100,20 @@ const DiscoverPage = () => {
 
   const handlePlayerStateChange = useCallback(
     (event: YouTubeEvent) => {
-      if (event.data === window.YT.PlayerState.ENDED) {
-        nextTrack()
-      }
+      if (event.data === window.YT.PlayerState.ENDED) nextTrack()
     },
     [nextTrack]
   )
 
-  const videoId = currentPlaylist
-    ? getVideoId(currentPlaylist.songs[currentTrackIndex]?.youtubeUrl)
-    : null
-
   const handlePlayPause = () => {
-    if (isPlaying) {
-      pause()
-    } else {
-      play()
-    }
+    if (isPlaying) pause()
+    else play()
   }
+
+  const isCurrentlyPlaying = (() => {
+    if (!window.YT || !playerRef.current) return false
+    return isPlaying && playerRef.current.getPlayerState() === window.YT.PlayerState.PLAYING
+  })()
 
   return (
     <Page>
@@ -132,7 +128,7 @@ const DiscoverPage = () => {
               currentPlaylist={currentPlaylist}
               currentTrackIndex={currentTrackIndex}
               currentTime={currentTime}
-              isPlaying={isPlaying}
+              isPlaying={isCurrentlyPlaying}
               onPlayPause={handlePlayPause}
               onNext={nextTrack}
               onPrev={prevTrack}
