@@ -26,6 +26,9 @@ const ChatInput = ({ value, onChange, onSend, onFocus }: ChatInputProps) => {
   }
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    // 한글 조합 중이면 전송하지 않음
+    if (e.nativeEvent.isComposing) return
+
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
       onSend()
