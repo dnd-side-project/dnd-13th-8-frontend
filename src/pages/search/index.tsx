@@ -5,6 +5,7 @@ import styled, { css } from 'styled-components'
 
 import { CARD_IMAGES_SMALL } from '@/assets/card'
 import { LeftArrow, Search } from '@/assets/icons'
+import { usePopularKeyword } from '@/features/search'
 import { TrendKeyword } from '@/pages/search/ui'
 import { MUSIC_GENRES } from '@/shared/config/musicGenres'
 import { CategoryButton, Header, Input, SvgButton } from '@/shared/ui'
@@ -23,6 +24,11 @@ const SearchPage = () => {
       })}`,
     })
   }
+
+  const { data } = usePopularKeyword({
+    range: '7d',
+    limit: 9,
+  })
 
   return (
     <>
@@ -46,15 +52,15 @@ const SearchPage = () => {
       <TrendKeywordsSection>
         <h1>인기 검색어</h1>
         <Keywords>
-          {trendData.map((item) => (
+          {data?.keywords.map((item) => (
             <TrendKeyword
-              key={item.id}
-              text={item.keyword}
+              key={`${item.score}-${item.term}`}
+              text={item.term}
               onClick={() =>
                 navigate({
                   pathname: '/searchResult',
                   search: `?${createSearchParams({
-                    keyword: item.keyword,
+                    keyword: item.term,
                     keywordType: 'keyword',
                   })}`,
                 })
@@ -122,16 +128,3 @@ const Category = styled.div`
   grid-template-columns: repeat(2, 1fr);
   gap: 12px;
 `
-
-// TODO: api 연동 후 실 데이터로 수정
-const trendData = [
-  { id: 1, keyword: '여름' },
-  { id: 2, keyword: '바캉스 플리' },
-  { id: 3, keyword: '카페 재즈 플레이리스트' },
-  { id: 4, keyword: '청량' },
-  { id: 5, keyword: '감성 힙합' },
-  { id: 6, keyword: '쇠맛 여자아이돌 모음' },
-  { id: 7, keyword: '드라이브' },
-  { id: 8, keyword: '인디밴드음악' },
-  { id: 9, keyword: 'K-POP' },
-]

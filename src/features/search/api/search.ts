@@ -1,6 +1,8 @@
 import type {
   CategoryPlaylistItem,
   CategoryPlaylistParams,
+  PopularKeywordParams,
+  PopularKeywordResponse,
   SearchParams,
   SearchPlaylistResponse,
 } from '@/features/search/types/search'
@@ -11,5 +13,9 @@ export const getSearchResult = (params: SearchParams) => {
 }
 
 export const getCategoryPlaylist = (params: CategoryPlaylistParams) => {
-  return api.get<CategoryPlaylistItem[]>('/main/playlist/search/genre', { params })
+  return api.get<CategoryPlaylistItem>('/main/playlist/search/genre', { params })
+}
+
+export const getPopularKeyword = (params: PopularKeywordParams) => {
+  return api.get<PopularKeywordResponse>('/main/playlist/search/popular', { params })
 }
