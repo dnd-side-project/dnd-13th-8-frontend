@@ -76,9 +76,8 @@ const PlaylistLayout = ({
         <Cd variant="xxl" bgColor="none" />
         <ActionBar
           playlistId={data.playlistId}
-          isFollowing={false}
-          userId={Number(data.creatorId)}
-          userName={data.creatorNickname}
+          isFollowing={false} // TODO : 실제 정보로 바꿔야 됨
+          userName={data.creator.creatorNickname}
           showFollow={type !== 'My'}
         />
       </Wrapper>

@@ -12,20 +12,12 @@ import { ChatButton } from '@/widgets/chat'
 interface ActionBarProps {
   playlistId: number
   isFollowing: boolean
-  userId: number
   userName: string
   profile?: string
   showFollow?: boolean
 }
 
-const ActionBar = ({
-  playlistId,
-  isFollowing,
-  userName,
-  profile,
-  userId,
-  showFollow,
-}: ActionBarProps) => {
+const ActionBar = ({ playlistId, isFollowing, userName, profile, showFollow }: ActionBarProps) => {
   const navigate = useNavigate()
 
   const handleMovePlaylist = () => {
@@ -43,7 +35,7 @@ const ActionBar = ({
           isFollowing={isFollowing}
           userName={userName}
           profile={profile}
-          userId={userId}
+          playlistId={playlistId}
         />
       )}
       <ShareButton playlistId={playlistId} />

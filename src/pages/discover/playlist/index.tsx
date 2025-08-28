@@ -32,8 +32,6 @@ const PlaylistInfoPage = () => {
     )
   }
 
-  console.log(playlistData)
-
   return (
     <Wrapper>
       <Header

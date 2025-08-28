@@ -6,23 +6,30 @@ export interface Track {
   youtubeLength: number
 }
 
-export interface Creator {}
+export interface Creator {
+  creatorId: string
+  creatorNickname: string
+}
 
-export interface PlaylistDetailResponse {
+export interface PlaylistDetail {
   playlistId: number
   playlistName: string
   genre: string
-  creatorId: string
-  creatorNickname: string
   songs: Track[]
   representative: boolean
 }
 
-export interface PlaylistInfo extends PlaylistDetailResponse {
+export interface PlaylistDetailResponse extends PlaylistDetail {
+  creatorId: string
+  creatorNickname: string
+}
+
+export interface PlaylistInfo extends PlaylistDetail {
   cardId: number
   position: number
   shareUrl: string
   totalTime: string
+  creator: Creator
 }
 
 // 커서 정보
