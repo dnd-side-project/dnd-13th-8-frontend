@@ -84,7 +84,7 @@ const SearchResultPage = () => {
     type === 'category' ? (categoryData?.pages.flatMap((page) => page.content) ?? []) : []
 
   const totalCount =
-    type === 'keyword' ? keywordData?.pages[0].totalCount : categorySearchResult.length
+    type === 'keyword' ? keywordData?.pages[0].totalCount : categoryData?.pages[0].totalCount
 
   const isError = type === 'keyword' ? isKeywordError : isCategoryError
   const isLoading =

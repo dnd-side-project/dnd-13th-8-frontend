@@ -60,6 +60,7 @@ export interface CategoryPlaylistItem {
   page: number
   size: number
   nextCursor: string | null
+  totalCount: number
 }
 
 export interface PopularKeywordItem {
