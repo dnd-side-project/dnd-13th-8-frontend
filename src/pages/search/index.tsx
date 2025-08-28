@@ -54,7 +54,7 @@ const SearchPage = () => {
         <Keywords>
           {data?.keywords.map((item) => (
             <TrendKeyword
-              key={item.score}
+              key={`${item.score}-${item.term}`}
               text={item.term}
               onClick={() =>
                 navigate({
