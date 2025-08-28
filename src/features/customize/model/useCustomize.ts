@@ -1,9 +1,17 @@
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
-import { postYouTubeVideoInfo, postTempPlaylist } from '@/features/customize/api/customize'
+import {
+  postYouTubeVideoInfo,
+  postTempPlaylist,
+  getUserStickers,
+  postUserSticker,
+  postFinalPlaylist,
+} from '@/features/customize/api/customize'
 import type {
   YoutubeVideoInfoPayload,
   PlaylistMetaInfo,
+  UserStickerPayload,
+  FinalPlaylistPayload,
 } from '@/features/customize/types/customize'
 
 export const useTempSavePlaylist = () => {
@@ -45,4 +53,51 @@ export const useTempSavePlaylist = () => {
       })
     },
   })
+}
+
+export const useUserSticker = () => {
+  const queryClient = useQueryClient()
+
+  // 조회
+  const {
+    data: userStickerList,
+    isLoading,
+    isError,
+    isSuccess,
+  } = useQuery({
+    queryKey: ['getUserStickers'],
+    queryFn: () => getUserStickers(),
+  })
+
+  // 업로드
+  const uploadMutation = useMutation({
+    mutationKey: ['postUserSticker'],
+    mutationFn: ({ theme, file }: UserStickerPayload) => {
+      return postUserSticker({ theme, file })
+    },
+    onSuccess: () => {
+      // 캐시 무효화하여 유저 스티커 리스트 재조회
+      queryClient.invalidateQueries({ queryKey: ['getUserStickers'] })
+    },
+    onError: (error) => {
+      console.error('스티커 업로드 실패', error)
+    },
+  })
+
+  // 최종 저장
+  const finalSaveMutation = useMutation({
+    mutationKey: ['postFinalPlaylist'],
+    mutationFn: (payload: FinalPlaylistPayload) => {
+      return postFinalPlaylist(payload)
+    },
+  })
+
+  return {
+    userStickerList,
+    isLoading,
+    isError,
+    isSuccess,
+    uploadSticker: uploadMutation.mutate,
+    finalSave: finalSaveMutation,
+  }
 }

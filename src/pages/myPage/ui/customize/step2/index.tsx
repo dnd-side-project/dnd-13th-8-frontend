@@ -1,4 +1,5 @@
 import { useState, useMemo, useRef, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import styled from 'styled-components'
 import { v4 as uuidv4 } from 'uuid'
@@ -8,38 +9,39 @@ import type { ModalProps } from '@shared/ui/Modal'
 import { Trash, Plus } from '@/assets/icons'
 import overlayUrl from '@/assets/icons/icn_overlay.svg?url'
 import { ExpandBtn, TrashBtn } from '@/assets/images'
+import { useUserSticker } from '@/features/customize/model/useCustomize'
 import { getCurrentThemeImages, STICKER_THEME_LIST } from '@/pages/myPage/lib/customizeTheme'
-import type { StickerThemeType } from '@/pages/myPage/types/mypage'
+import type { StickerThemeType, StickerInfoType } from '@/pages/myPage/types/mypage'
+import { THEME_PROP_ID_OFFSET } from '@/pages/myPage/types/mypage'
 import type { CustomizeStepProps } from '@/pages/myPage/ui/customize'
 import { StepHeader } from '@/pages/myPage/ui/customize/step1/components'
 import { flexRowCenter } from '@/shared/styles/mixins'
+import { Loading } from '@/shared/ui'
 
-// 스티커 타입 정의
-interface Sticker {
-  id: string
-  type: string
-  src: string
-  x: number
-  y: number
-  z: number
-  width: number
-  height: number
-  scale: number
-  rotation: number
-}
-
-const CustomizeStep2 = ({ currentStep, setCurrentStep, setModal }: CustomizeStepProps) => {
+const CustomizeStep2 = ({
+  currentStep,
+  setCurrentStep,
+  setCurrentCdId,
+  setModal,
+}: CustomizeStepProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const cdContainerRef = useRef<HTMLCanvasElement>(null)
   const imageCache = useRef<{ [key: string]: HTMLImageElement | null }>({})
 
   const [currentThemeId, setCurrentThemeId] = useState<StickerThemeType>('deulak')
-  const [stickers, setStickers] = useState<Sticker[]>([])
+  const [stickers, setStickers] = useState<StickerInfoType[]>([])
   const [selectedSticker, setSelectedSticker] = useState<number | null>(null)
   const [isDragging, setIsDragging] = useState(false)
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 })
   const [resizeMode, setResizeMode] = useState<'move' | 'resize' | null>(null)
-  const DELETE_BUTTON_SIZE = 20
+  const [, setPendingUploads] = useState<{ [key: string]: string }>({})
+
+  const navigate = useNavigate()
+  const { userStickerList, isLoading, isError, uploadSticker, finalSave } = useUserSticker()
+
+  // ===============================
+  // 스티커 초기 데이터 세팅
+  // ===============================
 
   // 테마 이미지 URL (Vite glob 결과를 정렬하여 일관된 순서 보장)
   const stickerUrls = useMemo(() => {
@@ -48,90 +50,42 @@ const CustomizeStep2 = ({ currentStep, setCurrentStep, setModal }: CustomizeStep
     return sortedKeys.map((key) => images[key].default)
   }, [currentThemeId])
 
+  // 스티커 리스트 생성
   const stickerList = useMemo(() => {
     return Array.from({ length: stickerUrls.length }, (_, i) => i + 1)
   }, [stickerUrls.length])
 
-  // Canvas 크기 초기화
-  useEffect(() => {
-    const canvas = cdContainerRef.current
-    if (canvas) {
-      canvas.width = 280
-      canvas.height = 280
-      // 초기화 후 바로 그리기
-      drawStickers()
-    }
-  }, [])
-
-  // 이미지 미리 로드
-  useEffect(() => {
-    // 기본 스티커 이미지들 미리 로드 (Vite glob URL 사용)
-    stickerUrls.forEach((src) => {
-      if (!imageCache.current[src]) {
-        const img = new Image()
-        img.onload = () => {
-          imageCache.current[src] = img
-          // 이미지 로딩 완료 후 Canvas 다시 그리기
-          if (cdContainerRef.current) {
-            drawStickers()
-          }
-        }
-        img.src = src
-      }
-    })
-
-    // 버튼 이미지들 미리 로드
-    const buttonImages = [TrashBtn, ExpandBtn]
-
-    buttonImages.forEach((src) => {
-      if (!imageCache.current[src]) {
-        const img = new Image()
-        img.onload = () => {
-          imageCache.current[src] = img
-          // 이미지 로딩 완료 후 Canvas 다시 그리기
-          if (cdContainerRef.current) {
-            drawStickers()
-          }
-        }
-        img.onerror = () => {
-          console.error('Failed to load button image:', src)
-          // 이미지 로딩 실패 시 null로 설정
-          imageCache.current[src] = null
-        }
-        img.src = src
-      }
-    })
-  }, [currentThemeId, stickerUrls])
-
-  // 모바일 Safari 등에서 터치 스크롤 간섭 방지 (passive: false)
-  useEffect(() => {
-    const canvas = cdContainerRef.current
-    if (!canvas) return
-    const stopDefault = (ev: TouchEvent) => ev.preventDefault()
-    canvas.addEventListener('touchstart', stopDefault, { passive: false })
-    canvas.addEventListener('touchmove', stopDefault, { passive: false })
-    canvas.addEventListener('touchend', stopDefault, { passive: false })
-    return () => {
-      canvas.removeEventListener('touchstart', stopDefault)
-      canvas.removeEventListener('touchmove', stopDefault)
-      canvas.removeEventListener('touchend', stopDefault)
-    }
-  }, [])
-
-  // stickers가 변경될 때마다 다시 그리기
-  useEffect(() => {
-    drawStickers()
-  }, [stickers, selectedSticker])
-
-  // TODO: api 연동 시 아래 주석 코드 삭제
-  // useEffect(() => {
-  //   console.log('stickers', stickers)
-  // }, [stickers.length])
+  // ===============================
+  // 저장 / 모달 관련
+  // ===============================
 
   // 헤더 다음 버튼 클릭
   const onHeaderNextClick = () => {
-    // TODO: cd 커스텀 저장/수정 api 호출
-    setCurrentStep(3)
+    const payload = {
+      saveCdRequestDto: {
+        cdItems: stickers.map((s) => ({
+          propId: s.propId ?? 0, // 백엔드 스티커 id
+          xCoordinate: s.x,
+          yCoordinate: s.y,
+          height: s.height,
+          width: s.width,
+          scale: s.scale,
+          angle: s.rotation,
+        })),
+      },
+    }
+
+    finalSave.mutate(payload, {
+      onSuccess: (response) => {
+        setCurrentCdId?.(response.playlistId)
+        // TODO: step3 추가 후 navigate 제거, step(3) 주석 해제
+        navigate('/myPage', { replace: true })
+        // setCurrentStep(3)
+      },
+      onError: (error) => {
+        console.error('CD 최종 저장 실패:', error)
+      },
+    })
   }
 
   // 모달 close
@@ -144,6 +98,10 @@ const CustomizeStep2 = ({ currentStep, setCurrentStep, setModal }: CustomizeStep
     if (stickers.length === 0) return 1
     return Math.max(...stickers.map((s) => s.z)) + 1
   }
+
+  // ===============================
+  // 스티커 업로드 / 추가 / 삭제
+  // ===============================
 
   // 스티커 업로드
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -170,6 +128,9 @@ const CustomizeStep2 = ({ currentStep, setCurrentStep, setModal }: CustomizeStep
       return
     }
 
+    // 유저 커스텀 스티커 데이터 전송
+    uploadSticker({ theme: 'USER', file })
+
     const reader = new FileReader()
     reader.onload = (event) => {
       const dataUrl = event.target?.result as string
@@ -179,8 +140,10 @@ const CustomizeStep2 = ({ currentStep, setCurrentStep, setModal }: CustomizeStep
       const height = 50
       const center = getCDCenter()
 
-      const newSticker: Sticker = {
-        id: uuidv4(),
+      const tempId = uuidv4()
+      const newSticker: StickerInfoType = {
+        id: tempId, // 프론트 추적용 uuid
+        propId: undefined, // 업로드 된 백엔드 스티커 id
         type: 'custom',
         src: dataUrl,
         x: center.x - width / 2 + 85,
@@ -200,14 +163,16 @@ const CustomizeStep2 = ({ currentStep, setCurrentStep, setModal }: CustomizeStep
       imageCache.current[dataUrl] = img
 
       const newStickers = [...stickers, newSticker]
-      setStickers(newStickers)
+      setStickers((prev) => [...prev, newSticker])
+      setPendingUploads((prev) => ({ ...prev, [tempId]: dataUrl }))
+
       setSelectedSticker(newStickers.length - 1)
     }
     reader.readAsDataURL(file)
     e.target.value = ''
   }
 
-  // 스티커 추가 함수
+  // 스티커 추가
   const onStickersAddClick = (stickerId: number) => {
     // 스티커 최대 16개 제한
     if (stickers.length >= 16) {
@@ -229,9 +194,10 @@ const CustomizeStep2 = ({ currentStep, setCurrentStep, setModal }: CustomizeStep
     const src = stickerUrls[stickerId - 1]
     const type = currentThemeId
 
-    const newSticker: Sticker = {
+    const newSticker: StickerInfoType = {
       id: uuidv4(),
       type,
+      propId: stickerId + getThemeOffset(currentThemeId),
       src,
       x: center.x - width / 2 + 85,
       y: center.y - height / 2,
@@ -257,7 +223,7 @@ const CustomizeStep2 = ({ currentStep, setCurrentStep, setModal }: CustomizeStep
     setSelectedSticker(newStickers.length - 1)
   }
 
-  // 스티커 삭제 함수
+  // 스티커 삭제
   const deleteSelectedSticker = () => {
     if (selectedSticker !== null) {
       const updatedStickers = stickers.filter((_, index) => index !== selectedSticker)
@@ -266,7 +232,7 @@ const CustomizeStep2 = ({ currentStep, setCurrentStep, setModal }: CustomizeStep
     }
   }
 
-  // 스티커 전체 삭제 버튼 클릭
+  // 스티커 전체 삭제
   const onAllDeleteClick = () => {
     setModal({
       isOpen: true,
@@ -285,11 +251,30 @@ const CustomizeStep2 = ({ currentStep, setCurrentStep, setModal }: CustomizeStep
     } as ModalProps)
   }
 
-  // 포인터 이벤트 핸들러
+  // ===============================
+  // 사용자 인터랙션
+  // ===============================
+
+  // 포인터 이벤트 핸들러 (down)
   const handlePointerDown = (e: React.MouseEvent | React.TouchEvent) => {
     if ('touches' in e) e.preventDefault()
 
     const { x, y } = getPointerPosition(e.nativeEvent)
+
+    // 클릭한 위치가 원형 cd 내부인지 확인
+    const canvas = cdContainerRef.current
+    if (canvas) {
+      const centerX = canvas.width / 2
+      const centerY = canvas.height / 2
+      const radius = canvas.width / 2 - 5
+
+      const dx = x - centerX
+      const dy = y - centerY
+      if (dx * dx + dy * dy > radius * radius) {
+        // 원 밖이면 무시
+        return
+      }
+    }
 
     // 선택된 스티커의 버튼들 클릭 확인
     if (selectedSticker !== null) {
@@ -297,7 +282,7 @@ const CustomizeStep2 = ({ currentStep, setCurrentStep, setModal }: CustomizeStep
       const handles = getStickerHandles(sticker)
 
       // 삭제 버튼 체크 - 감지 영역을 넓게 (20px)
-      if (Math.hypot(x - handles.delete.x, y - handles.delete.y) < DELETE_BUTTON_SIZE / 2) {
+      if (Math.hypot(x - handles.delete.x, y - handles.delete.y) < 10) {
         deleteSelectedSticker()
         return
       }
@@ -350,6 +335,7 @@ const CustomizeStep2 = ({ currentStep, setCurrentStep, setModal }: CustomizeStep
     setSelectedSticker(null)
   }
 
+  // 스티커 이동 핸들러 (move)
   const handlePointerMove = (e: React.MouseEvent | React.TouchEvent) => {
     if (!isDragging || selectedSticker === null) return
 
@@ -399,15 +385,19 @@ const CustomizeStep2 = ({ currentStep, setCurrentStep, setModal }: CustomizeStep
     }
   }
 
+  // 포인터 이벤트 핸들러 종료 (up)
   const handlePointerUp = () => {
     if (isDragging) {
       setIsDragging(false)
       setResizeMode(null)
     }
-    // 회전 기능 제거로 초기화 불필요
   }
 
-  // CD 중앙 좌표를 가져오기
+  // ===============================
+  // 좌표 / 보조 유틸
+  // ===============================
+
+  // CD 중앙 좌표 가져오기
   const getCDCenter = () => {
     if (cdContainerRef.current) {
       const rect = cdContainerRef.current.getBoundingClientRect()
@@ -416,15 +406,15 @@ const CustomizeStep2 = ({ currentStep, setCurrentStep, setModal }: CustomizeStep
     return { x: 140, y: 140 } // 기본값
   }
 
-  // 스티커 핸들 위치 계산
-  const getStickerHandles = (sticker: Sticker) => {
+  // 스티커 핸들러 좌표 계산
+  const getStickerHandles = (sticker: StickerInfoType) => {
     const centerX = sticker.x + (sticker.width * sticker.scale) / 2
     const centerY = sticker.y + (sticker.height * sticker.scale) / 2
 
     const resize = rotatePoint(sticker.width / 2, sticker.height / 2, sticker.rotation)
     const deleteBtn = rotatePoint(
-      sticker.width / 2 + 10 / sticker.scale,
-      -sticker.height / 2 - 10 / sticker.scale,
+      sticker.width / 2 / sticker.scale,
+      -sticker.height / 2 / sticker.scale,
       sticker.rotation
     )
 
@@ -441,7 +431,7 @@ const CustomizeStep2 = ({ currentStep, setCurrentStep, setModal }: CustomizeStep
     }
   }
 
-  // 회전 보조
+  // 회전 보조 함수
   function rotatePoint(x: number, y: number, angle: number) {
     return {
       x: x * Math.cos(angle) - y * Math.sin(angle),
@@ -472,6 +462,15 @@ const CustomizeStep2 = ({ currentStep, setCurrentStep, setModal }: CustomizeStep
       y: clientY - rect.top,
     }
   }
+
+  // 백엔드에 전송할 스티커별 theme offset 계산
+  const getThemeOffset = (theme: StickerThemeType) => {
+    return THEME_PROP_ID_OFFSET[theme as keyof typeof THEME_PROP_ID_OFFSET]
+  }
+
+  // ===============================
+  // Canvas 렌더링
+  // ===============================
 
   // Canvas에 스티커 그리기
   const drawStickers = () => {
@@ -683,6 +682,105 @@ const CustomizeStep2 = ({ currentStep, setCurrentStep, setModal }: CustomizeStep
     ctx.restore()
   }
 
+  // Canvas 초기화 및 이벤트 리스너 등록
+  useEffect(() => {
+    const canvas = cdContainerRef.current
+    if (!canvas) return
+
+    // Canvas 크기 초기화
+    canvas.width = 280
+    canvas.height = 280
+
+    // 초기화 후 바로 그리기
+    drawStickers()
+
+    // 모바일 Safari 등에서 터치 스크롤 간섭 방지 (passive: false)
+    const stopDefault = (ev: TouchEvent) => ev.preventDefault()
+    canvas.addEventListener('touchstart', stopDefault, { passive: false })
+    canvas.addEventListener('touchmove', stopDefault, { passive: false })
+    canvas.addEventListener('touchend', stopDefault, { passive: false })
+
+    return () => {
+      canvas.removeEventListener('touchstart', stopDefault)
+      canvas.removeEventListener('touchmove', stopDefault)
+      canvas.removeEventListener('touchend', stopDefault)
+    }
+  }, [])
+
+  // 이미지 미리 로드
+  useEffect(() => {
+    // 기본 스티커 이미지들 미리 로드 (Vite glob URL 사용)
+    stickerUrls.forEach((src) => {
+      if (!imageCache.current[src]) {
+        const img = new Image()
+        img.onload = () => {
+          imageCache.current[src] = img
+          // 이미지 로딩 완료 후 Canvas 다시 그리기
+          if (cdContainerRef.current) {
+            drawStickers()
+          }
+        }
+        img.src = src
+      }
+    })
+
+    // 버튼 이미지들 미리 로드
+    const buttonImages = [TrashBtn, ExpandBtn]
+
+    buttonImages.forEach((src) => {
+      if (!imageCache.current[src]) {
+        const img = new Image()
+        img.onload = () => {
+          imageCache.current[src] = img
+          // 이미지 로딩 완료 후 Canvas 다시 그리기
+          if (cdContainerRef.current) {
+            drawStickers()
+          }
+        }
+        img.onerror = () => {
+          console.error('Failed to load button image:', src)
+          // 이미지 로딩 실패 시 null로 설정
+          imageCache.current[src] = null
+        }
+        img.src = src
+      }
+    })
+  }, [currentThemeId, stickerUrls])
+
+  // 유저 스티커 리스트 propId, src 맵핑
+  useEffect(() => {
+    if (!userStickerList) return
+
+    setStickers((prev) =>
+      prev.map((sticker) => {
+        if (sticker.type === 'custom' && !sticker.propId) {
+          const latest = [...userStickerList.props].filter((p) => p.theme === 'USER').at(-1) // 가장 마지막 USER 스티커
+          if (latest) {
+            const cached = imageCache.current[sticker.src]
+            if (cached) {
+              imageCache.current[latest.imageUrl] = cached
+            }
+            return { ...sticker, propId: latest.propId, src: latest.imageUrl }
+          }
+        }
+        return sticker
+      })
+    )
+  }, [userStickerList])
+
+  // stickers가 변경될 때마다 다시 그리기
+  useEffect(() => {
+    drawStickers()
+  }, [stickers, selectedSticker])
+
+  if (isLoading) {
+    return <Loading isLoading={isLoading} />
+  }
+
+  if (isError) {
+    navigate('/error')
+  }
+
   return (
     <Step2Wrap>
       <StepHeader
@@ -738,7 +836,7 @@ const CustomizeStep2 = ({ currentStep, setCurrentStep, setModal }: CustomizeStep
             <input type="file" ref={fileInputRef} accept="image/*" onChange={onFileChange} hidden />
           </li>
           {stickerList.map((id) => (
-            <li key={id}>
+            <li key={uuidv4()}>
               <StickerButton type="button" onClick={() => onStickersAddClick(id)}>
                 <img src={stickerUrls[id - 1]} alt={`${currentThemeId} 스티커`} />
               </StickerButton>
@@ -792,13 +890,13 @@ const AllDeleteBtn = styled.button`
 
 const StickerAreaWrap = styled.section`
   flex: 1;
+  display: flex;
+  flex-direction: column;
   border-top-left-radius: 24px;
   border-top-right-radius: 24px;
   margin: 0 -20px;
   width: calc(100% + 40px);
   background-color: ${({ theme }) => theme.COLOR['gray-700']};
-  display: flex;
-  flex-direction: column;
 `
 
 const ThemeListContainer = styled.ul`
