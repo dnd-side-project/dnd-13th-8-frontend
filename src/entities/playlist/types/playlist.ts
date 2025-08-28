@@ -25,8 +25,8 @@ export interface MyCdInfo {
 export type MyCdListResponse = MyCdInfo[]
 
 export interface MyFollowingInfo {
-  myLikeCreator: number
   creatorId: string
+  creatorPlaylistId: string
   creatorNickname: string
   creatorProfileImageUrl: string | null
 }

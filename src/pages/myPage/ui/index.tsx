@@ -4,12 +4,12 @@ import styled from 'styled-components'
 
 import { Header, SvgButton, ContentHeader, Loading, Error } from '@shared/ui'
 
-import { Gear } from '@/assets/icons'
+import { Gear, NoFollowing } from '@/assets/icons'
 import { useMyCdList, useMyFollowingList } from '@/entities/playlist/model/useMyPlaylist'
 import type { MyPageTabType } from '@/pages/myPage/types/mypage'
 import { Divider, CdGrid, UserProfile } from '@/pages/myPage/ui/components'
 import { useSingleSelect } from '@/shared/lib/useSingleSelect'
-import { flexRowCenter } from '@/shared/styles/mixins'
+import { flexRowCenter, flexColCenter } from '@/shared/styles/mixins'
 import type { SortType } from '@/shared/ui/ContentHeader'
 import { SearchResultItem } from '@/widgets/search'
 
@@ -89,23 +89,46 @@ const MyPage = () => {
           </>
         ) : (
           <>
-            {isMyFollowingListLoading && <Loading isLoading={isMyFollowingListLoading} />}
-            {isMyFollowingListError && <Error />}
-            {isMyFollowingListSuccess &&
-              myFollowingList?.followPlaylistDto?.map((data) => (
-                // TODO: 백엔드 서버 복구 시 following size ui 영역 추가
-                <LikeUserContainer key={data.creatorId}>
-                  <li>
-                    <SearchResultItem
-                      type="USER"
-                      searchResult={data.creatorNickname}
-                      imageUrl={data?.creatorProfileImageUrl}
-                      // TODO: data.creatorId가 공유 url 맞는지 백엔드 확인 필요
-                      onClick={() => navigate(`/discover/${data.creatorId}`)}
-                    />
-                  </li>
-                </LikeUserContainer>
-              ))}
+            {isMyFollowingListLoading && (
+              <NonDataContainer>
+                <Loading isLoading={isMyFollowingListLoading} />
+              </NonDataContainer>
+            )}
+            {isMyFollowingListError && (
+              <NonDataContainer>
+                <Error />
+              </NonDataContainer>
+            )}
+            {isMyFollowingListSuccess && (
+              <>
+                <LikeUserHeader>
+                  <span>총 {myFollowingList?.size ?? 0}명</span>
+                </LikeUserHeader>
+                {myFollowingList?.size > 0 ? (
+                  myFollowingList?.followPlaylistDto?.map((data) => (
+                    <LikeUserContainer key={data.creatorId}>
+                      <li>
+                        <SearchResultItem
+                          type="USER"
+                          searchResult={data.creatorNickname}
+                          imageUrl={data?.creatorProfileImageUrl}
+                          onClick={() => navigate(`/discover/${data.creatorPlaylistId}`)}
+                        />
+                      </li>
+                    </LikeUserContainer>
+                  ))
+                ) : (
+                  <NonDataContainer>
+                    <NoFollowing width={100} height={100} />
+                    <NoFollowingText>
+                      아직 팔로잉한 유저가 없어요.
+                      <br />
+                      마음에 드는 뮤직룸을 찾아 팔로우해보세요.
+                    </NoFollowingText>
+                  </NonDataContainer>
+                )}
+              </>
+            )}
           </>
         )}
       </section>
@@ -143,9 +166,31 @@ const TabItem = styled.li<{ $isActive: boolean }>`
   }
 `
 
+const LikeUserHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 24px;
+  color: ${({ theme }) => theme.COLOR['gray-100']};
+`
+
 const LikeUserContainer = styled.ul`
   padding-top: 10px;
   display: flex;
   flex-direction: column;
   gap: 20px;
+`
+
+const NonDataContainer = styled.div`
+  ${flexColCenter}
+  gap: 12px;
+  margin-top: 48px;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+`
+
+const NoFollowingText = styled.p`
+  ${({ theme }) => theme.FONT['body1-normal']}
+  color: ${({ theme }) => theme.COLOR['gray-300']};
 `
