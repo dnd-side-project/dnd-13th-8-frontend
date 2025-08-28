@@ -83,7 +83,8 @@ const SearchResultPage = () => {
   const categorySearchResult: Playlist[] =
     type === 'category' ? (categoryData?.pages.flatMap((page) => page.content) ?? []) : []
 
-  const totalCount = type === 'keyword' ? keywordSearchResult.length : categorySearchResult.length
+  const totalCount =
+    type === 'keyword' ? keywordData?.pages[0].totalCount : categorySearchResult.length
 
   const isError = type === 'keyword' ? isKeywordError : isCategoryError
   const isLoading =
@@ -160,7 +161,7 @@ const SearchResultPage = () => {
         )}
       </TopWrapper>
       <Result ref={listRef} onScroll={handleScroll}>
-        {totalCount > 0 ? (
+        {totalCount && totalCount > 0 ? (
           <>
             <ContentHeader totalCount={totalCount} currentSort={selected} onSortChange={onSelect} />
             <ResultList>

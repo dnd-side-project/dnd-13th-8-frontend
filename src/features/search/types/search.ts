@@ -51,6 +51,7 @@ export type SearchPlaylistResponse = {
   page: number
   size: number
   hasNext: boolean
+  totalCount: number
 }
 
 export interface CategoryPlaylistItem {
