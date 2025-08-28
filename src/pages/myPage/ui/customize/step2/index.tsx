@@ -1,5 +1,4 @@
 import { useState, useMemo, useRef, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
 
 import styled from 'styled-components'
 import { v4 as uuidv4 } from 'uuid'
@@ -34,10 +33,8 @@ const CustomizeStep2 = ({
   const [isDragging, setIsDragging] = useState(false)
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 })
   const [resizeMode, setResizeMode] = useState<'move' | 'resize' | null>(null)
-  const [, setPendingUploads] = useState<{ [key: string]: string }>({})
 
-  const navigate = useNavigate()
-  const { userStickerList, isLoading, isError, uploadSticker, finalSave } = useUserSticker()
+  const { uploadSticker, uploadLoading, finalSave } = useUserSticker()
 
   // ===============================
   // 스티커 초기 데이터 세팅
@@ -78,9 +75,7 @@ const CustomizeStep2 = ({
     finalSave.mutate(payload, {
       onSuccess: (response) => {
         setCurrentCdId?.(response.playlistId)
-        // TODO: step3 추가 후 navigate 제거, step(3) 주석 해제
-        navigate('/myPage', { replace: true })
-        // setCurrentStep(3)
+        setCurrentStep(3)
       },
       onError: (error) => {
         console.error('CD 최종 저장 실패:', error)
@@ -129,47 +124,41 @@ const CustomizeStep2 = ({
     }
 
     // 유저 커스텀 스티커 데이터 전송
-    uploadSticker({ theme: 'USER', file })
+    uploadSticker.mutate(
+      { theme: 'USER', file },
+      {
+        onSuccess: (response) => {
+          const width = 50
+          const height = 50
+          const center = getCDCenter()
 
-    const reader = new FileReader()
-    reader.onload = (event) => {
-      const dataUrl = event.target?.result as string
-      if (!dataUrl) return
+          const newSticker: StickerInfoType = {
+            id: uuidv4(),
+            propId: response.propId,
+            type: 'custom',
+            src: response.imageUrl,
+            x: center.x - width / 2 + 85,
+            y: center.y - height / 2,
+            z: getNextZIndex(),
+            width,
+            height,
+            scale: 1,
+            rotation: 0,
+          }
 
-      const width = 50
-      const height = 50
-      const center = getCDCenter()
-
-      const tempId = uuidv4()
-      const newSticker: StickerInfoType = {
-        id: tempId, // 프론트 추적용 uuid
-        propId: undefined, // 업로드 된 백엔드 스티커 id
-        type: 'custom',
-        src: dataUrl,
-        x: center.x - width / 2 + 85,
-        y: center.y - height / 2,
-        z: getNextZIndex(),
-        width,
-        height,
-        scale: 1,
-        rotation: 0,
+          const img = new Image()
+          img.onload = () => {
+            imageCache.current[response.imageUrl] = img
+            setStickers((prev) => {
+              const updated = [...prev, newSticker]
+              setSelectedSticker(updated.length - 1)
+              return updated
+            })
+          }
+          img.src = response.imageUrl
+        },
       }
-
-      const img = new window.Image()
-      img.onload = () => {
-        drawStickers()
-      }
-      img.src = dataUrl
-      imageCache.current[dataUrl] = img
-
-      const newStickers = [...stickers, newSticker]
-      setStickers((prev) => [...prev, newSticker])
-      setPendingUploads((prev) => ({ ...prev, [tempId]: dataUrl }))
-
-      setSelectedSticker(newStickers.length - 1)
-    }
-    reader.readAsDataURL(file)
-    e.target.value = ''
+    )
   }
 
   // 스티커 추가
@@ -281,13 +270,13 @@ const CustomizeStep2 = ({
       const sticker = stickers[selectedSticker]
       const handles = getStickerHandles(sticker)
 
-      // 삭제 버튼 체크 - 감지 영역을 넓게 (20px)
+      // 삭제 버튼 체크 - 감지 영역을 넓게
       if (Math.hypot(x - handles.delete.x, y - handles.delete.y) < 10) {
         deleteSelectedSticker()
         return
       }
 
-      // 확대 버튼 체크 - 감지 영역을 넓게 (20px)
+      // 확대 버튼 체크 - 감지 영역을 넓게
       if (Math.hypot(x - handles.resize.x, y - handles.resize.y) < 20) {
         setResizeMode('resize')
         setIsDragging(true)
@@ -747,104 +736,84 @@ const CustomizeStep2 = ({
     })
   }, [currentThemeId, stickerUrls])
 
-  // 유저 스티커 리스트 propId, src 맵핑
-  useEffect(() => {
-    if (!userStickerList) return
-
-    setStickers((prev) =>
-      prev.map((sticker) => {
-        if (sticker.type === 'custom' && !sticker.propId) {
-          const latest = [...userStickerList.props].filter((p) => p.theme === 'USER').at(-1) // 가장 마지막 USER 스티커
-          if (latest) {
-            const cached = imageCache.current[sticker.src]
-            if (cached) {
-              imageCache.current[latest.imageUrl] = cached
-            }
-            return { ...sticker, propId: latest.propId, src: latest.imageUrl }
-          }
-        }
-        return sticker
-      })
-    )
-  }, [userStickerList])
-
   // stickers가 변경될 때마다 다시 그리기
   useEffect(() => {
     drawStickers()
   }, [stickers, selectedSticker])
 
-  if (isLoading) {
-    return <Loading isLoading={isLoading} />
-  }
-
-  if (isError) {
-    navigate('/error')
-  }
-
   return (
-    <Step2Wrap>
-      <StepHeader
-        currentStep={currentStep}
-        setCurrentStep={setCurrentStep}
-        isValidate
-        onHeaderNextClick={onHeaderNextClick}
-      />
-      <CdAreaWrap>
-        <CdCustomContainer>
-          <canvas
-            ref={cdContainerRef}
-            width={280}
-            height={280}
-            style={{ touchAction: 'none', WebkitUserSelect: 'none', WebkitTouchCallout: 'none' }}
-            onMouseDown={handlePointerDown}
-            onMouseMove={handlePointerMove}
-            onMouseUp={handlePointerUp}
-            onMouseLeave={handlePointerUp}
-            onTouchStart={handlePointerDown}
-            onTouchMove={handlePointerMove}
-            onTouchEnd={handlePointerUp}
-            onPointerDown={(e) => handlePointerDown(e as unknown as React.MouseEvent)}
-            onPointerMove={(e) => handlePointerMove(e as unknown as React.MouseEvent)}
-            onPointerUp={handlePointerUp}
-          />
+    <>
+      {uploadLoading && <Loading isLoading={uploadLoading} />}
+      <Step2Wrap>
+        <StepHeader
+          currentStep={currentStep}
+          setCurrentStep={setCurrentStep}
+          isValidate
+          onHeaderNextClick={onHeaderNextClick}
+        />
+        <CdAreaWrap>
+          <CdCustomContainer>
+            <canvas
+              ref={cdContainerRef}
+              width={280}
+              height={280}
+              style={{ touchAction: 'none', WebkitUserSelect: 'none', WebkitTouchCallout: 'none' }}
+              onMouseDown={handlePointerDown}
+              onMouseMove={handlePointerMove}
+              onMouseUp={handlePointerUp}
+              onMouseLeave={handlePointerUp}
+              onTouchStart={handlePointerDown}
+              onTouchMove={handlePointerMove}
+              onTouchEnd={handlePointerUp}
+              onPointerDown={(e) => handlePointerDown(e as unknown as React.MouseEvent)}
+              onPointerMove={(e) => handlePointerMove(e as unknown as React.MouseEvent)}
+              onPointerUp={handlePointerUp}
+            />
 
-          <CdOverlay />
-        </CdCustomContainer>
-        <AllDeleteBtn type="button" onClick={onAllDeleteClick}>
-          <Trash width={24} height={24} />
-        </AllDeleteBtn>
-      </CdAreaWrap>
-      <StickerAreaWrap>
-        <ThemeListContainer>
-          {STICKER_THEME_LIST.map((theme) => (
-            <li key={theme.id}>
-              <ThemeButton
-                type="button"
-                $isActive={currentThemeId === theme.id}
-                onClick={() => setCurrentThemeId(theme.id)}
-              >
-                {theme.name}
-              </ThemeButton>
-            </li>
-          ))}
-        </ThemeListContainer>
-        <StickerListContainer>
-          <li>
-            <StickerButton type="button" onClick={() => fileInputRef.current?.click()}>
-              <Plus width={32} height={32} />
-            </StickerButton>
-            <input type="file" ref={fileInputRef} accept="image/*" onChange={onFileChange} hidden />
-          </li>
-          {stickerList.map((id) => (
-            <li key={uuidv4()}>
-              <StickerButton type="button" onClick={() => onStickersAddClick(id)}>
-                <img src={stickerUrls[id - 1]} alt={`${currentThemeId} 스티커`} />
+            <CdOverlay />
+          </CdCustomContainer>
+          <AllDeleteBtn type="button" onClick={onAllDeleteClick}>
+            <Trash width={24} height={24} />
+          </AllDeleteBtn>
+        </CdAreaWrap>
+        <StickerAreaWrap>
+          <ThemeListContainer>
+            {STICKER_THEME_LIST.map((theme) => (
+              <li key={theme.id}>
+                <ThemeButton
+                  type="button"
+                  $isActive={currentThemeId === theme.id}
+                  onClick={() => setCurrentThemeId(theme.id)}
+                >
+                  {theme.name}
+                </ThemeButton>
+              </li>
+            ))}
+          </ThemeListContainer>
+          <StickerListContainer>
+            <li>
+              <StickerButton type="button" onClick={() => fileInputRef.current?.click()}>
+                <Plus width={32} height={32} />
               </StickerButton>
+              <input
+                type="file"
+                ref={fileInputRef}
+                accept="image/*"
+                onChange={onFileChange}
+                hidden
+              />
             </li>
-          ))}
-        </StickerListContainer>
-      </StickerAreaWrap>
-    </Step2Wrap>
+            {stickerList.map((id) => (
+              <li key={uuidv4()}>
+                <StickerButton type="button" onClick={() => onStickersAddClick(id)}>
+                  <img src={stickerUrls[id - 1]} alt={`${currentThemeId} 스티커`} />
+                </StickerButton>
+              </li>
+            ))}
+          </StickerListContainer>
+        </StickerAreaWrap>
+      </Step2Wrap>
+    </>
   )
 }
 

@@ -59,12 +59,7 @@ export const useUserSticker = () => {
   const queryClient = useQueryClient()
 
   // 조회
-  const {
-    data: userStickerList,
-    isLoading,
-    isError,
-    isSuccess,
-  } = useQuery({
+  const { data: userStickerList } = useQuery({
     queryKey: ['getUserStickers'],
     queryFn: () => getUserStickers(),
   })
@@ -94,10 +89,8 @@ export const useUserSticker = () => {
 
   return {
     userStickerList,
-    isLoading,
-    isError,
-    isSuccess,
-    uploadSticker: uploadMutation.mutate,
+    uploadSticker: uploadMutation,
+    uploadLoading: uploadMutation.isPending,
     finalSave: finalSaveMutation,
   }
 }

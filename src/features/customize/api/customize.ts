@@ -1,5 +1,6 @@
 import type {
   TempPlaylistPayload,
+  UserEachStickerResponse,
   UserStickerListResponse,
   UserStickerPayload,
   YouTubeVideoInfo,
@@ -28,7 +29,7 @@ export const postUserSticker = (payload: UserStickerPayload) => {
   const formData = new FormData()
   formData.append('theme', payload.theme)
   formData.append('file', payload.file)
-  return api.post<string>('/main/prop/upload', formData, {
+  return api.post<UserEachStickerResponse>('/main/prop/upload', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },

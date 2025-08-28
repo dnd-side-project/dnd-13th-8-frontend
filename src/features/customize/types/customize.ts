@@ -22,12 +22,14 @@ export interface TempPlaylistPayload extends PlaylistMetaInfo {
   youTubeVideoInfo: YouTubeVideoInfo[]
 }
 
+export interface UserEachStickerResponse {
+  propId: number
+  theme: StickerThemeUpperType
+  imageUrl: string
+}
+
 export interface UserStickerListResponse {
-  props: {
-    propId: number
-    theme: StickerThemeUpperType
-    imageUrl: string
-  }[]
+  props: UserEachStickerResponse[]
 }
 
 export interface UserStickerPayload {

@@ -9,14 +9,12 @@ import {
 import { useCdCustomData } from '@/entities/playlist/model/useMyPlaylist'
 import { SubHeader } from '@/pages/myPage/ui/components'
 import { flexColCenter } from '@/shared/styles/mixins'
-import { Loading } from '@/shared/ui'
+import { Loading, Cd } from '@/shared/ui'
 
 const CustomizeStep3 = ({ currentCdId }: { currentCdId: number | null }) => {
   const navigate = useNavigate()
 
   const { data, isLoading, isError } = useCdCustomData(currentCdId as number)
-
-  console.log(data)
 
   if (isLoading) {
     return <Loading isLoading={isLoading} />
@@ -45,9 +43,12 @@ const CustomizeStep3 = ({ currentCdId }: { currentCdId: number | null }) => {
               width={280}
               height={280}
             />
+            <Cd variant="customize" bgColor="none" stickers={data?.cdItems} />
           </MyCdViewContainer>
         </MyCdContainer>
-        <CtaButton type="button">내가 만든 CD 열기</CtaButton>
+        <CtaButton type="button" onClick={() => navigate(`/myPage/${currentCdId}/playlist`)}>
+          내가 만든 CD 열기
+        </CtaButton>
       </CdResultContainer>
     </>
   )
@@ -69,6 +70,7 @@ const CustomizeBg = styled.div`
 `
 
 const CdResultContainer = styled.div`
+  z-index: 1;
   ${flexColCenter}
   gap: 76px;
   width: 100%;
