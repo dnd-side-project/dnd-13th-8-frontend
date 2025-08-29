@@ -1,3 +1,5 @@
+import type { ProfileResponse } from '@/features/profile/types/profile'
+
 export interface LoginPayload {
   code: string
   codeVerifier: string
@@ -19,4 +21,5 @@ export interface AuthState {
   isLogin: boolean
   setLogin: (data: LoginResponse) => void
   setLogout: () => void
+  updateUserInfo: (data: ProfileResponse) => void
 }

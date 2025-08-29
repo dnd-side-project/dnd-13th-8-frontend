@@ -1,8 +1,10 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 
-import { Modal } from '@shared/ui'
+import { Loading, Modal } from '@shared/ui'
 import type { ModalProps } from '@shared/ui/Modal'
 
+import { useMyPagePlaylist } from '@/entities/playlist/model/useMyPlaylist'
 import CustomizeStep1 from '@/pages/myPage/ui/customize/step1'
 import CustomizeStep2 from '@/pages/myPage/ui/customize/step2'
 import CustomizeStep3 from '@/pages/myPage/ui/customize/step3'
@@ -18,8 +20,14 @@ export interface CustomizeStepProps {
 }
 
 const Customize = () => {
+  const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const playlistId = searchParams.get('playlistId')
+
   const [currentStep, setCurrentStep] = useState<CustomizeStep>(1)
   const [currentCdId, setCurrentCdId] = useState<number | null>(null)
+  const [isEditMode] = useState<boolean>(!!playlistId && Number(playlistId) > 0)
+
   const [modal, setModal] = useState<ModalProps>({
     isOpen: false,
     title: '',
@@ -34,6 +42,22 @@ const Customize = () => {
       setModal((prev) => ({ ...prev, isOpen: false }))
     },
   })
+
+  const { playlistData, isLoading, isError } = useMyPagePlaylist(
+    isEditMode ? Number(playlistId) : -1
+  )
+
+  console.log(playlistData)
+
+  useEffect(() => {
+    if (isError) {
+      navigate('/error')
+    }
+  }, [isError, navigate])
+
+  if (isLoading) {
+    return <Loading isLoading={isLoading} />
+  }
 
   return (
     <>

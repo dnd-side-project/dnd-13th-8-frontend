@@ -105,12 +105,20 @@ const MyPagePlaylist = () => {
         left={
           <SvgButton icon={LeftArrow} width={24} height={24} onClick={() => navigate('/mypage')} />
         }
-        right={<EditButton type="button">편집</EditButton>}
+        right={
+          <EditButton
+            type="button"
+            onClick={() => navigate(`/mypage/customize?playlistId=${playlistId}`)}
+          >
+            편집
+          </EditButton>
+        }
       />
       <PlaylistHorizontal
         genre={MUSIC_GENRES.find((g) => g.id === playlistData?.genre)?.label ?? ''}
         title={playlistData?.playlistName ?? ''}
         username={userInfo.username}
+        stickers={playlistData?.onlyCdResponse?.cdItems ?? []}
       />
       <ControlContainer>
         <LeftActions>
@@ -135,9 +143,11 @@ const MyPagePlaylist = () => {
       </ControlContainer>
       <Divider />
       <SongsContainer>
-        {playlistData?.songs.map((song) => (
-          <Link key={song.id} data={song} />
-        ))}
+        {playlistData?.songs
+          .sort((a, b) => a.id - b.id)
+          .map((song) => (
+            <Link key={song.id} data={song} />
+          ))}
       </SongsContainer>
 
       <Modal

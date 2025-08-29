@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
 import type { AuthState } from '@/features/auth/types/auth'
+import type { ProfileResponse } from '@/features/profile/types/profile'
 
 export const useAuthStore = create<AuthState>()(
   persist(
@@ -26,6 +27,16 @@ export const useAuthStore = create<AuthState>()(
           userInfo: { userId: '', username: '', userProfileImageUrl: null },
           accessToken: '',
           isLogin: false,
+        })
+      },
+
+      updateUserInfo: (payload: ProfileResponse) => {
+        set({
+          userInfo: {
+            userId: payload.userId,
+            username: payload.nickname,
+            userProfileImageUrl: payload.profileImageUrl,
+          },
         })
       },
     }),
