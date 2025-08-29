@@ -1,7 +1,7 @@
 {
   "name": "dnd-13th-8-frontend",
   "private": true,
-  "version": "0.0.1",
+  "version": "1.0.0",
   "type": "module",
   "engines": {
     "node": "22.12.0"
