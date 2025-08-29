@@ -11,6 +11,7 @@ export interface ChatMessage {
   sentAt?: string
   profileImage: string | null
   systemMessage?: boolean
+  roomId: string
 }
 
 export const useChatSocket = (roomId: string) => {

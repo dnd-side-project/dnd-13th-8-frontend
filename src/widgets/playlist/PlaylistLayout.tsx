@@ -106,6 +106,7 @@ const PlaylistLayout = ({
           isFollowing={!!isFollowing}
           userName={data.creator.creatorNickname}
           showFollow={type !== 'My'}
+          creatorId={data.creator.creatorId}
         />
       </Wrapper>
 

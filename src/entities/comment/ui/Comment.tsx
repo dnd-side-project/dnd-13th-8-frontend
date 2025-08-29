@@ -2,7 +2,9 @@ import { useState } from 'react'
 
 import styled from 'styled-components'
 
+import { useToast } from '@/app/providers'
 import { Menu } from '@/assets/icons'
+import { useDeleteChatMessage } from '@/features/chat/model/useChat'
 import { BottomSheet, Profile, SvgButton } from '@/shared/ui'
 
 interface CommentProps {
@@ -10,6 +12,8 @@ interface CommentProps {
   name: string
   comment: string
   role: 'owner' | 'mine' | 'other'
+  roomId: string
+  messageId: string
   Icon?: React.ComponentType<React.SVGProps<SVGSVGElement>>
 }
 
@@ -22,14 +26,18 @@ const COMMENT_OPTIONS = {
   other: [{ text: '신고하기', type: 'report' }],
 } as const
 
-const Comment = ({ profileUrl, name, comment, role, Icon }: CommentProps) => {
+const Comment = ({ profileUrl, name, comment, role, Icon, roomId, messageId }: CommentProps) => {
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false)
+  const { toast } = useToast()
+  const { mutate: deleteMessage } = useDeleteChatMessage(roomId)
 
   const handleOptionClick = (type: 'delete' | 'report') => {
     if (type === 'delete') {
-      console.log('삭제') // TODO: 실제 삭제 요청으로 변경
+      deleteMessage(messageId, {
+        onSuccess: () => toast('COMMENT'),
+      })
     } else if (type === 'report') {
-      console.log('신고') // TODO: 실제 신고 요청으로 변경
+      toast('REPORT')
     }
 
     setIsBottomSheetOpen(false)

@@ -6,3 +6,7 @@ export const getChatHistory = (roomId: string, params: ChatHistoryParams = {}) =
     params,
   })
 }
+
+export const deleteChatMessage = async (roomId: string, messageId: string) => {
+  return api.delete(`/chat/rooms/${roomId}/messages/${messageId}`)
+}
