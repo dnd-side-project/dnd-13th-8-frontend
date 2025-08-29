@@ -3,13 +3,13 @@ import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tansta
 import {
   getPlaylistDetail,
   getPlaylistViewCounts,
-  getSufflePlaylists,
+  getShufflePlaylists,
   postPlaylistConfirm,
   postPlaylistStart,
 } from '@/entities/playlist/api/playlist'
 import type { Cursor, PlaylistResponse } from '@/entities/playlist/types/playlist'
 
-export const useSufflePlaylists = () => {
+export const useShufflePlaylists = () => {
   return useInfiniteQuery<
     PlaylistResponse, // queryFn 반환 타입
     Error, // 에러 타입
@@ -19,7 +19,7 @@ export const useSufflePlaylists = () => {
   >({
     queryKey: ['playlists'],
     queryFn: ({ pageParam }) =>
-      getSufflePlaylists({
+      getShufflePlaylists({
         cursorPosition: pageParam?.position,
         cursorCardId: pageParam?.cardId,
         size: 5, // 고정

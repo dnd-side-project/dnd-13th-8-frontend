@@ -10,7 +10,7 @@ import {
   usePlaylistConfirmMutation,
   usePlaylistStartMutation,
   usePlaylistViewCounts,
-  useSufflePlaylists,
+  useShufflePlaylists,
   type Cursor,
   type PlaylistResponse,
 } from '@/entities/playlist'
@@ -50,7 +50,7 @@ const DiscoverPage = () => {
     localStorage.setItem('hasSeenDiscoverCoachmark', 'true')
   }
 
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useSufflePlaylists()
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useShufflePlaylists()
   const { mutate: startPlaylist } = usePlaylistStartMutation()
   const { mutate: confirmPlaylist } = usePlaylistConfirmMutation()
   const { refetch: refetchViewCounts } = usePlaylistViewCounts(currentPlaylist?.playlistId || 0)
