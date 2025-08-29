@@ -5,6 +5,7 @@ import SockJS from 'sockjs-client/dist/sockjs'
 
 export interface ChatMessage {
   senderId: string
+  messageId: string
   username: string | null
   content: string
   sentAt?: string
@@ -54,7 +55,7 @@ export const useChatSocket = (roomId: string) => {
     (senderId: string, username: string | null, content: string) => {
       if (!clientRef.current || !connected || !content.trim()) return
 
-      const payload: ChatMessage = {
+      const payload: Partial<ChatMessage> = {
         senderId,
         username,
         content,

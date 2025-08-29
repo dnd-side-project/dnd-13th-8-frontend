@@ -3,7 +3,7 @@ import { useInfiniteQuery, type InfiniteData } from '@tanstack/react-query'
 import { getChatHistory } from '@/features/chat/api/chat'
 import type { ChatHistoryResponse } from '@/features/chat/types/chat'
 
-export const useInfiniteChatHistory = (roomId: string, limit = 50) => {
+export const useInfiniteChatHistory = (roomId: string, limit = 100) => {
   return useInfiniteQuery<
     ChatHistoryResponse,
     Error,

@@ -65,7 +65,7 @@ const ChatBottomSheet = ({ isOpen, onClose, roomId }: ChatBottomSheetProps) => {
             return (
               <Comment
                 profileUrl=""
-                key={msg.sentAt}
+                key={msg.messageId}
                 name={msg.username || '익명'}
                 comment={text}
                 Icon={Icon || undefined}
