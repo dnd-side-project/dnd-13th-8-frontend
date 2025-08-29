@@ -444,9 +444,9 @@ const InputAddButton = styled.button`
   height: 42px;
   padding: 12px 0;
   border-radius: 10px;
-  background-color: ${({ theme }) => theme.COLOR['primary-normal']};
+  background: ${({ theme }) => theme.COLOR['gray-600']};
+  color: ${({ theme }) => theme.COLOR['primary-normal']};
   ${({ theme }) => theme.FONT['body2-normal']}
-  color: ${({ theme }) => theme.COLOR['gray-900']};
 `
 
 const LinksContainer = styled.div`
