@@ -25,13 +25,14 @@ export const useInfiniteChatHistory = (roomId: string, limit = 50) => {
   })
 }
 
-export const useDeleteChatMessage = (roomId: string) => {
+export const useDeleteChatMessage = (roomId: string, removeMessage: (id: string) => void) => {
   const queryClient = useQueryClient()
 
   return useMutation({
     mutationFn: (messageId: string) => deleteChatMessage(roomId, messageId),
-    onSuccess: () => {
+    onSuccess: (_, messageId) => {
       queryClient.invalidateQueries({ queryKey: ['chat-history', roomId] })
+      removeMessage(messageId) //  소켓 state 업데이트
     },
   })
 }

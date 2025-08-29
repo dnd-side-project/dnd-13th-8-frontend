@@ -72,5 +72,9 @@ export const useChatSocket = (roomId: string) => {
     [roomId, connected]
   )
 
-  return { messages, participantCount, sendMessage, connected }
+  const removeMessage = useCallback((messageId: string) => {
+    setMessages((prev) => prev.filter((msg) => msg.messageId !== messageId))
+  }, [])
+
+  return { messages, participantCount, sendMessage, connected, removeMessage }
 }
