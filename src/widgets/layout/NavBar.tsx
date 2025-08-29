@@ -64,7 +64,7 @@ const NavButtonBox = styled.nav`
   justify-content: center;
   gap: 8px;
   padding: 11px 20px;
-  background: linear-gradient(to top, rgb(36, 38, 45), rgba(65, 86, 163, 0.4));
+  background: linear-gradient(to bottom, rgba(36, 44, 50, 0.4) 0%, rgba(36, 44, 50, 1) 100%);
   border: 0.5px solid rgba(204, 255, 250, 0.2);
   border-radius: 999px;
   width: 335px;
