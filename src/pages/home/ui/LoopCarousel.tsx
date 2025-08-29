@@ -23,8 +23,6 @@ const LoopCarousel = ({ data, isLogin }: LoopCarouselProps) => {
   const [activeIndex, setActiveIndex] = useState(0)
   const navigate = useNavigate()
 
-  console.log(data)
-
   useEffect(() => {
     if (!emblaApi) return
     const onSelect = () => setActiveIndex(emblaApi.selectedScrollSnap())

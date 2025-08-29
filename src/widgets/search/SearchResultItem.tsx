@@ -1,5 +1,6 @@
 import styled from 'styled-components'
 
+import type { CdCustomData } from '@/entities/playlist'
 import { flexRowCenter } from '@/shared/styles/mixins'
 import { Cd, Profile } from '@/shared/ui'
 
@@ -9,6 +10,7 @@ interface SearchResultItemProps {
   searchResult: string
   userName?: string | null
   onClick?: () => void
+  stickers?: CdCustomData[]
 }
 
 const SearchResultItem = ({
@@ -17,11 +19,16 @@ const SearchResultItem = ({
   searchResult,
   userName,
   onClick,
+  stickers,
 }: SearchResultItemProps) => {
   return (
     <ItemContainer onClick={onClick}>
       <Left>
-        {type === 'PLAYLIST' ? <Cd variant="xs" /> : <Profile size="M" profileUrl={imageUrl} />}
+        {type === 'PLAYLIST' ? (
+          <Cd variant="xs" stickers={stickers} />
+        ) : (
+          <Profile size="M" profileUrl={imageUrl} />
+        )}
       </Left>
       <Right>
         <SearchResult>{searchResult}</SearchResult>

@@ -56,7 +56,6 @@ const HomePage = () => {
         <h1>{isLogin ? TITLE_TEXT.MEMBER(userInfo.username) : TITLE_TEXT.GUEST}</h1>
         <LoopCarousel data={playlists} isLogin={isLogin} />
       </FirstSection>
-
       <SecondSection>
         <h1>퇴근길, 귀에 붙는 노래</h1>
         <ScrollCarousel gap={14}>
@@ -66,6 +65,7 @@ const HomePage = () => {
               key={item.playlistId}
               title={item.playlistName}
               username={item.creatorNickname}
+              stickers={item.onlyCdResponse?.cdItems}
             />
           ))}
         </ScrollCarousel>
@@ -81,6 +81,7 @@ const HomePage = () => {
               title={playlist.playlistName}
               username={playlist.creatorNickname}
               songs={playlist.songs}
+              stickers={playlist.onlyCdResponse?.cdItems}
             />
           ))}
         </ScrollCarousel>

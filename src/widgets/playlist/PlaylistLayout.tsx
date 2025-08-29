@@ -6,6 +6,7 @@ import styled from 'styled-components'
 import type { PlaylistInfo } from '@/entities/playlist'
 import { useChatSocket } from '@/features/chat/model/sendMessage'
 import { useFollowStatus } from '@/features/follow/model/useFollow'
+import { getTrackOrderLabel } from '@/shared/lib'
 import { flexColCenter } from '@/shared/styles/mixins'
 import { Button, Cd, Header, LiveInfo } from '@/shared/ui'
 import { ActionBar, ProgressBar } from '@/widgets/playlist'
@@ -71,7 +72,7 @@ const PlaylistLayout = ({
         center={
           <>
             <span>{data.playlistName}</span>
-            <span>{currentPlaylist?.songs[currentTrackIndex]?.title}</span>
+            <span>{getTrackOrderLabel(Number(currentTrackIndex))}</span>
           </>
         }
       />
