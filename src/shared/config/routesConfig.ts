@@ -60,6 +60,7 @@ export const routesConfig: RouteConfig[] = [
   {
     path: '/mycd',
     component: MyCdLayout,
+    isPrivate: true,
     isNotSuspense: true,
     children: [
       { path: '', component: MyCdPage },
@@ -72,6 +73,7 @@ export const routesConfig: RouteConfig[] = [
     path: '/mypage',
     component: MyPageLayout,
     hideNav: true,
+    isPrivate: true,
     isNotSuspense: true,
     children: [
       { path: '', component: MyPage, hideNav: false, isNotSuspense: false },

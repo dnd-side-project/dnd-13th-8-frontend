@@ -45,7 +45,7 @@ const Cd = ({ variant, bgColor = 'default', stickers }: CdProps) => {
   }
 
   const baseSize = sizeMap[variant].base
-  const ratio = baseSize / 280
+  const ratio = baseSize / 275
 
   const Content = (
     <Base $variant={variant}>

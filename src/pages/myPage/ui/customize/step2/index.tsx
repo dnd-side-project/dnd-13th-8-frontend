@@ -9,8 +9,16 @@ import { Trash, Plus } from '@/assets/icons'
 import overlayUrl from '@/assets/icons/icn_overlay.svg?url'
 import { ExpandBtn, TrashBtn } from '@/assets/images'
 import { useUserSticker } from '@/features/customize/model/useCustomize'
-import { getCurrentThemeImages, STICKER_THEME_LIST } from '@/pages/myPage/lib/customizeTheme'
-import type { StickerThemeType, StickerInfoType } from '@/pages/myPage/types/mypage'
+import {
+  BACKEND_TO_FRONT_THEME,
+  getCurrentThemeImages,
+  STICKER_THEME_LIST,
+} from '@/pages/myPage/lib/customizeTheme'
+import type {
+  StickerThemeType,
+  StickerInfoType,
+  StickerThemeUpperType,
+} from '@/pages/myPage/types/mypage'
 import { THEME_PROP_ID_OFFSET } from '@/pages/myPage/types/mypage'
 import type { CustomizeStepProps } from '@/pages/myPage/ui/customize'
 import { StepHeader } from '@/pages/myPage/ui/customize/step1/components'
@@ -22,6 +30,8 @@ const CustomizeStep2 = ({
   setCurrentStep,
   setCurrentCdId,
   setModal,
+  isEditMode,
+  prevPlaylistData,
 }: CustomizeStepProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const cdContainerRef = useRef<HTMLCanvasElement>(null)
@@ -34,7 +44,7 @@ const CustomizeStep2 = ({
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 })
   const [resizeMode, setResizeMode] = useState<'move' | 'resize' | null>(null)
 
-  const { uploadSticker, uploadLoading, finalSave } = useUserSticker()
+  const { uploadSticker, uploadLoading, finalSave, editSave } = useUserSticker()
 
   // ===============================
   // 스티커 초기 데이터 세팅
@@ -72,13 +82,29 @@ const CustomizeStep2 = ({
       },
     }
 
+    if (isEditMode) {
+      editSave.mutate(
+        { ...payload, playlistId: Number(prevPlaylistData?.playlistId) },
+        {
+          onSuccess: (response) => {
+            setCurrentCdId?.(response.playlistId)
+            setCurrentStep(3)
+          },
+          onError: (error) => {
+            console.error('CD 저장 실패:', error)
+          },
+        }
+      )
+      return
+    }
+
     finalSave.mutate(payload, {
       onSuccess: (response) => {
         setCurrentCdId?.(response.playlistId)
         setCurrentStep(3)
       },
       onError: (error) => {
-        console.error('CD 최종 저장 실패:', error)
+        console.error('CD 저장 실패:', error)
       },
     })
   }
@@ -453,8 +479,15 @@ const CustomizeStep2 = ({
   }
 
   // 백엔드에 전송할 스티커별 theme offset 계산
-  const getThemeOffset = (theme: StickerThemeType) => {
-    return THEME_PROP_ID_OFFSET[theme as keyof typeof THEME_PROP_ID_OFFSET]
+  const getThemeOffset = (theme: StickerThemeType | StickerThemeUpperType) => {
+    // 백엔드에서 온 대문자면 변환
+    const normalized = (
+      theme in BACKEND_TO_FRONT_THEME
+        ? BACKEND_TO_FRONT_THEME[theme as StickerThemeUpperType]
+        : theme
+    ) as StickerThemeType
+
+    return THEME_PROP_ID_OFFSET[normalized as keyof typeof THEME_PROP_ID_OFFSET]
   }
 
   // ===============================
@@ -676,10 +709,6 @@ const CustomizeStep2 = ({
     const canvas = cdContainerRef.current
     if (!canvas) return
 
-    // Canvas 크기 초기화
-    canvas.width = 280
-    canvas.height = 280
-
     // 초기화 후 바로 그리기
     drawStickers()
 
@@ -736,6 +765,77 @@ const CustomizeStep2 = ({
     })
   }, [currentThemeId, stickerUrls])
 
+  // 수정 모드일 경우 스티커 데이터 화면에 렌더링
+  useEffect(() => {
+    if (isEditMode && prevPlaylistData?.onlyCdResponse?.cdItems) {
+      const initialStickers: StickerInfoType[] = prevPlaylistData.onlyCdResponse.cdItems.map(
+        (item, index) => {
+          const scaleFactor = 280 / 285
+
+          // imageUrl이 DEFAULT면 테마에서 이미지 찾아오기
+          let src = item.imageUrl
+          if (src === 'DEFAULT') {
+            // 타입 오류 방지: item.theme을 StickerThemeType으로 명확히 변환
+            const theme = item.theme as StickerThemeType
+            const images = getCurrentThemeImages(theme) as Record<string, { default: string }>
+            const sortedKeys = Object.keys(images).sort((a, b) => {
+              const numA = parseInt(a.match(/(\d+)\.png$/)?.[1] ?? '0', 10)
+              const numB = parseInt(b.match(/(\d+)\.png$/)?.[1] ?? '0', 10)
+              return numA - numB
+            })
+
+            // propId에서 theme offset 빼고 index 계산
+            const themeOffset = getThemeOffset(theme)
+            const idx = item.propId - themeOffset - 1
+            src = images[sortedKeys[idx]]?.default ?? ''
+          }
+
+          return {
+            id: uuidv4(),
+            propId: item.propId,
+            type: item.theme,
+            src,
+            x: item.xCoordinate * scaleFactor,
+            y: item.yCoordinate * scaleFactor,
+            z: index + 1,
+            width: item.width * scaleFactor,
+            height: item.height * scaleFactor,
+            scale: item.scale,
+            rotation: item.angle,
+          }
+        }
+      )
+
+      // stickers 세팅 전에 이미지 미리 로드
+      let loadedCount = 0
+      initialStickers.forEach((sticker) => {
+        if (imageCache.current[sticker.src]) {
+          loadedCount++
+          if (loadedCount === initialStickers.length) {
+            setStickers(initialStickers)
+          }
+          return
+        }
+
+        const img = new Image()
+        img.onload = () => {
+          imageCache.current[sticker.src] = img
+          loadedCount++
+          if (loadedCount === initialStickers.length) {
+            setStickers(initialStickers)
+          }
+        }
+        img.onerror = () => {
+          loadedCount++
+          if (loadedCount === initialStickers.length) {
+            setStickers(initialStickers)
+          }
+        }
+        img.src = sticker.src
+      })
+    }
+  }, [isEditMode, prevPlaylistData])
+
   // stickers가 변경될 때마다 다시 그리기
   useEffect(() => {
     drawStickers()
@@ -754,9 +854,9 @@ const CustomizeStep2 = ({
         <CdAreaWrap>
           <CdCustomContainer>
             <canvas
-              ref={cdContainerRef}
               width={280}
               height={280}
+              ref={cdContainerRef}
               style={{ touchAction: 'none', WebkitUserSelect: 'none', WebkitTouchCallout: 'none' }}
               onMouseDown={handlePointerDown}
               onMouseMove={handlePointerMove}

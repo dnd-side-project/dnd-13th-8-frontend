@@ -6,6 +6,7 @@ import type {
   YouTubeVideoInfo,
   FinalPlaylistPayload,
   FinalPlaylistResponse,
+  EditPlaylistPayload,
 } from '@/features/customize/types/customize'
 import { api } from '@/shared/api/httpClient'
 
@@ -39,4 +40,9 @@ export const postUserSticker = (payload: UserStickerPayload) => {
 // 플레이리스트 생성: 세션 임시본 사용 + cd 요청
 export const postFinalPlaylist = (payload: FinalPlaylistPayload) => {
   return api.post<FinalPlaylistResponse>('/main/mypage/playlists/final', payload)
+}
+
+// 플레이리스트 수정: 세션 임시본 사용 + cd 수정
+export const patchEditPlaylist = (payload: EditPlaylistPayload) => {
+  return api.patch<FinalPlaylistResponse>('/main/mypage/playlists/final', payload)
 }

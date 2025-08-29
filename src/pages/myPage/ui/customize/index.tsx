@@ -5,6 +5,7 @@ import { Loading, Modal } from '@shared/ui'
 import type { ModalProps } from '@shared/ui/Modal'
 
 import { useMyPagePlaylist } from '@/entities/playlist/model/useMyPlaylist'
+import type { MyPlaylistResponse } from '@/entities/playlist/types/playlist'
 import CustomizeStep1 from '@/pages/myPage/ui/customize/step1'
 import CustomizeStep2 from '@/pages/myPage/ui/customize/step2'
 import CustomizeStep3 from '@/pages/myPage/ui/customize/step3'
@@ -17,6 +18,8 @@ export interface CustomizeStepProps {
   currentCdId?: number | null
   setCurrentCdId?: (cdId: number | null) => void
   setModal: (modal: ModalProps) => void
+  isEditMode: boolean
+  prevPlaylistData?: MyPlaylistResponse
 }
 
 const Customize = () => {
@@ -47,8 +50,6 @@ const Customize = () => {
     isEditMode ? Number(playlistId) : -1
   )
 
-  console.log(playlistData)
-
   useEffect(() => {
     if (isError) {
       navigate('/error')
@@ -66,6 +67,8 @@ const Customize = () => {
           currentStep={currentStep}
           setCurrentStep={setCurrentStep}
           setModal={setModal}
+          isEditMode={isEditMode}
+          prevPlaylistData={playlistData}
         />
       )}
 
@@ -75,6 +78,8 @@ const Customize = () => {
           setCurrentStep={setCurrentStep}
           setCurrentCdId={setCurrentCdId}
           setModal={setModal}
+          isEditMode={isEditMode}
+          prevPlaylistData={playlistData}
         />
       )}
 

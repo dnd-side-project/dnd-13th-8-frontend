@@ -1,4 +1,4 @@
-import type { StickerThemeType } from '@/pages/myPage/types/mypage'
+import type { StickerThemeType, StickerThemeUpperType } from '@/pages/myPage/types/mypage'
 
 export const STICKER_THEME_LIST: { id: StickerThemeType; name: string }[] = [
   { id: 'deulak', name: '들락' },
@@ -12,6 +12,19 @@ export const STICKER_THEME_LIST: { id: StickerThemeType; name: string }[] = [
   { id: 'metal', name: '메탈' },
 ]
 
+export const BACKEND_TO_FRONT_THEME: Record<StickerThemeUpperType, StickerThemeType> = {
+  DEULAK: 'deulak',
+  BACKGROUND: 'background',
+  VINTAGE: 'vintage',
+  HANDDRAWN: 'handdrawn',
+  'PEOPLE&ANIMALS': 'people&animals',
+  NEONOBJECT: 'neonObject',
+  TRANSPORT: 'transport',
+  '3D': '3d',
+  METAL: 'metal',
+  USER: 'user',
+}
+
 export const THEME_IMAGES_MAP = {
   deulak: import.meta.glob('@/assets/customize/deulak/*.png', { eager: true }),
   background: import.meta.glob('@/assets/customize/background/*.png', { eager: true }),
@@ -24,13 +37,16 @@ export const THEME_IMAGES_MAP = {
   metal: import.meta.glob('@/assets/customize/metal/*.png', { eager: true }),
 }
 
-export const getCurrentThemeImages = (currentThemeId: StickerThemeType) => {
+export const getCurrentThemeImages = (currentThemeId: StickerThemeType | StickerThemeUpperType) => {
+  // 백엔드 대문자 테마 → 프론트 소문자 테마 변환
+  const normalized =
+    BACKEND_TO_FRONT_THEME[currentThemeId as StickerThemeUpperType] ??
+    (currentThemeId as StickerThemeType)
+
   // user는 커스텀 스티커이므로 빈 객체 리턴
-  if (currentThemeId.toLowerCase() === 'user') {
+  if (normalized === 'user') {
     return {}
   }
 
-  return (
-    THEME_IMAGES_MAP[currentThemeId as keyof typeof THEME_IMAGES_MAP] || THEME_IMAGES_MAP.deulak
-  )
+  return THEME_IMAGES_MAP[normalized as keyof typeof THEME_IMAGES_MAP] || THEME_IMAGES_MAP.deulak
 }

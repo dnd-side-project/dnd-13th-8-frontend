@@ -6,7 +6,7 @@ export interface MyCdInfo {
   isRepresentative: boolean
 }
 
-export type MyCdListResponse = MyCdInfo[]
+export type MyCdListResponse = (MyCdInfo & OnlyCdResponse)[]
 
 export interface MyFollowingInfo {
   creatorId: string
@@ -37,12 +37,15 @@ export interface CdCustomDataResponse {
   cdItems: CdCustomData[]
 }
 
-export interface MyPlaylistResponse extends MyCdInfo {
-  songs: Track[]
-  genre: MusicGenreId
+export interface OnlyCdResponse {
   onlyCdResponse: {
     cdItems: CdCustomData[]
   }
+}
+
+export interface MyPlaylistResponse extends MyCdInfo, OnlyCdResponse {
+  songs: Track[]
+  genre: MusicGenreId
 }
 
 export interface Track {

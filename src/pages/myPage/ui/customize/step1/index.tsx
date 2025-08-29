@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 import { AnimatePresence, motion, Reorder, useDragControls } from 'framer-motion'
 import styled from 'styled-components'
-import { v4 as uuidv4 } from 'uuid'
 
 import { Cd, SvgButton, Input, BottomSheet, Loading } from '@shared/ui'
 import type { ModalProps } from '@shared/ui/Modal'
 
 import { DownArrow, Pin, PinPrimary, Share, Trash, HelpCircle, Drag, Cancel } from '@/assets/icons'
+import type { Track } from '@/entities/playlist/types/playlist'
 import { useTempSavePlaylist } from '@/features/customize/model/useCustomize'
 import { Divider } from '@/pages/myPage/ui/components'
 import type { CustomizeStepProps } from '@/pages/myPage/ui/customize'
@@ -17,25 +17,28 @@ import { MUSIC_GENRES } from '@/shared/config/musicGenres'
 import type { MusicGenre } from '@/shared/config/musicGenres'
 import { flexColCenter, flexRowCenter } from '@/shared/styles/mixins'
 
-const CustomizeStep1 = ({ currentStep, setCurrentStep, setModal }: CustomizeStepProps) => {
+const CustomizeStep1 = ({
+  currentStep,
+  setCurrentStep,
+  setModal,
+  isEditMode,
+  prevPlaylistData,
+}: CustomizeStepProps) => {
   const navigate = useNavigate()
-  const location = useLocation()
-  const routeState = location.state as { isPrimary: boolean }
   const dragControls = useDragControls()
 
   const { mutate, isPending } = useTempSavePlaylist()
 
-  const [isEditMode] = useState(false)
   const [isPopoverOpen, setIsPopoverOpen] = useState(false)
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false)
 
-  const [metaGenre, setMetaGenre] = useState<MusicGenre | null>(null)
-  const [metaTitle, setMetaTitle] = useState('')
-  const [linkMap, setLinkMap] = useState<{ id: string; link: string }[]>([])
-  const [linkErrorMap, setLinkErrorMap] = useState<{ [key: string]: string }>({})
-
-  // TODO: 초ㅣ초 생성 시 대표 플리 지정 백엔드에서 처리
-  const [isPrimary, setIsPrimary] = useState(routeState?.isPrimary ?? false)
+  const [metaGenre, setMetaGenre] = useState<MusicGenre | null>(
+    MUSIC_GENRES.find((genre) => genre.id === prevPlaylistData?.genre) ?? null
+  )
+  const [metaTitle, setMetaTitle] = useState(prevPlaylistData?.playlistName ?? '')
+  const [linkMap, setLinkMap] = useState<Track[]>([])
+  const [linkErrorMap, setLinkErrorMap] = useState<{ [key: number]: string }>({})
+  const [isPrimary, setIsPrimary] = useState(prevPlaylistData?.isRepresentative ?? false)
 
   const MAX_LINK_COUNT = 10
   const VALID_YOUTUBE_URLS = [
@@ -49,10 +52,7 @@ const CustomizeStep1 = ({ currentStep, setCurrentStep, setModal }: CustomizeStep
     if (isEditMode) {
       const fetchLinks = async () => {
         try {
-          const response = await fetch('/src/pages/myPage/mock/playlistLinks.json')
-          const data = await response.json()
-          setLinkMap(data)
-          setIsPrimary(true) // 비동기 작업 완료 후 상태 업데이트
+          setLinkMap(prevPlaylistData?.songs ?? [])
         } catch (error) {
           console.error('링크를 불러오는 데 실패했습니다:', error)
         }
@@ -60,7 +60,9 @@ const CustomizeStep1 = ({ currentStep, setCurrentStep, setModal }: CustomizeStep
       fetchLinks()
       return
     }
-    setLinkMap([{ id: uuidv4(), link: '' }])
+    setLinkMap([
+      { id: Date.now(), title: '', youtubeUrl: '', youtubeThumbnail: '', youtubeLength: 0 },
+    ])
   }, [])
 
   // 모달 close
@@ -74,7 +76,7 @@ const CustomizeStep1 = ({ currentStep, setCurrentStep, setModal }: CustomizeStep
       mutate(
         {
           videoPayload: {
-            videoLinks: linkMap.map(({ link }) => link),
+            videoLinks: linkMap.map(({ youtubeUrl }) => youtubeUrl),
           },
           metaInfo: {
             name: metaTitle,
@@ -99,7 +101,7 @@ const CustomizeStep1 = ({ currentStep, setCurrentStep, setModal }: CustomizeStep
   const isValidate = () => {
     const hasMetaEmpty = !metaGenre?.id || !metaTitle
     const hasLinkError = Object.values(linkErrorMap).some((error) => error)
-    const hasLinkEmpty = linkMap.some(({ link }) => !link.trim())
+    const hasLinkEmpty = linkMap.some(({ youtubeUrl }) => !youtubeUrl.trim())
     return !hasMetaEmpty && !hasLinkError && linkMap.length > 0 && !hasLinkEmpty
   }
 
@@ -111,21 +113,6 @@ const CustomizeStep1 = ({ currentStep, setCurrentStep, setModal }: CustomizeStep
 
   // 플레이리스트 삭제
   const onListDeleteClick = () => {
-    // TODO: 화면 구현용 임시 value, 추후 api 응답값 추가
-    const tmpPlaylistCount = 3
-
-    if (isEditMode && tmpPlaylistCount <= 1) {
-      setModal({
-        isOpen: true,
-        title: '플레이리스트가 2개 이상이어야 삭제할 수 있어요',
-        ctaType: 'single',
-        confirmText: '확인',
-        onClose: () => onModalClose(),
-        onConfirm: () => onModalClose(),
-      } as ModalProps)
-      return
-    }
-
     setModal({
       isOpen: true,
       title: '이 플레이리스트를 삭제할까요?',
@@ -156,14 +143,17 @@ const CustomizeStep1 = ({ currentStep, setCurrentStep, setModal }: CustomizeStep
       return
     }
 
-    const hasLinkEmpty = linkMap.some(({ link }) => !link.trim())
+    const hasLinkEmpty = linkMap.some(({ youtubeUrl }) => !youtubeUrl.trim())
     if (!hasLinkEmpty) {
-      setLinkMap((prev) => [...prev, { id: uuidv4(), link: '' }])
+      setLinkMap((prev) => [
+        ...prev,
+        { id: Date.now(), title: '', youtubeUrl: '', youtubeThumbnail: '', youtubeLength: 0 },
+      ])
     }
   }
 
   // 링크 input 입력값 유효성 검증
-  const checkLinkValid = (id: string, link: string) => {
+  const checkLinkValid = (id: number, link: string) => {
     const isValidYoutubeLink = VALID_YOUTUBE_URLS.some((url) => link.startsWith(url))
     const hasOnlyAllowedChars = /^[a-zA-Z0-9\-_./?=&:%]*$/.test(link)
 
@@ -175,13 +165,13 @@ const CustomizeStep1 = ({ currentStep, setCurrentStep, setModal }: CustomizeStep
   }
 
   // 링크 input onChange
-  const onLinkChange = (id: string, value: string) => {
+  const onLinkChange = (id: number, value: string) => {
     checkLinkValid(id, value)
-    setLinkMap((prev) => prev.map((l) => (l.id === id ? { ...l, link: value } : l)))
+    setLinkMap((prev) => prev.map((l) => (l.id === id ? { ...l, youtubeUrl: value } : l)))
   }
 
   // 링크 삭제
-  const onLinkRemoveClick = (id: string) => {
+  const onLinkRemoveClick = (id: number) => {
     if (linkMap.length === 1) {
       setModal({
         isOpen: true,
@@ -199,7 +189,7 @@ const CustomizeStep1 = ({ currentStep, setCurrentStep, setModal }: CustomizeStep
   }
 
   // 링크 순서 정렬
-  const onReSort = (newOrder: { id: string; link: string }[]) => {
+  const onReSort = (newOrder: Track[]) => {
     setLinkMap(newOrder)
   }
 
@@ -218,7 +208,7 @@ const CustomizeStep1 = ({ currentStep, setCurrentStep, setModal }: CustomizeStep
 
       <PlaylistControlWrap>
         <MetaContainer>
-          <Cd variant="lg" />
+          <Cd variant="lg" stickers={prevPlaylistData?.onlyCdResponse?.cdItems ?? []} />
           <InfoContainer>
             <GenreSelect onClick={() => setIsBottomSheetOpen(true)}>
               <span>{metaGenre?.label || '장르'}</span>
@@ -292,7 +282,7 @@ const CustomizeStep1 = ({ currentStep, setCurrentStep, setModal }: CustomizeStep
                   <Input
                     type="url"
                     placeholder="링크를 입력해주세요"
-                    value={item.link}
+                    value={item.youtubeUrl}
                     error={!!linkErrorMap[item.id]}
                     errorMessage={linkErrorMap[item.id]}
                     onChange={(e) => onLinkChange(item.id, e.target.value.trim())}
