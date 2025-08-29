@@ -10,6 +10,7 @@ import { flexColCenter } from '@/shared/styles/mixins'
 import { Button, Cd, Header, LiveInfo } from '@/shared/ui'
 import { ActionBar, ProgressBar } from '@/widgets/playlist'
 import ControlBar from '@/widgets/playlist/ControlBar'
+import VolumeButton from '@/widgets/playlist/VolumeButton'
 
 interface PlaylistSlideProps {
   data: PlaylistInfo
@@ -21,6 +22,9 @@ interface PlaylistSlideProps {
   onNext: () => void
   onPrev: () => void
   onSelectTrack: (trackIndex: number, time?: number) => void
+  playerRef: React.RefObject<YT.Player | null>
+  isMuted: boolean | null
+  setIsMuted: React.Dispatch<React.SetStateAction<boolean | null>>
   type?: 'My' | 'Discover'
 }
 
@@ -34,6 +38,9 @@ const PlaylistLayout = ({
   onNext,
   onPrev,
   onSelectTrack,
+  playerRef,
+  isMuted,
+  setIsMuted,
   type = 'Discover',
 }: PlaylistSlideProps) => {
   const navigate = useNavigate()
@@ -75,6 +82,7 @@ const PlaylistLayout = ({
             꾸미기
           </Button>
         )}
+        <VolumeButton playerRef={playerRef} isMuted={isMuted} setIsMuted={setIsMuted} />
       </Container>
       <Wrapper>
         <Cd variant="xxl" bgColor="none" />

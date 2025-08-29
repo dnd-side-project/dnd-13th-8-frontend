@@ -32,6 +32,7 @@ const DiscoverPage = () => {
   } = usePlaylist()
   const playerRef = useRef<YT.Player | null>(null)
   const [showCoachmark, setShowCoachmark] = useState(false)
+  const [isMuted, setIsMuted] = useState<boolean | null>(null)
   const navigate = useNavigate()
 
   // 코치마크
@@ -169,6 +170,9 @@ const DiscoverPage = () => {
                   if (!isPlaying) play()
                 }
               }}
+              playerRef={playerRef}
+              isMuted={isMuted}
+              setIsMuted={setIsMuted}
             />
           </Slide>
         ))}
@@ -179,6 +183,10 @@ const DiscoverPage = () => {
           videoId={videoId}
           onReady={(event) => {
             playerRef.current = event.target
+
+            // 현 상태 참조해서 동기화
+            setIsMuted(playerRef.current?.isMuted() ?? null)
+
             if (isPlaying) {
               playerRef.current?.seekTo(currentTime, true)
               playerRef.current?.playVideo()
