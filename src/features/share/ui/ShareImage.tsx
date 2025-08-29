@@ -1,12 +1,15 @@
 import styled from 'styled-components'
 
 import { WaterMark } from '@/assets/icons'
-import { Cd } from '@/shared/ui'
 
-const ShareImage = () => {
+interface ShareImageProps {
+  children: React.ReactNode
+}
+
+const ShareImage = ({ children }: ShareImageProps) => {
   return (
     <ImagePreview>
-      <Cd variant="share" bgColor="none" />
+      {children}
       <WaterMarkWrapper>
         <WaterMark />
       </WaterMarkWrapper>

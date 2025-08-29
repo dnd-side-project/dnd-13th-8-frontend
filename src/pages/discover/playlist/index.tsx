@@ -3,9 +3,10 @@ import { useNavigate, useParams } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { Cancel } from '@/assets/icons'
-import PlaylistData from '@/pages/discover/playlistData.json'
+import { usePlaylistDetail } from '@/entities/playlist'
+import { getGenreLabel } from '@/shared/lib'
 import { flexColCenter } from '@/shared/styles/mixins'
-import { Header, Link, SvgButton } from '@/shared/ui'
+import { Error, Header, Link, Loading, SvgButton } from '@/shared/ui'
 import { PlaylistHorizontal } from '@/widgets/playlist'
 
 const PlaylistInfoPage = () => {
@@ -13,8 +14,23 @@ const PlaylistInfoPage = () => {
 
   const { id } = useParams<{ id: string }>()
 
-  // TODO : 실제 서버 요청으로 변경 (현재는 로컬 JSON으로 테스트용)
-  const playlist = PlaylistData.find((p) => p.id === Number(id))
+  const { data: playlistData, isLoading, isError } = usePlaylistDetail(Number(id))
+
+  if (isError || !playlistData) {
+    return (
+      <NoDataWrapper>
+        <Error />
+      </NoDataWrapper>
+    )
+  }
+
+  if (isLoading) {
+    return (
+      <NoDataWrapper>
+        <Loading isLoading width="100%" height="100%" />
+      </NoDataWrapper>
+    )
+  }
 
   return (
     <Wrapper>
@@ -24,13 +40,13 @@ const PlaylistInfoPage = () => {
       />
       <Content>
         <PlaylistHorizontal
-          genre={playlist?.genre || ''}
-          title={playlist?.title || ''}
-          username={playlist?.username || ''}
+          genre={getGenreLabel(playlistData?.genre || '')}
+          title={playlistData?.playlistName || ''}
+          username={playlistData?.creatorNickname || ''}
         />
         <TrackInfo>
-          {playlist &&
-            playlist.tracks.map((track, index) => (
+          {playlistData.songs &&
+            playlistData.songs.map((track, index) => (
               <Link key={index} data={track} variant="large" />
             ))}
         </TrackInfo>
@@ -54,4 +70,11 @@ const TrackInfo = styled.div`
   display: flex;
   flex-direction: column;
   gap: 20px;
+`
+
+const NoDataWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 60dvh;
 `

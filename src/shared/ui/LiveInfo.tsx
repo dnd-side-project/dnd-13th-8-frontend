@@ -1,5 +1,3 @@
-import { useState } from 'react'
-
 import styled from 'styled-components'
 
 import { User } from '@/assets/icons'
@@ -10,12 +8,9 @@ interface LiveInfoProps {
   isOwner: boolean
 }
 
-const LiveInfo = ({ isOnAir: initialOnAir, listenerCount, isOwner }: LiveInfoProps) => {
-  const [isOnAir, setIsOnAir] = useState(initialOnAir)
-
+const LiveInfo = ({ isOnAir, listenerCount, isOwner }: LiveInfoProps) => {
   const handleToggleOnAir = () => {
     if (!isOwner) return
-    setIsOnAir((prev) => !prev)
     // TODO: 서버 API 호출
   }
 

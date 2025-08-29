@@ -1,3 +1,5 @@
 export { default as Profile } from './img_profile.png'
 export { default as ExpandBtn } from './img_expand_btn.png'
 export { default as TrashBtn } from './img_trash_btn.png'
+export { default as MemberCharacter } from './img_character_member.png'
+export { default as GuestCharacter } from './img_character_guest.png'

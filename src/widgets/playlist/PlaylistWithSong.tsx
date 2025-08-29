@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import styled, { useTheme } from 'styled-components'
 
 import { Play } from '@/assets/icons'
-import type { Track } from '@/entities/playlist/model/types'
+import type { Track } from '@/entities/playlist'
 import { flexRowCenter } from '@/shared/styles/mixins'
 import Cd from '@/shared/ui/Cd'
 import Link from '@/shared/ui/Link'

@@ -1,6 +1,12 @@
+import { useState, useRef, useEffect } from 'react'
+
 import styled from 'styled-components'
 
-import { Comment, type CommentData } from '@/entities/comment'
+import { Comment } from '@/entities/comment'
+import { useUserInfo } from '@/features/auth/model/useAuth'
+import { parseMessage } from '@/features/chat'
+import { useChatSocket } from '@/features/chat/model/sendMessage'
+import { useInfiniteChatHistory } from '@/features/chat/model/useChat'
 import { flexColCenter } from '@/shared/styles/mixins'
 import { BottomSheet } from '@/shared/ui'
 import ChatInput from '@/widgets/chat/ChatInput'
@@ -10,24 +16,63 @@ import EmojiCarousel from './EmojiCarousel'
 interface ChatBottomSheetProps {
   isOpen: boolean
   onClose: () => void
-  comments?: CommentData[]
+  roomId: string
 }
 
-const ChatBottomSheet = ({ isOpen, onClose, comments }: ChatBottomSheetProps) => {
+const ChatBottomSheet = ({ isOpen, onClose, roomId }: ChatBottomSheetProps) => {
+  const [input, setInput] = useState('')
+  const scrollRef = useRef<HTMLDivElement>(null)
+
+  const { messages: socketMessages, sendMessage } = useChatSocket(roomId)
+  const {
+    data: historyData,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteChatHistory(roomId)
+  const { data: userData } = useUserInfo()
+
+  const historyMessages = historyData?.pages.flatMap((page) => page.messages) ?? []
+
+  // 히스토리 + 실시간 메시지 합치고 오래된 순으로 정렬
+  const allMessages = [...historyMessages, ...socketMessages].sort(
+    (a, b) => new Date(a.sentAt!).getTime() - new Date(b.sentAt!).getTime()
+  )
+
+  // 스크롤 맨 아래 유지
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight
+    }
+  }, [allMessages.length])
+
+  // 스크롤 이벤트로 이전 메시지 불러오기
+  const handleScroll = () => {
+    if (!scrollRef.current) return
+    if (scrollRef.current.scrollTop === 0 && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage()
+    }
+  }
+
   return (
     <BottomSheet isOpen={isOpen} onClose={onClose} height="fit-content">
       <Title>실시간 채팅</Title>
-      <CommentSection>
-        {comments && comments.length > 0 ? (
-          comments.map((msg) => (
-            <Comment
-              key={msg.id}
-              profileUrl={msg.profileImg}
-              name={msg.userName}
-              comment={msg.content}
-              role={msg.role}
-            />
-          ))
+      <CommentSection ref={scrollRef} onScroll={handleScroll}>
+        {allMessages.length > 0 ? (
+          allMessages.map((msg) => {
+            const { Icon, text } = parseMessage(msg.content)
+            // TODO : role 실제 값으로 변경 필요
+            return (
+              <Comment
+                profileUrl={msg.profileImage ?? undefined}
+                key={msg.messageId}
+                name={msg.username || '익명'}
+                comment={text}
+                Icon={Icon || undefined}
+                role={msg.systemMessage ? 'mine' : 'owner'}
+              />
+            )
+          })
         ) : (
           <Message>
             <EmptyText>아직 채팅이 없습니다</EmptyText>
@@ -36,8 +81,26 @@ const ChatBottomSheet = ({ isOpen, onClose, comments }: ChatBottomSheetProps) =>
         )}
       </CommentSection>
       <BottomSection>
-        <EmojiCarousel />
-        <ChatInput />
+        <EmojiCarousel
+          onClick={(value) => {
+            if (!value) return
+            if (userData?.userId && userData?.username) {
+              sendMessage(userData.userId, userData.username, value)
+            }
+          }}
+        />
+        <ChatInput
+          value={input}
+          onChange={setInput}
+          onSend={() => {
+            if (input.trim()) {
+              if (userData?.userId && userData?.username) {
+                sendMessage(userData.userId, userData.username, input)
+              }
+              setInput('')
+            }
+          }}
+        />
       </BottomSection>
     </BottomSheet>
   )

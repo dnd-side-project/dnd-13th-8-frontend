@@ -10,6 +10,7 @@ interface CommentProps {
   name: string
   comment: string
   role: 'owner' | 'mine' | 'other'
+  Icon?: React.ComponentType<React.SVGProps<SVGSVGElement>>
 }
 
 const COMMENT_OPTIONS = {
@@ -21,7 +22,7 @@ const COMMENT_OPTIONS = {
   other: [{ text: '신고하기', type: 'report' }],
 } as const
 
-const Comment = ({ profileUrl, name, comment, role }: CommentProps) => {
+const Comment = ({ profileUrl, name, comment, role, Icon }: CommentProps) => {
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false)
 
   const handleOptionClick = (type: 'delete' | 'report') => {
@@ -40,7 +41,10 @@ const Comment = ({ profileUrl, name, comment, role }: CommentProps) => {
         <Profile size="S" profileUrl={profileUrl} />
         <TextBox>
           <Name>{name}</Name>
-          <Text>{comment}</Text>
+          <Text>
+            {Icon && <Icon width={20} height={20} />}
+            {comment}
+          </Text>
         </TextBox>
         <SvgButton width={20} height={20} icon={Menu} onClick={() => setIsBottomSheetOpen(true)} />
       </CommentWrapper>
@@ -74,6 +78,7 @@ const CommentWrapper = styled.div`
 const TextBox = styled.div`
   display: flex;
   flex-direction: column;
+  gap: 4px;
   flex: 1;
 `
 
@@ -85,6 +90,8 @@ const Name = styled.span`
 const Text = styled.span`
   ${({ theme }) => theme.FONT['body2-normal']};
   color: ${({ theme }) => theme.COLOR['gray-50']};
+  display: flex;
+  gap: 6px;
 `
 const StyledButton = styled.button<{ $optionType: 'delete' | 'report' }>`
   width: 100%;

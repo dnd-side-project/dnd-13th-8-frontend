@@ -1,22 +1,36 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import styled from 'styled-components'
 
 import { AddUser } from '@/assets/icons'
+import { useAuthStore } from '@/features/auth/store/authStore'
 import { useFollow } from '@/features/follow'
-import { BottomSheet, Button, SvgButton } from '@/shared/ui'
+import { BottomSheet, Button, Modal, SvgButton } from '@/shared/ui'
 import { SearchResultItem } from '@/widgets/search'
 
 interface FollowButtonProps {
   isFollowing: boolean
-  userId: number
+  playlistId: number
   userName: string
   profile?: string
 }
 
-const FollowButton = ({ isFollowing, userId, userName, profile }: FollowButtonProps) => {
+const FollowButton = ({ isFollowing, playlistId, userName, profile }: FollowButtonProps) => {
+  const navigate = useNavigate()
+  const { isLogin } = useAuthStore()
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false)
-  const { isFollowing: following, toggleFollow } = useFollow(userId, isFollowing)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const { isFollowing: following, toggleFollow } = useFollow(Number(playlistId), isFollowing)
+
+  const handleFollowClick = () => {
+    if (isLogin) {
+      toggleFollow()
+      setIsBottomSheetOpen(false)
+    } else {
+      setIsModalOpen(true)
+    }
+  }
 
   return (
     <>
@@ -30,11 +44,34 @@ const FollowButton = ({ isFollowing, userId, userName, profile }: FollowButtonPr
         >
           <UserInfoRow>
             <SearchResultItem type="USER" searchResult={userName} imageUrl={profile} />
-            <Button size="S" state={following ? 'secondary' : 'primary'} onClick={toggleFollow}>
+            <Button
+              size="S"
+              state={following ? 'secondary' : 'primary'}
+              onClick={handleFollowClick}
+            >
               {following ? '팔로잉' : '팔로우'}
             </Button>
           </UserInfoRow>
         </BottomSheet>
+      )}
+
+      {isModalOpen && (
+        <Modal
+          isOpen={isModalOpen}
+          title="로그인 후 이용할 수 있어요"
+          ctaType="double"
+          onConfirm={() => {
+            navigate('/login')
+            setIsModalOpen(false)
+          }}
+          onCancel={() => {
+            setIsModalOpen(false)
+            setIsBottomSheetOpen(false)
+          }}
+          onClose={() => setIsModalOpen(false)}
+          confirmText="로그인하기"
+          cancelText="다음에 하기"
+        />
       )}
     </>
   )

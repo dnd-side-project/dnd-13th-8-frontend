@@ -7,14 +7,23 @@ import styled from 'styled-components'
 interface ScrollCarouselProps {
   children: React.ReactNode
   gap: number
+  onSelectIndex?: (index: number) => void
+  options?: Partial<Parameters<typeof useEmblaCarousel>[0]> // Embla 옵션 오버라이드용
 }
-const ScrollCarousel = ({ children, gap }: ScrollCarouselProps) => {
-  const [emblaRef, emblaApi] = useEmblaCarousel({ dragFree: true })
+
+const ScrollCarousel = ({ children, gap, onSelectIndex, options }: ScrollCarouselProps) => {
+  const defaultOptions = { dragFree: true }
+  const emblaOptions = { ...defaultOptions, ...options }
+  const [emblaRef, emblaApi] = useEmblaCarousel(emblaOptions)
   const [, setActiveIndex] = useState(0)
 
   useEffect(() => {
     if (!emblaApi) return
-    const onSelect = () => setActiveIndex(emblaApi.selectedScrollSnap())
+    const onSelect = () => {
+      const index = emblaApi.selectedScrollSnap()
+      setActiveIndex(index)
+      onSelectIndex?.(index) // 상위로 index 전달
+    }
     emblaApi.on('select', onSelect)
     onSelect()
 
