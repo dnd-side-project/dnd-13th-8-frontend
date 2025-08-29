@@ -35,7 +35,7 @@ export const Default: Story = {
   args: {
     type: 'text',
     placeholder: '텍스트를 입력하세요',
-    width: '375px',
+    width: '430px',
   },
 }
 
@@ -46,7 +46,7 @@ export const SearchInput: Story = {
     icon: Search,
     iconPosition: 'left',
     onClickIcon: () => alert('검색!'),
-    width: '375px',
+    width: '430px',
   },
 }
 

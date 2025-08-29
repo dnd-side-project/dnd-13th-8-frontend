@@ -12,7 +12,7 @@ export default Divider
 const StyledDivider = styled.div<{ $deviceType: DeviceType }>`
   margin: 0 -20px;
   width: ${({ $deviceType }) =>
-    $deviceType === 'mobile' ? 'clamp(320px, 100dvw, 430px)' : '375px'};
+    $deviceType === 'mobile' ? 'clamp(320px, 100dvw, 430px)' : '430px'};
   height: 12px;
   background-color: ${({ theme }) => theme.COLOR['gray-800']};
 `

@@ -53,7 +53,7 @@ const Page = () => {
 
     return (
       <>
-        <div style={{ width: '375px', backgroundColor: '#0f1013', padding: '0 20px' }}>
+        <div style={{ width: '430px', backgroundColor: '#0f1013', padding: '0 20px' }}>
           <ContentHeader totalCount={10} currentSort={currentSort} onSortChange={setCurrentSort} />
         </div>
         <br />
