@@ -1,8 +1,7 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import type { YouTubeEvent } from 'react-youtube'
 
-import type { InfiniteData } from '@tanstack/react-query'
 import styled from 'styled-components'
 
 import { usePlaylist } from '@/app/providers/PlayerProvider'
@@ -11,8 +10,6 @@ import {
   usePlaylistStartMutation,
   usePlaylistViewCounts,
   useShufflePlaylists,
-  type Cursor,
-  type PlaylistResponse,
 } from '@/entities/playlist'
 import { SwipeCarousel } from '@/features/swipe'
 import { DiscoverCoachMark } from '@/pages/discover/ui'
@@ -55,10 +52,7 @@ const DiscoverPage = () => {
   const { mutate: confirmPlaylist } = usePlaylistConfirmMutation()
   const { refetch: refetchViewCounts } = usePlaylistViewCounts(currentPlaylist?.playlistId || 0)
 
-  const playlists =
-    (data as unknown as InfiniteData<PlaylistResponse, Cursor>)?.pages.flatMap(
-      (page) => page.content
-    ) || []
+  const playlists = useMemo(() => data?.pages.flatMap((page) => page.content) ?? [], [data])
 
   const videoId = currentPlaylist
     ? getVideoId(currentPlaylist.songs[currentTrackIndex]?.youtubeUrl)
