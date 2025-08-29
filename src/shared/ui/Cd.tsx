@@ -7,7 +7,7 @@ import { THEME_PROP_ID_OFFSET } from '@/pages/myPage/types/mypage'
 import { flexRowCenter } from '@/shared/styles/mixins'
 
 interface CdProps {
-  variant: 'xxl' | 'xl' | 'lg' | 'md' | 'sm' | 'xs' | 'share' | 'customize'
+  variant: 'xxl' | 'xl' | 'lg' | 'md' | 'sm' | 'xs' | 'share' | 'customize' | 'carousel'
   bgColor?: 'none' | 'default' | 'dark'
   stickers?: CdCustomData[]
 }
@@ -72,7 +72,7 @@ const Cd = ({ variant, bgColor = 'default', stickers }: CdProps) => {
           />
         )
       })}
-      <Overlay width="100%" height="100%" />
+      <StyledOverlay width="100%" height="100%" />
     </Base>
   )
 
@@ -96,6 +96,7 @@ const sizeMap = {
   xs: { container: 56, base: 48, borderRadius: 6 },
   share: { container: 280, base: 220, borderRadius: 24 },
   customize: { container: 220, base: 220, borderRadius: 0 },
+  carousel: { container: 180, base: 180, borderRadius: 0 },
 } as const
 
 interface StyleProps {
@@ -122,4 +123,10 @@ const Base = styled.div<StyleProps>`
   border-radius: 100%;
   background: ${({ theme }) => theme.GRADIENT.hologram};
   overflow: hidden;
+`
+
+const StyledOverlay = styled(Overlay)`
+  position: absolute;
+  top: 0;
+  left: 0;
 `

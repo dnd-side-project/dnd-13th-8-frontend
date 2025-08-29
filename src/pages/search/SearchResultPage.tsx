@@ -174,6 +174,7 @@ const SearchResultPage = () => {
                       imageUrl={item.tracks?.[0]?.youtubeThumbnail ?? ''}
                       userName={item.type === 'PLAYLIST' ? item.creatorNickname : undefined}
                       onClick={() => handleItemClick(item.playlistId)}
+                      stickers={item.onlyCdResponse?.cdItems}
                     />
                   ))
                 : categorySearchResult.map((item: Playlist) => (
@@ -183,6 +184,7 @@ const SearchResultPage = () => {
                       searchResult={item.playlistName}
                       userName={item.creatorNickname}
                       onClick={() => handleItemClick(item.playlistId)}
+                      stickers={item.onlyCdResponse?.cdItems}
                     />
                   ))}
             </ResultList>

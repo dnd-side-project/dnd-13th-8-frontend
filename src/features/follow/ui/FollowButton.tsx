@@ -21,7 +21,10 @@ const FollowButton = ({ isFollowing, playlistId, userName, profile }: FollowButt
   const { isLogin } = useAuthStore()
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const { isFollowing: following, toggleFollow } = useFollow(Number(playlistId), isFollowing)
+  const { isFollowing: following, toggleFollow } = useFollow(
+    Number(playlistId),
+    isLogin ? isFollowing : false
+  )
 
   const handleFollowClick = () => {
     if (isLogin) {

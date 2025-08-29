@@ -5,19 +5,16 @@ import useEmblaCarousel from 'embla-carousel-react'
 import styled, { css } from 'styled-components'
 
 import { GuestCharacter, MemberCharacter } from '@/assets/images'
+import type { PlaylistInfo } from '@/entities/playlist'
 import { BUTTON_TEXT } from '@/pages/home/config/messages'
+import { getGenreLabel } from '@/shared/lib'
 import { flexColCenter, flexRowCenter } from '@/shared/styles/mixins'
-import { Button, Badge } from '@/shared/ui'
+import { Button, Badge, Cd } from '@/shared/ui'
 
 import { DotButton, useDotButton } from './DotButton'
 
-interface SlideData {
-  title: string
-  genre: string
-}
-
 interface LoopCarouselProps {
-  data: SlideData[]
+  data: PlaylistInfo[]
   isLogin: boolean
 }
 
@@ -63,11 +60,12 @@ const LoopCarousel = ({ data, isLogin }: LoopCarouselProps) => {
           </EmblaSlide>
 
           {data.map((slide, index) => (
-            <EmblaSlide key={index}>
+            <EmblaSlide key={slide.playlistId}>
               <Slide $active={activeIndex === index + 1}>
+                <Cd variant="carousel" bgColor="none" stickers={slide.cdItems} />
                 <SlideOverlay $active={activeIndex === index + 1}>
-                  <Badge size="large" text={slide.genre} />
-                  <Title>{slide.title}</Title>
+                  <Badge size="large" text={getGenreLabel(slide.genre)} />
+                  <Title>{slide.playlistName}</Title>
                 </SlideOverlay>
               </Slide>
             </EmblaSlide>

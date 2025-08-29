@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import styled, { useTheme } from 'styled-components'
 
 import { Play } from '@/assets/icons'
-import type { Track } from '@/entities/playlist'
+import type { CdCustomData, Track } from '@/entities/playlist'
 import { flexRowCenter } from '@/shared/styles/mixins'
 import Cd from '@/shared/ui/Cd'
 import Link from '@/shared/ui/Link'
@@ -14,9 +14,10 @@ interface PlaylistWithSongProps {
   id: number
   username: string
   songs: Track[]
+  stickers?: CdCustomData[]
 }
 
-const PlaylistWithSong = ({ id, title, username, songs }: PlaylistWithSongProps) => {
+const PlaylistWithSong = ({ id, title, username, songs, stickers }: PlaylistWithSongProps) => {
   const navigate = useNavigate()
   const theme = useTheme()
 
@@ -27,7 +28,7 @@ const PlaylistWithSong = ({ id, title, username, songs }: PlaylistWithSongProps)
   return (
     <Wrapper>
       <TopContainer>
-        <Cd variant="sm" bgColor="dark" />
+        <Cd variant="sm" bgColor="dark" stickers={stickers} />
         <InfoBox>
           <InfoText>
             <Title>{title}</Title>

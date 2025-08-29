@@ -1,9 +1,11 @@
+import { useMemo } from 'react'
 import { createSearchParams, useNavigate } from 'react-router-dom'
 
 import styled, { css } from 'styled-components'
 
 import { CARD_IMAGES_LARGE } from '@/assets/card'
 import { Logo, Notification, Search } from '@/assets/icons'
+import { useShufflePlaylists } from '@/entities/playlist'
 import { useAuthStore } from '@/features/auth/store/authStore'
 import {
   useRecommendationsByRecent,
@@ -25,6 +27,9 @@ const HomePage = () => {
   const { data: RecentData } = useRecommendationsByRecent()
   const { data: FollowData } = useRecommendationsByFollow()
   const { data: GenreData } = useRecommendedGenres()
+  const { data } = useShufflePlaylists(4)
+
+  const playlists = useMemo(() => data?.pages.flatMap((page) => page.content) ?? [], [data])
 
   const handleKeywordSearch = (genreCode: string) => {
     navigate({
@@ -49,9 +54,8 @@ const HomePage = () => {
 
       <FirstSection>
         <h1>{isLogin ? TITLE_TEXT.MEMBER(userInfo.username) : TITLE_TEXT.GUEST}</h1>
-        <LoopCarousel data={loopCarouselData} isLogin={isLogin} />
+        <LoopCarousel data={playlists} isLogin={isLogin} />
       </FirstSection>
-
       <SecondSection>
         <h1>퇴근길, 귀에 붙는 노래</h1>
         <ScrollCarousel gap={14}>
@@ -61,6 +65,7 @@ const HomePage = () => {
               key={item.playlistId}
               title={item.playlistName}
               username={item.creatorNickname}
+              stickers={item.onlyCdResponse?.cdItems}
             />
           ))}
         </ScrollCarousel>
@@ -76,6 +81,7 @@ const HomePage = () => {
               title={playlist.playlistName}
               username={playlist.creatorNickname}
               songs={playlist.songs}
+              stickers={playlist.onlyCdResponse?.cdItems}
             />
           ))}
         </ScrollCarousel>
@@ -157,23 +163,3 @@ const FourthSection = styled.section`
   ${sectionCommonLayout}
   padding: 16px 20px 48px 20px;
 `
-
-// mock data
-const loopCarouselData = [
-  {
-    title: '플레이리스트 #1',
-    genre: '힙합',
-  },
-  {
-    title: '플레이리스트 #2',
-    genre: '락',
-  },
-  {
-    title: '플레이리스트 #3',
-    genre: '발라드',
-  },
-  {
-    title: '플레이리스트 #4',
-    genre: '클래식',
-  },
-]
