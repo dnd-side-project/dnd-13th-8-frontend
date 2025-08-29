@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import { useAuthStore } from '@features/auth/store/authStore'
-
 import { Modal } from '@shared/ui'
+
+import { useAuthStore } from '@/features/auth/store/authStore'
 
 interface PrivateRouteProps {
   children: React.ReactNode
@@ -11,7 +11,7 @@ interface PrivateRouteProps {
 
 const PrivateRoute = ({ children }: PrivateRouteProps) => {
   const navigate = useNavigate()
-  const { isLogin } = useAuthStore()
+  const isLogin = useAuthStore((s) => s.isLogin)
 
   const [isModalOpen, setIsModalOpen] = useState(!isLogin)
 
