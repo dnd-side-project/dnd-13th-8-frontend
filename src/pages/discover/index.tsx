@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import type { YouTubeEvent } from 'react-youtube'
 
 import styled from 'styled-components'
@@ -7,6 +7,7 @@ import styled from 'styled-components'
 import { usePlaylist } from '@/app/providers/PlayerProvider'
 import {
   usePlaylistConfirmMutation,
+  usePlaylistDetail,
   usePlaylistStartMutation,
   usePlaylistViewCounts,
   useShufflePlaylists,
@@ -33,7 +34,6 @@ const DiscoverPage = () => {
   const playerRef = useRef<YT.Player | null>(null)
   const [showCoachmark, setShowCoachmark] = useState(false)
   const [isMuted, setIsMuted] = useState<boolean | null>(null)
-  const navigate = useNavigate()
 
   // 코치마크
   useEffect(() => {
@@ -48,12 +48,51 @@ const DiscoverPage = () => {
     localStorage.setItem('hasSeenDiscoverCoachmark', 'true')
   }
 
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useShufflePlaylists()
   const { mutate: startPlaylist } = usePlaylistStartMutation()
   const { mutate: confirmPlaylist } = usePlaylistConfirmMutation()
   const { refetch: refetchViewCounts } = usePlaylistViewCounts(currentPlaylist?.playlistId || 0)
+  const { data: playlistDetail } = usePlaylistDetail(Number(playlistId))
+  const {
+    data: shuffleData,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useShufflePlaylists()
 
-  const playlists = useMemo(() => data?.pages.flatMap((page) => page.content) ?? [], [data])
+  // shuffleData에서 실제 playlist 배열만 추출
+  const shufflePlaylists = shuffleData?.pages.flatMap((page) => page.content) ?? []
+
+  // PlaylistDetailResponse → PlaylistInfo 변환
+  const playlistAsInfo = useMemo(() => {
+    if (!playlistDetail) return null
+    return {
+      playlistId: playlistDetail.playlistId,
+      playlistName: playlistDetail.playlistName,
+      genre: playlistDetail.genre,
+      songs: playlistDetail.songs,
+      representative: playlistDetail.representative,
+      creator: {
+        creatorId: playlistDetail.creatorId,
+        creatorNickname: playlistDetail.creatorNickname,
+      },
+      onlyCdResponse: playlistDetail.onlyCdResponse,
+    }
+  }, [playlistDetail])
+
+  // 최종 배열
+  const playlistsData = useMemo(() => {
+    if (playlistAsInfo) {
+      return [
+        playlistAsInfo,
+        ...shufflePlaylists.filter((p) => p.playlistId !== playlistAsInfo.playlistId),
+      ]
+    }
+    return shufflePlaylists
+  }, [playlistAsInfo, shufflePlaylists])
+
+  console.log('playlist final data', playlistsData)
+
+  // const playlists = useMemo(() => data?.pages.flatMap((page) => page.content) ?? [], [data])
 
   const videoId = currentPlaylist
     ? getVideoId(currentPlaylist.songs[currentTrackIndex]?.youtubeUrl)
@@ -61,22 +100,22 @@ const DiscoverPage = () => {
 
   // 최초 playlist 초기화
   useEffect(() => {
-    if (!currentPlaylist && playlists.length > 0) {
+    if (!currentPlaylist && playlistsData.length > 0) {
       const initialPlaylist =
-        playlists.find((p) => p.playlistId === Number(playlistId)) || playlists[0]
+        playlistsData.find((p) => p.playlistId === Number(playlistId)) || playlistsData[0]
       setPlaylist(initialPlaylist, 0, 0)
     }
-  }, [playlists, currentPlaylist, playlistId, setPlaylist])
+  }, [playlistsData, currentPlaylist, playlistId, setPlaylist])
 
-  // URL을 현재 선택된 플레이리스트로 동기화
-  useEffect(() => {
-    if (currentPlaylist) {
-      const id = currentPlaylist.playlistId
-      if (Number(playlistId) !== id) {
-        navigate(`/discover/${id}`, { replace: true })
-      }
-    }
-  }, [currentPlaylist, playlistId, navigate])
+  // // URL을 현재 선택된 플레이리스트로 동기화
+  // useEffect(() => {
+  //   if (currentPlaylist) {
+  //     const id = currentPlaylist.playlistId
+  //     if (Number(playlistId) !== id) {
+  //       navigate(`/discover/${id}`, { replace: true })
+  //     }
+  //   }
+  // }, [currentPlaylist, playlistId, navigate])
 
   useEffect(() => {
     if (!currentPlaylist || !isPlaying) return
@@ -118,15 +157,15 @@ const DiscoverPage = () => {
   // 캐러셀 스와이프 시 현재 플레이리스트 업데이트
   const handleSelectPlaylist = useCallback(
     (index: number) => {
-      const selectedPlaylist = playlists[index]
+      const selectedPlaylist = playlistsData[index]
       if (selectedPlaylist && currentPlaylist?.playlistId !== selectedPlaylist.playlistId) {
         setPlaylist(selectedPlaylist, 0, 0)
       }
-      if (index === playlists.length - 1 && hasNextPage && !isFetchingNextPage) {
+      if (index === playlistsData.length - 1 && hasNextPage && !isFetchingNextPage) {
         fetchNextPage()
       }
     },
-    [setPlaylist, currentPlaylist, playlists, fetchNextPage, hasNextPage, isFetchingNextPage]
+    [setPlaylist, currentPlaylist, playlistsData, fetchNextPage, hasNextPage, isFetchingNextPage]
   )
 
   const handlePlayerStateChange = useCallback(
@@ -149,9 +188,8 @@ const DiscoverPage = () => {
   return (
     <Page>
       {showCoachmark && <DiscoverCoachMark onClick={handleCloseCoachmark} />}
-
-      <SwipeCarousel data={playlists} onSelectIndexChange={handleSelectPlaylist}>
-        {playlists.map((data) => (
+      <SwipeCarousel data={playlistsData} onSelectIndexChange={handleSelectPlaylist}>
+        {playlistsData.map((data) => (
           <Slide key={data.playlistId}>
             <PlaylistLayout
               key={data.playlistId}
@@ -177,7 +215,6 @@ const DiscoverPage = () => {
           </Slide>
         ))}
       </SwipeCarousel>
-
       {!showCoachmark && videoId && (
         <YoutubePlayer
           videoId={videoId}
