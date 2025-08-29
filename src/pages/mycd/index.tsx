@@ -1,4 +1,4 @@
-import { useRef, useEffect, useCallback } from 'react'
+import { useRef, useEffect, useCallback, useState } from 'react'
 
 import { usePlaylist } from '@/app/providers/PlayerProvider'
 import { getVideoId } from '@/shared/lib'
@@ -20,11 +20,31 @@ const MyCdPage = () => {
     updateCurrentTime,
   } = usePlaylist()
   const playerRef = useRef<YT.Player | null>(null)
+  const [isMuted, setIsMuted] = useState<boolean | null>(null) // 빌드용 임시 코드
 
   useEffect(() => {
     if (!currentPlaylist) {
       // 기존 currentTime이 있으면 그대로 사용
-      setPlaylist(playlistData, currentTrackIndex, currentTime)
+      // setPlaylist(playlistData, currentTrackIndex, currentTime)
+
+      // playlistData를 PlaylistInfo 형식으로 변환 (빌드용 임시 코드)
+      const convertedPlaylist = {
+        cardId: playlistData.id,
+        position: 0,
+        shareUrl: '',
+        totalTime: '0:00',
+        creator: {
+          creatorId: playlistData.userId.toString(),
+          creatorNickname: playlistData.username,
+        },
+        playlistId: playlistData.id,
+        playlistName: playlistData.title,
+        genre: playlistData.genre,
+        songs: playlistData.tracks,
+        representative: false,
+      }
+
+      setPlaylist(convertedPlaylist, currentTrackIndex, currentTime)
     }
   }, [currentPlaylist, setPlaylist, currentTrackIndex, currentTime])
 
@@ -54,7 +74,8 @@ const MyCdPage = () => {
   )
 
   const videoId = currentPlaylist
-    ? getVideoId(currentPlaylist.tracks[currentTrackIndex]?.youtubeUrl)
+    ? // ? getVideoId(currentPlaylist.tracks[currentTrackIndex]?.youtubeUrl)
+      getVideoId(currentPlaylist.songs[currentTrackIndex]?.youtubeUrl)
     : null
 
   const handlePlayPause = () => {
@@ -80,6 +101,9 @@ const MyCdPage = () => {
             if (!isPlaying) play()
           }}
           type="My"
+          playerRef={playerRef}
+          isMuted={isMuted}
+          setIsMuted={setIsMuted}
         />
       )}
 
