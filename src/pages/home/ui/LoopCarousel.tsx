@@ -61,7 +61,10 @@ const LoopCarousel = ({ data, isLogin }: LoopCarouselProps) => {
 
           {data.map((slide, index) => (
             <EmblaSlide key={slide.playlistId}>
-              <Slide $active={activeIndex === index + 1}>
+              <Slide
+                $active={activeIndex === index + 1}
+                onClick={() => navigate(`discover/${slide.playlistId}`)}
+              >
                 <Cd variant="carousel" bgColor="none" stickers={slide.cdItems} />
                 <SlideOverlay $active={activeIndex === index + 1}>
                   <Badge size="large" text={getGenreLabel(slide.genre)} />

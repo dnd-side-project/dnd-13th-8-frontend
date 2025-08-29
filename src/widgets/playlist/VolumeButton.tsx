@@ -1,6 +1,6 @@
 import type { RefObject } from 'react'
 
-import { Button } from '@/shared/ui'
+import styled from 'styled-components'
 
 interface VolumeButtonProps {
   playerRef: RefObject<YT.Player | null>
@@ -18,11 +18,14 @@ const VolumeButton = ({ playerRef, isMuted, setIsMuted }: VolumeButtonProps) => 
     setIsMuted(!isMuted)
   }
 
-  return (
-    <Button size="S" state="secondary" onClick={toggleMute}>
-      {isMuted ? '🔇' : '🔊'}
-    </Button>
-  )
+  return <StyledButton onClick={toggleMute} />
 }
 
 export default VolumeButton
+
+const StyledButton = styled.button`
+  position: absolute;
+  z-index: 1000;
+  width: 100%;
+  height: 100%;
+`

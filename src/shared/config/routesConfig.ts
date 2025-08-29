@@ -58,7 +58,6 @@ export const routesConfig: RouteConfig[] = [
     path: '/mycd',
     component: MyCdLayout,
     isNotSuspense: true,
-    isPrivate: true,
     children: [
       { path: '', component: MyCdPage },
       { path: 'playlist', component: MyCdInfoPage },
@@ -69,7 +68,6 @@ export const routesConfig: RouteConfig[] = [
   {
     path: '/mypage',
     component: MyPageLayout,
-    isPrivate: true,
     hideNav: true,
     isNotSuspense: true,
     children: [
