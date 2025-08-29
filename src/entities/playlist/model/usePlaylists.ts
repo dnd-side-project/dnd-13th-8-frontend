@@ -14,6 +14,7 @@ import {
   postPlaylistStart,
 } from '@/entities/playlist/api/playlist'
 import type { Cursor, PlaylistResponse } from '@/entities/playlist/types/playlist'
+import { useAuthStore } from '@/features/auth/store/authStore'
 
 export const useShufflePlaylists = () => {
   return useInfiniteQuery<
@@ -37,6 +38,7 @@ export const useShufflePlaylists = () => {
       }
       return undefined
     },
+    enabled: !!useAuthStore.getState().accessToken || !!localStorage.getItem('anonymous_token'),
   })
 }
 

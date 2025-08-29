@@ -15,8 +15,8 @@ const PrivateRoute = ({ children }: PrivateRouteProps) => {
 
   const [isModalOpen, setIsModalOpen] = useState(!isLogin)
 
-  const goToBack = () => {
-    navigate(-1)
+  const goToMain = () => {
+    navigate('/')
     setIsModalOpen(false)
   }
 
@@ -33,9 +33,9 @@ const PrivateRoute = ({ children }: PrivateRouteProps) => {
         ctaType="double"
         confirmText="로그인하기"
         cancelText="다음에 하기"
-        onClose={goToBack}
+        onClose={goToMain}
         onConfirm={goToLogin}
-        onCancel={goToBack}
+        onCancel={goToMain}
       />
     )
   }
