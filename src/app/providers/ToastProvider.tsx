@@ -4,13 +4,14 @@ import styled from 'styled-components'
 
 import { Toast } from '@/shared/ui'
 
-type ToastType = 'LINK' | 'IMAGE' | 'REPORT' | 'COMMENT'
+type ToastType = 'LINK' | 'IMAGE' | 'REPORT' | 'COMMENT' | 'AUTH_EXPIRED'
 
 const TOAST_MESSAGES: Record<ToastType, string> = {
   LINK: '링크가 복사됐어요',
   IMAGE: '이미지가 저장됐어요',
   REPORT: '신고가 접수됐어요',
   COMMENT: '댓글이 삭제됐어요',
+  AUTH_EXPIRED: '로그인 정보가 만료되었어요',
 }
 
 type ToastContextType = {

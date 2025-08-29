@@ -1,5 +1,6 @@
 import styled from 'styled-components'
 
+import type { CdCustomData } from '@/entities/playlist/types/playlist'
 import { Badge } from '@/shared/ui'
 import Cd from '@/shared/ui/Cd'
 
@@ -7,13 +8,14 @@ interface PlaylistHorizontalProps {
   genre: string
   title: string
   username: string
+  stickers?: CdCustomData[]
 }
 
-const PlaylistHorizontal = ({ title, username, genre }: PlaylistHorizontalProps) => {
+const PlaylistHorizontal = ({ title, username, genre, stickers }: PlaylistHorizontalProps) => {
   return (
     <Wrapper>
       <div>
-        <Cd variant="lg" bgColor="default" />
+        <Cd variant="lg" bgColor="default" stickers={stickers} />
       </div>
       <InfoBox>
         <Badge text={genre} />

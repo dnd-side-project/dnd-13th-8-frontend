@@ -37,7 +37,7 @@ export const deleteMyPagePlaylist = (playlistId: number) => {
 
 // 대표 플레이리스트 설정
 export const setPrimaryPlaylist = (playlistId: number) => {
-  return api.patch<string | null>(`/main/mypage/me/${playlistId}/representative`)
+  return api.patch<string | null>(`/main/mypage/playlists/me/${playlistId}/representative`)
 }
 
 export const getShufflePlaylists = (params: PlaylistParams) => {

@@ -8,7 +8,6 @@ import { flexColCenter } from '@/shared/styles/mixins'
 import { Header, Link, Loading, SvgButton, Error } from '@/shared/ui'
 import { PlaylistHorizontal } from '@/widgets/playlist'
 
-
 const MyPlaylistInfoPage = () => {
   const navigate = useNavigate()
   const location = useLocation()

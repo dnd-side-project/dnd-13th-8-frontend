@@ -1,14 +1,14 @@
 import { lazy } from 'react'
 import type { ComponentType, LazyExoticComponent } from 'react'
 
-const HomePage = lazy(() => import('@pages/home'))
-const MyPageLayout = lazy(() => import('@pages/myPage/ui/MyPageLayout'))
-const MyPage = lazy(() => import('@pages/myPage/ui'))
-const Customize = lazy(() => import('@pages/myPage/ui/customize'))
-const MyPagePlaylist = lazy(() => import('@pages/myPage/ui/playlist'))
-const Setting = lazy(() => import('@pages/myPage/ui/setting'))
-const Terms = lazy(() => import('@pages/myPage/ui/terms'))
-const Privacy = lazy(() => import('@pages/myPage/ui/privacy'))
+const HomePage = lazy(() => import('@/pages/home'))
+const MyPageLayout = lazy(() => import('@/pages/myPage/ui/MyPageLayout'))
+const MyPage = lazy(() => import('@/pages/myPage/ui'))
+const Customize = lazy(() => import('@/pages/myPage/ui/customize'))
+const MyPagePlaylist = lazy(() => import('@/pages/myPage/ui/playlist'))
+const Setting = lazy(() => import('@/pages/myPage/ui/setting'))
+const Terms = lazy(() => import('@/pages/myPage/ui/terms'))
+const Privacy = lazy(() => import('@/pages/myPage/ui/privacy'))
 const Unregister = lazy(() => import('@/pages/myPage/ui/unregister'))
 const Notification = lazy(() => import('@/pages/myPage/ui/notification'))
 const SearchPage = lazy(() => import('@/pages/search'))

@@ -2,115 +2,162 @@ import { useEffect, useRef, useState } from 'react'
 
 import styled from 'styled-components'
 
-import { Profile, Input } from '@shared/ui'
+import { Profile, Input, Loading } from '@shared/ui'
 import type { ProfileUrl } from '@shared/ui/Profile'
 
 import { Camera } from '@/assets/icons'
 import { useAuthStore } from '@/features/auth/store/authStore'
+import { useProfile } from '@/features/profile/model/useProfile'
 import { flexRowCenter } from '@/shared/styles/mixins'
 
+const MAX_FILE_SIZE = 1024 * 1024 * 5 // 5MB
+
 const UserProfile = () => {
-  const { userInfo } = useAuthStore()
+  const { userInfo, updateUserInfo } = useAuthStore()
+  const { mutate, isPending } = useProfile()
 
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const [isEditMode, setIsEditMode] = useState(false)
+  const [hasErrorMsg, setHasErrorMsg] = useState('')
+
   const [updatedProfile, setUpdatedProfile] = useState<{
     nickname: string
-    profileImg: ProfileUrl
+    file: File | null
+    profileImage: string | null
   }>({
     nickname: userInfo.username,
-    profileImg: userInfo?.userProfileImageUrl || null,
+    profileImage: userInfo?.userProfileImageUrl || null,
+    file: null,
   })
-  const [isFileError, setIsFileError] = useState(false)
 
-  // React 컴포넌트 라이프사이클에 맞춰 blob: URL 해제 및 메모리 릭 방지
-  useEffect(() => {
-    return () => {
-      if (
-        typeof updatedProfile.profileImg === 'string' &&
-        updatedProfile.profileImg.startsWith('blob:')
-      ) {
-        URL.revokeObjectURL(updatedProfile.profileImg)
-      }
-    }
-  }, [updatedProfile.profileImg])
+  // 화면에 보여줄 프리뷰 URL
+  const [previewImage, setPreviewImage] = useState<ProfileUrl>(
+    userInfo?.userProfileImageUrl || null
+  )
 
+  // 프로필 편집 버튼 클릭
   const onProfileEditClick = () => {
     if (!isEditMode) {
       setIsEditMode(true)
       return
     }
-    // TODO: 프로필 수정 api 연동 & api 성공 시 updatedProfile 초기화 로직 추가
+
+    if (updatedProfile.nickname.length === 0) {
+      setHasErrorMsg('1자 이상 입력해주세요')
+      return
+    }
+
+    mutate(updatedProfile, {
+      onSuccess: (response) => {
+        updateUserInfo(response)
+
+        setIsEditMode(false)
+        setHasErrorMsg('')
+        setUpdatedProfile({
+          nickname: response.nickname,
+          profileImage: response.profileImageUrl,
+          file: null,
+        })
+        setPreviewImage(response.profileImageUrl)
+      },
+    })
+
+    // 초기화
     setIsEditMode(false)
-    setIsFileError(false)
+    setHasErrorMsg('')
     setUpdatedProfile({
       nickname: userInfo.username,
-      profileImg: userInfo?.userProfileImageUrl || null,
+      profileImage: userInfo?.userProfileImageUrl || null,
+      file: null,
     })
+    setPreviewImage(userInfo?.userProfileImageUrl || null)
   }
 
+  // 프로필 이미지 선택
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || !e.target.files.length) return
 
     const file = e.target.files[0]
-    const MAX_FILE_SIZE = 1024 * 1024 * 5 // 5MB
-
     if (file.size > MAX_FILE_SIZE) {
-      setIsFileError(true)
+      setHasErrorMsg('5MB 이하의 파일만 업로드 가능해요')
       if (fileInputRef.current) {
         fileInputRef.current.value = ''
       }
-      setUpdatedProfile((prev) => ({ ...prev, profileImg: userInfo?.userProfileImageUrl || null }))
+      setUpdatedProfile((prev) => ({
+        ...prev,
+        profileImage: userInfo?.userProfileImageUrl || null,
+        file: null,
+      }))
+      setPreviewImage(userInfo?.userProfileImageUrl || null)
       return
     }
 
-    setIsFileError(false)
-    const image = window.URL.createObjectURL(file)
-    setUpdatedProfile((prev) => ({ ...prev, profileImg: image }))
+    setHasErrorMsg('')
+    const blobUrl = URL.createObjectURL(file)
+
+    setUpdatedProfile((prev) => ({ ...prev, file, profileImage: null }))
+    setPreviewImage(blobUrl)
   }
 
+  // blob URL 메모리 정리
+  useEffect(() => {
+    return () => {
+      if (previewImage && typeof previewImage === 'string' && previewImage.startsWith('blob:')) {
+        URL.revokeObjectURL(previewImage)
+      }
+    }
+  }, [previewImage])
+
   return (
-    <ProfileWrapper>
-      <ProfileImgContainer>
-        <Profile
-          size="L"
-          profileUrl={
-            isEditMode ? updatedProfile.profileImg : userInfo?.userProfileImageUrl || null
-          }
-        />
-        {isEditMode && (
-          <>
-            <ProfileImgEditBtn
-              type="button"
-              aria-label="프로필 이미지 수정"
-              onClick={() => fileInputRef.current?.click()}
-            >
-              <Camera width={14} height={14} />
-            </ProfileImgEditBtn>
-            <input type="file" ref={fileInputRef} accept="image/*" onChange={onFileChange} hidden />
-          </>
+    <>
+      {isPending && <Loading isLoading={isPending} />}
+      <ProfileWrapper>
+        <ProfileImgContainer>
+          <Profile size="L" profileUrl={previewImage} />
+
+          {isEditMode && (
+            <>
+              <ProfileImgEditBtn
+                type="button"
+                aria-label="프로필 이미지 수정"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <Camera width={14} height={14} />
+              </ProfileImgEditBtn>
+              <input
+                type="file"
+                ref={fileInputRef}
+                accept="image/*"
+                onChange={onFileChange}
+                hidden
+              />
+            </>
+          )}
+        </ProfileImgContainer>
+
+        {hasErrorMsg && <FileErrMsg>{hasErrorMsg}</FileErrMsg>}
+
+        {!isEditMode ? (
+          <ProfileName>{userInfo.username}</ProfileName>
+        ) : (
+          <Input
+            type="text"
+            placeholder="닉네임"
+            value={updatedProfile.nickname}
+            maxLength={10}
+            width="155px"
+            onChange={(e) =>
+              setUpdatedProfile({ ...updatedProfile, nickname: e.target.value.trim() })
+            }
+          />
         )}
-      </ProfileImgContainer>
-      {isFileError && <FileErrMsg>5MB 이하의 파일만 업로드 가능해요</FileErrMsg>}
-      {!isEditMode ? (
-        <ProfileName>{userInfo.username}</ProfileName>
-      ) : (
-        <Input
-          type="text"
-          placeholder="닉네임"
-          value={updatedProfile.nickname}
-          maxLength={10}
-          width="155px"
-          onChange={(e) =>
-            setUpdatedProfile({ ...updatedProfile, nickname: e.target.value.trim() })
-          }
-        />
-      )}
-      <ProfileEditBtn type="button" onClick={onProfileEditClick}>
-        {isEditMode ? '저장하기' : '프로필 편집'}
-      </ProfileEditBtn>
-    </ProfileWrapper>
+
+        <ProfileEditBtn type="button" onClick={onProfileEditClick}>
+          {isEditMode ? '저장하기' : '프로필 편집'}
+        </ProfileEditBtn>
+      </ProfileWrapper>
+    </>
   )
 }
 

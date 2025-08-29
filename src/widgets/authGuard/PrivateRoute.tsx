@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import { useAuthStore } from '@features/auth/store/authStore'
-
 import { Modal } from '@shared/ui'
+
+import { useAuthStore } from '@/features/auth/store/authStore'
 
 interface PrivateRouteProps {
   children: React.ReactNode
@@ -11,12 +11,12 @@ interface PrivateRouteProps {
 
 const PrivateRoute = ({ children }: PrivateRouteProps) => {
   const navigate = useNavigate()
-  const { isLogin } = useAuthStore()
+  const isLogin = useAuthStore((s) => s.isLogin)
 
   const [isModalOpen, setIsModalOpen] = useState(!isLogin)
 
-  const goToBack = () => {
-    navigate(-1)
+  const goToMain = () => {
+    navigate('/')
     setIsModalOpen(false)
   }
 
@@ -33,9 +33,9 @@ const PrivateRoute = ({ children }: PrivateRouteProps) => {
         ctaType="double"
         confirmText="로그인하기"
         cancelText="다음에 하기"
-        onClose={goToBack}
+        onClose={goToMain}
         onConfirm={goToLogin}
-        onCancel={goToBack}
+        onCancel={goToMain}
       />
     )
   }
