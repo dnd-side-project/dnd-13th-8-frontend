@@ -23,7 +23,7 @@ const ChatEmojiCarousel = ({ onClick }: ChatEmojiCarouselProps) => {
   ]
 
   const handleClick = (name: string, label?: string) => {
-    const value = `/${name}/ ${label ?? ''}`
+    const value = label ? `/${name}/ ${label}` : `/${name}/`
     if (onClick) onClick(value)
   }
 
