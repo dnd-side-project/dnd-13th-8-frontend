@@ -122,14 +122,14 @@ const DiscoverPage = () => {
 
     const confirmTimer = setTimeout(() => {
       confirmPlaylist(currentPlaylist.playlistId)
-    }, 15000)
+    }, 5000)
 
     // 재생 중일 때 10초마다 refetch
     const viewCountTimer = setInterval(() => {
       if (isPlaying) {
         refetchViewCounts()
       }
-    }, 10000)
+    }, 5000)
 
     return () => {
       clearTimeout(confirmTimer)
