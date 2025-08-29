@@ -55,6 +55,11 @@ export interface FinalPlaylistPayload {
   saveCdRequestDto: SaveCdRequestDto
 }
 
+export interface EditPlaylistPayload extends FinalPlaylistPayload {
+  playlistId: number
+  saveCdRequestDto: SaveCdRequestDto
+}
+
 export interface SongItem {
   id: number
   playlistId: number

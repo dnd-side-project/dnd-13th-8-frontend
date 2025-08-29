@@ -14,6 +14,7 @@ export const useMyCdList = (sort: string) => {
   return useQuery({
     queryKey: ['myCdList', sort],
     queryFn: () => getMyCdList(sort),
+    refetchOnMount: 'always',
   })
 }
 
@@ -21,6 +22,7 @@ export const useMyFollowingList = () => {
   return useQuery({
     queryKey: ['myFollowingList'],
     queryFn: () => getMyFollowingList('RECENT'),
+    refetchOnMount: 'always',
   })
 }
 
@@ -40,6 +42,7 @@ export const useMyPagePlaylist = (playlistId: number) => {
     queryKey: ['myPagePlaylist', playlistId],
     queryFn: () => getMyPagePlaylist(playlistId),
     enabled: Number.isInteger(playlistId) && playlistId >= 0,
+    refetchOnMount: 'always',
   })
 
   // 삭제

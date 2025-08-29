@@ -6,12 +6,14 @@ import {
   getUserStickers,
   postUserSticker,
   postFinalPlaylist,
+  patchEditPlaylist,
 } from '@/features/customize/api/customize'
 import type {
   YoutubeVideoInfoPayload,
   PlaylistMetaInfo,
   UserStickerPayload,
   FinalPlaylistPayload,
+  EditPlaylistPayload,
 } from '@/features/customize/types/customize'
 
 export const useTempSavePlaylist = () => {
@@ -87,10 +89,19 @@ export const useUserSticker = () => {
     },
   })
 
+  // 수정 저장
+  const editSaveMutation = useMutation({
+    mutationKey: ['patchEditPlaylist'],
+    mutationFn: (payload: EditPlaylistPayload) => {
+      return patchEditPlaylist(payload)
+    },
+  })
+
   return {
     userStickerList,
     uploadSticker: uploadMutation,
     uploadLoading: uploadMutation.isPending,
     finalSave: finalSaveMutation,
+    editSave: editSaveMutation,
   }
 }
