@@ -3,10 +3,9 @@ import { useLocation, Link, matchPath } from 'react-router-dom'
 
 import styled, { useTheme } from 'styled-components'
 
+import { useShufflePlaylists } from '@/entities/playlist'
 import { NAV_ITEMS } from '@/shared/config/navItems'
 import SvgButton from '@/shared/ui/SvgButton'
-
-import PlaylistData from '../../pages/discover/playlistData.json'
 
 export const NAV_HEIGHT = 64
 
@@ -15,15 +14,16 @@ const NavBar = () => {
   const theme = useTheme()
   const [discoverLink, setDiscoverLink] = useState('')
 
+  const { data } = useShufflePlaylists()
+
+  const firstPlaylistId = data?.pages?.[0]?.content?.[0]?.playlistId
+
   // 컴포넌트 마운트 시 첫 번째 항목의 id로 링크 설정
   useEffect(() => {
-    // TODO : API 호출 로직으로 교체 예정
-    const firstPlaylistId = PlaylistData[0]?.id
-
     if (firstPlaylistId) {
       setDiscoverLink(`/discover/${firstPlaylistId}`)
     }
-  }, [])
+  }, [firstPlaylistId])
 
   return (
     <NavButtonBox>

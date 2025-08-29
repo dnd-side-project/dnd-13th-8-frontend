@@ -5,7 +5,11 @@ import { SvgButton } from '@/shared/ui'
 
 import ChatBottomSheet from './ChatBottomSheet'
 
-const ChatButton = () => {
+interface ChatButtonProps {
+  roomId: number // playlistId === roomId임
+}
+
+const ChatButton = ({ roomId }: ChatButtonProps) => {
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false)
 
   return (
@@ -13,7 +17,11 @@ const ChatButton = () => {
       <SvgButton icon={Message} width={24} height={24} onClick={() => setIsBottomSheetOpen(true)} />
 
       {isBottomSheetOpen && (
-        <ChatBottomSheet isOpen={isBottomSheetOpen} onClose={() => setIsBottomSheetOpen(false)} />
+        <ChatBottomSheet
+          isOpen={isBottomSheetOpen}
+          onClose={() => setIsBottomSheetOpen(false)}
+          roomId={String(roomId)}
+        />
       )}
     </>
   )

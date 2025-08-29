@@ -3,6 +3,9 @@ import type {
   MyFollowingListResponse,
   CdCustomDataResponse,
   MyPlaylistResponse,
+  PlaylistDetailResponse,
+  PlaylistParams,
+  PlaylistResponse,
 } from '@/entities/playlist/types/playlist'
 import { api } from '@/shared/api/httpClient'
 
@@ -34,4 +37,24 @@ export const deleteMyPagePlaylist = (playlistId: number) => {
 // 대표 플레이리스트 설정
 export const setPrimaryPlaylist = (playlistId: number) => {
   return api.patch<string | null>(`/main/mypage/me/${playlistId}/representative`)
+}
+
+export const getShufflePlaylists = (params: PlaylistParams) => {
+  return api.get<PlaylistResponse>('/main/browse/playlists', { params })
+}
+
+export const getPlaylistDetail = (playlistId: number) => {
+  return api.get<PlaylistDetailResponse>(`/main/playlists/${playlistId}`)
+}
+
+export const postPlaylistStart = (playlistId: number) => {
+  return api.post(`/main/browse/playlists/start`, null, { params: { playlistId } })
+}
+
+export const postPlaylistConfirm = (playlistId: number) => {
+  return api.post(`/main/browse/playlists/confirm`, null, { params: { playlistId } })
+}
+
+export const getPlaylistViewCounts = (playlistId: number) => {
+  return api.get(`/main/browse/playlists/view-counts/${playlistId}`)
 }

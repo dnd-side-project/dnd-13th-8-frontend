@@ -31,6 +31,7 @@
     ]
   },
   "dependencies": {
+    "@stomp/stompjs": "^7.1.1",
     "@tanstack/react-query": "^5.84.2",
     "axios": "^1.11.0",
     "embla-carousel": "^8.6.0",
@@ -42,6 +43,7 @@
     "react-dom": "^19.1.0",
     "react-router-dom": "^7.8.0",
     "react-youtube": "^10.1.0",
+    "sockjs-client": "^1.6.1",
     "styled-components": "^6.1.19",
     "styled-reset": "^4.5.2",
     "uuid": "^11.1.0",
@@ -60,6 +62,7 @@
     "@storybook/react-vite": "^9.1.1",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
+    "@types/sockjs-client": "^1.5.4",
     "@types/youtube": "^0.1.2",
     "@vitejs/plugin-react": "^4.6.0",
     "@vitest/browser": "^3.2.4",

@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import useEmblaCarousel from 'embla-carousel-react'
 import styled, { css } from 'styled-components'
 
-import { Character } from '@/assets/icons'
+import { GuestCharacter, MemberCharacter } from '@/assets/images'
 import { BUTTON_TEXT } from '@/pages/home/config/messages'
 import { flexColCenter, flexRowCenter } from '@/shared/styles/mixins'
 import { Button, Badge } from '@/shared/ui'
@@ -46,7 +46,11 @@ const LoopCarousel = ({ data, isLogin }: LoopCarouselProps) => {
           <EmblaSlide key="image">
             <Slide $active={activeIndex === 0}>
               <FirstContent>
-                <Character />
+                {isLogin ? (
+                  <img src={MemberCharacter} alt="Member Character" width={160} height={160} />
+                ) : (
+                  <img src={GuestCharacter} alt="Guest Character" width={160} height={160} />
+                )}
                 <Button
                   size="S"
                   state="primary"

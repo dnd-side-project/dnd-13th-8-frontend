@@ -1,6 +1,6 @@
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 
-import { postLogin, getAnonymousLogin } from '@/features/auth/api/auth'
+import { postLogin, getAnonymousLogin, getUserInfo } from '@/features/auth/api/auth'
 import type { LoginPayload } from '@/features/auth/types/auth'
 
 export const useLogin = () => {
@@ -14,5 +14,11 @@ export const useAnonymousLogin = () => {
   return useMutation({
     mutationKey: ['anonymousLogin'],
     mutationFn: getAnonymousLogin,
+  })
+}
+export const useUserInfo = () => {
+  return useQuery({
+    queryKey: ['userInfo'],
+    queryFn: getUserInfo,
   })
 }

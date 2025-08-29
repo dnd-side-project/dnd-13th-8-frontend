@@ -5,30 +5,44 @@ import styled from 'styled-components'
 
 import { useToast } from '@/app/providers'
 import { Share } from '@/assets/icons'
+import GuestCharacter from '@/assets/images/img_character_guest.png'
+import MemberCharacter from '@/assets/images/img_character_member.png'
 import ShareImage from '@/features/share/ui/ShareImage'
-import { flexColCenter, flexRowCenter } from '@/shared/styles/mixins'
-import { BottomSheet, Button, SvgButton } from '@/shared/ui'
+import { flexRowCenter } from '@/shared/styles/mixins'
+import { BottomSheet, Button, Cd, ScrollCarousel, SvgButton } from '@/shared/ui'
 
 interface ShareButtonProps {
   playlistId: number
 }
 
+const slides = [
+  { id: 'cd', content: <Cd variant="share" bgColor="none" /> },
+  {
+    id: 'member',
+    content: <img src={MemberCharacter} alt="Member Character" width={220} height={220} />,
+  },
+  {
+    id: 'guest',
+    content: <img src={GuestCharacter} alt="Guest Character" width={220} height={220} />,
+  },
+]
+
 const ShareButton = ({ playlistId }: ShareButtonProps) => {
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false)
+  const [selectedIndex, setSelectedIndex] = useState(0)
   const { toast } = useToast()
-  const shareRef = useRef<HTMLDivElement>(null)
+  const shareRefs = useRef<(HTMLDivElement | null)[]>([])
 
-  const handleShare = () => {
-    setIsBottomSheetOpen(true)
-  }
+  const handleShare = () => setIsBottomSheetOpen(true)
 
   const handleSaveImage = async () => {
-    if (!shareRef.current) return
+    const currentRef = shareRefs.current[selectedIndex]
+    if (!currentRef) return
     try {
-      const dataUrl = await toPng(shareRef.current)
+      const dataUrl = await toPng(currentRef)
       const link = document.createElement('a')
       link.href = dataUrl
-      link.download = `playlist-${playlistId}.png`
+      link.download = `playlist-${playlistId}-${slides[selectedIndex].id}.png`
       link.click()
       toast('IMAGE')
     } catch (e) {
@@ -61,9 +75,7 @@ const ShareButton = ({ playlistId }: ShareButtonProps) => {
   const handleCopyLink = () => {
     const link = `${window.location.origin}/discover/${playlistId}`
     copyToClipboard(link).then(() => {
-      console.log(link)
       toast('LINK')
-      console.log('copied', link)
     })
   }
 
@@ -77,9 +89,23 @@ const ShareButton = ({ playlistId }: ShareButtonProps) => {
         height="fit-content"
       >
         <BottomSheetWrapper>
-          <div ref={shareRef}>
-            <ShareImage />
-          </div>
+          <ScrollCarousel
+            gap={20}
+            onSelectIndex={setSelectedIndex}
+            options={{ dragFree: false, containScroll: false }}
+          >
+            {slides.map((slide, idx) => (
+              <div
+                key={slide.id}
+                ref={(el: HTMLDivElement | null) => {
+                  shareRefs.current[idx] = el
+                }}
+              >
+                <ShareImage>{slide.content}</ShareImage>
+              </div>
+            ))}
+          </ScrollCarousel>
+
           <ButtonBar>
             <Button onClick={handleSaveImage} size="M" state="secondary">
               이미지로 저장
@@ -97,8 +123,10 @@ const ShareButton = ({ playlistId }: ShareButtonProps) => {
 export default ShareButton
 
 const BottomSheetWrapper = styled.div`
-  ${flexColCenter}
+  display: flex;
+  flex-direction: column;
   gap: 24px;
+  justify-content: center;
 `
 
 const ButtonBar = styled.div`
