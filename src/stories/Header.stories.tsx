@@ -22,7 +22,7 @@ export default meta
 type Story = StoryObj<typeof Header>
 
 const Wrapper = styled.div`
-  width: 375px;
+  width: 430px;
 `
 
 export const MainHeader: Story = {

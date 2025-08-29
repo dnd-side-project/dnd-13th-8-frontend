@@ -35,7 +35,7 @@ export const Default: Story = {
 
 const MainWrapper = styled.div`
   padding: 20px;
-  width: 375px;
+  width: 430px;
   margin: 0 auto;
   overflow-x: auto;
 `

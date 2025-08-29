@@ -32,7 +32,7 @@ export const Default: Story = {
     return (
       <div
         style={{
-          width: '375px',
+          width: '430px',
           height: '400px',
           display: 'flex',
           justifyContent: 'center',

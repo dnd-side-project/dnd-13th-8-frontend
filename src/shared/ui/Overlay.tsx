@@ -4,6 +4,8 @@ import { createPortal } from 'react-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import styled from 'styled-components'
 
+import { useDevice } from '@/shared/lib/useDevice'
+
 interface OverlayProps {
   isOpen: boolean
   onClose: () => void
@@ -21,6 +23,10 @@ const Overlay = ({
 }: OverlayProps) => {
   const overlayRef = useRef<HTMLDivElement>(null)
   const prevOverflowRef = useRef<string | null>(null)
+
+  const deviceType = useDevice()
+
+  const LAYOUT_WIDTH = deviceType === 'mobile' ? 'clamp(320px, 100dvw, 430px)' : '430px'
 
   // ESC 키로 onClose
   const handleEscape = useCallback(
@@ -86,6 +92,7 @@ const Overlay = ({
             as="div"
             ref={overlayRef}
             onClick={handleOverlayClick}
+            $layoutWidth={LAYOUT_WIDTH}
             $childrenAlign={childrenAlign}
           >
             {children}
@@ -106,6 +113,7 @@ const Overlay = ({
           initial="hidden"
           animate="visible"
           exit="exit"
+          $layoutWidth={LAYOUT_WIDTH}
           $childrenAlign={childrenAlign}
         >
           {children}
@@ -118,15 +126,29 @@ const Overlay = ({
 
 export default Overlay
 
-const StyledOverlay = styled(motion.div)<{ $childrenAlign?: 'center' | 'bottom' }>`
+const StyledOverlay = styled(motion.div)<{
+  $childrenAlign?: 'center' | 'bottom'
+  $layoutWidth: string
+}>`
+  z-index: 1000;
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
   bottom: 0;
   display: flex;
   align-items: ${({ $childrenAlign }) => ($childrenAlign === 'bottom' ? 'flex-end' : 'center')};
   justify-content: center;
+  width: ${({ $layoutWidth }) => $layoutWidth};
+  height: 100dvh;
   background-color: ${({ theme }) => theme.OPACITY.scrim};
-  z-index: 1000;
+
+  @media (max-width: 980px) {
+    top: 0;
+    left: 50%;
+    right: 0;
+    transform: translateX(-50%);
+  }
+
+  @media (min-width: 980px) {
+    left: 55%;
+    transform: none;
+  }
 `
