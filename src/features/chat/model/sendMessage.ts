@@ -9,6 +9,7 @@ export interface ChatMessage {
   username: string | null
   content: string
   sentAt?: string
+  profileImage: string | null
   systemMessage?: boolean
 }
 

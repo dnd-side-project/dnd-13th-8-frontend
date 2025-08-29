@@ -13,5 +13,5 @@ export const getAnonymousLogin = () => {
 
 // 채팅 내 이름/아이디 확인
 export const getUserInfo = () => {
-  return api.get<UserInfo>('/main/user')
+  return api.get<UserInfo>('/chat/user')
 }

@@ -11,6 +11,7 @@ export interface ChatHistoryMessage {
   content: string
   sentAt: string
   systemMessage?: boolean
+  profileImage: string | null
 }
 
 export interface ChatHistoryResponse {

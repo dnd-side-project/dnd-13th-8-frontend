@@ -61,10 +61,10 @@ const ChatBottomSheet = ({ isOpen, onClose, roomId }: ChatBottomSheetProps) => {
         {allMessages.length > 0 ? (
           allMessages.map((msg) => {
             const { Icon, text } = parseMessage(msg.content)
-            // TODO : profileUrl, role 실제 값으로 변경 필요
+            // TODO : role 실제 값으로 변경 필요
             return (
               <Comment
-                profileUrl=""
+                profileUrl={msg.profileImage ?? undefined}
                 key={msg.messageId}
                 name={msg.username || '익명'}
                 comment={text}
@@ -81,11 +81,12 @@ const ChatBottomSheet = ({ isOpen, onClose, roomId }: ChatBottomSheetProps) => {
         )}
       </CommentSection>
       <BottomSection>
-        {/* TODO : anonymous, 익명 수정 필요 */}
         <EmojiCarousel
           onClick={(value) => {
             if (!value) return
-            sendMessage(userData?.userId || 'anonymous', userData?.username || '익명', value)
+            if (userData?.userId && userData?.username) {
+              sendMessage(userData.userId, userData.username, value)
+            }
           }}
         />
         <ChatInput
@@ -93,7 +94,9 @@ const ChatBottomSheet = ({ isOpen, onClose, roomId }: ChatBottomSheetProps) => {
           onChange={setInput}
           onSend={() => {
             if (input.trim()) {
-              sendMessage(userData?.userId || 'anonymous', userData?.username || '익명', input)
+              if (userData?.userId && userData?.username) {
+                sendMessage(userData.userId, userData.username, input)
+              }
               setInput('')
             }
           }}
