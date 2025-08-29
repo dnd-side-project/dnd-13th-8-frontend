@@ -1,16 +1,35 @@
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 import styled from 'styled-components'
 
 import { Cancel } from '@/assets/icons'
+import { usePlaylistDetail } from '@/entities/playlist'
 import { flexColCenter } from '@/shared/styles/mixins'
-import { Header, Link, SvgButton } from '@/shared/ui'
+import { Header, Link, Loading, SvgButton, Error } from '@/shared/ui'
 import { PlaylistHorizontal } from '@/widgets/playlist'
-
-import PlaylistData from '../myPlaylist.json'
 
 const MyPlaylistInfoPage = () => {
   const navigate = useNavigate()
+  const location = useLocation()
+  const { playlistId } = location.state as { playlistId: number }
+
+  const { data: playlistData, isLoading, isError } = usePlaylistDetail(Number(playlistId))
+
+  if (isError || !playlistData) {
+    return (
+      <NoDataWrapper>
+        <Error />
+      </NoDataWrapper>
+    )
+  }
+
+  if (isLoading) {
+    return (
+      <NoDataWrapper>
+        <Loading isLoading width="100%" height="100%" />
+      </NoDataWrapper>
+    )
+  }
 
   return (
     <Wrapper>
@@ -20,13 +39,13 @@ const MyPlaylistInfoPage = () => {
       />
       <Content>
         <PlaylistHorizontal
-          genre={PlaylistData?.genre || ''}
-          title={PlaylistData?.title || ''}
-          username={PlaylistData?.username || ''}
+          genre={playlistData?.genre || ''}
+          title={playlistData?.playlistName || ''}
+          username={playlistData?.creatorNickname || ''}
         />
         <TrackInfo>
-          {PlaylistData &&
-            PlaylistData.tracks.map((track, index) => (
+          {playlistData.songs &&
+            playlistData.songs.map((track, index) => (
               <Link key={index} data={track} variant="large" />
             ))}
         </TrackInfo>
@@ -50,4 +69,11 @@ const TrackInfo = styled.div`
   display: flex;
   flex-direction: column;
   gap: 20px;
+`
+
+const NoDataWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 60dvh;
 `

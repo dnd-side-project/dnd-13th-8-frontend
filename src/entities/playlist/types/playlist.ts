@@ -72,11 +72,17 @@ export interface PlaylistDetailResponse extends PlaylistDetail {
 }
 
 export interface PlaylistInfo extends PlaylistDetail {
-  cardId: number
-  position: number
-  shareUrl: string
-  totalTime: string
+  cardId?: number
+  position?: number
+  shareUrl?: string
+  totalTime?: string
   creator: Creator
+
+  // TODO : 타입 맞춰달라고 수정 요청 해야 함
+  onlyCdResponse?: {
+    cdItems: CdCustomData[]
+  }
+  cdItems?: CdCustomData[]
 }
 
 // 커서 정보
@@ -96,4 +102,15 @@ export interface PlaylistParams {
   cursorPosition?: number
   cursorCardId?: number
   size?: number
+}
+
+export interface MyRepresentResponse {
+  playlistId: number
+  playlistName: string
+  isRepresentative: boolean
+  songs: Track[]
+  genre: MusicGenreId
+  onlyCdResponse: {
+    cdItems: CdCustomData[]
+  }
 }

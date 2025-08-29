@@ -1,4 +1,4 @@
-import type { Track } from '@/entities/playlist'
+import type { CdCustomData, Track } from '@/entities/playlist'
 
 export interface SearchParams {
   query: string
@@ -36,6 +36,12 @@ export interface Playlist {
   creatorNickname: string
   tracks: Track[]
   type: 'USER' | 'PLAYLIST'
+
+  // TODO : 스티커 정보는 둘 중 하나로 올 수 있음 추후 통일 필요
+  onlyCdResponse?: {
+    cdItems: CdCustomData[]
+  }
+  cdItems?: CdCustomData[]
 }
 
 export type SearchPlaylistResponse = {

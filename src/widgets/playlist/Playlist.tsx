@@ -2,15 +2,17 @@ import { useNavigate } from 'react-router-dom'
 
 import styled from 'styled-components'
 
+import type { CdCustomData } from '@/entities/playlist'
 import Cd from '@/shared/ui/Cd'
 
 interface PlaylistProps {
   title: string
   username: string
   id: number
+  stickers?: CdCustomData[]
 }
 
-const Playlist = ({ id, title, username }: PlaylistProps) => {
+const Playlist = ({ id, title, username, stickers }: PlaylistProps) => {
   const navigate = useNavigate()
 
   const handleClick = () => {
@@ -20,7 +22,7 @@ const Playlist = ({ id, title, username }: PlaylistProps) => {
   return (
     <Wrapper onClick={handleClick}>
       <CdBox>
-        <Cd variant="xl" />
+        <Cd variant="xl" stickers={stickers} />
       </CdBox>
       <InfoBox>
         <Title>{title}</Title>

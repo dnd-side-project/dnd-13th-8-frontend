@@ -16,20 +16,20 @@ import {
 import type { Cursor, PlaylistResponse } from '@/entities/playlist/types/playlist'
 import { useAuthStore } from '@/features/auth/store/authStore'
 
-export const useShufflePlaylists = () => {
+export const useShufflePlaylists = (size: number = 5) => {
   return useInfiniteQuery<
     PlaylistResponse, // queryFn 반환 타입
     Error, // 에러 타입
     InfiniteData<PlaylistResponse, Cursor>, // select 후 데이터 타입
-    ['playlists'], // queryKey 타입
+    ['playlists', number], // queryKey 타입
     Cursor | undefined // pageParam 타입
   >({
-    queryKey: ['playlists'],
+    queryKey: ['playlists', size],
     queryFn: ({ pageParam }) =>
       getShufflePlaylists({
         cursorPosition: pageParam?.position,
         cursorCardId: pageParam?.cardId,
-        size: 5, // 고정
+        size,
       }),
     initialPageParam: undefined, // 첫 호출은 커서 없이 시작
     getNextPageParam: (lastPage) => {

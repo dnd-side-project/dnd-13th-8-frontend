@@ -38,10 +38,11 @@ const useFollow = (playlistId: number, initialIsFollowing: boolean) => {
 
 export default useFollow
 
-export const useFollowStatus = (playlistId: number) => {
+export const useFollowStatus = (playlistId: number, options?: { enabled?: boolean }) => {
   return useQuery({
     queryKey: ['followStatus', playlistId],
     queryFn: () => getFollowStatus(playlistId),
     staleTime: 0,
+    enabled: playlistId !== undefined && (options?.enabled ?? true),
   })
 }

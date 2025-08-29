@@ -6,6 +6,7 @@ import styled from 'styled-components'
 import type { PlaylistInfo } from '@/entities/playlist'
 import { useChatSocket } from '@/features/chat/model/sendMessage'
 import { useFollowStatus } from '@/features/follow/model/useFollow'
+import { getTrackOrderLabel } from '@/shared/lib'
 import { flexColCenter } from '@/shared/styles/mixins'
 import { Button, Cd, Header, LiveInfo } from '@/shared/ui'
 import { ActionBar, ProgressBar } from '@/widgets/playlist'
@@ -46,7 +47,9 @@ const PlaylistLayout = ({
   const navigate = useNavigate()
   const isActive = currentPlaylist?.playlistId === data.playlistId
   const { participantCount: listenersNum } = useChatSocket(isActive ? String(data.playlistId) : '')
-  const { data: isFollowing } = useFollowStatus(data.playlistId)
+  const { data: isFollowing } = useFollowStatus(data.playlistId, {
+    enabled: currentPlaylist?.playlistId === data.playlistId, // active playlist만 호출
+  })
 
   // 누적 시간 계산
   const accumulatedTime = useMemo(() => {
@@ -71,7 +74,7 @@ const PlaylistLayout = ({
         center={
           <>
             <span>{data.playlistName}</span>
-            <span>{currentPlaylist?.songs[currentTrackIndex]?.title}</span>
+            <span>{getTrackOrderLabel(Number(currentTrackIndex))}</span>
           </>
         }
       />
@@ -85,7 +88,7 @@ const PlaylistLayout = ({
         <VolumeButton playerRef={playerRef} isMuted={isMuted} setIsMuted={setIsMuted} />
       </Container>
       <Wrapper>
-        <Cd variant="xxl" bgColor="none" />
+        <Cd variant="xxl" bgColor="none" stickers={data?.cdItems} />
         <ActionBar
           playlistId={data.playlistId}
           isFollowing={!!isFollowing}

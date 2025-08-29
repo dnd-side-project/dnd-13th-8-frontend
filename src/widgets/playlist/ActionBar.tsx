@@ -24,7 +24,7 @@ const ActionBar = ({ playlistId, isFollowing, userName, profile, showFollow }: A
     if (showFollow) {
       navigate(`/discover/${playlistId}/playlist`)
     } else {
-      navigate(`/mycd/playlist`)
+      navigate(`/mycd/playlist`, { state: { playlistId } })
     }
   }
 
