@@ -25,7 +25,7 @@ const LoginPage = () => {
 
     const authUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${KAKAO_CLIENT_ID}&redirect_uri=${encodeURIComponent(
       REDIRECT_URI
-    )}&response_type=code&code_challenge=${codeChallenge}&code_challenge_method=S256`
+    )}&response_type=code&code_challenge=${codeChallenge}&code_challenge_method=S256&scope=profile_nickname%20profile_image`
 
     window.location.href = authUrl
   }
