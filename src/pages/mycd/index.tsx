@@ -59,13 +59,6 @@ const MyCdPage = () => {
     return () => clearInterval(intervalId)
   }, [updateCurrentTime])
 
-  useEffect(() => {
-    if (playerRef.current) {
-      if (isPlaying) playerRef.current.playVideo()
-      else playerRef.current.pauseVideo()
-    }
-  }, [isPlaying])
-
   const handlePlayerStateChange = useCallback(
     (event: YT.OnStateChangeEvent) => {
       if (event.data === window.YT.PlayerState.ENDED) nextTrack()

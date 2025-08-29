@@ -72,15 +72,7 @@ const Cd = ({ variant, bgColor = 'default', stickers }: CdProps) => {
           />
         )
       })}
-      <Overlay
-        width="100%"
-        height="100%"
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-        }}
-      />
+      <StyledOverlay width="100%" height="100%" />
     </Base>
   )
 
@@ -131,4 +123,10 @@ const Base = styled.div<StyleProps>`
   border-radius: 100%;
   background: ${({ theme }) => theme.GRADIENT.hologram};
   overflow: hidden;
+`
+
+const StyledOverlay = styled(Overlay)`
+  position: absolute;
+  top: 0;
+  left: 0;
 `
