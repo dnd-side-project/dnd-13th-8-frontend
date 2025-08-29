@@ -1,6 +1,11 @@
-import { useInfiniteQuery, type InfiniteData } from '@tanstack/react-query'
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQueryClient,
+  type InfiniteData,
+} from '@tanstack/react-query'
 
-import { getChatHistory } from '@/features/chat/api/chat'
+import { deleteChatMessage, getChatHistory } from '@/features/chat/api/chat'
 import type { ChatHistoryResponse } from '@/features/chat/types/chat'
 
 export const useInfiniteChatHistory = (roomId: string, limit = 50) => {
@@ -17,5 +22,16 @@ export const useInfiniteChatHistory = (roomId: string, limit = 50) => {
     initialPageParam: undefined, // pageParam -> string | undefined
     getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
     staleTime: 0,
+  })
+}
+
+export const useDeleteChatMessage = (roomId: string) => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (messageId: string) => deleteChatMessage(roomId, messageId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['chat-history', roomId] })
+    },
   })
 }

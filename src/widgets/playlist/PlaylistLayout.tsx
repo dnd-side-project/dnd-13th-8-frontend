@@ -95,13 +95,18 @@ const PlaylistLayout = ({
           {isMobile && (
             <VolumeButton playerRef={playerRef} isMuted={isMuted} setIsMuted={setIsMuted} />
           )}
-          <Cd variant="xxl" bgColor="none" stickers={data?.cdItems} />
+          <Cd
+            variant="xxl"
+            bgColor="none"
+            stickers={data?.cdItems ?? data?.onlyCdResponse?.cdItems ?? []}
+          />
         </CdWrapper>
         <ActionBar
           playlistId={data.playlistId}
           isFollowing={!!isFollowing}
           userName={data.creator.creatorNickname}
           showFollow={type !== 'My'}
+          creatorId={data.creator.creatorId}
         />
       </Wrapper>
 

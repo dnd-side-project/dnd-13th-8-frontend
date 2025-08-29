@@ -17,9 +17,10 @@ interface ChatBottomSheetProps {
   isOpen: boolean
   onClose: () => void
   roomId: string
+  creatorId: string
 }
 
-const ChatBottomSheet = ({ isOpen, onClose, roomId }: ChatBottomSheetProps) => {
+const ChatBottomSheet = ({ isOpen, onClose, roomId, creatorId }: ChatBottomSheetProps) => {
   const [input, setInput] = useState('')
   const scrollRef = useRef<HTMLDivElement>(null)
 
@@ -54,6 +55,8 @@ const ChatBottomSheet = ({ isOpen, onClose, roomId }: ChatBottomSheetProps) => {
     }
   }
 
+  console.log(allMessages)
+
   return (
     <BottomSheet isOpen={isOpen} onClose={onClose} height="fit-content">
       <Title>실시간 채팅</Title>
@@ -61,7 +64,15 @@ const ChatBottomSheet = ({ isOpen, onClose, roomId }: ChatBottomSheetProps) => {
         {allMessages.length > 0 ? (
           allMessages.map((msg) => {
             const { Icon, text } = parseMessage(msg.content)
-            // TODO : role 실제 값으로 변경 필요
+
+            // role 판별
+            let role: 'mine' | 'owner' | 'other' = 'other'
+            if (msg.senderId === userData?.userId) {
+              role = 'mine'
+            } else if (userData?.userId === creatorId) {
+              role = 'owner'
+            }
+
             return (
               <Comment
                 profileUrl={msg.profileImage ?? undefined}
@@ -69,7 +80,9 @@ const ChatBottomSheet = ({ isOpen, onClose, roomId }: ChatBottomSheetProps) => {
                 name={msg.username || '익명'}
                 comment={text}
                 Icon={Icon || undefined}
-                role={msg.systemMessage ? 'mine' : 'owner'}
+                role={role}
+                messageId={msg.messageId}
+                roomId={msg.roomId}
               />
             )
           })

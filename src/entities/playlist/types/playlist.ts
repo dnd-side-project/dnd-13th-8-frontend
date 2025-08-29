@@ -69,6 +69,11 @@ export interface PlaylistDetail {
 export interface PlaylistDetailResponse extends PlaylistDetail {
   creatorId: string
   creatorNickname: string
+
+  // TODO : 타입 맞춰달라고 수정 요청 해야 함
+  onlyCdResponse?: {
+    cdItems: CdCustomData[]
+  }
 }
 
 export interface PlaylistInfo extends PlaylistDetail {
