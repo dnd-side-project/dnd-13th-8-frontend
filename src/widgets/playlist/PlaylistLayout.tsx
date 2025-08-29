@@ -37,7 +37,8 @@ const PlaylistLayout = ({
   type = 'Discover',
 }: PlaylistSlideProps) => {
   const navigate = useNavigate()
-  const { participantCount: listenersNum } = useChatSocket(String(data.playlistId))
+  const isActive = currentPlaylist?.playlistId === data.playlistId
+  const { participantCount: listenersNum } = useChatSocket(isActive ? String(data.playlistId) : '')
   const { data: isFollowing } = useFollowStatus(data.playlistId)
 
   // 누적 시간 계산
