@@ -57,7 +57,6 @@ const CustomizeStep3 = ({ currentCdId }: { currentCdId: number | null }) => {
 export default CustomizeStep3
 
 const CustomizeBg = styled.div`
-  z-index: 0;
   position: absolute;
   top: 0;
   left: -20px;
@@ -67,10 +66,10 @@ const CustomizeBg = styled.div`
   background-repeat: no-repeat;
   width: calc(100% + 40px);
   height: 100%;
+  pointer-events: none;
 `
 
 const CdResultContainer = styled.div`
-  z-index: 1;
   ${flexColCenter}
   gap: 76px;
   width: 100%;

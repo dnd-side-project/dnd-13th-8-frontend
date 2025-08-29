@@ -75,7 +75,7 @@ export const routesConfig: RouteConfig[] = [
     children: [
       { path: '', component: MyPage, hideNav: false, isNotSuspense: false },
       { path: 'customize', component: Customize, isNotSuspense: false },
-      { path: ':id/playlist', component: MyPagePlaylist },
+      { path: ':id/playlist', component: MyPagePlaylist, hideNav: false },
       { path: 'setting', component: Setting },
       { path: 'terms', component: Terms },
       { path: 'privacy', component: Privacy },

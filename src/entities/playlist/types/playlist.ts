@@ -1,5 +1,8 @@
+import type { Track } from '@/entities/playlist'
+import type { MusicGenreId } from '@/shared/config/musicGenres'
+
 export interface MyCdInfo {
-  paylistId: number
+  playlistId: number
   playlistName: string
   isRepresentative: boolean
 }
@@ -33,4 +36,12 @@ export interface CdCustomData {
 export interface CdCustomDataResponse {
   playlistId: number
   cdItems: CdCustomData[]
+}
+
+export interface MyPlaylistResponse extends MyCdInfo {
+  songs: Track[]
+  genre: MusicGenreId
+  onlyCdResponse: {
+    cdItems: CdCustomData[]
+  }
 }

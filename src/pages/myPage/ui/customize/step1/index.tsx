@@ -34,6 +34,7 @@ const CustomizeStep1 = ({ currentStep, setCurrentStep, setModal }: CustomizeStep
   const [linkMap, setLinkMap] = useState<{ id: string; link: string }[]>([])
   const [linkErrorMap, setLinkErrorMap] = useState<{ [key: string]: string }>({})
 
+  // TODO: 초ㅣ초 생성 시 대표 플리 지정 백엔드에서 처리
   const [isPrimary, setIsPrimary] = useState(routeState?.isPrimary ?? false)
 
   const MAX_LINK_COUNT = 10
