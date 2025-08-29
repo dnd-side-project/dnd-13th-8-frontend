@@ -102,7 +102,9 @@ const MyPagePlaylist = () => {
   return (
     <>
       <Header
-        left={<SvgButton icon={LeftArrow} width={24} height={24} onClick={() => navigate(-1)} />}
+        left={
+          <SvgButton icon={LeftArrow} width={24} height={24} onClick={() => navigate('/mypage')} />
+        }
         right={<EditButton type="button">편집</EditButton>}
       />
       <PlaylistHorizontal
