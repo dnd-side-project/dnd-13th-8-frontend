@@ -12,7 +12,7 @@ import { flexColCenter, flexRowCenter } from '@/shared/styles/mixins'
 
 const LoginPage = () => {
   const navigate = useNavigate()
-  const { toast } = useToast()
+  const { toast } = useToast?.() ?? {}
 
   const onKakaoLoginClick = async () => {
     const KAKAO_CLIENT_ID = import.meta.env.VITE_KAKAO_CLIENT_ID
@@ -39,7 +39,7 @@ const LoginPage = () => {
 
   useEffect(() => {
     if (localStorage.getItem('show_expired_toast') === 'true') {
-      toast('AUTH_EXPIRED')
+      toast?.('AUTH_EXPIRED')
       localStorage.removeItem('show_expired_toast')
     }
   }, [toast])

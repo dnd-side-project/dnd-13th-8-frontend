@@ -137,7 +137,7 @@ const BottomSheet = ({
 const SheetContainer = styled(motion.div)<{ $deviceType: DeviceType; $height: string }>`
   position: relative;
   width: ${({ $deviceType }) =>
-    $deviceType === 'mobile' ? 'clamp(320px, 100dvw, 430px)' : '375px'};
+    $deviceType === 'mobile' ? 'clamp(320px, 100dvw, 430px)' : '430px'};
   height: ${({ $height }) => $height};
   border-radius: 20px 20px 0 0;
   overflow: hidden;
