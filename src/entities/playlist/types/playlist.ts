@@ -72,10 +72,10 @@ export interface PlaylistDetailResponse extends PlaylistDetail {
 }
 
 export interface PlaylistInfo extends PlaylistDetail {
-  cardId: number
-  position: number
-  shareUrl: string
-  totalTime: string
+  cardId?: number
+  position?: number
+  shareUrl?: string
+  totalTime?: string
   creator: Creator
 }
 
@@ -96,4 +96,15 @@ export interface PlaylistParams {
   cursorPosition?: number
   cursorCardId?: number
   size?: number
+}
+
+export interface MyRepresentResponse {
+  playlistId: number
+  playlistName: string
+  isRepresentative: boolean
+  songs: Track[]
+  genre: MusicGenreId
+  onlyCdResponse: {
+    cdItems: CdCustomData[]
+  }
 }

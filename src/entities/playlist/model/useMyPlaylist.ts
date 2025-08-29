@@ -7,6 +7,7 @@ import {
   getMyPagePlaylist,
   deleteMyPagePlaylist,
   setPrimaryPlaylist,
+  getMyRepresentativePlaylist,
 } from '@/entities/playlist/api/playlist'
 
 export const useMyCdList = (sort: string) => {
@@ -63,4 +64,11 @@ export const useMyPagePlaylist = (playlistId: number) => {
     deletePlaylist: deleteMutation,
     setPrimaryPlaylist: setPrimaryMutation,
   }
+}
+
+export const useMyRepresentativePlaylist = () => {
+  return useQuery({
+    queryKey: ['myRepresentativePlaylist'],
+    queryFn: () => getMyRepresentativePlaylist(),
+  })
 }

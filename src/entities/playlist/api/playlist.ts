@@ -6,6 +6,7 @@ import type {
   PlaylistDetailResponse,
   PlaylistParams,
   PlaylistResponse,
+  MyRepresentResponse,
 } from '@/entities/playlist/types/playlist'
 import { api } from '@/shared/api/httpClient'
 
@@ -57,4 +58,8 @@ export const postPlaylistConfirm = (playlistId: number) => {
 
 export const getPlaylistViewCounts = (playlistId: number) => {
   return api.get(`/main/browse/playlists/view-counts/${playlistId}`)
+}
+
+export const getMyRepresentativePlaylist = () => {
+  return api.get<MyRepresentResponse>('main/playlists/representative')
 }
