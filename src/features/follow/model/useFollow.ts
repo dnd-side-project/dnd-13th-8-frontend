@@ -25,6 +25,7 @@ const useFollow = (playlistId: number, initialIsFollowing: boolean) => {
   })
 
   const toggleFollow = () => {
+    if (followMutation.isPending || unfollowMutation.isPending) return
     if (isFollowing) {
       unfollowMutation.mutate(playlistId)
     } else {
