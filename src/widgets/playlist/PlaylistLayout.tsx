@@ -47,7 +47,9 @@ const PlaylistLayout = ({
   const navigate = useNavigate()
   const isActive = currentPlaylist?.playlistId === data.playlistId
   const { participantCount: listenersNum } = useChatSocket(isActive ? String(data.playlistId) : '')
-  const { data: isFollowing } = useFollowStatus(data.playlistId)
+  const { data: isFollowing } = useFollowStatus(data.playlistId, {
+    enabled: currentPlaylist?.playlistId === data.playlistId, // active playlist만 호출
+  })
 
   // 누적 시간 계산
   const accumulatedTime = useMemo(() => {
