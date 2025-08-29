@@ -35,16 +35,16 @@ export const useCategoryPlaylist = (params: CategoryPlaylistParams, enabled = tr
     InfiniteData<CategoryPlaylistItem, string | null>,
     (string | CategoryPlaylistParams)[],
     string | null // pageParam 타입
-      >({
-        queryKey: ['categoryPlaylist', params],
-        initialPageParam: null,
-        queryFn: ({ pageParam }) => {
-          const cursorId = pageParam ? Number(pageParam) : undefined
-          return getCategoryPlaylist({ ...params, cursorId })
-        },
-        getNextPageParam: (lastPage) => lastPage.nextCursor ?? null,
-        enabled,
-      })
+  >({
+    queryKey: ['categoryPlaylist', params],
+    initialPageParam: null,
+    queryFn: ({ pageParam }) => {
+      const cursorId = pageParam ? Number(pageParam) : undefined
+      return getCategoryPlaylist({ ...params, cursorId })
+    },
+    getNextPageParam: (lastPage) => lastPage.nextCursor ?? null,
+    enabled,
+  })
 }
 
 export const usePopularKeyword = (params: PopularKeywordParams) => {

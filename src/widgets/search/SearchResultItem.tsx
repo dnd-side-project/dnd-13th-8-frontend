@@ -4,7 +4,7 @@ import { flexRowCenter } from '@/shared/styles/mixins'
 import { Cd, Profile } from '@/shared/ui'
 
 interface SearchResultItemProps {
-  imageUrl?: string
+  imageUrl?: string | null
   type: 'PLAYLIST' | 'USER'
   searchResult: string
   userName?: string | null

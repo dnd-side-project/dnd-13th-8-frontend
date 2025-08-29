@@ -5,17 +5,21 @@ import type { ModalProps } from '@shared/ui/Modal'
 
 import CustomizeStep1 from '@/pages/myPage/ui/customize/step1'
 import CustomizeStep2 from '@/pages/myPage/ui/customize/step2'
+import CustomizeStep3 from '@/pages/myPage/ui/customize/step3'
 
 export type CustomizeStep = 1 | 2 | 3
 
 export interface CustomizeStepProps {
   currentStep: CustomizeStep
   setCurrentStep: (step: CustomizeStep) => void
+  currentCdId?: number | null
+  setCurrentCdId?: (cdId: number | null) => void
   setModal: (modal: ModalProps) => void
 }
 
 const Customize = () => {
-  const [currentStep, setCurrentStep] = useState<CustomizeStep>(2)
+  const [currentStep, setCurrentStep] = useState<CustomizeStep>(1)
+  const [currentCdId, setCurrentCdId] = useState<number | null>(null)
   const [modal, setModal] = useState<ModalProps>({
     isOpen: false,
     title: '',
@@ -45,9 +49,12 @@ const Customize = () => {
         <CustomizeStep2
           currentStep={currentStep}
           setCurrentStep={setCurrentStep}
+          setCurrentCdId={setCurrentCdId}
           setModal={setModal}
         />
       )}
+
+      {currentStep === 3 && <CustomizeStep3 currentCdId={currentCdId} />}
 
       <Modal
         isOpen={modal.isOpen}

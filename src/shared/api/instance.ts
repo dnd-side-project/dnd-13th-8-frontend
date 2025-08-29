@@ -5,7 +5,8 @@ import { useAuthStore } from '@/features/auth/store/authStore'
 
 export const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
-  timeout: 5000,
+  timeout: 15000, // 15초
+  withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -27,11 +28,10 @@ axiosInstance.interceptors.request.use(
 // 응답 interceptor
 axiosInstance.interceptors.response.use(
   (response: AxiosResponse) => {
-    // TODO: 응답 구조에 따라 수정
     return response.data
   },
   (error: AxiosError) => {
-    if (error.response) console.error(error.response)
+    if (error.response) console.error(error.response.data)
     return Promise.reject(error)
   }
 )

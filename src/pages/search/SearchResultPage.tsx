@@ -27,7 +27,7 @@ const SearchResultPage = () => {
 
   const [inputValue, setInputValue] = useState(keyword)
   const [searchValue, setSearchValue] = useState(keyword)
-  const { selected, onSelect } = useSingleSelect<SortType>('popular')
+  const { selected, onSelect } = useSingleSelect<SortType>('POPULAR')
 
   const commonParams: SearchParams = {
     query: searchValue,
@@ -167,24 +167,24 @@ const SearchResultPage = () => {
             <ResultList>
               {type === 'keyword'
                 ? keywordSearchResult?.map((item: Playlist) => (
-                  <SearchResultItem
-                    key={item.playlistId}
-                    type={item.type}
-                    searchResult={item.type === 'USER' ? item.creatorNickname : item.playlistName}
-                    imageUrl={item.tracks?.[0]?.youtubeThumbnail ?? ''}
-                    userName={item.type === 'PLAYLIST' ? item.creatorNickname : undefined}
-                    onClick={() => handleItemClick(item.playlistId)}
-                  />
-                ))
+                    <SearchResultItem
+                      key={item.playlistId}
+                      type={item.type}
+                      searchResult={item.type === 'USER' ? item.creatorNickname : item.playlistName}
+                      imageUrl={item.tracks?.[0]?.youtubeThumbnail ?? ''}
+                      userName={item.type === 'PLAYLIST' ? item.creatorNickname : undefined}
+                      onClick={() => handleItemClick(item.playlistId)}
+                    />
+                  ))
                 : categorySearchResult.map((item: Playlist) => (
-                  <SearchResultItem
-                    key={item.playlistId}
-                    type="PLAYLIST"
-                    searchResult={item.playlistName}
-                    userName={item.creatorNickname}
-                    onClick={() => handleItemClick(item.playlistId)}
-                  />
-                ))}
+                    <SearchResultItem
+                      key={item.playlistId}
+                      type="PLAYLIST"
+                      searchResult={item.playlistName}
+                      userName={item.creatorNickname}
+                      onClick={() => handleItemClick(item.playlistId)}
+                    />
+                  ))}
             </ResultList>
             {isFetchingNextPage && (
               <LoadingWrapper>

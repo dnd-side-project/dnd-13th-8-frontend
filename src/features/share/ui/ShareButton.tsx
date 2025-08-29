@@ -11,7 +11,6 @@ import ShareImage from '@/features/share/ui/ShareImage'
 import { flexRowCenter } from '@/shared/styles/mixins'
 import { BottomSheet, Button, Cd, ScrollCarousel, SvgButton } from '@/shared/ui'
 
-
 interface ShareButtonProps {
   playlistId: number
 }

@@ -12,18 +12,25 @@ export const STICKER_THEME_LIST: { id: StickerThemeType; name: string }[] = [
   { id: 'metal', name: '메탈' },
 ]
 
+export const THEME_IMAGES_MAP = {
+  deulak: import.meta.glob('@/assets/customize/deulak/*.png', { eager: true }),
+  background: import.meta.glob('@/assets/customize/background/*.png', { eager: true }),
+  vintage: import.meta.glob('@/assets/customize/vintage/*.png', { eager: true }),
+  handdrawn: import.meta.glob('@/assets/customize/handdrawn/*.png', { eager: true }),
+  'people&animals': import.meta.glob('@/assets/customize/people&animals/*.png', { eager: true }),
+  neonObject: import.meta.glob('@/assets/customize/neonObject/*.png', { eager: true }),
+  transport: import.meta.glob('@/assets/customize/transport/*.png', { eager: true }),
+  '3d': import.meta.glob('@/assets/customize/3d/*.png', { eager: true }),
+  metal: import.meta.glob('@/assets/customize/metal/*.png', { eager: true }),
+}
+
 export const getCurrentThemeImages = (currentThemeId: StickerThemeType) => {
-  const themeImages = {
-    deulak: import.meta.glob('@/assets/customize/deulak/*.png', { eager: true }),
-    background: import.meta.glob('@/assets/customize/background/*.png', { eager: true }),
-    vintage: import.meta.glob('@/assets/customize/vintage/*.png', { eager: true }),
-    handdrawn: import.meta.glob('@/assets/customize/handdrawn/*.png', { eager: true }),
-    'people&animals': import.meta.glob('@/assets/customize/people&animals/*.png', { eager: true }),
-    neonObject: import.meta.glob('@/assets/customize/neonObject/*.png', { eager: true }),
-    transport: import.meta.glob('@/assets/customize/transport/*.png', { eager: true }),
-    '3d': import.meta.glob('@/assets/customize/3d/*.png', { eager: true }),
-    metal: import.meta.glob('@/assets/customize/metal/*.png', { eager: true }),
+  // user는 커스텀 스티커이므로 빈 객체 리턴
+  if (currentThemeId.toLowerCase() === 'user') {
+    return {}
   }
 
-  return themeImages[currentThemeId] || themeImages.deulak
+  return (
+    THEME_IMAGES_MAP[currentThemeId as keyof typeof THEME_IMAGES_MAP] || THEME_IMAGES_MAP.deulak
+  )
 }

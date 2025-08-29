@@ -6,21 +6,19 @@ import { flexColCenter } from '@shared/styles/mixins'
 import { SvgButton, Cd, Badge } from '@shared/ui'
 
 import { Plus } from '@/assets/icons'
+import type { MyCdListResponse } from '@/entities/playlist/types/playlist'
+import { useAuthStore } from '@/features/auth/store/authStore'
+import type { MyPageTabType } from '@/pages/myPage/types/mypage'
 
-// TODO: api 연동 후 실 데이터로 수정
 const CdGrid = ({
   currentPlaylist,
   currentTab,
 }: {
-  currentPlaylist: {
-    id: number
-    title: string
-    username: string
-    isPrimary?: boolean
-  }[]
-  currentTab: 'cd' | 'following'
+  currentPlaylist: MyCdListResponse
+  currentTab: MyPageTabType
 }) => {
   const navigate = useNavigate()
+  const { userInfo } = useAuthStore()
 
   return (
     <CdGridWrap>
@@ -29,17 +27,27 @@ const CdGrid = ({
           icon={Plus}
           width={40}
           height={40}
-          onClick={() => navigate('/mypage/customize')}
+          onClick={() =>
+            navigate('/mypage/customize', {
+              // 최초 생성일 경우 대표 플리 지정
+              // state: { isPrimary: !currentPlaylist?.length },
+            })
+          }
         />
         <CdAddLabel>추가하기</CdAddLabel>
       </CdAddContainer>
       {currentPlaylist?.map((item) => (
-        <CdContainer key={item.id}>
+        <CdContainer
+          key={item.playlistId}
+          as="button"
+          type="button"
+          onClick={() => navigate(`/mypage/${item.playlistId}/playlist`)}
+        >
           <Cd variant="md" />
-          {currentTab === 'cd' && item?.isPrimary && <Badge size="small" text="대표" />}
+          {currentTab === 'cd' && item?.isRepresentative && <Badge size="small" text="대표" />}
           <p>
-            <CdTitle>{item.title}</CdTitle>
-            <CdCreator>{item.username}</CdCreator>
+            <CdTitle>{item.playlistName}</CdTitle>
+            <CdCreator>{userInfo.username}</CdCreator>
           </p>
         </CdContainer>
       ))}
@@ -84,6 +92,7 @@ const CdAddLabel = styled.p`
 const CdContainer = styled.li`
   position: relative;
   ${flexColCenter}
+  cursor: pointer;
 
   & > button {
     width: 100%;

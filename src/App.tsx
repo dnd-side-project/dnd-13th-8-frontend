@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react'
-import { matchPath, useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 
 import styled from 'styled-components'
 
 import { ToastProvider } from '@app/providers'
 import { AppRoutes } from '@app/routes/routes'
 
-import { routesConfig } from '@shared/config/routesConfig'
+import { routesConfig, type RouteConfig } from '@shared/config/routesConfig'
 import { useDevice, type DeviceType } from '@shared/lib/useDevice'
 import { flexRowCenter } from '@shared/styles/mixins'
 
@@ -33,25 +33,53 @@ const App = () => {
     if (!isLogin) {
       mutate(undefined, {
         onSuccess: (response) => {
-          const token = `${response}` || ''
-          localStorage.setItem('anonymous_token', token)
+          localStorage.setItem('anonymous_token', response)
         },
       })
     }
   }
 
+  // children route가 hideNav를 가지면 해당 값 우선 적용, index route('')는 부모 경로와 정확히 일치할 때만 적용
+  const getHideNav = (pathname: string) => {
+    let hideNav = false
+
+    const findHideNav = (routes: RouteConfig[], parentPath = '', parentHide?: boolean) => {
+      for (const route of routes) {
+        const fullPath =
+          route.path === '' ? parentPath : `${parentPath}/${route.path}`.replace(/\/+/g, '/')
+        const currentHide = route.hideNav ?? parentHide ?? false
+
+        const isIndex = route.path === ''
+        const matched = isIndex
+          ? pathname === fullPath
+          : pathname === fullPath || pathname.startsWith(fullPath + '/')
+
+        if (matched) {
+          hideNav = currentHide
+          if (route.children) {
+            findHideNav(route.children, fullPath, currentHide)
+          }
+          break
+        }
+      }
+    }
+
+    findHideNav(routesConfig)
+    return hideNav
+  }
+
   useEffect(() => {
     const { pathname } = location
+
+    // 익명 토큰 발급
     if (['/login', '/login/callback'].includes(pathname)) {
       localStorage.removeItem('anonymous_token')
     } else {
       checkAnonymousLogin()
     }
-    const currentRoute = routesConfig.find((route) =>
-      matchPath({ path: route.path, end: true }, pathname)
-    )
-    const shouldHideNav = currentRoute?.hideNav ?? false
-    setIsNavVisible(!shouldHideNav)
+
+    // 네비게이션 미노출 여부 확인
+    setIsNavVisible(!getHideNav(pathname))
   }, [location.pathname])
 
   return (
@@ -85,7 +113,7 @@ const MainLayout = styled.main<{
   margin: 0 auto;
   padding: 0 20px
     ${({ $isNavVisible, $layoutBottomGap }) =>
-    $isNavVisible ? NAV_HEIGHT + $layoutBottomGap : '0'}px
+      $isNavVisible ? NAV_HEIGHT + $layoutBottomGap : '0'}px
     20px;
   width: ${({ $layoutWidth }) => $layoutWidth};
   min-height: 100dvh;

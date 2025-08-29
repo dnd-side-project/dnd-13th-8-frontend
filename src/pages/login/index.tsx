@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { Kakao } from '@/assets/icons'
+import { LoginBg as LoginBgImg, LoginContent as LoginContentImg } from '@/assets/images'
 import { generateCodeVerifier, generateCodeChallenge } from '@/features/auth/lib/pkce'
 import { useAuthStore } from '@/features/auth/store/authStore'
 import { flexColCenter, flexRowCenter } from '@/shared/styles/mixins'
@@ -35,29 +36,53 @@ const LoginPage = () => {
   }, [])
 
   return (
-    <LoginWrap>
-      {/* TODO: 그래픽 영역, 디자인 작업 중 */}
-      <div />
-      <CtaContainer>
-        <LoginButton type="button" onClick={onKakaoLoginClick}>
-          <Kakao width={20} height={20} />
-          <span>카카오로 시작하기</span>
-        </LoginButton>
-        <GuestButton type="button">비회원으로 둘러보기</GuestButton>
-      </CtaContainer>
-    </LoginWrap>
+    <>
+      <LoginBg />
+      <LoginWrap>
+        <LoginContent src={LoginContentImg} alt="login content" width={240} height={368} />
+        <CtaContainer>
+          <LoginButton type="button" onClick={onKakaoLoginClick}>
+            <Kakao width={20} height={20} />
+            <span>카카오로 시작하기</span>
+          </LoginButton>
+          <GuestButton type="button" onClick={() => navigate(-1)}>
+            비회원으로 둘러보기
+          </GuestButton>
+        </CtaContainer>
+      </LoginWrap>
+    </>
   )
 }
 
 export default LoginPage
 
+const LoginBg = styled.div`
+  z-index: 0;
+  position: absolute;
+  top: 0;
+  left: -20px;
+  background-image: url(${LoginBgImg});
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  width: calc(100% + 40px);
+  height: 100%;
+`
+
 const LoginWrap = styled.div`
   ${flexColCenter}
+  gap: 80px;
   width: 100%;
   height: 100dvh;
 `
 
+const LoginContent = styled.img`
+  z-index: 1;
+  object-fit: contain;
+`
+
 const CtaContainer = styled.div`
+  z-index: 1;
   ${flexColCenter}
   gap: 24px;
   width: 100%;

@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom'
 
 import { useLogin } from '@/features/auth/model/useAuth'
 import { useAuthStore } from '@/features/auth/store/authStore'
-import type { LoginResponse } from '@/features/auth/types/auth'
 import { Loading } from '@/shared/ui'
 
 const LoginCallbackPage = () => {
@@ -38,7 +37,7 @@ const LoginCallbackPage = () => {
       {
         onSuccess: (response) => {
           sessionStorage.removeItem('pkce_code_verifier')
-          setLogin(response as unknown as LoginResponse)
+          setLogin(response)
           navigate('/', { replace: true })
         },
         onError: (error) => {

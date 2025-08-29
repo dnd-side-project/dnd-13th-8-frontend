@@ -1,13 +1,15 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 
 import { AnimatePresence, motion, Reorder, useDragControls } from 'framer-motion'
 import styled from 'styled-components'
+import { v4 as uuidv4 } from 'uuid'
 
-import { Button, Cd, SvgButton, Input, BottomSheet } from '@shared/ui'
+import { Button, Cd, SvgButton, Input, BottomSheet, Loading } from '@shared/ui'
 import type { ModalProps } from '@shared/ui/Modal'
 
 import { DownArrow, Pin, PinPrimary, Share, Trash, HelpCircle, Drag, Cancel } from '@/assets/icons'
+import { useTempSavePlaylist } from '@/features/customize/model/useCustomize'
 import { Divider } from '@/pages/myPage/ui/components'
 import type { CustomizeStepProps } from '@/pages/myPage/ui/customize'
 import { StepHeader } from '@/pages/myPage/ui/customize/step1/components'
@@ -17,7 +19,11 @@ import { flexColCenter, flexRowCenter } from '@/shared/styles/mixins'
 
 const CustomizeStep1 = ({ currentStep, setCurrentStep, setModal }: CustomizeStepProps) => {
   const navigate = useNavigate()
+  const location = useLocation()
+  const routeState = location.state as { isPrimary: boolean }
   const dragControls = useDragControls()
+
+  const { mutate, isPending } = useTempSavePlaylist()
 
   const [isEditMode] = useState(false)
   const [isPopoverOpen, setIsPopoverOpen] = useState(false)
@@ -25,11 +31,11 @@ const CustomizeStep1 = ({ currentStep, setCurrentStep, setModal }: CustomizeStep
 
   const [metaGenre, setMetaGenre] = useState<MusicGenre | null>(null)
   const [metaTitle, setMetaTitle] = useState('')
-  const [linkMap, setLinkMap] = useState<{ id: number; link: string }[]>([])
-  const [linkErrorMap, setLinkErrorMap] = useState<{ [key: number]: string }>({})
+  const [linkMap, setLinkMap] = useState<{ id: string; link: string }[]>([])
+  const [linkErrorMap, setLinkErrorMap] = useState<{ [key: string]: string }>({})
 
-  // TODO: UI 확인용 임시 데이터, api 연동 시 수정 예정
-  const [isPrimary, setIsPrimary] = useState(false)
+  // TODO: 초ㅣ초 생성 시 대표 플리 지정 백엔드에서 처리
+  const [isPrimary, setIsPrimary] = useState(routeState?.isPrimary ?? false)
 
   const MAX_LINK_COUNT = 10
   const VALID_YOUTUBE_URLS = [
@@ -54,7 +60,7 @@ const CustomizeStep1 = ({ currentStep, setCurrentStep, setModal }: CustomizeStep
       fetchLinks()
       return
     }
-    setLinkMap([{ id: Date.now(), link: '' }])
+    setLinkMap([{ id: uuidv4(), link: '' }])
   }, [])
 
   // 모달 close
@@ -65,8 +71,27 @@ const CustomizeStep1 = ({ currentStep, setCurrentStep, setModal }: CustomizeStep
   // 헤더 다음 버튼 클릭
   const onHeaderNextClick = () => {
     if (isValidate()) {
-      // TODO: 플레이리스트 저장/수정 api 호출
-      setCurrentStep(2)
+      mutate(
+        {
+          videoPayload: {
+            videoLinks: linkMap.map(({ link }) => link),
+          },
+          metaInfo: {
+            name: metaTitle,
+            genre: metaGenre!.id,
+            isRepresentative: isPrimary,
+          },
+        },
+        {
+          onSuccess: () => {
+            setCurrentStep(2)
+          },
+          onError: (error) => {
+            console.error('플레이리스트 저장 실패:', error)
+            navigate('/error')
+          },
+        }
+      )
     }
   }
 
@@ -133,12 +158,12 @@ const CustomizeStep1 = ({ currentStep, setCurrentStep, setModal }: CustomizeStep
 
     const hasLinkEmpty = linkMap.some(({ link }) => !link.trim())
     if (!hasLinkEmpty) {
-      setLinkMap((prev) => [...prev, { id: Date.now(), link: '' }])
+      setLinkMap((prev) => [...prev, { id: uuidv4(), link: '' }])
     }
   }
 
   // 링크 input 입력값 유효성 검증
-  const checkLinkValid = (id: number, link: string) => {
+  const checkLinkValid = (id: string, link: string) => {
     const isValidYoutubeLink = VALID_YOUTUBE_URLS.some((url) => link.startsWith(url))
     const hasOnlyAllowedChars = /^[a-zA-Z0-9\-_./?=&:%]*$/.test(link)
 
@@ -150,20 +175,36 @@ const CustomizeStep1 = ({ currentStep, setCurrentStep, setModal }: CustomizeStep
   }
 
   // 링크 input onChange
-  const onLinkChange = (id: number, value: string) => {
+  const onLinkChange = (id: string, value: string) => {
     checkLinkValid(id, value)
     setLinkMap((prev) => prev.map((l) => (l.id === id ? { ...l, link: value } : l)))
   }
 
   // 링크 삭제
-  const onLinkRemoveClick = (id: number) => {
+  const onLinkRemoveClick = (id: string) => {
+    if (linkMap.length === 1) {
+      setModal({
+        isOpen: true,
+        title: `최소 1개 이상의 유튜브 링크가 필요해요`,
+        ctaType: 'single',
+        confirmText: '확인',
+        onClose: onModalClose,
+        onConfirm: onModalClose,
+      } as ModalProps)
+      return
+    }
+
     setLinkMap((prev) => prev.filter((link) => link.id !== id))
     setLinkErrorMap((prev) => ({ ...prev, [id]: '' }))
   }
 
   // 링크 순서 정렬
-  const onReSort = (newOrder: { id: number; link: string }[]) => {
+  const onReSort = (newOrder: { id: string; link: string }[]) => {
     setLinkMap(newOrder)
+  }
+
+  if (isPending) {
+    return <Loading isLoading />
   }
 
   return (

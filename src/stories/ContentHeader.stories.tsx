@@ -20,7 +20,7 @@ type Story = StoryObj<typeof ContentHeader>
 export const Default: Story = {
   args: {
     totalCount: 10,
-    currentSort: 'popular',
+    currentSort: 'POPULAR',
     onSortChange: () => {},
   },
   parameters: {
@@ -49,7 +49,7 @@ const Page = () => {
     },
   },
   render: () => {
-    const { selected: currentSort, onSelect: setCurrentSort } = useSingleSelect<SortType>('popular')
+    const { selected: currentSort, onSelect: setCurrentSort } = useSingleSelect<SortType>('POPULAR')
 
     return (
       <>
