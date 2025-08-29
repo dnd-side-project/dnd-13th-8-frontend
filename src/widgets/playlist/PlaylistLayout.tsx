@@ -7,6 +7,7 @@ import type { PlaylistInfo } from '@/entities/playlist'
 import { useChatSocket } from '@/features/chat/model/sendMessage'
 import { useFollowStatus } from '@/features/follow/model/useFollow'
 import { getTrackOrderLabel } from '@/shared/lib'
+import { useDevice } from '@/shared/lib/useDevice'
 import { flexColCenter } from '@/shared/styles/mixins'
 import { Button, Cd, Header, LiveInfo } from '@/shared/ui'
 import { ActionBar, ProgressBar } from '@/widgets/playlist'
@@ -51,6 +52,9 @@ const PlaylistLayout = ({
     enabled: currentPlaylist?.playlistId === data.playlistId, // active playlist만 호출
   })
 
+  const deviceType = useDevice()
+  const isMobile = deviceType === 'mobile'
+
   // 누적 시간 계산
   const accumulatedTime = useMemo(() => {
     if (!currentPlaylist) return 0
@@ -85,15 +89,24 @@ const PlaylistLayout = ({
             꾸미기
           </Button>
         )}
-        <VolumeButton playerRef={playerRef} isMuted={isMuted} setIsMuted={setIsMuted} />
       </Container>
       <Wrapper>
-        <Cd variant="xxl" bgColor="none" stickers={data?.cdItems} />
+        <CdWrapper>
+          {isMobile && (
+            <VolumeButton playerRef={playerRef} isMuted={isMuted} setIsMuted={setIsMuted} />
+          )}
+          <Cd
+            variant="xxl"
+            bgColor="none"
+            stickers={data?.cdItems ?? data?.onlyCdResponse?.cdItems ?? []}
+          />
+        </CdWrapper>
         <ActionBar
           playlistId={data.playlistId}
           isFollowing={!!isFollowing}
           userName={data.creator.creatorNickname}
           showFollow={type !== 'My'}
+          creatorId={data.creator.creatorId}
         />
       </Wrapper>
 
@@ -119,9 +132,14 @@ const Wrapper = styled.div`
   ${flexColCenter}
   padding: 16px 0;
   gap: 24px;
+  position: relative;
 `
 
 const Container = styled.div`
   display: flex;
   justify-content: space-between;
+`
+
+const CdWrapper = styled.div`
+  position: relative;
 `

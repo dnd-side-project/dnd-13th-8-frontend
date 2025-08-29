@@ -35,7 +35,13 @@ const NavBar = () => {
         )
 
         const color = isActive ? theme.COLOR['primary-normal'] : theme.COLOR['gray-100']
-        const linkTo = title === '둘러보기' && discoverLink ? discoverLink : paths[0]
+        const locationIdMatch = matchPath('/discover/:id', location.pathname)
+        const linkTo =
+          title === '둘러보기'
+            ? locationIdMatch
+              ? location.pathname // URL에 id 있으면 그대로
+              : discoverLink // 없으면 첫 셔플 id
+            : paths[0]
 
         return (
           <NavLink to={linkTo} key={title}>

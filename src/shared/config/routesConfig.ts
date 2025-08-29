@@ -1,6 +1,8 @@
 import { lazy } from 'react'
 import type { ComponentType, LazyExoticComponent } from 'react'
 
+import RedirectToShuffle from '@/pages/discover/ui/RedirectToShuffle'
+
 const HomePage = lazy(() => import('@/pages/home'))
 const MyPageLayout = lazy(() => import('@/pages/myPage/ui/MyPageLayout'))
 const MyPage = lazy(() => import('@/pages/myPage/ui'))
@@ -44,12 +46,13 @@ export const routesConfig: RouteConfig[] = [
 
   // 둘러보기
   {
-    path: '/discover/:id',
+    path: '/discover',
     component: DiscoverLayout,
     isNotSuspense: true,
     children: [
-      { path: '', component: DiscoverCarousel },
-      { path: 'playlist', component: PlaylistInfoPage },
+      { path: '', component: RedirectToShuffle }, // /discover → 셔플 리다이렉트
+      { path: ':id', component: DiscoverCarousel },
+      { path: ':id/playlist', component: PlaylistInfoPage },
     ],
   },
 
@@ -58,7 +61,6 @@ export const routesConfig: RouteConfig[] = [
     path: '/mycd',
     component: MyCdLayout,
     isNotSuspense: true,
-    isPrivate: true,
     children: [
       { path: '', component: MyCdPage },
       { path: 'playlist', component: MyCdInfoPage },
@@ -69,7 +71,6 @@ export const routesConfig: RouteConfig[] = [
   {
     path: '/mypage',
     component: MyPageLayout,
-    isPrivate: true,
     hideNav: true,
     isNotSuspense: true,
     children: [

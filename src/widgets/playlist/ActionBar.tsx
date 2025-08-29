@@ -15,9 +15,17 @@ interface ActionBarProps {
   userName: string
   profile?: string
   showFollow?: boolean
+  creatorId: string
 }
 
-const ActionBar = ({ playlistId, isFollowing, userName, profile, showFollow }: ActionBarProps) => {
+const ActionBar = ({
+  playlistId,
+  isFollowing,
+  userName,
+  profile,
+  showFollow,
+  creatorId,
+}: ActionBarProps) => {
   const navigate = useNavigate()
 
   const handleMovePlaylist = () => {
@@ -40,7 +48,7 @@ const ActionBar = ({ playlistId, isFollowing, userName, profile, showFollow }: A
       )}
       <ShareButton playlistId={playlistId} />
       <SvgButton icon={Playlist} width={24} height={24} onClick={handleMovePlaylist} />
-      <ChatButton roomId={playlistId} />
+      <ChatButton roomId={playlistId} creatorId={creatorId} />
     </Wrapper>
   )
 }
