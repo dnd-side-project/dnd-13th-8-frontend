@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 
-import { Overlay } from '@/assets/icons'
+import overlayUrl from '@/assets/icons/icn_overlay.svg?url'
 import type { CdCustomData } from '@/entities/playlist/types/playlist'
 import { THEME_IMAGES_MAP } from '@/pages/myPage/lib/customizeTheme'
 import { THEME_PROP_ID_OFFSET } from '@/pages/myPage/types/mypage'
@@ -72,7 +72,7 @@ const Cd = ({ variant, bgColor = 'default', stickers }: CdProps) => {
           />
         )
       })}
-      <Overlay width="100%" height="100%" />
+      <Overlay />
     </Base>
   )
 
@@ -122,4 +122,12 @@ const Base = styled.div<StyleProps>`
   border-radius: 100%;
   background: ${({ theme }) => theme.GRADIENT.hologram};
   overflow: hidden;
+`
+
+const Overlay = styled.div`
+  position: absolute;
+  inset: 0;
+  background: url(${overlayUrl}) no-repeat center/cover;
+  mix-blend-mode: multiply;
+  pointer-events: none;
 `
