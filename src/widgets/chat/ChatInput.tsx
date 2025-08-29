@@ -46,7 +46,7 @@ const ChatInput = ({ value, onChange, onSend, onFocus }: ChatInputProps) => {
 
   useEffect(() => {
     adjustHeight()
-  }, [])
+  }, [value])
 
   return (
     <Wrapper $isExpanded={isExpanded}>
