@@ -5,7 +5,7 @@ import { AnimatePresence, motion, Reorder, useDragControls } from 'framer-motion
 import styled from 'styled-components'
 import { v4 as uuidv4 } from 'uuid'
 
-import { Button, Cd, SvgButton, Input, BottomSheet, Loading } from '@shared/ui'
+import { Cd, SvgButton, Input, BottomSheet, Loading } from '@shared/ui'
 import type { ModalProps } from '@shared/ui/Modal'
 
 import { DownArrow, Pin, PinPrimary, Share, Trash, HelpCircle, Drag, Cancel } from '@/assets/icons'
@@ -270,9 +270,7 @@ const CustomizeStep1 = ({ currentStep, setCurrentStep, setModal }: CustomizeStep
           </AnimatePresence>
         </PopoverContainer>
 
-        <Button size="L" state="secondary" onClick={onLinkAddClick}>
-          추가하기
-        </Button>
+        <InputAddButton onClick={onLinkAddClick}>추가하기</InputAddButton>
 
         <LinksContainer>
           <Reorder.Group axis="y" values={linkMap} onReorder={onReSort}>
@@ -414,7 +412,6 @@ const PlaylistAddWrap = styled.div`
   ${flexColCenter}
   gap: 12px;
   width: 100%;
-  height: 100%;
 `
 
 const PopoverContainer = styled.div`
@@ -439,6 +436,17 @@ const PopoverText = styled(motion.div)`
   border-radius: 6px;
   background-color: ${({ theme }) => theme.COLOR['gray-700']};
   ${({ theme }) => theme.FONT['caption1']}
+`
+
+const InputAddButton = styled.button`
+  ${flexRowCenter}
+  width: 100%;
+  height: 42px;
+  padding: 12px 0;
+  border-radius: 10px;
+  background-color: ${({ theme }) => theme.COLOR['primary-normal']};
+  ${({ theme }) => theme.FONT['body2-normal']}
+  color: ${({ theme }) => theme.COLOR['gray-900']};
 `
 
 const LinksContainer = styled.div`
