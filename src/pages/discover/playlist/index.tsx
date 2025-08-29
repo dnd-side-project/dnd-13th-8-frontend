@@ -43,6 +43,7 @@ const PlaylistInfoPage = () => {
           genre={getGenreLabel(playlistData?.genre || '')}
           title={playlistData?.playlistName || ''}
           username={playlistData?.creatorNickname || ''}
+          stickers={playlistData?.onlyCdResponse?.cdItems || []}
         />
         <TrackInfo>
           {playlistData.songs &&

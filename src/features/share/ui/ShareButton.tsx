@@ -7,31 +7,33 @@ import { useToast } from '@/app/providers'
 import { Share } from '@/assets/icons'
 import GuestCharacter from '@/assets/images/img_character_guest.png'
 import MemberCharacter from '@/assets/images/img_character_member.png'
+import type { CdCustomData } from '@/entities/playlist'
 import ShareImage from '@/features/share/ui/ShareImage'
 import { flexRowCenter } from '@/shared/styles/mixins'
 import { BottomSheet, Button, Cd, ScrollCarousel, SvgButton } from '@/shared/ui'
 
 interface ShareButtonProps {
   playlistId: number
+  stickers?: CdCustomData[]
 }
 
-const slides = [
-  { id: 'cd', content: <Cd variant="share" bgColor="none" /> },
-  {
-    id: 'member',
-    content: <img src={MemberCharacter} alt="Member Character" width={220} height={220} />,
-  },
-  {
-    id: 'guest',
-    content: <img src={GuestCharacter} alt="Guest Character" width={220} height={220} />,
-  },
-]
-
-const ShareButton = ({ playlistId }: ShareButtonProps) => {
+const ShareButton = ({ playlistId, stickers }: ShareButtonProps) => {
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false)
   const [selectedIndex, setSelectedIndex] = useState(0)
   const { toast } = useToast()
   const shareRefs = useRef<(HTMLDivElement | null)[]>([])
+
+  const slides = [
+    { id: 'cd', content: <Cd variant="share" bgColor="none" stickers={stickers} /> },
+    {
+      id: 'member',
+      content: <img src={MemberCharacter} alt="Member Character" width={220} height={220} />,
+    },
+    {
+      id: 'guest',
+      content: <img src={GuestCharacter} alt="Guest Character" width={220} height={220} />,
+    },
+  ]
 
   const handleShare = () => setIsBottomSheetOpen(true)
 
