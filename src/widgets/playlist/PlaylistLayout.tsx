@@ -85,7 +85,7 @@ const PlaylistLayout = ({
         <VolumeButton playerRef={playerRef} isMuted={isMuted} setIsMuted={setIsMuted} />
       </Container>
       <Wrapper>
-        <Cd variant="xxl" bgColor="none" />
+        <Cd variant="xxl" bgColor="none" stickers={data?.cdItems} />
         <ActionBar
           playlistId={data.playlistId}
           isFollowing={!!isFollowing}

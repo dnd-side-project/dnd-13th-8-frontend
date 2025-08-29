@@ -6,7 +6,6 @@ import { useAuthStore } from '@/features/auth/store/authStore'
 import { getVideoId } from '@/shared/lib'
 import { PlaylistLayout, YoutubePlayer } from '@/widgets/playlist'
 
-
 const MyCdPage = () => {
   const {
     setPlaylist,
@@ -41,6 +40,7 @@ const MyCdPage = () => {
           genre,
           songs,
           representative: false,
+          cdItems: playlistData.onlyCdResponse?.cdItems || [],
         }
 
         setPlaylist(convertedPlaylist, currentTrackIndex, currentTime)

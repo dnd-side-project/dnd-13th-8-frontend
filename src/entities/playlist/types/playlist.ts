@@ -77,6 +77,12 @@ export interface PlaylistInfo extends PlaylistDetail {
   shareUrl?: string
   totalTime?: string
   creator: Creator
+
+  // TODO : 타입 맞춰달라고 수정 요청 해야 함
+  onlyCdResponse?: {
+    cdItems: CdCustomData[]
+  }
+  cdItems?: CdCustomData[]
 }
 
 // 커서 정보
