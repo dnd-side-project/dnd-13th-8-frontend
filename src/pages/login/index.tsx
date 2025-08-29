@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 
 import styled from 'styled-components'
 
+import { useToast } from '@/app/providers'
 import { Kakao } from '@/assets/icons'
 import { LoginBg as LoginBgImg, LoginContent as LoginContentImg } from '@/assets/images'
 import { generateCodeVerifier, generateCodeChallenge } from '@/features/auth/lib/pkce'
@@ -11,6 +12,7 @@ import { flexColCenter, flexRowCenter } from '@/shared/styles/mixins'
 
 const LoginPage = () => {
   const navigate = useNavigate()
+  const { toast } = useToast()
 
   const onKakaoLoginClick = async () => {
     const KAKAO_CLIENT_ID = import.meta.env.VITE_KAKAO_CLIENT_ID
@@ -35,6 +37,13 @@ const LoginPage = () => {
     }
   }, [])
 
+  useEffect(() => {
+    if (localStorage.getItem('show_expired_toast') === 'true') {
+      toast('AUTH_EXPIRED')
+      localStorage.removeItem('show_expired_toast')
+    }
+  }, [toast])
+
   return (
     <>
       <LoginBg />
@@ -45,7 +54,7 @@ const LoginPage = () => {
             <Kakao width={20} height={20} />
             <span>카카오로 시작하기</span>
           </LoginButton>
-          <GuestButton type="button" onClick={() => navigate(-1)}>
+          <GuestButton type="button" onClick={() => navigate('/')}>
             비회원으로 둘러보기
           </GuestButton>
         </CtaContainer>
