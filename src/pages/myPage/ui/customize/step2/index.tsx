@@ -720,14 +720,10 @@ const CustomizeStep2 = ({
     ctx.scale(dpr, dpr)
 
     // 초기 그리기
-    // drawStickers()
     drawStickers(logicalSize)
 
     // 모바일 Safari 등에서 터치 스크롤 간섭 방지
     const stopDefault = (ev: TouchEvent) => ev.preventDefault()
-    canvas.addEventListener('touchstart', stopDefault, { passive: false })
-    canvas.addEventListener('touchmove', stopDefault, { passive: false })
-    canvas.addEventListener('touchend', stopDefault, { passive: false })
 
     return () => {
       canvas.removeEventListener('touchstart', stopDefault)
@@ -865,20 +861,14 @@ const CustomizeStep2 = ({
         <CdAreaWrap>
           <CdCustomContainer>
             <canvas
+              ref={cdContainerRef}
               width={280}
               height={280}
-              ref={cdContainerRef}
               style={{ touchAction: 'none', WebkitUserSelect: 'none', WebkitTouchCallout: 'none' }}
-              onMouseDown={handlePointerDown}
-              onMouseMove={handlePointerMove}
-              onMouseUp={handlePointerUp}
-              onMouseLeave={handlePointerUp}
-              onTouchStart={handlePointerDown}
-              onTouchMove={handlePointerMove}
-              onTouchEnd={handlePointerUp}
-              onPointerDown={(e) => handlePointerDown(e as unknown as React.MouseEvent)}
-              onPointerMove={(e) => handlePointerMove(e as unknown as React.MouseEvent)}
+              onPointerDown={handlePointerDown}
+              onPointerMove={handlePointerMove}
               onPointerUp={handlePointerUp}
+              onPointerLeave={handlePointerUp}
             />
 
             <CdOverlay />
