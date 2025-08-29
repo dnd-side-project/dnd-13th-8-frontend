@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useLocation, Link, matchPath } from 'react-router-dom'
 
-import type { InfiniteData } from '@tanstack/react-query'
 import styled, { useTheme } from 'styled-components'
 
-import { useShufflePlaylists, type Cursor, type PlaylistResponse } from '@/entities/playlist'
+import { useShufflePlaylists } from '@/entities/playlist'
 import { NAV_ITEMS } from '@/shared/config/navItems'
 import SvgButton from '@/shared/ui/SvgButton'
 
@@ -17,11 +16,7 @@ const NavBar = () => {
 
   const { data } = useShufflePlaylists()
 
-  const playlists =
-    (data as unknown as InfiniteData<PlaylistResponse, Cursor>)?.pages.flatMap(
-      (page) => page.content
-    ) || []
-  const firstPlaylistId = playlists[0]?.playlistId
+  const firstPlaylistId = data?.pages?.[0]?.content?.[0]?.playlistId
 
   // 컴포넌트 마운트 시 첫 번째 항목의 id로 링크 설정
   useEffect(() => {

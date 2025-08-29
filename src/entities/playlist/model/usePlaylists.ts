@@ -1,4 +1,10 @@
-import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+  type InfiniteData,
+} from '@tanstack/react-query'
 
 import {
   getPlaylistDetail,
@@ -13,7 +19,7 @@ export const useShufflePlaylists = () => {
   return useInfiniteQuery<
     PlaylistResponse, // queryFn 반환 타입
     Error, // 에러 타입
-    PlaylistResponse, // select 후 데이터 타입
+    InfiniteData<PlaylistResponse, Cursor>, // select 후 데이터 타입
     ['playlists'], // queryKey 타입
     Cursor | undefined // pageParam 타입
   >({
