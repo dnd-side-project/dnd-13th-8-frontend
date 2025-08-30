@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { usePlaylist } from '@/app/providers/PlayerProvider'
-import { GuestCharacter } from '@/assets/images'
+import { MemberCharacter } from '@/assets/images'
 import { useMyRepresentativePlaylist } from '@/entities/playlist/model/useMyPlaylist'
 import { useAuthStore } from '@/features/auth/store/authStore'
 import { BUTTON_TEXT } from '@/pages/home/config/messages'
@@ -98,10 +98,10 @@ const MyCdPage = () => {
   if (isError) {
     return (
       <ErrorContainer>
-        <img src={GuestCharacter} alt="Guest Character" width={160} height={160} />
+        <img src={MemberCharacter} alt="Guest Character" width={160} height={160} />
 
         <Button size="S" state="primary" onClick={() => navigate('/mypage/customize')}>
-          {BUTTON_TEXT.GUEST}
+          {BUTTON_TEXT.MEMBER}
         </Button>
       </ErrorContainer>
     )
@@ -152,4 +152,5 @@ export default MyCdPage
 
 const ErrorContainer = styled.div`
   ${flexColCenter}
+  height: 100dvh;
 `
