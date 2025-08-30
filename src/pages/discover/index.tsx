@@ -90,17 +90,15 @@ const DiscoverPage = () => {
     return shufflePlaylists
   }, [playlistAsInfo, shufflePlaylists])
 
-  console.log('playlist final data', playlistsData)
-
-  // const playlists = useMemo(() => data?.pages.flatMap((page) => page.content) ?? [], [data])
-
   const videoId = currentPlaylist
     ? getVideoId(currentPlaylist.songs[currentTrackIndex]?.youtubeUrl)
     : null
 
+  const isReady = !!playlistAsInfo && shuffleData !== undefined
+
   // 최초 playlist 초기화
   useEffect(() => {
-    if (!currentPlaylist && playlistsData.length > 0) {
+    if (!currentPlaylist && playlistsData.length > 0 && isReady) {
       const initialPlaylist =
         playlistsData.find((p) => p.playlistId === Number(playlistId)) || playlistsData[0]
       setPlaylist(initialPlaylist, 0, 0)
@@ -124,14 +122,14 @@ const DiscoverPage = () => {
 
     const confirmTimer = setTimeout(() => {
       confirmPlaylist(currentPlaylist.playlistId)
-    }, 15000)
+    }, 5000)
 
     // 재생 중일 때 10초마다 refetch
     const viewCountTimer = setInterval(() => {
       if (isPlaying) {
         refetchViewCounts()
       }
-    }, 10000)
+    }, 5000)
 
     return () => {
       clearTimeout(confirmTimer)

@@ -15,6 +15,7 @@ interface CommentProps {
   roomId: string
   messageId: string
   Icon?: React.ComponentType<React.SVGProps<SVGSVGElement>>
+  removeMessage: (id: string) => void
 }
 
 const COMMENT_OPTIONS = {
@@ -26,10 +27,19 @@ const COMMENT_OPTIONS = {
   other: [{ text: '신고하기', type: 'report' }],
 } as const
 
-const Comment = ({ profileUrl, name, comment, role, Icon, roomId, messageId }: CommentProps) => {
+const Comment = ({
+  profileUrl,
+  name,
+  comment,
+  role,
+  Icon,
+  roomId,
+  messageId,
+  removeMessage,
+}: CommentProps) => {
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false)
   const { toast } = useToast()
-  const { mutate: deleteMessage } = useDeleteChatMessage(roomId)
+  const { mutate: deleteMessage } = useDeleteChatMessage(roomId, removeMessage)
 
   const handleOptionClick = (type: 'delete' | 'report') => {
     if (type === 'delete') {

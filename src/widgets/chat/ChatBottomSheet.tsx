@@ -24,7 +24,7 @@ const ChatBottomSheet = ({ isOpen, onClose, roomId, creatorId }: ChatBottomSheet
   const [input, setInput] = useState('')
   const scrollRef = useRef<HTMLDivElement>(null)
 
-  const { messages: socketMessages, sendMessage } = useChatSocket(roomId)
+  const { messages: socketMessages, sendMessage, removeMessage } = useChatSocket(roomId)
   const {
     data: historyData,
     fetchNextPage,
@@ -83,6 +83,7 @@ const ChatBottomSheet = ({ isOpen, onClose, roomId, creatorId }: ChatBottomSheet
                 role={role}
                 messageId={msg.messageId}
                 roomId={msg.roomId}
+                removeMessage={removeMessage}
               />
             )
           })

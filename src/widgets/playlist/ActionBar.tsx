@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { Playlist } from '@/assets/icons'
+import type { CdCustomData } from '@/entities/playlist'
 import { FollowButton } from '@/features/follow'
 import { ShareButton } from '@/features/share'
 import { flexRowCenter } from '@/shared/styles/mixins'
@@ -16,6 +17,7 @@ interface ActionBarProps {
   profile?: string
   showFollow?: boolean
   creatorId: string
+  stickers?: CdCustomData[]
 }
 
 const ActionBar = ({
@@ -25,6 +27,7 @@ const ActionBar = ({
   profile,
   showFollow,
   creatorId,
+  stickers,
 }: ActionBarProps) => {
   const navigate = useNavigate()
 
@@ -46,7 +49,7 @@ const ActionBar = ({
           playlistId={playlistId}
         />
       )}
-      <ShareButton playlistId={playlistId} />
+      <ShareButton playlistId={playlistId} stickers={stickers} />
       <SvgButton icon={Playlist} width={24} height={24} onClick={handleMovePlaylist} />
       <ChatButton roomId={playlistId} creatorId={creatorId} />
     </Wrapper>

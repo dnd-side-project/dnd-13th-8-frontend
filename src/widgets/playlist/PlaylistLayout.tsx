@@ -107,6 +107,7 @@ const PlaylistLayout = ({
           userName={data.creator.creatorNickname}
           showFollow={type !== 'My'}
           creatorId={data.creator.creatorId}
+          stickers={data?.cdItems ?? data?.onlyCdResponse?.cdItems ?? []}
         />
       </Wrapper>
 

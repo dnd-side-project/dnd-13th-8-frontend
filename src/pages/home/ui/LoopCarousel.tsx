@@ -180,4 +180,8 @@ const SlideOverlay = styled.div<{ $active: boolean }>`
 const FirstContent = styled.div`
   ${flexColCenter}
   gap: 12px;
+
+  button {
+    font-weight: 500;
+  }
 `
