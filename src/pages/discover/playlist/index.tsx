@@ -65,6 +65,7 @@ const Wrapper = styled.div`
 const Content = styled.section`
   display: flex;
   flex-direction: column;
+  width: 100%;
   gap: 28px;
 `
 const TrackInfo = styled.div`
