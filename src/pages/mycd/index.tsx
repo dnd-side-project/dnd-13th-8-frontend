@@ -1,9 +1,16 @@
 import { useRef, useEffect, useCallback, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+
+import styled from 'styled-components'
 
 import { usePlaylist } from '@/app/providers/PlayerProvider'
+import { GuestCharacter } from '@/assets/images'
 import { useMyRepresentativePlaylist } from '@/entities/playlist/model/useMyPlaylist'
 import { useAuthStore } from '@/features/auth/store/authStore'
+import { BUTTON_TEXT } from '@/pages/home/config/messages'
 import { getVideoId } from '@/shared/lib'
+import { flexColCenter } from '@/shared/styles/mixins'
+import { Button } from '@/shared/ui'
 import { PlaylistLayout, YoutubePlayer } from '@/widgets/playlist'
 
 const MyCdPage = () => {
@@ -22,8 +29,9 @@ const MyCdPage = () => {
   const playerRef = useRef<YT.Player | null>(null)
   const [isMuted, setIsMuted] = useState<boolean | null>(null) // TODO : 모바일 대응용 버튼으로 수정
   const { userInfo } = useAuthStore()
+  const navigate = useNavigate()
 
-  const { data: playlistData } = useMyRepresentativePlaylist()
+  const { data: playlistData, isError } = useMyRepresentativePlaylist()
 
   useEffect(() => {
     if (!currentPlaylist && playlistData && userInfo) {
@@ -87,6 +95,18 @@ const MyCdPage = () => {
     return isPlaying && playerRef.current.getPlayerState() === window.YT.PlayerState.PLAYING
   })()
 
+  if (isError) {
+    return (
+      <ErrorContainer>
+        <img src={GuestCharacter} alt="Guest Character" width={160} height={160} />
+
+        <Button size="S" state="primary" onClick={() => navigate('/mypage/customize')}>
+          {BUTTON_TEXT.GUEST}
+        </Button>
+      </ErrorContainer>
+    )
+  }
+
   return (
     <div>
       {currentPlaylist && (
@@ -129,3 +149,7 @@ const MyCdPage = () => {
 }
 
 export default MyCdPage
+
+const ErrorContainer = styled.div`
+  ${flexColCenter}
+`
