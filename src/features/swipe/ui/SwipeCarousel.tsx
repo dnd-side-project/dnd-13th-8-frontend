@@ -32,6 +32,7 @@ const SwipeCarousel = ({ children, data, onSelectIndexChange }: SwipeCarouselPro
     if (!emblaApi || data.length === 0) return
 
     const selectedIndex = emblaApi.selectedScrollSnap()
+    console.log('selectedIndex ', selectedIndex)
     onSelectIndexChange?.(selectedIndex) // 부모에 알림
     const newId = data[selectedIndex]?.playlistId
 
