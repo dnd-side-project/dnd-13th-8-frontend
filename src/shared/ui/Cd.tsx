@@ -59,6 +59,7 @@ const Cd = ({ variant, bgColor = 'default', stickers }: CdProps) => {
             key={`${cdItemId}-${xCoordinate}-${yCoordinate}`}
             src={src}
             alt="cd-sticker"
+            // crossOrigin="anonymous"
             style={{
               position: 'absolute',
               left: xCoordinate * ratio,

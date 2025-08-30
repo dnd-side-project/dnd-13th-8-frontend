@@ -55,8 +55,6 @@ const ChatBottomSheet = ({ isOpen, onClose, roomId, creatorId }: ChatBottomSheet
     }
   }
 
-  console.log(allMessages)
-
   return (
     <BottomSheet isOpen={isOpen} onClose={onClose} height="fit-content">
       <Title>실시간 채팅</Title>
