@@ -153,4 +153,5 @@ export default MyCdPage
 const ErrorContainer = styled.div`
   ${flexColCenter}
   height: 100dvh;
+  gap: 12px;
 `
