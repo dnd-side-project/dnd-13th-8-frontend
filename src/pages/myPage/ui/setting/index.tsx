@@ -9,7 +9,8 @@ import { SubHeader } from '@pages/myPage/ui/components'
 import { ToggleSwitch } from '@pages/myPage/ui/setting/components'
 
 import { RightArrow } from '@/assets/icons'
-import { flexRowCenter } from '@/shared/styles/mixins'
+// TODO: 최종 발표 당일 로그아웃/탈퇴하기 버튼 임시 주석
+// import { flexRowCenter } from '@/shared/styles/mixins'
 
 const Setting = () => {
   const navigate = useNavigate()
@@ -60,12 +61,13 @@ const Setting = () => {
         </ul>
       </SectionWrap>
 
-      <BottomCraWrap>
+      {/* TODO: 최종 발표 당일 로그아웃/탈퇴하기 버튼 임시 주석 */}
+      {/* <BottomCraWrap>
         <button type="button">로그아웃</button>
         <button type="button" onClick={() => navigate('/mypage/unregister')}>
           탈퇴하기
         </button>
-      </BottomCraWrap>
+      </BottomCraWrap> */}
     </>
   )
 }
@@ -104,21 +106,22 @@ const StyledHr = styled.hr`
   border: 1px solid ${({ theme }) => theme.COLOR['gray-700']};
 `
 
-const BottomCraWrap = styled.div`
-  position: absolute;
-  left: 0;
-  bottom: 66px;
-  ${flexRowCenter}
-  width: 100%;
-  height: 18px;
+// TODO: 최종 발표 당일 로그아웃/탈퇴하기 버튼 임시 주석
+// const BottomCraWrap = styled.div`
+//   position: absolute;
+//   left: 0;
+//   bottom: 66px;
+//   ${flexRowCenter}
+//   width: 100%;
+//   height: 18px;
 
-  & > button {
-    width: 100%;
-    ${({ theme }) => theme.FONT['label']}
-    color: ${({ theme }) => theme.COLOR['gray-200']};
-  }
+//   & > button {
+//     width: 100%;
+//     ${({ theme }) => theme.FONT['label']}
+//     color: ${({ theme }) => theme.COLOR['gray-200']};
+//   }
 
-  & > button:first-child {
-    border-right: 2px solid ${({ theme }) => theme.COLOR['gray-700']};
-  }
-`
+//   & > button:first-child {
+//     border-right: 2px solid ${({ theme }) => theme.COLOR['gray-700']};
+//   }
+// `

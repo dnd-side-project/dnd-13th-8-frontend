@@ -495,7 +495,7 @@ const CustomizeStep2 = ({
   // ===============================
 
   // Canvas에 스티커 그리기
-  const drawStickers = () => {
+  const drawStickers = (logicalSize = 280) => {
     const canvas = cdContainerRef.current
     if (!canvas) return
 
@@ -503,24 +503,19 @@ const CustomizeStep2 = ({
     if (!ctx) return
 
     // Canvas 초기화
-    ctx.clearRect(0, 0, canvas.width, canvas.height)
+    ctx.clearRect(0, 0, logicalSize, logicalSize)
+
+    const centerX = logicalSize / 2
+    const centerY = logicalSize / 2
+    const radius = logicalSize / 2 - 5
 
     // CD 배경 (원형, 테마의 hologram 그라디언트)
     ctx.save()
     ctx.beginPath()
-    ctx.arc(
-      canvas.width / 2,
-      canvas.height / 2,
-      Math.min(canvas.width, canvas.height) / 2 - 5,
-      0,
-      2 * Math.PI
-    )
+    ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI)
+    ctx.clip()
 
     // Canvas API로 hologram 그라디언트 생성 (모바일 Safari 호환: conic 미지원 시 radial로 폴백)
-    const centerX = canvas.width / 2
-    const centerY = canvas.height / 2
-    const radius = Math.min(canvas.width, canvas.height) / 2 - 5
-
     let gradient: CanvasGradient
     const hasConic =
       typeof (
@@ -708,15 +703,27 @@ const CustomizeStep2 = ({
   useEffect(() => {
     const canvas = cdContainerRef.current
     if (!canvas) return
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
 
-    // 초기화 후 바로 그리기
-    drawStickers()
+    // DPR 적용
+    const dpr = window.devicePixelRatio || 1
+    const logicalSize = 280
 
-    // 모바일 Safari 등에서 터치 스크롤 간섭 방지 (passive: false)
+    // CSS 크기는 280 유지, 실제 해상도는 DPR 반영
+    canvas.style.width = `${logicalSize}px`
+    canvas.style.height = `${logicalSize}px`
+    canvas.width = logicalSize * dpr
+    canvas.height = logicalSize * dpr
+
+    // 좌표계 스케일링
+    ctx.scale(dpr, dpr)
+
+    // 초기 그리기
+    drawStickers(logicalSize)
+
+    // 모바일 Safari 등에서 터치 스크롤 간섭 방지
     const stopDefault = (ev: TouchEvent) => ev.preventDefault()
-    canvas.addEventListener('touchstart', stopDefault, { passive: false })
-    canvas.addEventListener('touchmove', stopDefault, { passive: false })
-    canvas.addEventListener('touchend', stopDefault, { passive: false })
 
     return () => {
       canvas.removeEventListener('touchstart', stopDefault)
@@ -854,20 +861,14 @@ const CustomizeStep2 = ({
         <CdAreaWrap>
           <CdCustomContainer>
             <canvas
+              ref={cdContainerRef}
               width={280}
               height={280}
-              ref={cdContainerRef}
               style={{ touchAction: 'none', WebkitUserSelect: 'none', WebkitTouchCallout: 'none' }}
-              onMouseDown={handlePointerDown}
-              onMouseMove={handlePointerMove}
-              onMouseUp={handlePointerUp}
-              onMouseLeave={handlePointerUp}
-              onTouchStart={handlePointerDown}
-              onTouchMove={handlePointerMove}
-              onTouchEnd={handlePointerUp}
-              onPointerDown={(e) => handlePointerDown(e as unknown as React.MouseEvent)}
-              onPointerMove={(e) => handlePointerMove(e as unknown as React.MouseEvent)}
+              onPointerDown={handlePointerDown}
+              onPointerMove={handlePointerMove}
               onPointerUp={handlePointerUp}
+              onPointerLeave={handlePointerUp}
             />
 
             <CdOverlay />

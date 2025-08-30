@@ -1,18 +1,18 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import { AnimatePresence, motion, Reorder, useDragControls } from 'framer-motion'
+import { AnimatePresence, motion, Reorder } from 'framer-motion'
 import styled from 'styled-components'
 
 import { Cd, SvgButton, Input, BottomSheet, Loading } from '@shared/ui'
 import type { ModalProps } from '@shared/ui/Modal'
 
-import { DownArrow, Pin, PinPrimary, Share, Trash, HelpCircle, Drag, Cancel } from '@/assets/icons'
+import { DownArrow, Pin, PinPrimary, Share, Trash, HelpCircle } from '@/assets/icons'
 import type { Track } from '@/entities/playlist/types/playlist'
 import { useTempSavePlaylist } from '@/features/customize/model/useCustomize'
 import { Divider } from '@/pages/myPage/ui/components'
 import type { CustomizeStepProps } from '@/pages/myPage/ui/customize'
-import { StepHeader } from '@/pages/myPage/ui/customize/step1/components'
+import { InputLinkItem, StepHeader } from '@/pages/myPage/ui/customize/step1/components'
 import { MUSIC_GENRES } from '@/shared/config/musicGenres'
 import type { MusicGenre } from '@/shared/config/musicGenres'
 import { flexColCenter, flexRowCenter } from '@/shared/styles/mixins'
@@ -25,7 +25,6 @@ const CustomizeStep1 = ({
   prevPlaylistData,
 }: CustomizeStepProps) => {
   const navigate = useNavigate()
-  const dragControls = useDragControls()
 
   const { mutate, isPending } = useTempSavePlaylist()
 
@@ -265,44 +264,13 @@ const CustomizeStep1 = ({
         <LinksContainer>
           <Reorder.Group axis="y" values={linkMap} onReorder={onReSort}>
             {linkMap.map((item) => (
-              <Reorder.Item
+              <InputLinkItem
                 key={item.id}
-                value={item}
-                dragListener={false}
-                dragControls={dragControls}
-              >
-                <LinkItemWrap>
-                  <DragHandle
-                    type="button"
-                    as={motion.button}
-                    onPointerDown={(e) => dragControls.start(e)}
-                  >
-                    <Drag width={24} height={24} />
-                  </DragHandle>
-                  <Input
-                    type="url"
-                    placeholder="링크를 입력해주세요"
-                    value={item.youtubeUrl}
-                    error={!!linkErrorMap[item.id]}
-                    errorMessage={linkErrorMap[item.id]}
-                    onChange={(e) => onLinkChange(item.id, e.target.value.trim())}
-                    onBlur={(e) => {
-                      checkLinkValid(item.id, e.target.value.trim())
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        checkLinkValid(item.id, e.currentTarget.value.trim())
-                      }
-                    }}
-                  />
-                  <SvgButton
-                    icon={Cancel}
-                    width={24}
-                    height={24}
-                    onClick={() => onLinkRemoveClick(item.id)}
-                  />
-                </LinkItemWrap>
-              </Reorder.Item>
+                item={item}
+                errorMsg={linkErrorMap[item.id]}
+                onChange={(id, value) => onLinkChange(id, value)}
+                onRemove={onLinkRemoveClick}
+              />
             ))}
           </Reorder.Group>
         </LinksContainer>
@@ -449,28 +417,5 @@ const LinksContainer = styled.div`
     width: 100%;
     height: 100%;
     gap: 16px;
-  }
-`
-
-const LinkItemWrap = styled.div`
-  ${flexRowCenter}
-  gap: 6px;
-  width: 100%;
-
-  &:active {
-    cursor: grabbing;
-  }
-`
-
-const DragHandle = styled.button`
-  ${flexRowCenter}
-  width: 24px;
-  height: 100%;
-  cursor: grab;
-  touch-action: none; // 모바일 터치 동작 방지
-  user-select: none; // 텍스트 선택 방지
-
-  &:active {
-    cursor: grabbing;
   }
 `

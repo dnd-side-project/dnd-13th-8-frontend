@@ -161,5 +161,6 @@ const ThirdSection = styled.section`
 
 const FourthSection = styled.section`
   ${sectionCommonLayout}
-  padding: 16px 20px 48px 20px;
+  padding: 16px 20px 146px 20px;
+  margin-bottom: -98px;
 `

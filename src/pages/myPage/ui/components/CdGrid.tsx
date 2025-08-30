@@ -27,12 +27,7 @@ const CdGrid = ({
           icon={Plus}
           width={40}
           height={40}
-          onClick={() =>
-            navigate('/mypage/customize', {
-              // 최초 생성일 경우 대표 플리 지정
-              // state: { isPrimary: !currentPlaylist?.length },
-            })
-          }
+          onClick={() => navigate('/mypage/customize')}
         />
         <CdAddLabel>추가하기</CdAddLabel>
       </CdAddContainer>
@@ -66,6 +61,11 @@ const CdGridWrap = styled.ul`
   justify-content: space-around;
   margin: 14px auto;
   width: 100%;
+
+  /* 추가하기 버튼만 있을 경우 왼쪽 정렬 */
+  &:has(> li:only-child) {
+    justify-content: flex-start;
+  }
 `
 
 const CdAddContainer = styled.li`
