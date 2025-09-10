@@ -10,7 +10,7 @@ export const patchProfile = (payload: ProfilePayload) => {
     formData.append('profileImage', payload.file)
   }
 
-  return api.patch<ProfileResponse>('/main/mypage/playlists/me', formData, {
+  return api.patch<ProfileResponse>('/main/user/profile', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
