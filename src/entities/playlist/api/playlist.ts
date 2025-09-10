@@ -62,7 +62,7 @@ export const postPlaylistConfirm = (playlistId: number) => {
 
 // 플리 조회수 단건 조회
 export const getPlaylistViewCounts = (playlistId: number) => {
-  return api.get(`/main/playlists/browse/view-counts/${playlistId}`)
+  return api.get(`/main/playlist/browse/view-counts/${playlistId}`)
 }
 
 // 내 대표 플레이리스트 조회
