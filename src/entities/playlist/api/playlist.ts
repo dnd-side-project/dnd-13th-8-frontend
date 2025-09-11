@@ -67,5 +67,5 @@ export const getPlaylistViewCounts = (playlistId: number) => {
 
 // 내 대표 플레이리스트 조회
 export const getMyRepresentativePlaylist = () => {
-  return api.get<MyRepresentResponse>('main/playlist/mypage/me/representative')
+  return api.get<MyRepresentResponse>('/main/playlist/mypage/me/representative')
 }
