@@ -16,7 +16,7 @@ export const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const { isLogin, accessToken } = useAuthStore.getState()
-    const token = isLogin ? accessToken : localStorage.getItem('anonymous_token')
+    const token = isLogin ? accessToken : sessionStorage.getItem('anonymous_token')
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
     }
@@ -57,7 +57,7 @@ axiosInstance.interceptors.response.use(
 
             // 서버 응답 형태 확인 (string vs object)
             const token = typeof res.data === 'string' ? res.data : res.data.token
-            localStorage.setItem('anonymous_token', token)
+            sessionStorage.setItem('anonymous_token', token)
 
             // 원래 요청 재시도
             if (error.config) {

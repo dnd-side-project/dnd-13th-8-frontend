@@ -38,7 +38,7 @@ export const useShufflePlaylists = (size: number = 5) => {
       }
       return undefined
     },
-    enabled: !!useAuthStore.getState().accessToken || !!localStorage.getItem('anonymous_token'),
+    enabled: !!useAuthStore.getState().accessToken || !!sessionStorage.getItem('anonymous_token'),
   })
 }
 
