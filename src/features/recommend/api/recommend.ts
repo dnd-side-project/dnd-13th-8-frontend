@@ -5,13 +5,13 @@ import {
 import { api } from '@/shared/api/httpClient'
 
 export const getRecommendationsByRecent = () => {
-  return api.get<RecommendationsResponse>('/main/playlists/recommendations/playlist')
+  return api.get<RecommendationsResponse>('/main/recommendation/playlist')
 }
 
 export const getRecommendationsByFollow = () => {
-  return api.get<RecommendationsResponse>('/main/playlists/recommendations/follow')
+  return api.get<RecommendationsResponse>('/main/recommendation/follow')
 }
 
 export const getRecommendedGenres = () => {
-  return api.get<RecommendedGenresResponse>('/main/playlists/recommendations/genres')
+  return api.get<RecommendedGenresResponse>('/main/recommendation/genres')
 }

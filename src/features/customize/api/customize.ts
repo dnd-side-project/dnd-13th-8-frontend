@@ -17,7 +17,7 @@ export const postYouTubeVideoInfo = (payload: string[]) => {
 
 // 임시 플레이리스트 저장: 플레이리스트 최종 생성 전 본문 세션에 임시 저장
 export const postTempPlaylist = (payload: TempPlaylistPayload) => {
-  return api.post<null>('/main/mypage/playlists/temp', payload)
+  return api.post<null>('/main/playlist/temp', payload)
 }
 
 // cd 유저 커스텀 스티커 리스트 조회
@@ -39,10 +39,10 @@ export const postUserSticker = (payload: UserStickerPayload) => {
 
 // 플레이리스트 생성: 세션 임시본 사용 + cd 요청
 export const postFinalPlaylist = (payload: FinalPlaylistPayload) => {
-  return api.post<FinalPlaylistResponse>('/main/mypage/playlists/final', payload)
+  return api.post<FinalPlaylistResponse>('/main/playlist/final', payload)
 }
 
 // 플레이리스트 수정: 세션 임시본 사용 + cd 수정
 export const patchEditPlaylist = (payload: EditPlaylistPayload) => {
-  return api.patch<FinalPlaylistResponse>('/main/mypage/playlists/final', payload)
+  return api.patch<FinalPlaylistResponse>('/main/playlist/final', payload)
 }
