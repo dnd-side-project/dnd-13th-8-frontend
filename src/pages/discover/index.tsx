@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import type { YouTubeEvent } from 'react-youtube'
 
 import styled from 'styled-components'
@@ -34,8 +34,6 @@ const DiscoverPage = () => {
   const playerRef = useRef<YT.Player | null>(null)
   const [showCoachmark, setShowCoachmark] = useState(false)
   const [isMuted, setIsMuted] = useState<boolean | null>(null)
-  const [, setCurrentIndex] = useState(0)
-  const navigate = useNavigate()
 
   // 코치마크
   useEffect(() => {
@@ -86,6 +84,7 @@ const DiscoverPage = () => {
     if (!playlistAsInfo) {
       return shufflePlaylists
     }
+
     // URL에서 가져온 플레이리스트를 playlistsData 배열에 추가
     // 기존에 shufflePlaylists에 있는 경우, 순서를 변경하지 않고 추가
     const existingPlaylist = shufflePlaylists.find(
@@ -97,13 +96,7 @@ const DiscoverPage = () => {
     return [playlistAsInfo, ...shufflePlaylists]
   }, [playlistAsInfo, shufflePlaylists])
 
-  // 플레이리스트 ID로 인덱스를 찾는 함수를 추가합니다.
-  const getPlaylistIndexById = useCallback(
-    (id: number) => {
-      return playlistsData.findIndex((p) => p.playlistId === id)
-    },
-    [playlistsData]
-  )
+  console.log(playlistsData)
 
   const videoId = currentPlaylist
     ? getVideoId(currentPlaylist.songs[currentTrackIndex]?.youtubeUrl)
@@ -113,28 +106,16 @@ const DiscoverPage = () => {
 
   // 최초 playlist 초기화
   useEffect(() => {
-    if (playlistsData.length > 0 && isReady) {
-      const initialIndex = getPlaylistIndexById(Number(playlistId))
-      const initialPlaylist = playlistsData[initialIndex > -1 ? initialIndex : 0]
+    if (!currentPlaylist && playlistsData.length > 0 && isReady) {
+      const initialPlaylist =
+        playlistsData.find((p) => p.playlistId === Number(playlistId)) || playlistsData[0]
 
-      setCurrentIndex(initialIndex > -1 ? initialIndex : 0)
       setPlaylist(initialPlaylist, 0, 0)
     }
-  }, [playlistsData, playlistId, getPlaylistIndexById, setPlaylist])
-
-  // // URL을 현재 선택된 플레이리스트로 동기화
-  // useEffect(() => {
-  //   if (currentPlaylist) {
-  //     const id = currentPlaylist.playlistId
-  //     if (Number(playlistId) !== id) {
-  //       navigate(`/discover/${id}`, { replace: true })
-  //     }
-  //   }
-  // }, [currentPlaylist, playlistId, navigate])
+  }, [playlistsData, currentPlaylist, playlistId, setPlaylist])
 
   useEffect(() => {
     if (!currentPlaylist || !isPlaying) return
-
     startPlaylist(currentPlaylist.playlistId)
 
     const confirmTimer = setTimeout(() => {
@@ -172,34 +153,16 @@ const DiscoverPage = () => {
   // 캐러셀 스와이프 시 현재 플레이리스트 업데이트
   const handleSelectPlaylist = useCallback(
     (index: number) => {
-      // 현재 인덱스 상태를 업데이트
-      setCurrentIndex(index)
-
       const selectedPlaylist = playlistsData[index]
       if (selectedPlaylist && currentPlaylist?.playlistId !== selectedPlaylist.playlistId) {
         setPlaylist(selectedPlaylist, 0, 0)
-
-        // URL을 동기화
-        const newId = selectedPlaylist.playlistId
-        if (Number(playlistId) !== newId) {
-          navigate(`/discover/${newId}`, { replace: true })
-        }
       }
 
       if (index === playlistsData.length - 1 && hasNextPage && !isFetchingNextPage) {
         fetchNextPage()
       }
     },
-    [
-      setPlaylist,
-      currentPlaylist,
-      playlistsData,
-      fetchNextPage,
-      hasNextPage,
-      isFetchingNextPage,
-      navigate,
-      playlistId,
-    ]
+    [setPlaylist, currentPlaylist, playlistsData, fetchNextPage, hasNextPage, isFetchingNextPage]
   )
 
   const handlePlayerStateChange = useCallback(

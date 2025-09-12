@@ -12,7 +12,7 @@ export const useAuthStore = create<AuthState>()(
       accessToken: '',
 
       setLogin: (response) => {
-        localStorage.removeItem('anonymous_token')
+        sessionStorage.removeItem('anonymous_token')
         const { userId, username, userProfileImageUrl, jwtAccessToken } = response
         set({
           userInfo: { userId, username, userProfileImageUrl },

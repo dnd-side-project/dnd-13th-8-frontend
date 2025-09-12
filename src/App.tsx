@@ -39,10 +39,11 @@ const App = () => {
   // 비회원일 경우 API 호출을 위한 익명 토큰 발급
   // TODO: 토큰 만료됐을 경우 응답 체크해서 해당 값일 경우 토큰 재발급
   const checkAnonymousLogin = () => {
-    if (!isLogin) {
+    const token = sessionStorage.getItem('anonymous_token')
+    if (!isLogin && !token) {
       mutate(undefined, {
         onSuccess: (response) => {
-          localStorage.setItem('anonymous_token', response)
+          sessionStorage.setItem('anonymous_token', response)
         },
       })
     }
@@ -82,7 +83,7 @@ const App = () => {
 
     // 익명 토큰 발급
     if (['/login', '/login/callback'].includes(pathname)) {
-      localStorage.removeItem('anonymous_token')
+      sessionStorage.removeItem('anonymous_token')
     } else {
       checkAnonymousLogin()
     }
