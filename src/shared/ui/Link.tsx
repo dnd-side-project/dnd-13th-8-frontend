@@ -46,6 +46,7 @@ const Thumbnail = styled.div<ThumbnailProps>`
   border-radius: 4px;
 
   display: flex;
+  flex-shrink: 0;
   justify-content: center;
   align-items: center;
 `
@@ -56,7 +57,7 @@ const Title = styled.p<{ $variant?: 'large' | 'small' }>`
   -webkit-box-orient: vertical;
   overflow: hidden;
   word-break: break-word;
-  width: ${({ $variant }) => ($variant === 'large' ? '245px' : '128px')};
+  width: 100%;
 
   color: ${({ theme }) => theme.COLOR['gray-50']};
   ${({ $variant, theme }) =>
