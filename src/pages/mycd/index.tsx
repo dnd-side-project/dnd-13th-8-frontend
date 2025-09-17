@@ -1,4 +1,4 @@
-import { useRef, useEffect, useCallback, useState } from 'react'
+import { useEffect, useCallback, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import styled from 'styled-components'
@@ -24,10 +24,9 @@ const MyCdPage = () => {
     play,
     pause,
     currentTime,
-    updateCurrentTime,
+    playerRef,
   } = usePlaylist()
-  const playerRef = useRef<YT.Player | null>(null)
-  const [isMuted, setIsMuted] = useState<boolean | null>(null) // TODO : 모바일 대응용 버튼으로 수정
+  const [isMuted, setIsMuted] = useState<boolean | null>(null)
   const { userInfo } = useAuthStore()
   const navigate = useNavigate()
 
@@ -35,37 +34,22 @@ const MyCdPage = () => {
 
   useEffect(() => {
     if (!currentPlaylist && playlistData && userInfo) {
-      const { playlistId, playlistName, songs, genre } = playlistData // 필수 값 체크
-
-      if (playlistId && playlistName && songs) {
-        const convertedPlaylist = {
-          creator: {
-            creatorId: userInfo.userId,
-            creatorNickname: userInfo.username,
-          },
-          playlistId,
-          playlistName,
-          genre,
-          songs,
-          representative: false,
-          cdItems: playlistData.onlyCdResponse?.cdItems || [],
-        }
-
-        setPlaylist(convertedPlaylist, currentTrackIndex, currentTime)
+      const convertedPlaylist = {
+        creator: {
+          creatorId: userInfo.userId,
+          creatorNickname: userInfo.username,
+        },
+        playlistId: playlistData.playlistId,
+        playlistName: playlistData.playlistName,
+        genre: playlistData.genre,
+        songs: playlistData.songs,
+        representative: false,
+        cdItems: playlistData.onlyCdResponse?.cdItems || [],
       }
+
+      setPlaylist(convertedPlaylist, currentTrackIndex, currentTime)
     }
   }, [currentPlaylist, playlistData, userInfo, setPlaylist, currentTrackIndex, currentTime])
-
-  // 현재 재생 시간 업데이트
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      if (playerRef.current) {
-        updateCurrentTime(playerRef.current.getCurrentTime())
-      }
-    }, 1000)
-
-    return () => clearInterval(intervalId)
-  }, [updateCurrentTime])
 
   const handlePlayerStateChange = useCallback(
     (event: YT.OnStateChangeEvent) => {
@@ -77,18 +61,6 @@ const MyCdPage = () => {
   const videoId = currentPlaylist
     ? getVideoId(currentPlaylist.songs[currentTrackIndex]?.youtubeUrl)
     : null
-
-  // 재생, 일시정지
-  useEffect(() => {
-    if (!playerRef.current) return
-    if (isPlaying) playerRef.current.playVideo()
-    else playerRef.current.pauseVideo()
-  }, [isPlaying])
-
-  const handlePlayPause = () => {
-    if (isPlaying) pause()
-    else play()
-  }
 
   const isCurrentlyPlaying = (() => {
     if (!window.YT || !playerRef.current) return false
@@ -116,7 +88,7 @@ const MyCdPage = () => {
           currentTrackIndex={currentTrackIndex}
           currentTime={currentTime}
           isPlaying={isCurrentlyPlaying}
-          onPlayPause={handlePlayPause}
+          onPlayPause={() => (isPlaying ? pause() : play())}
           onNext={nextTrack}
           onPrev={prevTrack}
           onSelectTrack={(trackIndex, time) => {
