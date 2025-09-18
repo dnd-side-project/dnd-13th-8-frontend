@@ -1,12 +1,4 @@
-import {
-  createContext,
-  useState,
-  useContext,
-  useRef,
-  useEffect,
-  useCallback,
-  type ReactNode,
-} from 'react'
+import { createContext, useState, useContext, useRef, useCallback, type ReactNode } from 'react'
 
 import type { PlaylistInfo } from '@/entities/playlist'
 
@@ -38,14 +30,6 @@ const PlaylistProvider = ({ children }: PlaylistProviderProps) => {
   const [isPlaying, setIsPlaying] = useState(false)
 
   const playerRef = useRef<YT.Player | null>(null)
-
-  // 1초마다 재생 시간 자동 업데이트
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      if (playerRef.current) setCurrentTime(playerRef.current.getCurrentTime())
-    }, 1000)
-    return () => clearInterval(intervalId)
-  }, [])
 
   const setPlaylist = (playlist: PlaylistInfo, trackIndex?: number, time?: number) => {
     setCurrentPlaylist(playlist)

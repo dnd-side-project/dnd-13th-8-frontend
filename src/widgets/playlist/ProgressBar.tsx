@@ -1,12 +1,14 @@
+import { useEffect } from 'react'
+
 import styled from 'styled-components'
 
+import { usePlaylist } from '@/app/providers/PlayerProvider'
 import { Mark } from '@/assets/icons'
 import { getAccTime } from '@/shared/lib'
 import { SvgButton } from '@/shared/ui'
 
 interface ProgressBarProps {
   trackLengths: number[]
-  currentTime: number
   currentIndex: number
   onClick?: (trackIndex: number, seconds: number) => void
 }
@@ -17,7 +19,19 @@ const formatTime = (time: number) => {
     .join(':')
 }
 
-const ProgressBar = ({ trackLengths, currentTime, currentIndex, onClick }: ProgressBarProps) => {
+const ProgressBar = ({ trackLengths, currentIndex, onClick }: ProgressBarProps) => {
+  const { currentTime, updateCurrentTime, playerRef, isPlaying } = usePlaylist()
+
+  useEffect(() => {
+    if (!isPlaying) return
+    const id = setInterval(() => {
+      if (playerRef.current) {
+        updateCurrentTime(playerRef.current.getCurrentTime())
+      }
+    }, 1000)
+    return () => clearInterval(id)
+  }, [isPlaying, playerRef, updateCurrentTime])
+
   const duration = trackLengths.reduce((acc, cur) => acc + cur, 0)
   const accTime = getAccTime(trackLengths, currentIndex, currentTime)
 

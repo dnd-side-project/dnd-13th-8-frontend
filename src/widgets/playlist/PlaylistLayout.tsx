@@ -34,7 +34,6 @@ const PlaylistLayout = ({
   data,
   currentPlaylist,
   currentTrackIndex,
-  currentTime,
   isPlaying,
   onPlayPause,
   onNext,
@@ -103,7 +102,6 @@ const PlaylistLayout = ({
 
       <ProgressBar
         trackLengths={currentPlaylist?.songs.map((t) => t.youtubeLength) || []}
-        currentTime={currentTime}
         currentIndex={currentTrackIndex}
         onClick={handleProgressClick}
       />
