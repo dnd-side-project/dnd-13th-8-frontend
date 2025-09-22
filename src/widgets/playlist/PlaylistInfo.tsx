@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom'
 
 import styled from 'styled-components'
 
+import { usePlaylist } from '@/app/providers/PlayerProvider'
 import { Cancel } from '@/assets/icons'
 import type { PlaylistDetailResponse } from '@/entities/playlist'
 import { getGenreLabel } from '@/shared/lib'
@@ -17,6 +18,13 @@ interface PlaylistInfoProps {
 
 const PlaylistInfo = ({ playlistData, isLoading, isError }: PlaylistInfoProps) => {
   const navigate = useNavigate()
+  const { setPlaylist, currentPlaylist } = usePlaylist()
+
+  const handleClickTrack = (trackIndex: number) => {
+    if (!currentPlaylist) return
+    navigate(-1)
+    setPlaylist(currentPlaylist, trackIndex, 0)
+  }
 
   if (isError || !playlistData) {
     return (
@@ -50,7 +58,12 @@ const PlaylistInfo = ({ playlistData, isLoading, isError }: PlaylistInfoProps) =
         <TrackInfo>
           {playlistData.songs &&
             playlistData.songs.map((track, index) => (
-              <Link key={index} data={track} variant="large" />
+              <Link
+                key={index}
+                data={track}
+                variant="large"
+                onClick={() => handleClickTrack(index)}
+              />
             ))}
         </TrackInfo>
       </Content>
