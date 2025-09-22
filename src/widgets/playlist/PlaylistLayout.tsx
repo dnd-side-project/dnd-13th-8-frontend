@@ -1,4 +1,4 @@
-import { useMemo, useCallback } from 'react'
+import { useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import styled from 'styled-components'
@@ -34,7 +34,6 @@ const PlaylistLayout = ({
   data,
   currentPlaylist,
   currentTrackIndex,
-  currentTime,
   isPlaying,
   onPlayPause,
   onNext,
@@ -54,16 +53,6 @@ const PlaylistLayout = ({
 
   const deviceType = useDevice()
   const isMobile = deviceType === 'mobile'
-
-  // 누적 시간 계산
-  const accumulatedTime = useMemo(() => {
-    if (!currentPlaylist) return 0
-    return (
-      currentPlaylist.songs
-        .slice(0, currentTrackIndex)
-        .reduce((acc, track) => acc + track.youtubeLength, 0) + currentTime
-    )
-  }, [currentPlaylist, currentTrackIndex, currentTime])
 
   const handleProgressClick = useCallback(
     (trackIndex: number, seconds: number) => {
@@ -113,7 +102,7 @@ const PlaylistLayout = ({
 
       <ProgressBar
         trackLengths={currentPlaylist?.songs.map((t) => t.youtubeLength) || []}
-        currentTime={accumulatedTime}
+        currentIndex={currentTrackIndex}
         onClick={handleProgressClick}
       />
 

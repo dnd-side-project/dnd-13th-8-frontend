@@ -1,11 +1,15 @@
+import { useEffect } from 'react'
+
 import styled from 'styled-components'
 
+import { usePlaylist } from '@/app/providers/PlayerProvider'
 import { Mark } from '@/assets/icons'
+import { getAccTime } from '@/shared/lib'
 import { SvgButton } from '@/shared/ui'
 
 interface ProgressBarProps {
   trackLengths: number[]
-  currentTime: number
+  currentIndex: number
   onClick?: (trackIndex: number, seconds: number) => void
 }
 
@@ -15,8 +19,21 @@ const formatTime = (time: number) => {
     .join(':')
 }
 
-const ProgressBar = ({ trackLengths, currentTime, onClick }: ProgressBarProps) => {
+const ProgressBar = ({ trackLengths, currentIndex, onClick }: ProgressBarProps) => {
+  const { currentTime, updateCurrentTime, playerRef, isPlaying } = usePlaylist()
+
+  useEffect(() => {
+    if (!isPlaying) return
+    const id = setInterval(() => {
+      if (playerRef.current) {
+        updateCurrentTime(playerRef.current.getCurrentTime())
+      }
+    }, 1000)
+    return () => clearInterval(id)
+  }, [isPlaying, playerRef, updateCurrentTime])
+
   const duration = trackLengths.reduce((acc, cur) => acc + cur, 0)
+  const accTime = getAccTime(trackLengths, currentIndex, currentTime)
 
   // 마커 퍼센트 계산
   let sum = 0
@@ -58,7 +75,7 @@ const ProgressBar = ({ trackLengths, currentTime, onClick }: ProgressBarProps) =
     onClick?.(trackIndex, localTime)
   }
 
-  const progressPercent = duration > 0 ? (currentTime / duration) * 100 : 0
+  const progressPercent = duration > 0 ? (accTime / duration) * 100 : 0
 
   return (
     <Wrapper>
@@ -75,7 +92,7 @@ const ProgressBar = ({ trackLengths, currentTime, onClick }: ProgressBarProps) =
       </BarContainer>
 
       <TimeBox>
-        <span>{formatTime(currentTime)}</span>
+        <span>{formatTime(accTime)}</span>
         <span>{formatTime(duration)}</span>
       </TimeBox>
     </Wrapper>

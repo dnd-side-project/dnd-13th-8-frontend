@@ -1,6 +1,5 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import type { YouTubeEvent } from 'react-youtube'
 
 import styled from 'styled-components'
 
@@ -20,18 +19,19 @@ import { PlaylistLayout, YoutubePlayer } from '@/widgets/playlist'
 const DiscoverPage = () => {
   const { id: playlistId } = useParams()
   const {
-    setPlaylist,
-    isPlaying,
     currentPlaylist,
     currentTrackIndex,
-    nextTrack,
-    prevTrack,
+    currentTime,
+    isPlaying,
+    playerRef,
+    setPlaylist,
     play,
     pause,
-    currentTime,
-    updateCurrentTime,
+    nextTrack,
+    prevTrack,
+    handlePlayerStateChange,
   } = usePlaylist()
-  const playerRef = useRef<YT.Player | null>(null)
+
   const [showCoachmark, setShowCoachmark] = useState(false)
   const [isMuted, setIsMuted] = useState<boolean | null>(null)
 
@@ -96,8 +96,6 @@ const DiscoverPage = () => {
     return [playlistAsInfo, ...shufflePlaylists]
   }, [playlistAsInfo, shufflePlaylists])
 
-  console.log(playlistsData)
-
   const videoId = currentPlaylist
     ? getVideoId(currentPlaylist.songs[currentTrackIndex]?.youtubeUrl)
     : null
@@ -109,11 +107,11 @@ const DiscoverPage = () => {
     if (!currentPlaylist && playlistsData.length > 0 && isReady) {
       const initialPlaylist =
         playlistsData.find((p) => p.playlistId === Number(playlistId)) || playlistsData[0]
-
       setPlaylist(initialPlaylist, 0, 0)
     }
-  }, [playlistsData, currentPlaylist, playlistId, setPlaylist])
+  }, [playlistsData, currentPlaylist, playlistId, setPlaylist, isReady])
 
+  // 재생, 확인, 조회수 refetch
   useEffect(() => {
     if (!currentPlaylist || !isPlaying) return
     startPlaylist(currentPlaylist.playlistId)
@@ -135,21 +133,6 @@ const DiscoverPage = () => {
     }
   }, [currentPlaylist, isPlaying, startPlaylist, confirmPlaylist, refetchViewCounts])
 
-  // 현재 재생 시간 업데이트
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      if (playerRef.current) updateCurrentTime(playerRef.current.getCurrentTime())
-    }, 1000)
-    return () => clearInterval(intervalId)
-  }, [updateCurrentTime])
-
-  // 재생, 일시정지
-  useEffect(() => {
-    if (!playerRef.current) return
-    if (isPlaying) playerRef.current.playVideo()
-    else playerRef.current.pauseVideo()
-  }, [isPlaying])
-
   // 캐러셀 스와이프 시 현재 플레이리스트 업데이트
   const handleSelectPlaylist = useCallback(
     (index: number) => {
@@ -162,25 +145,8 @@ const DiscoverPage = () => {
         fetchNextPage()
       }
     },
-    [setPlaylist, currentPlaylist, playlistsData, fetchNextPage, hasNextPage, isFetchingNextPage]
+    [playlistsData, currentPlaylist, setPlaylist, hasNextPage, isFetchingNextPage, fetchNextPage]
   )
-
-  const handlePlayerStateChange = useCallback(
-    (event: YouTubeEvent) => {
-      if (event.data === window.YT.PlayerState.ENDED) nextTrack()
-    },
-    [nextTrack]
-  )
-
-  const handlePlayPause = () => {
-    if (isPlaying) pause()
-    else play()
-  }
-
-  const isCurrentlyPlaying = (() => {
-    if (!window.YT || !playerRef.current) return false
-    return isPlaying && playerRef.current.getPlayerState() === window.YT.PlayerState.PLAYING
-  })()
 
   return (
     <Page>
@@ -189,21 +155,16 @@ const DiscoverPage = () => {
         {playlistsData.map((data) => (
           <Slide key={data.playlistId}>
             <PlaylistLayout
-              key={data.playlistId}
               data={data}
               currentPlaylist={currentPlaylist}
               currentTrackIndex={currentTrackIndex}
               currentTime={currentTime}
-              isPlaying={isCurrentlyPlaying}
-              onPlayPause={handlePlayPause}
+              isPlaying={isPlaying}
+              onPlayPause={() => (isPlaying ? pause() : play())}
               onNext={nextTrack}
               onPrev={prevTrack}
               onSelectTrack={(trackIndex, time) => {
-                if (currentPlaylist) {
-                  setPlaylist(currentPlaylist, trackIndex)
-                  if (time !== undefined) playerRef.current?.seekTo(time, true)
-                  if (!isPlaying) play()
-                }
+                if (currentPlaylist) setPlaylist(currentPlaylist, trackIndex, time)
               }}
               playerRef={playerRef}
               isMuted={isMuted}
@@ -212,22 +173,16 @@ const DiscoverPage = () => {
           </Slide>
         ))}
       </SwipeCarousel>
-      {!showCoachmark && videoId && (
+
+      {videoId && (
         <YoutubePlayer
           videoId={videoId}
           onReady={(event) => {
             playerRef.current = event.target
-
-            // 현 상태 참조해서 동기화
+            playerRef.current?.seekTo(currentTime, true)
+            if (isPlaying) playerRef.current?.playVideo()
+            else playerRef.current?.pauseVideo()
             setIsMuted(playerRef.current?.isMuted() ?? null)
-
-            if (isPlaying) {
-              playerRef.current?.seekTo(currentTime, true)
-              playerRef.current?.playVideo()
-            } else {
-              playerRef.current?.seekTo(currentTime, true)
-              playerRef.current?.pauseVideo()
-            }
           }}
           onStateChange={handlePlayerStateChange}
         />
@@ -241,7 +196,6 @@ export default DiscoverPage
 const Slide = styled.div`
   flex: 0 0 100%;
 `
-
 const Page = styled.div`
   position: relative;
 `

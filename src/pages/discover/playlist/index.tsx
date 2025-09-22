@@ -1,82 +1,13 @@
-import { useNavigate, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 
-import styled from 'styled-components'
-
-import { Cancel } from '@/assets/icons'
 import { usePlaylistDetail } from '@/entities/playlist'
-import { getGenreLabel } from '@/shared/lib'
-import { flexColCenter } from '@/shared/styles/mixins'
-import { Error, Header, Link, Loading, SvgButton } from '@/shared/ui'
-import { PlaylistHorizontal } from '@/widgets/playlist'
+import { PlaylistInfo } from '@/widgets/playlist'
 
 const PlaylistInfoPage = () => {
-  const navigate = useNavigate()
-
   const { id } = useParams<{ id: string }>()
+  const { data, isLoading, isError } = usePlaylistDetail(Number(id))
 
-  const { data: playlistData, isLoading, isError } = usePlaylistDetail(Number(id))
-
-  if (isError || !playlistData) {
-    return (
-      <NoDataWrapper>
-        <Error />
-      </NoDataWrapper>
-    )
-  }
-
-  if (isLoading) {
-    return (
-      <NoDataWrapper>
-        <Loading isLoading width="100%" height="100%" />
-      </NoDataWrapper>
-    )
-  }
-
-  return (
-    <Wrapper>
-      <Header
-        left={<span>플레이리스트</span>}
-        right={<SvgButton icon={Cancel} onClick={() => navigate(-1)} />}
-      />
-      <Content>
-        <PlaylistHorizontal
-          genre={getGenreLabel(playlistData?.genre || '')}
-          title={playlistData?.playlistName || ''}
-          username={playlistData?.creatorNickname || ''}
-          stickers={playlistData?.onlyCdResponse?.cdItems || []}
-        />
-        <TrackInfo>
-          {playlistData.songs &&
-            playlistData.songs.map((track, index) => (
-              <Link key={index} data={track} variant="large" />
-            ))}
-        </TrackInfo>
-      </Content>
-    </Wrapper>
-  )
+  return <PlaylistInfo playlistData={data} isLoading={isLoading} isError={isError} />
 }
 
 export default PlaylistInfoPage
-
-const Wrapper = styled.div`
-  ${flexColCenter}
-`
-
-const Content = styled.section`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  gap: 28px;
-`
-const TrackInfo = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-`
-
-const NoDataWrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 60dvh;
-`
