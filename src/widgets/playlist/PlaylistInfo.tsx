@@ -59,7 +59,7 @@ const PlaylistInfo = ({ playlistData, isLoading, isError }: PlaylistInfoProps) =
           {playlistData.songs &&
             playlistData.songs.map((track, index) => (
               <Link
-                key={index}
+                key={track.id}
                 data={track}
                 variant="large"
                 onClick={() => handleClickTrack(index)}
