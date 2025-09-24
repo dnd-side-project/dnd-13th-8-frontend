@@ -1,7 +1,7 @@
+import { useRef, useEffect } from 'react'
 import YouTube from 'react-youtube'
-import type { YouTubeProps, YouTubeEvent, YouTubePlayer } from 'react-youtube' //
+import type { YouTubeProps, YouTubeEvent, YouTubePlayer } from 'react-youtube'
 
-import { useDevice } from '@/shared/lib/useDevice'
 
 interface YoutubePlayerProps {
   videoId: string
@@ -10,23 +10,38 @@ interface YoutubePlayerProps {
 }
 
 function YoutubePlayer({ videoId, onReady, onStateChange }: YoutubePlayerProps) {
-  const deviceType = useDevice()
-  const isMobile = deviceType === 'mobile'
+  const playerRef = useRef<YouTubePlayer | null>(null)
+  const isFirstLoad = useRef(true)
 
   const playerOpts: YouTubeProps['opts'] = {
     playerVars: {
       autoplay: 1,
-      mute: isMobile ? 1 : 0,
+      mute: 0,
       playsinline: 1, // 모바일 인라인 재생
     },
   }
+
+  useEffect(() => {
+    if (!isFirstLoad.current && playerRef.current && videoId) {
+      // 첫 로딩 제외하고 loadVideoById 호출
+      try {
+        playerRef.current.loadVideoById(videoId)
+      } catch (e) {
+        console.error('loadVideoById 실패', e)
+      }
+    }
+    isFirstLoad.current = false
+  }, [videoId])
 
   return (
     <div style={{ width: 0, height: 0, overflow: 'hidden', position: 'absolute' }}>
       <YouTube
         videoId={videoId}
         opts={playerOpts}
-        onReady={onReady}
+        onReady={(e) => {
+          playerRef.current = e.target
+          onReady(e)
+        }}
         onStateChange={onStateChange}
       />
     </div>
