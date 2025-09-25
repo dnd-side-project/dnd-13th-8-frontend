@@ -6,11 +6,12 @@ import type { Track } from '@/entities/playlist'
 interface LinkProps {
   variant?: 'large' | 'small'
   data: Track
+  onClick?: () => void
 }
 
-const Link = ({ variant = 'large', data }: LinkProps) => {
+const Link = ({ variant = 'large', data, onClick }: LinkProps) => {
   return (
-    <LinkBox $variant={variant}>
+    <LinkBox $variant={variant} onClick={onClick}>
       <Thumbnail $thumbnail={data.youtubeThumbnail ?? undefined} $variant={variant}>
         {!data.youtubeThumbnail && (
           <Gallery width={variant === 'large' ? 24 : 20} height={variant === 'large' ? 24 : 20} />

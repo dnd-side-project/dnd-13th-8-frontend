@@ -80,7 +80,7 @@ const PlaylistLayout = ({
         )}
       </Container>
       <Wrapper>
-        <CdWrapper>
+        <CdWrapper $isPlaying={isPlaying}>
           {isMobile && (
             <VolumeButton playerRef={playerRef} isMuted={isMuted} setIsMuted={setIsMuted} />
           )}
@@ -130,6 +130,18 @@ const Container = styled.div`
   justify-content: space-between;
 `
 
-const CdWrapper = styled.div`
+const CdWrapper = styled.div<{ $isPlaying: boolean }>`
   position: relative;
+  animation: spin 40s linear infinite;
+  animation-play-state: ${(props) => (props.$isPlaying ? 'running' : 'paused')};
+  transform-origin: center;
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
 `
