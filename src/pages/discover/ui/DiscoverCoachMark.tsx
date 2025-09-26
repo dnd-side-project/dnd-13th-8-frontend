@@ -1,47 +1,35 @@
 import Lottie from 'lottie-react'
 import styled from 'styled-components'
 
-import { Cancel, CoachMarkArrow } from '@/assets/icons'
 import { SwipeLottie } from '@/assets/lottie'
-import { useDevice } from '@/shared/lib/useDevice'
-import { Cd, SvgButton } from '@/shared/ui'
+import { flexColCenter } from '@/shared/styles/mixins'
 
 interface DiscoverCoachMarkProps {
-  onClick: () => void
+  onClose: () => void
 }
 
-const DiscoverCoachMark = ({ onClick }: DiscoverCoachMarkProps) => {
-  const deviceType = useDevice()
-  const isMobile = deviceType === 'mobile'
+const DiscoverCoachMark = ({ onClose }: DiscoverCoachMarkProps) => {
+  const handleOverlayClick = (e: React.MouseEvent | React.TouchEvent) => {
+    e.stopPropagation()
+
+    setTimeout(() => {
+      onClose()
+    }, 0)
+  }
 
   return (
-    <Overlay>
-      <CloseButton>
-        <SvgButton icon={Cancel} onClick={onClick} />
-      </CloseButton>
-
-      <ContentWrapper $isMobile={isMobile}>
-        {isMobile && (
-          <CoachMarkCdWrapper>
-            <CdText>
-              <Highlight>CD를 클릭</Highlight>하면 <br /> 플레이리스트가 재생돼요
-            </CdText>
-            <CoachMarkCd>
-              <CoachMarkArrow />
-              <Cd variant="xxl" bgColor="none" />
-            </CoachMarkCd>
-          </CoachMarkCdWrapper>
-        )}
-        <Content>
-          <p>
-            더 많은 플레이리스트를 보려면 <br />
-            <Highlight>화면을 위로</Highlight> 올려보세요!
-          </p>
-        </Content>
-        <LottieWrapper>
-          <Lottie animationData={SwipeLottie} loop autoplay style={{ height: 190 }} />
-        </LottieWrapper>
-      </ContentWrapper>
+    <Overlay
+      onClick={handleOverlayClick}
+      onTouchStart={handleOverlayClick}
+      onMouseDown={handleOverlayClick}
+    >
+      <Content>
+        <p>
+          더 많은 플레이리스트를 보려면 <br />
+          <Highlight>화면을 위로</Highlight> 올려보세요!
+        </p>
+      </Content>
+      <Lottie animationData={SwipeLottie} loop autoplay style={{ height: 220 }} />
     </Overlay>
   )
 }
@@ -54,73 +42,18 @@ const Overlay = styled.div`
   left: 0;
   width: 100%;
   height: 100dvh;
-  background: rgba(15, 16, 20, 0.68);
+  background: rgba(15, 16, 20, 0.8);
   z-index: 999;
-`
+  ${flexColCenter}
 
-const CloseButton = styled.div`
-  position: absolute;
-  top: 18px;
-  right: 0;
-  z-index: 1001;
-`
-
-const ContentWrapper = styled.div<{ $isMobile: boolean }>`
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-
-  top: ${({ $isMobile }) => ($isMobile ? '64px' : '50%')};
-  transform: ${({ $isMobile }) => ($isMobile ? 'translateX(-50%)' : 'translate(-50%, -50%)')};
+  pointer-events: auto;
 `
 
 const Content = styled.div`
   text-align: center;
   ${({ theme }) => theme.FONT.headline1};
-  font-weight: 600;
-
-  margin-top: 20px;
-  white-space: nowrap;
 `
 
 const Highlight = styled.span`
   color: ${({ theme }) => theme.COLOR['primary-normal']};
-`
-
-const CoachMarkCd = styled.div`
-  position: relative;
-
-  & svg {
-    position: absolute;
-    right: 0;
-    top: 0;
-  }
-`
-
-const LottieWrapper = styled.div`
-  height: 180px;
-  overflow: hidden;
-`
-const CoachMarkCdWrapper = styled.div`
-  position: relative;
-  display: inline-block;
-  padding-top: 40px;
-`
-
-const CdText = styled.p`
-  color: ${({ theme }) => theme.COLOR['gray-50']};
-  ${({ theme }) => theme.FONT['body1-normal']};
-  text-align: right;
-  position: absolute;
-
-  top: -4%;
-  right: 0;
-  margin-bottom: 12px;
-
-  white-space: nowrap;
 `
