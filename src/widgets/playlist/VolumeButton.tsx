@@ -2,6 +2,10 @@ import type { RefObject } from 'react'
 
 import styled from 'styled-components'
 
+import { Volumn } from '@/assets/icons'
+import { flexRowCenter } from '@/shared/styles/mixins'
+
+
 interface VolumeButtonProps {
   playerRef: RefObject<YT.Player | null>
   isMuted: boolean | null
@@ -18,7 +22,12 @@ const VolumeButton = ({ playerRef, isMuted, setIsMuted }: VolumeButtonProps) => 
     setIsMuted(!isMuted)
   }
 
-  return <StyledButton onClick={toggleMute} />
+  return (
+    <StyledButton onClick={toggleMute}>
+      <Volumn />
+      탭하여 음소거 해제
+    </StyledButton>
+  )
 }
 
 export default VolumeButton
@@ -26,6 +35,12 @@ export default VolumeButton
 const StyledButton = styled.button`
   position: absolute;
   z-index: 1000;
-  width: 100%;
-  height: 100%;
+
+  background-color: ${({ theme }) => theme.COLOR['common-white']};
+  color: ${({ theme }) => theme.COLOR['gray-900']};
+  ${({ theme }) => theme.FONT.caption1};
+  ${flexRowCenter}
+  padding: 10px;
+  gap: 4px;
+  border-radius: 4px;
 `

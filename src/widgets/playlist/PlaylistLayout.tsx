@@ -10,8 +10,7 @@ import { useFollowStatus } from '@/features/follow/model/useFollow'
 import { useDevice } from '@/shared/lib/useDevice'
 import { flexColCenter } from '@/shared/styles/mixins'
 import { Button, Cd, Header, LiveInfo, SvgButton } from '@/shared/ui'
-import { ActionBar, ProgressBar } from '@/widgets/playlist'
-import VolumeButton from '@/widgets/playlist/VolumeButton'
+import { ActionBar, ProgressBar, VolumeButton } from '@/widgets/playlist'
 
 interface PlaylistSlideProps {
   data: PlaylistInfo
@@ -64,6 +63,9 @@ const PlaylistLayout = ({
         center={<span>둘러보기</span>}
       />
       <Container>
+        {isMobile && isMuted && (
+          <VolumeButton playerRef={playerRef} isMuted={isMuted} setIsMuted={setIsMuted} />
+        )}
         <LiveInfo isOnAir={listenersNum > 0} listenerCount={listenersNum} isOwner={false} />
         {type === 'My' && (
           <Button size="S" state="primary" onClick={() => navigate('/mypage/customize')}>
@@ -73,9 +75,6 @@ const PlaylistLayout = ({
       </Container>
       <Wrapper>
         <CdSpinner $isPlaying={isPlaying}>
-          {isMobile && (
-            <VolumeButton playerRef={playerRef} isMuted={isMuted} setIsMuted={setIsMuted} />
-          )}
           <Cd
             variant="xxl"
             bgColor="none"
