@@ -6,7 +6,7 @@ import { Playlist } from '@/assets/icons'
 import type { CdCustomData } from '@/entities/playlist'
 import { FollowButton } from '@/features/follow'
 import { ShareButton } from '@/features/share'
-import { flexRowCenter } from '@/shared/styles/mixins'
+import { flexColCenter } from '@/shared/styles/mixins'
 import SvgButton from '@/shared/ui/SvgButton'
 import { ChatButton } from '@/widgets/chat'
 
@@ -49,9 +49,9 @@ const ActionBar = ({
           playlistId={playlistId}
         />
       )}
-      <ShareButton playlistId={playlistId} stickers={stickers} />
-      <SvgButton icon={Playlist} width={24} height={24} onClick={handleMovePlaylist} />
       <ChatButton roomId={playlistId} creatorId={creatorId} />
+      <SvgButton icon={Playlist} width={24} height={24} onClick={handleMovePlaylist} />
+      <ShareButton playlistId={playlistId} stickers={stickers} />
     </Wrapper>
   )
 }
@@ -59,6 +59,6 @@ const ActionBar = ({
 export default ActionBar
 
 const Wrapper = styled.div`
-  ${flexRowCenter}
+  ${flexColCenter}
   gap: 16px;
 `

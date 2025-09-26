@@ -3,15 +3,14 @@ import { useNavigate } from 'react-router-dom'
 
 import styled from 'styled-components'
 
+import { LeftArrow } from '@/assets/icons'
 import type { PlaylistInfo } from '@/entities/playlist'
 import { useChatSocket } from '@/features/chat/model/sendMessage'
 import { useFollowStatus } from '@/features/follow/model/useFollow'
-import { getTrackOrderLabel } from '@/shared/lib'
 import { useDevice } from '@/shared/lib/useDevice'
 import { flexColCenter } from '@/shared/styles/mixins'
-import { Button, Cd, Header, LiveInfo } from '@/shared/ui'
+import { Button, Cd, Header, LiveInfo, SvgButton } from '@/shared/ui'
 import { ActionBar, ProgressBar } from '@/widgets/playlist'
-import ControlBar from '@/widgets/playlist/ControlBar'
 import VolumeButton from '@/widgets/playlist/VolumeButton'
 
 interface PlaylistSlideProps {
@@ -35,9 +34,6 @@ const PlaylistLayout = ({
   currentPlaylist,
   currentTrackIndex,
   isPlaying,
-  onPlayPause,
-  onNext,
-  onPrev,
   onSelectTrack,
   playerRef,
   isMuted,
@@ -64,12 +60,8 @@ const PlaylistLayout = ({
   return (
     <>
       <Header
-        center={
-          <>
-            <span>{data.playlistName}</span>
-            <span>{getTrackOrderLabel(Number(currentTrackIndex))}</span>
-          </>
-        }
+        left={<SvgButton icon={LeftArrow} onClick={() => navigate('/')} />}
+        center={<span>둘러보기</span>}
       />
       <Container>
         <LiveInfo isOnAir={listenersNum > 0} listenerCount={listenersNum} isOwner={false} />
@@ -80,7 +72,7 @@ const PlaylistLayout = ({
         )}
       </Container>
       <Wrapper>
-        <CdWrapper $isPlaying={isPlaying}>
+        <CdSpinner $isPlaying={isPlaying}>
           {isMobile && (
             <VolumeButton playerRef={playerRef} isMuted={isMuted} setIsMuted={setIsMuted} />
           )}
@@ -89,28 +81,26 @@ const PlaylistLayout = ({
             bgColor="none"
             stickers={data?.cdItems ?? data?.onlyCdResponse?.cdItems ?? []}
           />
-        </CdWrapper>
-        <ActionBar
-          playlistId={data.playlistId}
-          isFollowing={!!isFollowing}
-          userName={data.creator.creatorNickname}
-          showFollow={type !== 'My'}
-          creatorId={data.creator.creatorId}
-          stickers={data?.cdItems ?? data?.onlyCdResponse?.cdItems ?? []}
-        />
+        </CdSpinner>
+        <ActionBarContainer>
+          <ActionBar
+            playlistId={data.playlistId}
+            isFollowing={!!isFollowing}
+            userName={data.creator.creatorNickname}
+            showFollow={type !== 'My'}
+            creatorId={data.creator.creatorId}
+            stickers={data?.cdItems ?? data?.onlyCdResponse?.cdItems ?? []}
+          />
+        </ActionBarContainer>
       </Wrapper>
+
+      <Title>{data.playlistName}</Title>
+      <Creator>{data.creator.creatorNickname}</Creator>
 
       <ProgressBar
         trackLengths={currentPlaylist?.songs.map((t) => t.youtubeLength) || []}
         currentIndex={currentTrackIndex}
         onClick={handleProgressClick}
-      />
-
-      <ControlBar
-        isPlaying={isPlaying}
-        onTogglePlay={onPlayPause}
-        onNext={onNext}
-        onPrev={onPrev}
       />
     </>
   )
@@ -120,8 +110,7 @@ export default PlaylistLayout
 
 const Wrapper = styled.div`
   ${flexColCenter}
-  padding: 16px 0;
-  gap: 24px;
+  padding-top: 16px;
   position: relative;
 `
 
@@ -130,7 +119,7 @@ const Container = styled.div`
   justify-content: space-between;
 `
 
-const CdWrapper = styled.div<{ $isPlaying: boolean }>`
+const CdSpinner = styled.div<{ $isPlaying: boolean }>`
   position: relative;
   animation: spin 40s linear infinite;
   animation-play-state: ${(props) => (props.$isPlaying ? 'running' : 'paused')};
@@ -144,4 +133,19 @@ const CdWrapper = styled.div<{ $isPlaying: boolean }>`
       transform: rotate(360deg);
     }
   }
+`
+
+const Title = styled.p`
+  ${({ theme }) => theme.FONT.headline1};
+`
+
+const Creator = styled.p`
+  ${({ theme }) => theme.FONT['body2-normal']};
+  color: ${({ theme }) => theme.COLOR['gray-300']};
+`
+const ActionBarContainer = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  margin-top: -40px;
 `
