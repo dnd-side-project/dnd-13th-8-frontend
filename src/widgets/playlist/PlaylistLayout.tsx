@@ -10,7 +10,7 @@ import { useFollowStatus } from '@/features/follow/model/useFollow'
 import { useDevice } from '@/shared/lib/useDevice'
 import { flexColCenter } from '@/shared/styles/mixins'
 import { Button, Cd, Header, LiveInfo, SvgButton } from '@/shared/ui'
-import { ActionBar, ProgressBar, VolumeButton } from '@/widgets/playlist'
+import { ActionBar, PlayButton, ProgressBar, VolumeButton } from '@/widgets/playlist'
 
 interface PlaylistSlideProps {
   data: PlaylistInfo
@@ -33,6 +33,7 @@ const PlaylistLayout = ({
   currentPlaylist,
   currentTrackIndex,
   isPlaying,
+  onPlayPause,
   onSelectTrack,
   playerRef,
   isMuted,
@@ -74,13 +75,16 @@ const PlaylistLayout = ({
         )}
       </Container>
       <Wrapper>
-        <CdSpinner $isPlaying={isPlaying}>
-          <Cd
-            variant="xxl"
-            bgColor="none"
-            stickers={data?.cdItems ?? data?.onlyCdResponse?.cdItems ?? []}
-          />
-        </CdSpinner>
+        <CdContainer>
+          <PlayButton isPlaying={isPlaying} onTogglePlay={onPlayPause} />
+          <CdSpinner $isPlaying={isPlaying}>
+            <Cd
+              variant="xxl"
+              bgColor="none"
+              stickers={data?.cdItems ?? data?.onlyCdResponse?.cdItems ?? []}
+            />
+          </CdSpinner>
+        </CdContainer>
         <ActionBarContainer>
           <ActionBar
             playlistId={data.playlistId}
@@ -147,4 +151,8 @@ const ActionBarContainer = styled.div`
   justify-content: flex-end;
   width: 100%;
   margin-top: -40px;
+`
+
+const CdContainer = styled.div`
+  position: relative;
 `
