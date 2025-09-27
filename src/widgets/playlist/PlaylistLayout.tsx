@@ -59,6 +59,7 @@ const PlaylistLayout = ({
 
   return (
     <>
+      <Overlay onClick={onPlayPause} />
       <Header
         left={<SvgButton icon={LeftArrow} onClick={() => navigate('/')} />}
         center={<span>둘러보기</span>}
@@ -76,7 +77,7 @@ const PlaylistLayout = ({
       </Container>
       <Wrapper>
         <CdContainer>
-          <PlayButton isPlaying={isPlaying} onTogglePlay={onPlayPause} />
+          {!isPlaying && <PlayButton onPlayPause={onPlayPause} />}
           <CdSpinner $isPlaying={isPlaying}>
             <Cd
               variant="xxl"
@@ -155,4 +156,14 @@ const ActionBarContainer = styled.div`
 
 const CdContainer = styled.div`
   position: relative;
+`
+
+const Overlay = styled.div`
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100dvh;
+  z-index: 999;
+
+  pointer-events: auto;
 `
