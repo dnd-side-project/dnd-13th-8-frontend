@@ -48,7 +48,6 @@ export const routesConfig: RouteConfig[] = [
   {
     path: '/discover',
     component: DiscoverLayout,
-    hideNav: true,
     isNotSuspense: true,
     children: [
       { path: '', component: RedirectToShuffle }, // /discover → 셔플 리다이렉트

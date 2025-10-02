@@ -3,13 +3,12 @@ import { useNavigate } from 'react-router-dom'
 
 import styled from 'styled-components'
 
-import { LeftArrow } from '@/assets/icons'
 import type { PlaylistInfo } from '@/entities/playlist'
 import { useChatSocket } from '@/features/chat/model/sendMessage'
 import { useFollowStatus } from '@/features/follow/model/useFollow'
 import { useDevice } from '@/shared/lib/useDevice'
 import { flexColCenter } from '@/shared/styles/mixins'
-import { Button, Cd, Header, LiveInfo, SvgButton } from '@/shared/ui'
+import { Button, Cd, Header, LiveInfo } from '@/shared/ui'
 import { ActionBar, PlayButton, ProgressBar, VolumeButton } from '@/widgets/playlist'
 
 interface PlaylistSlideProps {
@@ -60,10 +59,7 @@ const PlaylistLayout = ({
   return (
     <>
       <Overlay onClick={onPlayPause} />
-      <Header
-        left={<SvgButton icon={LeftArrow} onClick={() => navigate('/')} />}
-        center={<span>둘러보기</span>}
-      />
+      <Header center={<span>둘러보기</span>} />
       <Container>
         {isMobile && isMuted && (
           <VolumeButton playerRef={playerRef} isMuted={isMuted} setIsMuted={setIsMuted} />
