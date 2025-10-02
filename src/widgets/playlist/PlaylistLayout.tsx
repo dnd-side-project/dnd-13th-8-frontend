@@ -101,11 +101,13 @@ const PlaylistLayout = ({
       <Title>{data.playlistName}</Title>
       <Creator>{data.creator.creatorNickname}</Creator>
 
-      <ProgressBar
-        trackLengths={currentPlaylist?.songs.map((t) => t.youtubeLength) || []}
-        currentIndex={currentTrackIndex}
-        onClick={handleProgressClick}
-      />
+      <ProgressBarWrapper>
+        <ProgressBar
+          trackLengths={currentPlaylist?.songs.map((t) => t.youtubeLength) || []}
+          currentIndex={currentTrackIndex}
+          onClick={handleProgressClick}
+        />
+      </ProgressBarWrapper>
     </>
   )
 }
@@ -150,8 +152,9 @@ const Creator = styled.p`
 const ActionBarContainer = styled.div`
   display: flex;
   justify-content: flex-end;
-  width: 100%;
-  margin-top: -40px;
+  margin: -40px 0 0 auto;
+  position: relative;
+  z-index: 9999;
 `
 
 const CdContainer = styled.div`
@@ -166,4 +169,9 @@ const Overlay = styled.div`
   z-index: 999;
 
   pointer-events: auto;
+`
+
+const ProgressBarWrapper = styled.div`
+  position: relative;
+  z-index: 9999;
 `
