@@ -115,8 +115,9 @@ export const theme = {
   },
 
   Z_INDEX: {
-    overlay: 999,
-    topLayer: 9999,
+    overlay: 100,
+    topLayer: 200,
+    coachMark: 300,
   },
 }
 
