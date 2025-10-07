@@ -150,7 +150,7 @@ const ActionBarContainer = styled.div`
   justify-content: flex-end;
   margin: -40px 0 0 auto;
   position: relative;
-  z-index: 9999;
+  z-index: ${({ theme }) => theme.Z_INDEX.topLayer};
 `
 
 const CdContainer = styled.div`
@@ -162,12 +162,12 @@ const Overlay = styled.div`
   inset: 0;
   width: 100%;
   height: 100dvh;
-  z-index: 999;
+  z-index: ${({ theme }) => theme.Z_INDEX.overlay};
 
   pointer-events: auto;
 `
 
 const ProgressBarWrapper = styled.div`
   position: relative;
-  z-index: 9999;
+  z-index: ${({ theme }) => theme.Z_INDEX.topLayer};
 `

@@ -22,7 +22,7 @@ const Wrapper = styled.div`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 9999;
+  z-index: ${({ theme }) => theme.Z_INDEX.topLayer};
 
   background: rgba(126, 136, 154, 0.3);
   border: 1px solid rgba(255, 255, 255, 0.1);

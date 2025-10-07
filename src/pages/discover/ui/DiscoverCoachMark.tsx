@@ -43,7 +43,7 @@ const Overlay = styled.div`
   width: 100%;
   height: 100dvh;
   background: rgba(15, 16, 20, 0.8);
-  z-index: 999;
+  z-index: ${({ theme }) => theme.Z_INDEX.overlay};
   ${flexColCenter}
 
   pointer-events: auto;

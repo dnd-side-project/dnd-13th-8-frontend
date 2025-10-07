@@ -142,7 +142,7 @@ const Handle = styled.div<{ $left: number }>`
   border-radius: 99px;
   top: 50%;
   transform: translate(-50%, -50%);
-  z-index: 9999;
+  z-index: ${({ theme }) => theme.Z_INDEX.topLayer};
   background-color: ${({ theme }) => theme.COLOR['common-white']};
   left: ${({ $left }) => $left}%;
 `

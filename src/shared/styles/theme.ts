@@ -113,6 +113,11 @@ export const theme = {
       letter-spacing: 0.0311em;
     `,
   },
+
+  Z_INDEX: {
+    overlay: 999,
+    topLayer: 9999,
+  },
 }
 
 export type Theme = typeof theme
