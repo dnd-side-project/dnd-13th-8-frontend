@@ -2,9 +2,8 @@ import type { RefObject } from 'react'
 
 import styled from 'styled-components'
 
-import { Volumn } from '@/assets/icons'
+import { Volume } from '@/assets/icons'
 import { flexRowCenter } from '@/shared/styles/mixins'
-
 
 interface VolumeButtonProps {
   playerRef: RefObject<YT.Player | null>
@@ -24,7 +23,7 @@ const VolumeButton = ({ playerRef, isMuted, setIsMuted }: VolumeButtonProps) => 
 
   return (
     <StyledButton onClick={toggleMute}>
-      <Volumn />
+      <Volume />
       탭하여 음소거 해제
     </StyledButton>
   )
