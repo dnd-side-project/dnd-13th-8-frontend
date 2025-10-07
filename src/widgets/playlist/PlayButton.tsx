@@ -10,8 +10,8 @@ interface PlayButtonProps {
 
 const PlayButton = ({ onPlayPause }: PlayButtonProps) => {
   return (
-    <Wrapper onClick={onPlayPause}>
-      <SvgButton icon={Start} width={32} height={32} />
+    <Wrapper>
+      <SvgButton icon={Start} width={32} height={32} onClick={onPlayPause} />
     </Wrapper>
   )
 }
