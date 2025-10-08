@@ -18,10 +18,10 @@ export const useMyCdList = (sort: string) => {
   })
 }
 
-export const useMyFollowingList = () => {
+export const useMyFollowingList = (sort: string) => {
   return useQuery({
-    queryKey: ['myFollowingList'],
-    queryFn: () => getMyFollowingList('RECENT'),
+    queryKey: ['myFollowingList', sort],
+    queryFn: () => getMyFollowingList(sort),
     refetchOnMount: 'always',
   })
 }

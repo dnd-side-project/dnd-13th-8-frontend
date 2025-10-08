@@ -26,7 +26,7 @@ export interface StickerInfoType {
   rotation: number
 }
 
-export type MyPageTabType = 'cd' | 'following'
+export type MyPageTabType = 'cd' | 'like'
 
 export const THEME_PROP_ID_OFFSET = {
   deulak: 1000,
