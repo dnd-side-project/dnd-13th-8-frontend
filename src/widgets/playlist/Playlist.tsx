@@ -26,7 +26,7 @@ const Playlist = ({ id, title, username, stickers, isLiked }: PlaylistProps) => 
       <CdBox>
         <Cd variant="xl" stickers={stickers} />
         <ButtonContainer>
-          <LikeButton playlistId={id} initialLiked={isLiked} />
+          <LikeButton playlistId={id} isLiked={isLiked} />
         </ButtonContainer>
       </CdBox>
       <InfoBox>
