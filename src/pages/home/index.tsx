@@ -70,6 +70,7 @@ const HomePage = () => {
               title={item.playlistName}
               username={item.creatorNickname}
               stickers={item.onlyCdResponse?.cdItems}
+              isLiked={false}
             />
           ))}
         </ScrollCarousel>

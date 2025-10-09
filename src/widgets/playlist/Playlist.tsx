@@ -1,18 +1,22 @@
 import { useNavigate } from 'react-router-dom'
 
-import styled from 'styled-components'
+import styled, { useTheme } from 'styled-components'
 
+import { Like } from '@/assets/icons'
 import type { CdCustomData } from '@/entities/playlist'
 import Cd from '@/shared/ui/Cd'
+import SvgButton from '@/shared/ui/SvgButton'
 
 interface PlaylistProps {
   title: string
   username: string
   id: number
   stickers?: CdCustomData[]
+  isLiked: boolean
 }
 
-const Playlist = ({ id, title, username, stickers }: PlaylistProps) => {
+const Playlist = ({ id, title, username, stickers, isLiked }: PlaylistProps) => {
+  const theme = useTheme()
   const navigate = useNavigate()
 
   const handleClick = () => {
@@ -23,6 +27,14 @@ const Playlist = ({ id, title, username, stickers }: PlaylistProps) => {
     <Wrapper onClick={handleClick}>
       <CdBox>
         <Cd variant="xl" stickers={stickers} />
+        <LikeButton $opacity={isLiked ? 1 : 0.2}>
+          <SvgButton
+            icon={Like}
+            width={20}
+            height={20}
+            fill={isLiked ? theme.COLOR['primary-normal'] : theme.COLOR['gray-200']}
+          />
+        </LikeButton>
       </CdBox>
       <InfoBox>
         <Title>{title}</Title>
@@ -39,7 +51,6 @@ const Wrapper = styled.div`
   flex-direction: column;
   gap: 12px;
   width: 140px;
-  cursor: pointer;
 `
 
 const CdBox = styled.div`
@@ -51,6 +62,14 @@ const CdBox = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+`
+
+const LikeButton = styled.div<{ $opacity?: number }>`
+  position: absolute;
+  top: 6px;
+  right: 6px;
+
+  opacity: ${({ $opacity }) => $opacity};
 `
 
 const Title = styled.h3`
