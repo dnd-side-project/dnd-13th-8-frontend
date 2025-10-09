@@ -52,5 +52,5 @@ const ToastContainer = styled.div`
   left: 0;
   right: 0;
   padding: 0 20px;
-  z-index: 20000;
+  z-index: ${({ theme }) => theme.Z_INDEX.topLayer};
 `

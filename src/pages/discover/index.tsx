@@ -150,7 +150,7 @@ const DiscoverPage = () => {
 
   return (
     <Page>
-      {showCoachmark && <DiscoverCoachMark onClick={handleCloseCoachmark} />}
+      {showCoachmark && <DiscoverCoachMark onClose={handleCloseCoachmark} />}
       <SwipeCarousel data={playlistsData} onSelectIndexChange={handleSelectPlaylist}>
         {playlistsData.map((data) => (
           <Slide key={data.playlistId}>
