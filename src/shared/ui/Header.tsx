@@ -23,7 +23,6 @@ const HeaderContainer = styled.header`
   ${flexRowCenter}
   height: 60px;
   padding: 18px 0px;
-  background-color: ${({ theme }) => theme.COLOR['gray-900']};
 `
 
 const Side = styled.div<{ $position: 'left' | 'right' }>`
