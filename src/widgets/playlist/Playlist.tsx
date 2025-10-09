@@ -4,6 +4,7 @@ import styled, { useTheme } from 'styled-components'
 
 import { Like } from '@/assets/icons'
 import type { CdCustomData } from '@/entities/playlist'
+import { useLike } from '@/features/like'
 import Cd from '@/shared/ui/Cd'
 import SvgButton from '@/shared/ui/SvgButton'
 
@@ -18,6 +19,7 @@ interface PlaylistProps {
 const Playlist = ({ id, title, username, stickers, isLiked }: PlaylistProps) => {
   const theme = useTheme()
   const navigate = useNavigate()
+  const { liked, toggleLike } = useLike(id, isLiked)
 
   const handleClick = () => {
     navigate(`/discover/${id}`)
@@ -27,12 +29,16 @@ const Playlist = ({ id, title, username, stickers, isLiked }: PlaylistProps) => 
     <Wrapper onClick={handleClick}>
       <CdBox>
         <Cd variant="xl" stickers={stickers} />
-        <LikeButton $opacity={isLiked ? 1 : 0.2}>
+        <LikeButton $opacity={liked ? 1 : 0.2}>
           <SvgButton
             icon={Like}
+            onClick={(e) => {
+              e.stopPropagation()
+              toggleLike()
+            }}
             width={20}
             height={20}
-            fill={isLiked ? theme.COLOR['primary-normal'] : theme.COLOR['gray-200']}
+            fill={liked ? theme.COLOR['primary-normal'] : theme.COLOR['gray-200']}
           />
         </LikeButton>
       </CdBox>

@@ -6,7 +6,7 @@ import { flexRowCenter } from '@/shared/styles/mixins'
 
 interface SvgButtonProps {
   icon: React.ComponentType<React.SVGProps<SVGSVGElement>>
-  onClick?: () => void
+  onClick?: React.MouseEventHandler<HTMLButtonElement>
   width?: number
   height?: number
   fill?: string
