@@ -6,7 +6,7 @@ import { Playlist } from '@/assets/icons'
 import type { CdCustomData } from '@/entities/playlist'
 import { LikeButton } from '@/features/like'
 import { ShareButton } from '@/features/share'
-import { flexColCenter } from '@/shared/styles/mixins'
+import { flexColCenter, flexRowCenter, myCdButton } from '@/shared/styles/mixins'
 import SvgButton from '@/shared/ui/SvgButton'
 import { ChatButton } from '@/widgets/chat'
 
@@ -15,9 +15,16 @@ interface ActionBarProps {
   showFollow?: boolean
   creatorId: string
   stickers?: CdCustomData[]
+  type?: 'MY' | 'DISCOVER'
 }
 
-const ActionBar = ({ playlistId, showFollow, creatorId, stickers }: ActionBarProps) => {
+const ActionBar = ({
+  playlistId,
+  showFollow,
+  creatorId,
+  stickers,
+  type = 'DISCOVER',
+}: ActionBarProps) => {
   const navigate = useNavigate()
 
   const handleMovePlaylist = () => {
@@ -29,18 +36,30 @@ const ActionBar = ({ playlistId, showFollow, creatorId, stickers }: ActionBarPro
   }
 
   return (
-    <Wrapper>
-      <LikeButton playlistId={playlistId} isLiked={false} type="DISCOVER" />
-      <ChatButton roomId={playlistId} creatorId={creatorId} />
-      <SvgButton icon={Playlist} width={24} height={24} onClick={handleMovePlaylist} />
-      <ShareButton playlistId={playlistId} stickers={stickers} />
+    <Wrapper $type={type}>
+      <LikeButton playlistId={playlistId} isLiked={false} type={type} />
+      <ChatButton roomId={playlistId} creatorId={creatorId} type={type} />
+      <DetailButton $isMy={type === 'MY'} onClick={handleMovePlaylist}>
+        <SvgButton
+          icon={Playlist}
+          width={type === 'MY' ? 16 : 24}
+          height={type === 'MY' ? 16 : 24}
+        />
+        {type === 'MY' && <p>목록</p>}
+      </DetailButton>
+      <ShareButton playlistId={playlistId} stickers={stickers} type={type} />
     </Wrapper>
   )
 }
 
 export default ActionBar
 
-const Wrapper = styled.div`
-  ${flexColCenter}
-  gap: 16px;
+const Wrapper = styled.div<{ $type: 'MY' | 'DISCOVER' }>`
+  ${({ $type }) => ($type === 'MY' ? flexRowCenter : flexColCenter)};
+  gap: ${({ $type }) => ($type === 'MY' ? '8px' : '16px')};
+`
+
+const DetailButton = styled.div<{ $isMy: boolean }>`
+  ${flexRowCenter};
+  ${({ $isMy }) => $isMy && myCdButton};
 `

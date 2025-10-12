@@ -1,21 +1,32 @@
 import { useState } from 'react'
 
+import styled from 'styled-components'
+
 import { Message } from '@/assets/icons'
+import { flexRowCenter, myCdButton } from '@/shared/styles/mixins'
 import { SvgButton } from '@/shared/ui'
 
 import ChatBottomSheet from './ChatBottomSheet'
 
 interface ChatButtonProps {
-  roomId: number // playlistId === roomId임
+  roomId: number // playlistId === roomId
   creatorId: string
+  type?: 'MY' | 'DISCOVER'
 }
 
-const ChatButton = ({ roomId, creatorId }: ChatButtonProps) => {
+const ChatButton = ({ roomId, creatorId, type = 'DISCOVER' }: ChatButtonProps) => {
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false)
 
   return (
     <>
-      <SvgButton icon={Message} width={24} height={24} onClick={() => setIsBottomSheetOpen(true)} />
+      <ButtonWrapper $isMy={type === 'MY'} onClick={() => setIsBottomSheetOpen(true)}>
+        <SvgButton
+          icon={Message}
+          width={type === 'MY' ? 16 : 24}
+          height={type === 'MY' ? 16 : 24}
+        />
+        {type === 'MY' && <p>28</p>}
+      </ButtonWrapper>
 
       {isBottomSheetOpen && (
         <ChatBottomSheet
@@ -30,3 +41,8 @@ const ChatButton = ({ roomId, creatorId }: ChatButtonProps) => {
 }
 
 export default ChatButton
+
+const ButtonWrapper = styled.div<{ $isMy: boolean }>`
+  ${flexRowCenter};
+  ${({ $isMy }) => $isMy && myCdButton};
+`
