@@ -12,23 +12,16 @@ import { ChatButton } from '@/widgets/chat'
 
 interface ActionBarProps {
   playlistId: number
-  showFollow?: boolean
   creatorId: string
   stickers?: CdCustomData[]
   type?: 'MY' | 'DISCOVER'
 }
 
-const ActionBar = ({
-  playlistId,
-  showFollow,
-  creatorId,
-  stickers,
-  type = 'DISCOVER',
-}: ActionBarProps) => {
+const ActionBar = ({ playlistId, creatorId, stickers, type = 'DISCOVER' }: ActionBarProps) => {
   const navigate = useNavigate()
 
   const handleMovePlaylist = () => {
-    if (showFollow) {
+    if (type === 'DISCOVER') {
       navigate(`/discover/${playlistId}/playlist`)
     } else {
       navigate(`/mycd/playlist`, { state: { playlistId } })

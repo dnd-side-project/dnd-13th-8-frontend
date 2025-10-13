@@ -81,9 +81,9 @@ const PlaylistLayout = ({
         <ActionBarContainer>
           <ActionBar
             playlistId={data.playlistId}
-            showFollow={type !== 'My'}
             creatorId={data.creator.creatorId}
             stickers={data?.cdItems ?? data?.onlyCdResponse?.cdItems ?? []}
+            type="DISCOVER"
           />
         </ActionBarContainer>
       </Wrapper>
