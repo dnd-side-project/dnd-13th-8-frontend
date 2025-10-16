@@ -153,7 +153,7 @@ const MyCdPage = () => {
 
           <Title>{centerPlaylist.playlistName}</Title>
 
-          <ProgressBarWrapper>
+          <BottomWrapper>
             <ProgressBar
               trackLengths={currentPlaylist.songs.map((t) => t.youtubeLength) || []}
               currentIndex={currentTrackIndex}
@@ -166,7 +166,7 @@ const MyCdPage = () => {
               onNext={nextTrack}
               onPrev={prevTrack}
             />
-          </ProgressBarWrapper>
+          </BottomWrapper>
         </>
       )}
 
@@ -200,8 +200,11 @@ const Title = styled.p`
   padding-top: 40px;
 `
 
-const ProgressBarWrapper = styled.div`
+const BottomWrapper = styled.div`
   padding-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 `
 
 const ErrorContainer = styled.div`
