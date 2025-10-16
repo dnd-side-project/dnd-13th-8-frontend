@@ -44,18 +44,18 @@ const LoopCarousel = ({ data, onCenterChange }: LoopCarouselProps) => {
     return () => {
       emblaApi.off('select', handleSelect) // 언마운트 시 이벤트 해제
     }
-  }, [emblaApi, handleSelect, data])
+  }, [emblaApi, handleSelect])
 
   return (
     <div ref={emblaRef}>
-      <EmblaContainer>
+      <EmblaContainer $single={data.length === 1}>
         {data.map((slide, index: Key) => (
           <EmblaSlide key={index}>
             <Slide $active={activeIndex === index}>
               <Cd
                 variant="carousel"
                 bgColor="none"
-                stickers={activeIndex === index ? (slide.onlyCdResponse?.cdItems ?? []) : []}
+                stickers={activeIndex === index ? slide.onlyCdResponse.cdItems : []}
               />
             </Slide>
           </EmblaSlide>
@@ -67,10 +67,11 @@ const LoopCarousel = ({ data, onCenterChange }: LoopCarouselProps) => {
 
 export default LoopCarousel
 
-const EmblaContainer = styled.div`
+const EmblaContainer = styled.div<{ $single?: boolean }>`
   display: flex;
   touch-action: pan-y pinch-zoom;
   padding: 16px 0;
+  justify-content: ${({ $single }) => ($single ? 'center' : 'flex-start')};
 `
 
 const EmblaSlide = styled.div`
