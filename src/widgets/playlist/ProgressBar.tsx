@@ -100,7 +100,6 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 14px;
-  padding-top: 32px;
 `
 
 const BarContainer = styled.div`

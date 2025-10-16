@@ -164,4 +164,5 @@ const Overlay = styled.div`
 const ProgressBarWrapper = styled.div`
   position: relative;
   z-index: ${({ theme }) => theme.Z_INDEX.topLayer};
+  padding-top: 32px;
 `

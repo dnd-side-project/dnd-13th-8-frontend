@@ -5,13 +5,17 @@ import styled from 'styled-components'
 
 import { usePlaylist } from '@/app/providers/PlayerProvider'
 import { MemberCharacter } from '@/assets/images'
-import { useMyRepresentativePlaylist } from '@/entities/playlist/model/useMyPlaylist'
+import { usePlaylistDetail } from '@/entities/playlist'
+import { useMyCdList } from '@/entities/playlist/model/useMyPlaylist'
 import { useAuthStore } from '@/features/auth/store/authStore'
+import { useChatSocket } from '@/features/chat/model/sendMessage'
 import { BUTTON_TEXT } from '@/pages/home/config/messages'
+import { LoopCarousel } from '@/pages/home/ui'
 import { getVideoId } from '@/shared/lib'
+import { useDevice } from '@/shared/lib/useDevice'
 import { flexColCenter } from '@/shared/styles/mixins'
-import { Button } from '@/shared/ui'
-import { PlaylistLayout, YoutubePlayer } from '@/widgets/playlist'
+import { Button, Header, LiveInfo } from '@/shared/ui'
+import { ActionBar, ControlBar, ProgressBar, VolumeButton, YoutubePlayer } from '@/widgets/playlist'
 
 const MyCdPage = () => {
   const {
@@ -29,27 +33,67 @@ const MyCdPage = () => {
   const [isMuted, setIsMuted] = useState<boolean | null>(null)
   const { userInfo } = useAuthStore()
   const navigate = useNavigate()
+  const deviceType = useDevice()
+  const isMobile = deviceType === 'mobile'
 
-  const { data: playlistData, isError } = useMyRepresentativePlaylist()
+  const { data: playlistData, isError } = useMyCdList('RECENT')
+
+  const [centerPlaylist, setCenterPlaylist] = useState<{
+    playlistId: number | null
+    playlistName: string
+  }>({ playlistId: null, playlistName: '' })
 
   useEffect(() => {
-    if (!currentPlaylist && playlistData && userInfo) {
+    if (playlistData && playlistData.length > 0 && centerPlaylist.playlistId === null) {
+      const first = playlistData[0]
+      setCenterPlaylist({
+        playlistId: first.playlistId,
+        playlistName: first.playlistName,
+      })
+    }
+  }, [playlistData, centerPlaylist.playlistId])
+
+  // LoopCarousel 센터 컨텐츠 변경 핸들러
+  const handleCenterChange = useCallback(
+    (playlist: { playlistId: number; playlistName: string }) => {
+      if (playlist) {
+        setCenterPlaylist({
+          playlistId: playlist.playlistId,
+          playlistName: playlist.playlistName,
+        })
+      }
+    },
+    []
+  )
+
+  const { data: playlistDetail } = usePlaylistDetail(centerPlaylist.playlistId)
+
+  useEffect(() => {
+    if (playlistDetail && userInfo) {
+      // 이미 같은 playlist면 재설정 안함
+      if (currentPlaylist?.playlistId === playlistDetail.playlistId) return
+
       const convertedPlaylist = {
         creator: {
           creatorId: userInfo.userId,
           creatorNickname: userInfo.username,
         },
-        playlistId: playlistData.playlistId,
-        playlistName: playlistData.playlistName,
-        genre: playlistData.genre,
-        songs: playlistData.songs,
+        playlistId: playlistDetail.playlistId,
+        playlistName: playlistDetail.playlistName,
+        genre: playlistDetail.genre,
+        songs: playlistDetail.songs,
         representative: false,
-        cdItems: playlistData.onlyCdResponse?.cdItems || [],
+        cdItems: playlistDetail.onlyCdResponse?.cdItems || [],
       }
 
-      setPlaylist(convertedPlaylist, currentTrackIndex, currentTime)
+      setPlaylist(convertedPlaylist, 0, 0)
     }
-  }, [currentPlaylist, playlistData, userInfo, setPlaylist, currentTrackIndex, currentTime])
+  }, [playlistDetail, userInfo, setPlaylist, currentPlaylist])
+
+  const isActive = currentPlaylist?.playlistId === playlistDetail?.playlistId
+  const { participantCount: listenersNum } = useChatSocket(
+    isActive && centerPlaylist.playlistId ? String(centerPlaylist.playlistId) : ''
+  )
 
   const handlePlayerStateChange = useCallback(
     (event: YT.OnStateChangeEvent) => {
@@ -58,20 +102,24 @@ const MyCdPage = () => {
     [nextTrack]
   )
 
+  const handleProgressClick = useCallback(
+    (trackIndex: number, seconds: number) => {
+      if (!currentPlaylist) return
+      setPlaylist(currentPlaylist, trackIndex, seconds)
+      if (seconds !== undefined) playerRef.current?.seekTo(seconds, true)
+      if (!isPlaying) play()
+    },
+    [currentPlaylist, setPlaylist, playerRef, isPlaying, play]
+  )
+
   const videoId = currentPlaylist
     ? getVideoId(currentPlaylist.songs[currentTrackIndex]?.youtubeUrl)
     : null
-
-  const isCurrentlyPlaying = (() => {
-    if (!window.YT || !playerRef.current) return false
-    return isPlaying && playerRef.current.getPlayerState() === window.YT.PlayerState.PLAYING
-  })()
 
   if (isError) {
     return (
       <ErrorContainer>
         <img src={MemberCharacter} alt="Guest Character" width={160} height={160} />
-
         <Button size="S" state="primary" onClick={() => navigate('/mypage/customize')}>
           {BUTTON_TEXT.MEMBER}
         </Button>
@@ -82,25 +130,44 @@ const MyCdPage = () => {
   return (
     <div>
       {currentPlaylist && (
-        <PlaylistLayout
-          data={currentPlaylist}
-          currentPlaylist={currentPlaylist}
-          currentTrackIndex={currentTrackIndex}
-          currentTime={currentTime}
-          isPlaying={isCurrentlyPlaying}
-          onPlayPause={() => (isPlaying ? pause() : play())}
-          onNext={nextTrack}
-          onPrev={prevTrack}
-          onSelectTrack={(trackIndex, time) => {
-            setPlaylist(currentPlaylist, trackIndex, time)
-            if (time !== undefined) playerRef.current?.seekTo(time, true)
-            if (!isPlaying) play()
-          }}
-          type="My"
-          playerRef={playerRef}
-          isMuted={isMuted}
-          setIsMuted={setIsMuted}
-        />
+        <>
+          <Header center={<span>나의 플레이리스트</span>} />
+          <Container>
+            {isMobile && isMuted && (
+              <VolumeButton playerRef={playerRef} isMuted={isMuted} setIsMuted={setIsMuted} />
+            )}
+            <LiveInfo isOnAir={listenersNum > 0} listenerCount={listenersNum} isOwner={false} />
+            <Button size="S" state="primary" onClick={() => navigate('/mypage/customize')}>
+              편집
+            </Button>
+          </Container>
+
+          <LoopCarousel data={playlistData ?? []} onCenterChange={handleCenterChange} />
+
+          <ActionBar
+            playlistId={centerPlaylist.playlistId ?? 0}
+            creatorId="currentPlaylist.creator.creatorId"
+            stickers={[]}
+            type="MY"
+          />
+
+          <Title>{centerPlaylist.playlistName}</Title>
+
+          <ProgressBarWrapper>
+            <ProgressBar
+              trackLengths={currentPlaylist.songs.map((t) => t.youtubeLength) || []}
+              currentIndex={currentTrackIndex}
+              onClick={handleProgressClick}
+            />
+
+            <ControlBar
+              isPlaying={isPlaying}
+              onTogglePlay={isPlaying ? pause : play}
+              onNext={nextTrack}
+              onPrev={prevTrack}
+            />
+          </ProgressBarWrapper>
+        </>
       )}
 
       {videoId && (
@@ -121,6 +188,21 @@ const MyCdPage = () => {
 }
 
 export default MyCdPage
+
+const Container = styled.div`
+  display: flex;
+  justify-content: space-between;
+  height: 30px;
+`
+
+const Title = styled.p`
+  ${({ theme }) => theme.FONT.headline1};
+  padding-top: 40px;
+`
+
+const ProgressBarWrapper = styled.div`
+  padding-top: 24px;
+`
 
 const ErrorContainer = styled.div`
   ${flexColCenter}
