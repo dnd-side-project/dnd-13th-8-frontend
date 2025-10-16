@@ -6,15 +6,16 @@ import styled from 'styled-components'
 import { usePlaylist } from '@/app/providers/PlayerProvider'
 import { MemberCharacter } from '@/assets/images'
 import { usePlaylistDetail } from '@/entities/playlist'
-import { useMyCdList } from '@/entities/playlist/model/useMyPlaylist'
+import { useMyCdList, useMyLikedCdList } from '@/entities/playlist/model/useMyPlaylist'
 import { useAuthStore } from '@/features/auth/store/authStore'
 import { useChatSocket } from '@/features/chat/model/sendMessage'
 import { BUTTON_TEXT } from '@/pages/home/config/messages'
 import { LoopCarousel } from '@/pages/home/ui'
+import { HeaderTab } from '@/pages/mycd/ui'
 import { getVideoId } from '@/shared/lib'
 import { useDevice } from '@/shared/lib/useDevice'
 import { flexColCenter } from '@/shared/styles/mixins'
-import { Button, Header, LiveInfo } from '@/shared/ui'
+import { Button, LiveInfo } from '@/shared/ui'
 import { ActionBar, ControlBar, ProgressBar, VolumeButton, YoutubePlayer } from '@/widgets/playlist'
 
 const MyCdPage = () => {
@@ -31,12 +32,22 @@ const MyCdPage = () => {
     playerRef,
   } = usePlaylist()
   const [isMuted, setIsMuted] = useState<boolean | null>(null)
+  const [selectedTab, setSelectedTab] = useState<'MY' | 'LIKE'>('MY')
   const { userInfo } = useAuthStore()
   const navigate = useNavigate()
   const deviceType = useDevice()
   const isMobile = deviceType === 'mobile'
 
-  const { data: playlistData, isError } = useMyCdList('RECENT')
+  const handleTabSelect = (tab: 'MY' | 'LIKE') => {
+    setSelectedTab(tab)
+  }
+
+  const myCdPlaylist = useMyCdList('RECENT')
+  const likedCdPlaylist = useMyLikedCdList('RECENT')
+
+  const playlistQuery = selectedTab === 'MY' ? myCdPlaylist : likedCdPlaylist
+  const playlistData = playlistQuery.data
+  const isError = playlistQuery.isError
 
   const [centerPlaylist, setCenterPlaylist] = useState<{
     playlistId: number | null
@@ -131,7 +142,7 @@ const MyCdPage = () => {
     <div>
       {currentPlaylist && (
         <>
-          <Header center={<span>나의 플레이리스트</span>} />
+          <HeaderTab selectedTab={selectedTab} onSelect={handleTabSelect} />
           <Container>
             {isMobile && isMuted && (
               <VolumeButton playerRef={playerRef} isMuted={isMuted} setIsMuted={setIsMuted} />

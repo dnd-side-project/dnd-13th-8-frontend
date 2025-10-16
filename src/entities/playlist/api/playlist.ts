@@ -69,3 +69,8 @@ export const getPlaylistViewCounts = (playlistId: number) => {
 export const getMyRepresentativePlaylist = () => {
   return api.get<MyRepresentResponse>('/main/playlist/mypage/me/representative')
 }
+
+// 좋아요한 플레이리스트 조회
+export const getMyLikedCdList = (sort: string) => {
+  return api.get<MyCdListResponse>(`/main/playlist/mypage/me/likes?sort=${sort}`)
+}
