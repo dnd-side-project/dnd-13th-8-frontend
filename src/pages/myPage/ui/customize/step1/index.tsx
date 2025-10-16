@@ -37,7 +37,7 @@ const CustomizeStep1 = ({
   const [metaTitle, setMetaTitle] = useState(prevPlaylistData?.playlistName ?? '')
   const [linkMap, setLinkMap] = useState<Track[]>([])
   const [linkErrorMap, setLinkErrorMap] = useState<{ [key: number]: string }>({})
-  const [isPrimary, setIsPrimary] = useState(prevPlaylistData?.isRepresentative ?? false)
+  const [isPrimary, setIsPrimary] = useState(prevPlaylistData?.isPublic ?? false)
 
   const MAX_LINK_COUNT = 10
   const VALID_YOUTUBE_URLS = [
