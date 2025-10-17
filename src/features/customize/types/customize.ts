@@ -1,4 +1,4 @@
-import type { StickerThemeUpperType } from '@/pages/myPage/types/mypage'
+import type { StickerThemeUpperType } from '@/pages/mypage/types/mypage'
 import type { MusicGenreId } from '@/shared/config/musicGenres'
 
 export interface YoutubeVideoInfoPayload {

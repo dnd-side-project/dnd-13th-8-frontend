@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "type": "user",
+    "imageUrl": "https://cdn2.colley.kr/profile_836440_profile_image_1.jpeg",
+    "searchResult": "베이비주댕치"
+  },
+  {
+    "id": 2,
+    "type": "user",
+    "imageUrl": "https://www.sanrio.co.jp/special/characterranking/2025/assets/img/characters/pochacco.png",
+    "searchResult": "포차코코볼"
+  },
+  {
+    "id": 3,
+    "type": "user",
+    "imageUrl": "https://i.pinimg.com/236x/de/13/f2/de13f2f288026ff34cc19c7078adf37d.jpg",
+    "searchResult": "박키티"
+  },
+  {
+    "id": 4,
+    "type": "user",
+    "imageUrl": "https://mblogthumb-phinf.pstatic.net/MjAyMTA4MjRfMTM4/MDAxNjI5ODA1MjI3MTg0.V886TtxCmr9TC9nvJvUJrvhwOolKp45k3eCajqt6aHsg.xxaKT2KM6y2jTWNZLxL1NYDgNA-dfVELvwGpiDbROY0g.PNG.studygir/6c4ws5_%2845%29.png?type=w420",
+    "searchResult": "코기뮹주니어3세"
+  },
+  {
+    "id": 5,
+    "type": "user",
+    "imageUrl": "https://i.pinimg.com/736x/8f/20/41/8f2041520696507bc2bfd2f5648c8da3.jpg",
+    "searchResult": "이태원한교동"
+  }
+]

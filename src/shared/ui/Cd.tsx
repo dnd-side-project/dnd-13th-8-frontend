@@ -2,8 +2,8 @@ import styled from 'styled-components'
 
 import overlayUrl from '@/assets/icons/icn_overlay.svg?url'
 import type { CdCustomData } from '@/entities/playlist/types/playlist'
-import { THEME_IMAGES_MAP } from '@/pages/myPage/lib/customizeTheme'
-import { THEME_PROP_ID_OFFSET } from '@/pages/myPage/types/mypage'
+import { THEME_IMAGES_MAP } from '@/pages/mypage/lib/customizeTheme'
+import { THEME_PROP_ID_OFFSET } from '@/pages/mypage/types/mypage'
 import { flexRowCenter } from '@/shared/styles/mixins'
 
 interface CdProps {
