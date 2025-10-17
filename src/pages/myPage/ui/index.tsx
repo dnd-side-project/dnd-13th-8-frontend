@@ -4,7 +4,7 @@ import styled from 'styled-components'
 
 import { Header, SvgButton, ContentHeader, Loading, Error } from '@shared/ui'
 
-import { Gear, NoFollowing, Notification } from '@/assets/icons'
+import { Gear, NoFollowing } from '@/assets/icons'
 import { useMyCdList, useMyFollowingList } from '@/entities/playlist/model/useMyPlaylist'
 import type { MyPageTabType } from '@/pages/myPage/types/mypage'
 import { Divider, CdGrid, UserProfile } from '@/pages/myPage/ui/components'
@@ -43,12 +43,13 @@ const MyPage = () => {
         left={<PageHeader>마이페이지</PageHeader>}
         right={
           <>
-            <SvgButton
+            {/* TODO: 알림 기능 2차 스프린트 시 작업 예정 */}
+            {/* <SvgButton
               icon={Notification}
               width={24}
               height={24}
               onClick={() => navigate('/mypage/notification')}
-            />
+            /> */}
             <SvgButton
               icon={Gear}
               width={24}

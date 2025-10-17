@@ -4,7 +4,7 @@ import { createSearchParams, useNavigate } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 
 import { CARD_IMAGES_LARGE } from '@/assets/card'
-import { Logo, Notification, Search } from '@/assets/icons'
+import { Logo, Search } from '@/assets/icons'
 import { useShufflePlaylists } from '@/entities/playlist'
 import { useAuthStore } from '@/features/auth/store/authStore'
 import {
@@ -21,7 +21,8 @@ const HomePage = () => {
   const navigate = useNavigate()
   const { isLogin, userInfo } = useAuthStore()
 
-  const handleNotiClick = () => navigate('/mypage/notification')
+  // TODO: 알림 기능 2차 스프린트 시 작업 예정
+  // const handleNotiClick = () => navigate('/mypage/notification')
   const handleSearchClick = () => navigate('/search')
 
   const { data: RecentData } = useRecommendationsByRecent()
@@ -46,7 +47,8 @@ const HomePage = () => {
         left={<Logo />}
         right={
           <>
-            <SvgButton icon={Notification} onClick={handleNotiClick} />
+            {/* TODO: 알림 기능 2차 스프린트 시 작업 예정 */}
+            {/* <SvgButton icon={Notification} onClick={handleNotiClick} /> */}
             <SvgButton icon={Search} onClick={handleSearchClick} />
           </>
         }
