@@ -60,7 +60,9 @@ const MyPage = () => {
         }
       />
       <UserProfile />
+
       <Divider />
+
       <section>
         <TabContainer>
           {TAB_LIST.map((tab) => (
@@ -113,9 +115,9 @@ const MyPage = () => {
                   <NonDataContainer>
                     <NoFollowing width={100} height={100} />
                     <NoFollowingText>
-                      아직 팔로잉한 유저가 없어요.
+                      아직 좋아요한 CD가 없어요.
                       <br />
-                      마음에 드는 뮤직룸을 찾아 팔로우해보세요.
+                      마음에 드는 CD를 찾아 좋아요를 눌러보세요.
                     </NoFollowingText>
                   </NonDataContainer>
                 )}
@@ -157,6 +159,8 @@ const TabItem = styled.li<{ $isActive: boolean }>`
     width: 100%;
     height: 100%;
     ${({ theme }) => theme.FONT['body2-normal']}
+    color: ${({ theme, $isActive }) =>
+      $isActive ? theme.COLOR['gray-10'] : theme.COLOR['gray-400']};
   }
 `
 

@@ -101,7 +101,6 @@ const StyledHr = styled.hr`
   border: 1px solid ${({ theme }) => theme.COLOR['gray-700']};
 `
 
-// TODO: 최종 발표 당일 로그아웃/탈퇴하기 버튼 임시 주석
 const BottomCraWrap = styled.div`
   position: absolute;
   left: 0;

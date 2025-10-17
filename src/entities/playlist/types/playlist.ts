@@ -3,7 +3,7 @@ import type { MusicGenreId } from '@/shared/config/musicGenres'
 export interface MyCdInfo {
   playlistId: number
   playlistName: string
-  isRepresentative: boolean
+  isPublic: boolean
 }
 
 export type MyCdListResponse = (MyCdInfo & OnlyCdResponse)[]
@@ -26,6 +26,7 @@ export interface CdCustomData {
   theme: string
   xCoordinate: number
   yCoordinate: number
+  zCoordinate: number
   height: number
   width: number
   scale: number
@@ -38,7 +39,7 @@ export interface CdCustomDataResponse {
 }
 
 export interface OnlyCdResponse {
-  onlyCdResponse: {
+  cdResponse: {
     cdItems: CdCustomData[]
   }
 }

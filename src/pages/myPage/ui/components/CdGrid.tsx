@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { flexColCenter } from '@shared/styles/mixins'
-import { SvgButton, Cd, Badge } from '@shared/ui'
+import { SvgButton, Cd } from '@shared/ui'
 
 import { Plus } from '@/assets/icons'
 import type { MyCdListResponse } from '@/entities/playlist/types/playlist'
@@ -12,7 +12,7 @@ import type { MyPageTabType } from '@/pages/myPage/types/mypage'
 
 const CdGrid = ({
   currentPlaylist,
-  currentTab,
+  // currentTab,
 }: {
   currentPlaylist: MyCdListResponse
   currentTab: MyPageTabType
@@ -38,8 +38,7 @@ const CdGrid = ({
           type="button"
           onClick={() => navigate(`/mypage/${item.playlistId}/playlist`)}
         >
-          <Cd variant="md" stickers={item.onlyCdResponse.cdItems} />
-          {currentTab === 'cd' && item?.isRepresentative && <Badge size="small" text="대표" />}
+          <Cd variant="md" stickers={item.cdResponse?.cdItems} />
           <p>
             <CdTitle>{item.playlistName}</CdTitle>
             <CdCreator>{userInfo.username}</CdCreator>
