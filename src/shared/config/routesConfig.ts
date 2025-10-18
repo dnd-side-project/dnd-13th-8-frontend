@@ -4,8 +4,8 @@ import type { ComponentType, LazyExoticComponent } from 'react'
 import RedirectToShuffle from '@/pages/discover/ui/RedirectToShuffle'
 
 const HomePage = lazy(() => import('@/pages/home'))
-const MyPageLayout = lazy(() => import('@/pages/mypage/ui/MyPageLayout'))
-const MyPage = lazy(() => import('@/pages/mypage/ui'))
+const MypageLayout = lazy(() => import('@/pages/mypage/ui/MypageLayout'))
+const Mypage = lazy(() => import('@/pages/mypage/ui/main'))
 const Customize = lazy(() => import('@/pages/mypage/ui/customize'))
 const MyPagePlaylist = lazy(() => import('@/pages/mypage/ui/playlist'))
 const Setting = lazy(() => import('@/pages/mypage/ui/setting'))
@@ -71,12 +71,12 @@ export const routesConfig: RouteConfig[] = [
   // 마이페이지
   {
     path: '/mypage',
-    component: MyPageLayout,
+    component: MypageLayout,
     hideNav: true,
     isPrivate: true,
     isNotSuspense: true,
     children: [
-      { path: '', component: MyPage, hideNav: false, isNotSuspense: false },
+      { path: '', component: Mypage, hideNav: false, isNotSuspense: false },
       { path: 'customize', component: Customize, isNotSuspense: false },
       { path: ':id/playlist', component: MyPagePlaylist, hideNav: false },
       { path: 'setting', component: Setting },
