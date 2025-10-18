@@ -37,7 +37,10 @@ const MyCdList = () => {
         </CdAddContainer>
         {myCdList?.map((item) => (
           <li key={item.playlistId}>
-            <CdButton type="button" onClick={() => navigate(`/mypage/${item.playlistId}/playlist`)}>
+            <CdButton
+              type="button"
+              onClick={() => navigate(`/mypage/${item.playlistId}/tracklist`)}
+            >
               <Cd variant="responsive" stickers={item?.cdResponse?.cdItems} />
             </CdButton>
             <CdNameInfo title={item?.playlistName || ''} creator={userInfo?.username || ''} />

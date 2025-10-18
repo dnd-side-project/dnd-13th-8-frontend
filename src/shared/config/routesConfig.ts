@@ -7,7 +7,7 @@ const HomePage = lazy(() => import('@/pages/home'))
 const MypageLayout = lazy(() => import('@/pages/mypage/ui/MypageLayout'))
 const Mypage = lazy(() => import('@/pages/mypage/ui/main'))
 const Customize = lazy(() => import('@/pages/mypage/ui/customize'))
-const MyPagePlaylist = lazy(() => import('@/pages/mypage/ui/playlist'))
+const MypageTracklist = lazy(() => import('@/pages/mypage/ui/tracklist'))
 const Setting = lazy(() => import('@/pages/mypage/ui/setting'))
 const Terms = lazy(() => import('@/pages/mypage/ui/terms'))
 const Privacy = lazy(() => import('@/pages/mypage/ui/privacy'))
@@ -78,7 +78,7 @@ export const routesConfig: RouteConfig[] = [
     children: [
       { path: '', component: Mypage, hideNav: false, isNotSuspense: false },
       { path: 'customize', component: Customize, isNotSuspense: false },
-      { path: ':id/playlist', component: MyPagePlaylist, hideNav: false },
+      { path: ':id/tracklist', component: MypageTracklist, hideNav: false },
       { path: 'setting', component: Setting },
       { path: 'terms', component: Terms },
       { path: 'privacy', component: Privacy },

@@ -15,7 +15,7 @@ import { Header, Loading, SvgButton, Link, Modal } from '@/shared/ui'
 import type { ModalProps } from '@/shared/ui/Modal'
 import { PlaylistHorizontal } from '@/widgets/playlist'
 
-const MyPagePlaylist = () => {
+const MypageTracklist = () => {
   const navigate = useNavigate()
   const { id: playlistId } = useParams()
   const [modal, setModal] = useState<ModalProps>({
@@ -164,7 +164,7 @@ const MyPagePlaylist = () => {
   )
 }
 
-export default MyPagePlaylist
+export default MypageTracklist
 
 const EditButton = styled.button`
   padding: 8px 20px;
