@@ -2,11 +2,12 @@ import { useRef, useState, useEffect } from 'react'
 
 import styled from 'styled-components'
 
+import { EyeSlash } from '@/assets/icons'
 import overlayUrl from '@/assets/icons/icn_overlay.svg?url'
 import type { CdCustomData } from '@/entities/playlist/types/playlist'
 import { THEME_IMAGES_MAP } from '@/pages/mypage/lib/customizeTheme'
 import { THEME_PROP_ID_OFFSET } from '@/pages/mypage/types/mypage'
-import { flexRowCenter } from '@/shared/styles/mixins'
+import { flexRowCenter, flexColCenter } from '@/shared/styles/mixins'
 
 interface CdProps {
   variant:
@@ -22,9 +23,10 @@ interface CdProps {
     | 'responsive'
   bgColor?: 'none' | 'default' | 'dark'
   stickers?: CdCustomData[]
+  isPublic?: boolean
 }
 
-const Cd = ({ variant, bgColor = 'default', stickers }: CdProps) => {
+const Cd = ({ variant, bgColor = 'default', stickers, isPublic = true }: CdProps) => {
   const baseRef = useRef<HTMLDivElement>(null)
   const [dynamicBase, setDynamicBase] = useState(0)
 
@@ -102,6 +104,12 @@ const Cd = ({ variant, bgColor = 'default', stickers }: CdProps) => {
         )
       })}
       <Overlay />
+      {!isPublic && (
+        <PrivateCover>
+          <EyeSlash width={16} height={16} />
+          <span>비공개된 CD</span>
+        </PrivateCover>
+      )}
     </Base>
   )
 
@@ -162,4 +170,17 @@ const Overlay = styled.div`
   background: url(${overlayUrl}) no-repeat center/cover;
   mix-blend-mode: multiply;
   pointer-events: none;
+`
+
+const PrivateCover = styled.div`
+  position: relative;
+  ${flexColCenter}
+  gap: 3px;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(42, 47, 57, 0.7);
+
+  & > span {
+    ${({ theme }) => theme.FONT['caption2']}
+  }
 `

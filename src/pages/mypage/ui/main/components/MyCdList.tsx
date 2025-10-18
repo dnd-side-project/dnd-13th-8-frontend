@@ -41,7 +41,11 @@ const MyCdList = () => {
               type="button"
               onClick={() => navigate(`/mypage/${item.playlistId}/tracklist`)}
             >
-              <Cd variant="responsive" stickers={item?.cdResponse?.cdItems} />
+              <Cd
+                variant="responsive"
+                stickers={item?.cdResponse?.cdItems}
+                isPublic={item?.isPublic}
+              />
             </CdButton>
             <CdNameInfo title={item?.playlistName || ''} creator={userInfo?.username || ''} />
           </li>
