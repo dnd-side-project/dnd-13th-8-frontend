@@ -41,11 +41,8 @@ const MyCdList = () => {
               type="button"
               onClick={() => navigate(`/mypage/${item.playlistId}/tracklist`)}
             >
-              <Cd
-                variant="responsive"
-                stickers={item?.cdResponse?.cdItems}
-                isPublic={item?.isPublic}
-              />
+              <Cd variant="responsive" stickers={item?.cdResponse?.cdItems} />
+              {!item?.isPublic && <PrivateBadge>비공개</PrivateBadge>}
             </CdButton>
             <CdNameInfo title={item?.playlistName || ''} creator={userInfo?.username || ''} />
           </li>
@@ -92,7 +89,19 @@ const CdAddContainer = styled.li`
 `
 
 const CdButton = styled.button`
+  position: relative;
   width: 100%;
   aspect-ratio: 1 / 1;
   border-radius: 10px;
+`
+
+const PrivateBadge = styled.span`
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  ${({ theme }) => theme.FONT['caption2']}
+  color: ${({ theme }) => theme.COLOR['gray-200']};
+  background-color: ${({ theme }) => theme.COLOR['gray-700']};
+  padding: 2px 6px;
+  border-radius: 99px;
 `
