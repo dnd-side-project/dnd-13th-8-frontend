@@ -1,6 +1,5 @@
 import type {
-  MyCdListResponse,
-  MyFollowingListResponse,
+  CdMetaResponse,
   CdCustomDataResponse,
   MyPlaylistResponse,
   PlaylistDetailResponse,
@@ -12,12 +11,12 @@ import { api } from '@/shared/api/httpClient'
 
 // 나의 CD 리스트 조회
 export const getMyCdList = (sort: string) => {
-  return api.get<MyCdListResponse>(`/main/playlist/mypage/me?sort=${sort}`)
+  return api.get<CdMetaResponse>(`/main/playlist/mypage/me?sort=${sort}`)
 }
 
-// 나의 팔로잉 리스트 조회
-export const getMyFollowingList = (sort: string) => {
-  return api.get<MyFollowingListResponse>(`/main/playlist/mypage/me/follows?sort=${sort}`)
+// 좋아요한 CD 리스트 조회
+export const getLikedCdList = (sort: string) => {
+  return api.get<CdMetaResponse>(`/main/playlist/mypage/me/likes?sort=${sort}`)
 }
 
 // 단일 cd 커스텀 데이터 조회

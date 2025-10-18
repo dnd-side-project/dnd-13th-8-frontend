@@ -1,5 +1,32 @@
 import type { MusicGenreId } from '@/shared/config/musicGenres'
 
+export interface CdBasicInfo {
+  playlistId: number
+  playlistName: string
+  creatorNickname?: string
+  isPublic: boolean
+}
+
+export interface StickerData {
+  cdItemId: number
+  propId: number
+  theme: string
+  xCoordinate: number
+  yCoordinate: number
+  zCoordinate: number
+  height: number
+  width: number
+  scale: number
+  angle: number
+  imageUrl: string
+}
+
+export interface CdCoverInfo {
+  cdItems: StickerData[]
+}
+
+export type CdMetaResponse = (CdBasicInfo & { cdResponse: CdCoverInfo })[]
+
 export interface MyCdInfo {
   playlistId: number
   playlistName: string

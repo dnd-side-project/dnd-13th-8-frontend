@@ -2,34 +2,24 @@ import { useNavigate } from 'react-router-dom'
 
 import styled from 'styled-components'
 
-import { Header, SvgButton, ContentHeader, Loading, Error } from '@shared/ui'
+import { Header, SvgButton } from '@shared/ui'
 
-import { Gear, NoFollowing } from '@/assets/icons'
-import { useMyFollowingList } from '@/entities/playlist/model/useMyPlaylist'
+import { Gear } from '@/assets/icons'
 import type { MyPageTabType } from '@/pages/mypage/types/mypage'
 import { Divider } from '@/pages/mypage/ui/components'
-import { UserProfile, MyCdList } from '@/pages/mypage/ui/main/components'
+import { UserProfile, MyCdList, MyLikedCdList } from '@/pages/mypage/ui/main/components'
 import { useSingleSelect } from '@/shared/lib/useSingleSelect'
-import { flexRowCenter, flexColCenter } from '@/shared/styles/mixins'
-import type { SortType } from '@/shared/ui/ContentHeader'
+import { flexRowCenter } from '@/shared/styles/mixins'
 
 const Mypage = () => {
   const navigate = useNavigate()
 
   const { selected: currentTab, onSelect: setCurrentTab } = useSingleSelect<MyPageTabType>('cd')
-  const { selected: currentSort, onSelect: setCurrentSort } = useSingleSelect<SortType>('POPULAR')
 
   const TAB_LIST: { label: string; value: MyPageTabType }[] = [
     { label: '나의 CD', value: 'cd' },
     { label: '나의 좋아요', value: 'like' },
   ]
-
-  const {
-    data: myLikeList,
-    isLoading: isMyLikeListLoading,
-    isError: isMyLikeListError,
-    isSuccess: isMyLikeListSuccess,
-  } = useMyFollowingList(currentSort)
 
   return (
     <>
@@ -54,9 +44,7 @@ const Mypage = () => {
         }
       />
       <UserProfile />
-
       <Divider />
-
       <section>
         <TabContainer>
           {TAB_LIST.map((tab) => (
@@ -67,44 +55,7 @@ const Mypage = () => {
             </TabItem>
           ))}
         </TabContainer>
-        {currentTab === 'cd' ? (
-          <MyCdList />
-        ) : (
-          <>
-            {isMyLikeListLoading && (
-              <NonDataContainer>
-                <Loading isLoading={isMyLikeListLoading} />
-              </NonDataContainer>
-            )}
-            {isMyLikeListError && (
-              <NonDataContainer>
-                <Error />
-              </NonDataContainer>
-            )}
-            {isMyLikeListSuccess && (
-              <>
-                <ContentHeader
-                  totalCount={myLikeList?.size ?? 0}
-                  currentSort={currentSort}
-                  onSortChange={setCurrentSort}
-                />
-                {myLikeList?.size > 0 ? (
-                  // TODO: api response 수정 후 변경 필요
-                  <>api response 수정 후 변경 필요</>
-                ) : (
-                  <NonDataContainer>
-                    <NoFollowing width={100} height={100} />
-                    <NoFollowingText>
-                      아직 좋아요한 CD가 없어요.
-                      <br />
-                      마음에 드는 CD를 찾아 좋아요를 눌러보세요.
-                    </NoFollowingText>
-                  </NonDataContainer>
-                )}
-              </>
-            )}
-          </>
-        )}
+        {currentTab === 'cd' ? <MyCdList /> : <MyLikedCdList />}
       </section>
     </>
   )
@@ -142,18 +93,4 @@ const TabItem = styled.li<{ $isActive: boolean }>`
     color: ${({ theme, $isActive }) =>
       $isActive ? theme.COLOR['gray-10'] : theme.COLOR['gray-400']};
   }
-`
-
-const NonDataContainer = styled.div`
-  ${flexColCenter}
-  gap: 12px;
-  margin-top: 48px;
-  width: 100%;
-  height: 100%;
-  text-align: center;
-`
-
-const NoFollowingText = styled.p`
-  ${({ theme }) => theme.FONT['body1-normal']}
-  color: ${({ theme }) => theme.COLOR['gray-300']};
 `
