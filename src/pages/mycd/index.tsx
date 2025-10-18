@@ -5,7 +5,7 @@ import styled from 'styled-components'
 
 import { usePlaylist } from '@/app/providers/PlayerProvider'
 import { MemberCharacter } from '@/assets/images'
-import { useMyRepresentativePlaylist } from '@/entities/playlist/model/useMyPlaylist'
+import { useMyRepresentativePlaylist } from '@/entities/playlist/model/useMyCd'
 import { useAuthStore } from '@/features/auth/store/authStore'
 import { BUTTON_TEXT } from '@/pages/home/config/messages'
 import { getVideoId } from '@/shared/lib'

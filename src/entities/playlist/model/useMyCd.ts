@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import {
   getMyCdList,
-  getMyFollowingList,
+  // getMyFollowingList,
   getCdCustomData,
   getMyPagePlaylist,
   deleteMyPagePlaylist,
@@ -18,13 +18,13 @@ export const useMyCdList = (sort: string) => {
   })
 }
 
-export const useMyFollowingList = (sort: string) => {
-  return useQuery({
-    queryKey: ['myFollowingList', sort],
-    queryFn: () => getMyFollowingList(sort),
-    refetchOnMount: 'always',
-  })
-}
+// export const useMyFollowingList = (sort: string) => {
+//   return useQuery({
+//     queryKey: ['myFollowingList', sort],
+//     queryFn: () => getMyFollowingList(sort),
+//     refetchOnMount: 'always',
+//   })
+// }
 
 export const useCdCustomData = (playlistId: number) => {
   return useQuery({

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { Plus } from '@/assets/icons'
-import { useMyCdList } from '@/entities/playlist/model/useMyPlaylist'
+import { useMyCdList } from '@/entities/playlist/model/useMyCd'
 import { useAuthStore } from '@/features/auth/store/authStore'
 import { CdNameInfo } from '@/pages/mypage/ui/main/components'
 import { useSingleSelect } from '@/shared/lib/useSingleSelect'

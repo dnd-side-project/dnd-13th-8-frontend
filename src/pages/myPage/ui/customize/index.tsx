@@ -4,7 +4,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Loading, Modal } from '@shared/ui'
 import type { ModalProps } from '@shared/ui/Modal'
 
-import { useMyPagePlaylist } from '@/entities/playlist/model/useMyPlaylist'
+import { useMyPagePlaylist } from '@/entities/playlist/model/useMyCd'
 import type { MyPlaylistResponse } from '@/entities/playlist/types/playlist'
 import CustomizeStep1 from '@/pages/mypage/ui/customize/step1'
 import CustomizeStep2 from '@/pages/mypage/ui/customize/step2'

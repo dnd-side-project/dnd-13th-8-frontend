@@ -6,7 +6,7 @@ import {
   CustomizeBg as CustomizeBgImg,
   CustomizeThumbnail as CustomizeThumbnailImg,
 } from '@/assets/images'
-import { useCdCustomData } from '@/entities/playlist/model/useMyPlaylist'
+import { useCdCustomData } from '@/entities/playlist/model/useMyCd'
 import { SubHeader } from '@/pages/mypage/ui/components'
 import { flexColCenter } from '@/shared/styles/mixins'
 import { Loading, Cd } from '@/shared/ui'
