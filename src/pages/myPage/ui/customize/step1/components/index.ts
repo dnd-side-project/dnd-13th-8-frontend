@@ -1,2 +1,1 @@
-export { default as StepHeader } from './StepHeader'
-export { default as InputLinkItem } from './InputLinkItem'
+export { default as TrackItem } from './TrackItem'

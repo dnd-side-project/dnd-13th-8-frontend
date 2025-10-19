@@ -5,7 +5,7 @@ import styled from 'styled-components'
 import { Header, SvgButton } from '@shared/ui'
 
 import { Gear } from '@/assets/icons'
-import type { MyPageTabType } from '@/pages/mypage/types/mypage'
+import type { MYPAGE_TAB_TYPE } from '@/pages/mypage/types/mypage'
 import { Divider } from '@/pages/mypage/ui/components'
 import { UserProfile, MyCdList, MyLikedCdList } from '@/pages/mypage/ui/main/components'
 import { useSingleSelect } from '@/shared/lib/useSingleSelect'
@@ -14,9 +14,9 @@ import { flexRowCenter } from '@/shared/styles/mixins'
 const Mypage = () => {
   const navigate = useNavigate()
 
-  const { selected: currentTab, onSelect: setCurrentTab } = useSingleSelect<MyPageTabType>('cd')
+  const { selected: currentTab, onSelect: setCurrentTab } = useSingleSelect<MYPAGE_TAB_TYPE>('cd')
 
-  const TAB_LIST: { label: string; value: MyPageTabType }[] = [
+  const TAB_LIST: { label: string; value: MYPAGE_TAB_TYPE }[] = [
     { label: '나의 CD', value: 'cd' },
     { label: '나의 좋아요', value: 'like' },
   ]

@@ -1,20 +1,18 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 
-import { Loading, Modal } from '@shared/ui'
-import type { ModalProps } from '@shared/ui/Modal'
-
-import { useMyPagePlaylist } from '@/entities/playlist/model/useMyCd'
+import { useMyCdActions } from '@/entities/playlist/model/useMyCd'
 import type { MyPlaylistResponse } from '@/entities/playlist/types/playlist'
+import type { CUSTOMIZE_STEP } from '@/pages/mypage/types/mypage'
 import CustomizeStep1 from '@/pages/mypage/ui/customize/step1'
 import CustomizeStep2 from '@/pages/mypage/ui/customize/step2'
 import CustomizeStep3 from '@/pages/mypage/ui/customize/step3'
-
-export type CustomizeStep = 1 | 2 | 3
+import { Loading, Modal } from '@/shared/ui'
+import type { ModalProps } from '@/shared/ui/Modal'
 
 export interface CustomizeStepProps {
-  currentStep: CustomizeStep
-  setCurrentStep: (step: CustomizeStep) => void
+  currentStep: CUSTOMIZE_STEP
+  setCurrentStep: (step: CUSTOMIZE_STEP) => void
   currentCdId?: number | null
   setCurrentCdId?: (cdId: number | null) => void
   setModal: (modal: ModalProps) => void
@@ -27,7 +25,7 @@ const Customize = () => {
   const [searchParams] = useSearchParams()
   const playlistId = searchParams.get('playlistId')
 
-  const [currentStep, setCurrentStep] = useState<CustomizeStep>(1)
+  const [currentStep, setCurrentStep] = useState<CUSTOMIZE_STEP>(1)
   const [currentCdId, setCurrentCdId] = useState<number | null>(null)
   const [isEditMode] = useState<boolean>(!!playlistId && Number(playlistId) > 0)
 
@@ -46,9 +44,7 @@ const Customize = () => {
     },
   })
 
-  const { playlistData, isLoading, isError } = useMyPagePlaylist(
-    isEditMode ? Number(playlistId) : -1
-  )
+  const { playlistData, isLoading, isError } = useMyCdActions(isEditMode ? Number(playlistId) : -1)
 
   useEffect(() => {
     if (isError) {

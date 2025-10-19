@@ -20,8 +20,8 @@ import type {
   StickerThemeUpperType,
 } from '@/pages/mypage/types/mypage'
 import { THEME_PROP_ID_OFFSET } from '@/pages/mypage/types/mypage'
+import { StepHeader } from '@/pages/mypage/ui/components'
 import type { CustomizeStepProps } from '@/pages/mypage/ui/customize'
-import { StepHeader } from '@/pages/mypage/ui/customize/step1/components'
 import { flexRowCenter } from '@/shared/styles/mixins'
 import { Loading } from '@/shared/ui'
 
@@ -774,8 +774,8 @@ const CustomizeStep2 = ({
 
   // 수정 모드일 경우 스티커 데이터 화면에 렌더링
   useEffect(() => {
-    if (isEditMode && prevPlaylistData?.onlyCdResponse?.cdItems) {
-      const initialStickers: StickerInfoType[] = prevPlaylistData.onlyCdResponse.cdItems.map(
+    if (isEditMode && prevPlaylistData?.cdResponse?.cdItems) {
+      const initialStickers: StickerInfoType[] = prevPlaylistData.cdResponse.cdItems.map(
         (item, index) => {
           const scaleFactor = 280 / 285
 

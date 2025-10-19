@@ -10,7 +10,7 @@ const TOGGLE_CONSTANTS = {
 
 interface ToggleSwitchProps {
   isOn: boolean
-  setIsOn: (isOn: boolean | ((prev: boolean) => boolean)) => void
+  setIsOn: (value: boolean) => void
 }
 
 const ToggleSwitch = ({ isOn, setIsOn }: ToggleSwitchProps) => {
@@ -20,11 +20,9 @@ const ToggleSwitch = ({ isOn, setIsOn }: ToggleSwitchProps) => {
       role="switch"
       aria-checked={isOn}
       tabIndex={0}
-      onClick={() => setIsOn((prev) => !prev)}
+      onClick={() => setIsOn(!isOn)}
       onKeyDown={(e) => {
-        if (['Enter', ' '].includes(e.key)) {
-          setIsOn((prev) => !prev)
-        }
+        if (['Enter', ' '].includes(e.key)) setIsOn(!isOn)
       }}
     >
       <ToggleButton

@@ -3,41 +3,43 @@ import { useNavigate } from 'react-router-dom'
 
 import { AnimatePresence, motion, Reorder } from 'framer-motion'
 import styled from 'styled-components'
+import { v4 as uuidv4 } from 'uuid'
 
-import { Cd, SvgButton, Input, BottomSheet, Loading } from '@shared/ui'
-import type { ModalProps } from '@shared/ui/Modal'
-
-import { DownArrow, Pin, PinPrimary, Share, Trash, HelpCircle } from '@/assets/icons'
-import type { Track } from '@/entities/playlist/types/playlist'
-import { useTempSavePlaylist } from '@/features/customize/model/useCustomize'
-import { Divider } from '@/pages/mypage/ui/components'
+import { CancelCircle, DownArrow, HelpCircle, Plus, PlusBlack } from '@/assets/icons'
+import { useCdTempSave } from '@/features/customize/model/useCustomize'
+import type { YoutubeVideoInfo } from '@/features/customize/types/customize'
+import { Divider, StepHeader, ToggleSwitch } from '@/pages/mypage/ui/components'
 import type { CustomizeStepProps } from '@/pages/mypage/ui/customize'
-import { InputLinkItem, StepHeader } from '@/pages/mypage/ui/customize/step1/components'
+import { TrackItem } from '@/pages/mypage/ui/customize/step1/components'
 import { MUSIC_GENRES } from '@/shared/config/musicGenres'
 import type { MusicGenre } from '@/shared/config/musicGenres'
 import { flexColCenter, flexRowCenter } from '@/shared/styles/mixins'
+import { Cd, Input, BottomSheet, Loading } from '@/shared/ui'
+import type { ModalProps } from '@/shared/ui/Modal'
 
 const CustomizeStep1 = ({
   currentStep,
   setCurrentStep,
   setModal,
-  isEditMode,
+  // TODO: cd 생성 리팩토링 완료 후 cd 수정 로직 리팩토링
+  // isEditMode,
   prevPlaylistData,
 }: CustomizeStepProps) => {
   const navigate = useNavigate()
 
-  const { mutate, isPending } = useTempSavePlaylist()
+  const { mutate, isPending } = useCdTempSave()
 
+  const [basicInfoMap, setbasicInfo] = useState({
+    name: '',
+    genre: MUSIC_GENRES.find((genre) => genre.id === prevPlaylistData?.genre) ?? null,
+    isPublic: prevPlaylistData?.isPublic ?? true,
+  })
+  const [tracklist, setTracklist] = useState<(YoutubeVideoInfo & { id: string })[]>([])
+  const [currentTrackUrl, setCurrentTrackUrl] = useState('')
+  const [trackErrMsg, setTrackErrMsg] = useState('')
   const [isPopoverOpen, setIsPopoverOpen] = useState(false)
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false)
-
-  const [metaGenre, setMetaGenre] = useState<MusicGenre | null>(
-    MUSIC_GENRES.find((genre) => genre.id === prevPlaylistData?.genre) ?? null
-  )
-  const [metaTitle, setMetaTitle] = useState(prevPlaylistData?.playlistName ?? '')
-  const [linkMap, setLinkMap] = useState<Track[]>([])
-  const [linkErrorMap, setLinkErrorMap] = useState<{ [key: number]: string }>({})
-  const [isPrimary, setIsPrimary] = useState(prevPlaylistData?.isRepresentative ?? false)
+  const [isThumbnailLoading, setIsThumbnailLoading] = useState(false)
 
   const MAX_LINK_COUNT = 10
   const VALID_YOUTUBE_URLS = [
@@ -46,41 +48,17 @@ const CustomizeStep1 = ({
     'https://music.youtube.com/watch?v=',
   ]
 
-  // TODO: api 연동 시 로직 수정
-  useEffect(() => {
-    if (isEditMode) {
-      const fetchLinks = async () => {
-        try {
-          setLinkMap(prevPlaylistData?.songs ?? [])
-        } catch (error) {
-          console.error('링크를 불러오는 데 실패했습니다:', error)
-        }
-      }
-      fetchLinks()
-      return
-    }
-    setLinkMap([
-      { id: Date.now(), title: '', youtubeUrl: '', youtubeThumbnail: '', youtubeLength: 0 },
-    ])
-  }, [])
-
-  // 모달 close
-  const onModalClose = () => {
-    setModal({ isOpen: false } as ModalProps)
-  }
-
   // 헤더 다음 버튼 클릭
   const onHeaderNextClick = () => {
     if (isValidate()) {
       mutate(
         {
-          videoPayload: {
-            videoLinks: linkMap.map(({ youtubeUrl }) => youtubeUrl),
-          },
-          metaInfo: {
-            name: metaTitle,
-            genre: metaGenre!.id,
-            isRepresentative: isPrimary,
+          youtubeLinkList: tracklist.map(({ link }) => link),
+          tempSaveMap: {
+            ...basicInfoMap,
+            genre: basicInfoMap.genre!.id,
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            youTubeVideoInfo: tracklist.map(({ id, ...rest }) => rest),
           },
         },
         {
@@ -96,105 +74,112 @@ const CustomizeStep1 = ({
     }
   }
 
-  // 다음 버튼 검증
+  // 폼 입력값 검증
   const isValidate = () => {
-    const hasMetaEmpty = !metaGenre?.id || !metaTitle
-    const hasLinkError = Object.values(linkErrorMap).some((error) => error)
-    const hasLinkEmpty = linkMap.some(({ youtubeUrl }) => !youtubeUrl.trim())
-    return !hasMetaEmpty && !hasLinkError && linkMap.length > 0 && !hasLinkEmpty
+    const { name, genre } = basicInfoMap
+    return Boolean(name && genre?.id && tracklist.length > 0)
   }
 
   // 장르 선택
   const onGenreClick = (genre: MusicGenre) => {
-    setMetaGenre(genre)
+    setbasicInfo((prev) => ({ ...prev, genre }))
     setIsBottomSheetOpen(false)
   }
 
-  // 플레이리스트 삭제
-  const onListDeleteClick = () => {
-    setModal({
-      isOpen: true,
-      title: '이 플레이리스트를 삭제할까요?',
-      ctaType: 'double',
-      confirmText: '삭제하기',
-      cancelText: '취소',
-      onClose: () => onModalClose(),
-      onConfirm: () => {
-        navigate('/mypage')
-        onModalClose()
-        return
-      },
-      onCancel: () => onModalClose(),
-    } as ModalProps)
+  // 유튜브 url 여부 검증 후 id값 반환
+  const getValidYoutubeThumbnail = async (link: string) => {
+    try {
+      // 1. 유튜브 링크 여부 검증
+      const isValidYoutubeLink = VALID_YOUTUBE_URLS.some((url) => link.startsWith(url))
+      const hasOnlyAllowedChars = /^[a-zA-Z0-9\-_./?=&:%]*$/.test(link)
+      if (link && (!isValidYoutubeLink || !hasOnlyAllowedChars)) {
+        setTrackErrMsg('유튜브 링크만 추가할 수 있어요')
+        return ''
+      }
+
+      // 2. video id 존재 여부 검증
+      const match = link.match(/(?:v=|\/)([0-9A-Za-z_-]{11})(?:[?&]|$)/)
+      const videoId = match ? match[1] : null
+      if (!videoId) {
+        setTrackErrMsg('유효하지 않은 유튜브 링크예요')
+        return ''
+      }
+
+      // 3. 영상 유효성 검증
+      setIsThumbnailLoading(true)
+      const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/default.jpg`
+      const res = await fetch(thumbnailUrl)
+      if (!res?.ok) {
+        setTrackErrMsg('삭제되었거나 비공개된 영상이에요')
+        return ''
+      }
+
+      setTrackErrMsg('')
+      return thumbnailUrl ?? ''
+    } catch (error) {
+      console.error('유튜브 영상 정보 확인 중 오류 발생:', error)
+      setTrackErrMsg('유튜브 영상 정보를 불러오는 중 오류가 발생헀어요')
+      return ''
+    } finally {
+      setIsThumbnailLoading(false)
+    }
   }
 
-  // 링크 추가
-  const onLinkAddClick = () => {
-    if (linkMap.length >= MAX_LINK_COUNT) {
+  // 트랙 추가
+  const onTrackAddClick = async () => {
+    if (tracklist.length >= MAX_LINK_COUNT) {
       setModal({
         isOpen: true,
         title: `최대 ${MAX_LINK_COUNT}개까지 추가할 수 있어요`,
         ctaType: 'single',
         confirmText: '확인',
-        onClose: onModalClose,
-        onConfirm: onModalClose,
+        onClose: () => setModal({ isOpen: false } as ModalProps),
+        onConfirm: () => setModal({ isOpen: false } as ModalProps),
       } as ModalProps)
       return
     }
 
-    const hasLinkEmpty = linkMap.some(({ youtubeUrl }) => !youtubeUrl.trim())
-    if (!hasLinkEmpty) {
-      setLinkMap((prev) => [
+    const thumbnailUrl = await getValidYoutubeThumbnail(currentTrackUrl)
+    if (!thumbnailUrl) return
+    setTracklist((prev) => {
+      const newTrack = [
         ...prev,
-        { id: Date.now(), title: '', youtubeUrl: '', youtubeThumbnail: '', youtubeLength: 0 },
-      ])
-    }
+        {
+          id: uuidv4(),
+          link: currentTrackUrl,
+          title: '',
+          thumbnailUrl,
+          duration: '',
+          orderIndex: 0,
+        },
+      ]
+      return newTrack.map((track, index) => ({ ...track, orderIndex: index + 1 }))
+    })
+    setCurrentTrackUrl('')
   }
 
-  // 링크 input 입력값 유효성 검증
-  const checkLinkValid = (id: number, link: string) => {
-    const isValidYoutubeLink = VALID_YOUTUBE_URLS.some((url) => link.startsWith(url))
-    const hasOnlyAllowedChars = /^[a-zA-Z0-9\-_./?=&:%]*$/.test(link)
-
-    if (link && (!isValidYoutubeLink || !hasOnlyAllowedChars)) {
-      setLinkErrorMap((prev) => ({ ...prev, [id]: '유튜브 링크만 추가할 수 있어요' }))
-      return
-    }
-    setLinkErrorMap((prev) => ({ ...prev, [id]: '' }))
-  }
-
-  // 링크 input onChange
-  const onLinkChange = (id: number, value: string) => {
-    checkLinkValid(id, value)
-    setLinkMap((prev) => prev.map((l) => (l.id === id ? { ...l, youtubeUrl: value } : l)))
-  }
-
-  // 링크 삭제
-  const onLinkRemoveClick = (id: number) => {
-    if (linkMap.length === 1) {
-      setModal({
-        isOpen: true,
-        title: `최소 1개 이상의 유튜브 링크가 필요해요`,
-        ctaType: 'single',
-        confirmText: '확인',
-        onClose: onModalClose,
-        onConfirm: onModalClose,
-      } as ModalProps)
-      return
-    }
-
-    setLinkMap((prev) => prev.filter((link) => link.id !== id))
-    setLinkErrorMap((prev) => ({ ...prev, [id]: '' }))
+  // 트랙 삭제
+  const onTrackDeleteClick = (id: string) => {
+    setTracklist((prev) =>
+      prev.filter((t) => t.id !== id).map((t, idx) => ({ ...t, orderIndex: idx + 1 }))
+    )
   }
 
   // 링크 순서 정렬
-  const onReSort = (newOrder: Track[]) => {
-    setLinkMap(newOrder)
+  const onReSort = (newOrderIds: string[]) => {
+    setTracklist((prev) =>
+      newOrderIds.map((id, idx) => {
+        const track = prev.find((t) => t.id === id)!
+        return { ...track, orderIndex: idx + 1 }
+      })
+    )
   }
 
-  if (isPending) {
-    return <Loading isLoading />
-  }
+  // 입력 중인 input값 제거 시 에러 메세지 초기화
+  useEffect(() => {
+    if (currentTrackUrl.length > 0) return
+    setTrackErrMsg('')
+  }, [currentTrackUrl])
 
   return (
     <>
@@ -205,76 +190,120 @@ const CustomizeStep1 = ({
         onHeaderNextClick={onHeaderNextClick}
       />
 
-      <PlaylistControlWrap>
-        <MetaContainer>
-          <Cd variant="lg" stickers={prevPlaylistData?.onlyCdResponse?.cdItems ?? []} />
-          <InfoContainer>
-            <GenreSelect onClick={() => setIsBottomSheetOpen(true)}>
-              <span>{metaGenre?.label || '장르'}</span>
+      <BasicInfoEditorWrap>
+        <BasicInfoContainer>
+          <Cd variant="lg" stickers={prevPlaylistData?.cdResponse?.cdItems ?? []} />
+          <BasicInfoBox>
+            <GenreDropdown
+              $isSelected={!!basicInfoMap.genre?.id}
+              onClick={() => setIsBottomSheetOpen(true)}
+            >
+              <span>{basicInfoMap.genre?.label ?? '장르'}</span>
               <DownArrow width={24} height={24} />
-            </GenreSelect>
+            </GenreDropdown>
             <Input
               type="text"
-              placeholder="플레이리스트명"
-              defaultValue={metaTitle ?? ''}
+              placeholder="CD명"
+              value={basicInfoMap.name}
               maxLength={24}
-              onChange={(e) => setMetaTitle(e.target.value)}
+              onChange={(e) => setbasicInfo((prev) => ({ ...prev, name: e.target.value }))}
+              required
             />
-          </InfoContainer>
-        </MetaContainer>
+          </BasicInfoBox>
+        </BasicInfoContainer>
 
-        {isEditMode && (
-          <ControlContainer>
-            <LeftActions>
-              <SvgButton icon={Trash} width={20} height={20} onClick={onListDeleteClick} />
-              <SvgButton icon={Share} width={20} height={20} />
-            </LeftActions>
-            <RightAction type="button" onClick={() => setIsPrimary((prev) => !prev)}>
-              {isPrimary ? <PinPrimary /> : <Pin />}
-              <span>{isPrimary ? '대표 플리' : '대표로 지정'}</span>
-            </RightAction>
-          </ControlContainer>
-        )}
-      </PlaylistControlWrap>
+        <PublicControler>
+          <span aria-hidden="true">공개</span>
+          <ToggleSwitch
+            aria-label="CD 공개 여부"
+            isOn={basicInfoMap.isPublic}
+            setIsOn={(isOn) => setbasicInfo((prev) => ({ ...prev, isPublic: isOn }))}
+          />
+        </PublicControler>
+      </BasicInfoEditorWrap>
 
       <Divider />
 
-      <PlaylistAddWrap>
-        <PopoverContainer>
-          <PopoverButton onClick={() => setIsPopoverOpen((prev) => !prev)}>
-            <span>플레이리스트 링크</span>
-            <HelpCircle width={16} height={16} />
-          </PopoverButton>
-          <AnimatePresence initial={false}>
-            {isPopoverOpen ? (
-              <PopoverText
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                key="box"
-              >
-                <span>공유할 링크를 여기에 입력해주세요</span>
-              </PopoverText>
-            ) : null}
-          </AnimatePresence>
-        </PopoverContainer>
+      <TracklistEditorWrap>
+        <GuideContainer>
+          <div>
+            <PopoverButton onClick={() => setIsPopoverOpen((prev) => !prev)}>
+              <span>트랙 추가하기</span>
+              <HelpCircle width={16} height={16} />
+            </PopoverButton>
+            <AnimatePresence initial={false}>
+              {isPopoverOpen ? (
+                <PopoverText
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  key="box"
+                >
+                  <span>공유할 링크를 여기에 입력해주세요</span>
+                </PopoverText>
+              ) : null}
+            </AnimatePresence>
+          </div>
+          {tracklist.length > 0 && (
+            <TrackCountBox>
+              <span>{tracklist.length}</span> / {MAX_LINK_COUNT}
+            </TrackCountBox>
+          )}
+        </GuideContainer>
 
-        <InputAddButton onClick={onLinkAddClick}>추가하기</InputAddButton>
+        <MoveToYoutube href="https://www.youtube.com" target="_blank" rel="noopener noreferrer">
+          유튜브에서 링크 추가
+        </MoveToYoutube>
 
-        <LinksContainer>
-          <Reorder.Group axis="y" values={linkMap} onReorder={onReSort}>
-            {linkMap.map((item) => (
-              <InputLinkItem
-                key={item.id}
-                item={item}
-                errorMsg={linkErrorMap[item.id]}
-                onChange={(id, value) => onLinkChange(id, value)}
-                onRemove={onLinkRemoveClick}
+        <EditorContainer>
+          <TrackInputBox>
+            <InputItem $isError={!!trackErrMsg}>
+              <Input
+                type="url"
+                placeholder="유튜브 링크를 입력해주세요"
+                value={currentTrackUrl}
+                error={!!trackErrMsg}
+                errorMessage={trackErrMsg}
+                onChange={(e) => setCurrentTrackUrl(e.target.value.trim())}
               />
-            ))}
-          </Reorder.Group>
-        </LinksContainer>
-      </PlaylistAddWrap>
+              <InputCleanButton
+                type="button"
+                aria-label="입력 중인 링크 삭제하기"
+                onClick={() => setCurrentTrackUrl('')}
+              >
+                <CancelCircle width={24} height={24} />
+              </InputCleanButton>
+            </InputItem>
+            <TrackAddButton
+              $isFilled={!!currentTrackUrl}
+              type="button"
+              aria-label="유튜브 링크 추가하기"
+              onClick={onTrackAddClick}
+              disabled={!currentTrackUrl}
+            >
+              {currentTrackUrl ? (
+                <PlusBlack width={24} height={24} />
+              ) : (
+                <Plus width={24} height={24} />
+              )}
+            </TrackAddButton>
+          </TrackInputBox>
+
+          <TrackListContainer>
+            <Reorder.Group
+              axis="y"
+              values={tracklist.map((t) => t.id)}
+              onReorder={(newOrderIds) => onReSort(newOrderIds)}
+            >
+              {tracklist.map((track) => (
+                <TrackItem key={track.id} track={track} onTrackDeleteClick={onTrackDeleteClick} />
+              ))}
+            </Reorder.Group>
+          </TrackListContainer>
+        </EditorContainer>
+      </TracklistEditorWrap>
+
+      <Loading isLoading={isPending || isThumbnailLoading} height="100%" />
 
       <BottomSheet
         isOpen={isBottomSheetOpen}
@@ -284,7 +313,7 @@ const CustomizeStep1 = ({
         {MUSIC_GENRES.map((genre) => (
           <EachGenre
             key={genre.id}
-            $currentGenre={metaGenre?.id === genre.id}
+            $currentGenre={basicInfoMap.genre?.id === genre.id}
             onClick={() => onGenreClick(genre)}
           >
             <span>{genre.label}</span>
@@ -297,23 +326,22 @@ const CustomizeStep1 = ({
 
 export default CustomizeStep1
 
-const PlaylistControlWrap = styled.section`
+const BasicInfoEditorWrap = styled.section`
   ${flexColCenter}
   margin-top: 16px;
 `
 
-const MetaContainer = styled.div`
+const BasicInfoContainer = styled.div`
   display: grid;
   grid-template-columns: auto 1fr;
   grid-template-rows: 1fr;
   gap: 16px;
   align-items: center;
-  margin-bottom: 20px;
   width: 100%;
   height: 124px;
 `
 
-const InfoContainer = styled.div`
+const BasicInfoBox = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -321,30 +349,18 @@ const InfoContainer = styled.div`
   height: 100%;
 `
 
-const ControlContainer = styled.div`
+const PublicControler = styled.div`
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: 20px;
+  justify-content: flex-end;
+  gap: 8px;
   width: 100%;
-`
-
-const LeftActions = styled.div`
-  ${flexRowCenter}
-  gap: 12px;
-`
-
-const RightAction = styled.button`
-  ${flexRowCenter}
-  gap: 4px;
-  padding: 5px 7px;
-  border-radius: 4px;
+  height: 56px;
+  ${({ theme }) => theme.FONT['body2-normal']}
   color: ${({ theme }) => theme.COLOR['gray-200']};
-  background-color: ${({ theme }) => theme.COLOR['gray-700']};
-  ${({ theme }) => theme.FONT['label']}
 `
 
-const GenreSelect = styled.button`
+const GenreDropdown = styled.button<{ $isSelected: boolean }>`
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -352,7 +368,8 @@ const GenreSelect = styled.button`
   width: 100%;
   height: 42px;
   border-radius: 10px;
-  color: ${({ theme }) => theme.COLOR['gray-300']};
+  color: ${({ theme, $isSelected }) =>
+    $isSelected ? theme.COLOR['gray-10'] : theme.COLOR['gray-300']};
   background-color: ${({ theme }) => theme.COLOR['gray-800']};
 `
 
@@ -365,16 +382,30 @@ const EachGenre = styled.button<{ $currentGenre: boolean }>`
   ${({ theme }) => theme.FONT['headline2']}
 `
 
-const PlaylistAddWrap = styled.div`
-  margin-top: 24px;
+const TracklistEditorWrap = styled.div`
+  margin: 24px 0;
   ${flexColCenter}
   gap: 12px;
   width: 100%;
 `
 
-const PopoverContainer = styled.div`
+const GuideContainer = styled.div`
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   width: 100%;
+`
+
+const TrackCountBox = styled.p`
+  ${flexRowCenter}
+  gap: 4px;
+  color: ${({ theme }) => theme.COLOR['gray-300']};
+  ${({ theme }) => theme.FONT['body2-normal']}
+
+  & > span {
+    color: ${({ theme }) => theme.COLOR['primary-normal']};
+  }
 `
 
 const PopoverButton = styled.button`
@@ -396,10 +427,9 @@ const PopoverText = styled(motion.div)`
   ${({ theme }) => theme.FONT['caption1']}
 `
 
-const InputAddButton = styled.button`
+const MoveToYoutube = styled.a`
   ${flexRowCenter}
   width: 100%;
-  height: 42px;
   padding: 12px 0;
   border-radius: 10px;
   background: ${({ theme }) => theme.COLOR['gray-600']};
@@ -407,15 +437,52 @@ const InputAddButton = styled.button`
   ${({ theme }) => theme.FONT['body2-normal']}
 `
 
-const LinksContainer = styled.div`
-  margin-top: 12px;
+const EditorContainer = styled.div`
+  margin-top: 16px;
   width: 100%;
+`
 
-  & > ul,
-  & > ul > li {
-    ${flexColCenter}
-    width: 100%;
-    height: 100%;
+const TrackInputBox = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+`
+
+const InputItem = styled.div<{ $isError: boolean }>`
+  position: relative;
+  flex: 1;
+
+  & > div > div:has(input) {
+    padding-right: 40px;
+    height: 50px;
+    border: 1px solid
+      ${({ $isError, theme }) => ($isError ? theme.COLOR['common-error'] : theme.COLOR['gray-600'])};
+  }
+`
+
+const InputCleanButton = styled.button`
+  position: absolute;
+  top: 13px;
+  right: 12px;
+`
+
+const TrackAddButton = styled.button<{ $isFilled: boolean }>`
+  ${flexRowCenter}
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  background-color: ${({ $isFilled, theme }) =>
+    $isFilled ? theme.COLOR['primary-normal'] : theme.COLOR['gray-600']};
+  cursor: ${({ $isFilled }) => ($isFilled ? 'pointer' : 'not-allowed')};
+`
+
+const TrackListContainer = styled.div`
+  margin: 24px 0;
+
+  & > ul {
+    display: flex;
+    flex-direction: column;
     gap: 16px;
   }
 `

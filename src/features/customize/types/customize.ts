@@ -1,25 +1,19 @@
 import type { StickerThemeUpperType } from '@/pages/mypage/types/mypage'
 import type { MusicGenreId } from '@/shared/config/musicGenres'
 
-export interface YoutubeVideoInfoPayload {
-  videoLinks: string[]
-}
-
-export interface YouTubeVideoInfo {
+export interface YoutubeVideoInfo {
   link: string
   title: string
   thumbnailUrl: string
   duration: string
+  orderIndex: number
 }
 
-export interface PlaylistMetaInfo {
+export type TempSavePayload = {
   name: string
   genre: MusicGenreId
-  isRepresentative: boolean
-}
-
-export interface TempPlaylistPayload extends PlaylistMetaInfo {
-  youTubeVideoInfo: YouTubeVideoInfo[]
+  isPublic: boolean
+  youTubeVideoInfo: YoutubeVideoInfo[]
 }
 
 export interface UserEachStickerResponse {

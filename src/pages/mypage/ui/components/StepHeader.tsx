@@ -2,11 +2,10 @@ import { useNavigate } from 'react-router-dom'
 
 import styled from 'styled-components'
 
-import { Button, Header, SvgButton } from '@shared/ui'
-
 import { LeftArrow } from '@/assets/icons'
-import type { CustomizeStep } from '@/pages/mypage/ui/customize'
+import type { CUSTOMIZE_STEP } from '@/pages/mypage/types/mypage'
 import { flexRowCenter } from '@/shared/styles/mixins'
+import { Button, Header, SvgButton } from '@/shared/ui'
 
 const StepHeader = ({
   currentStep,
@@ -14,8 +13,8 @@ const StepHeader = ({
   isValidate,
   onHeaderNextClick,
 }: {
-  currentStep: CustomizeStep
-  setCurrentStep: (step: CustomizeStep) => void
+  currentStep: CUSTOMIZE_STEP
+  setCurrentStep: (step: CUSTOMIZE_STEP) => void
   isValidate: boolean
   onHeaderNextClick: () => void
 }) => {
@@ -27,7 +26,7 @@ const StepHeader = ({
       navigate('/mypage')
       return
     }
-    setCurrentStep((currentStep - 1) as CustomizeStep)
+    setCurrentStep((currentStep - 1) as CUSTOMIZE_STEP)
   }
 
   return (
@@ -92,6 +91,7 @@ const StepItem = styled.li<{ $isActive: boolean }>`
 
 const HeaderRight = styled.div`
   & > button {
-    ${({ theme }) => theme.FONT['caption1']}
+    padding: 8px 20px;
+    ${({ theme }) => theme.FONT['label']}
   }
 `

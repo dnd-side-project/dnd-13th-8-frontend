@@ -1,3 +1,7 @@
+export type CUSTOMIZE_STEP = 1 | 2 | 3
+
+export type MYPAGE_TAB_TYPE = 'cd' | 'like'
+
 export type StickerThemeType =
   | 'deulak'
   | 'background'
@@ -25,8 +29,6 @@ export interface StickerInfoType {
   scale: number
   rotation: number
 }
-
-export type MyPageTabType = 'cd' | 'like'
 
 export const THEME_PROP_ID_OFFSET = {
   deulak: 1000,

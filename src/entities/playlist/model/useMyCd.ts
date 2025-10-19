@@ -26,15 +26,7 @@ export const useMyLikedCdList = (sort: string) => {
   })
 }
 
-export const useCdCustomData = (playlistId: number) => {
-  return useQuery({
-    queryKey: ['cdCustomData', playlistId],
-    queryFn: () => getCdCustomData(playlistId),
-    enabled: Number.isInteger(playlistId) && playlistId >= 0,
-  })
-}
-
-export const useMyPagePlaylist = (playlistId: number) => {
+export const useMyCdActions = (playlistId: number) => {
   const queryClient = useQueryClient()
 
   // 조회
@@ -67,6 +59,14 @@ export const useMyPagePlaylist = (playlistId: number) => {
     deletePlaylist: deleteMutation,
     setPrimaryPlaylist: setPrimaryMutation,
   }
+}
+
+export const useCdCustomData = (playlistId: number) => {
+  return useQuery({
+    queryKey: ['cdCustomData', playlistId],
+    queryFn: () => getCdCustomData(playlistId),
+    enabled: Number.isInteger(playlistId) && playlistId >= 0,
+  })
 }
 
 export const useMyRepresentativePlaylist = () => {
