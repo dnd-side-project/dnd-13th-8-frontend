@@ -6,7 +6,7 @@ import {
   CustomizeBg as CustomizeBgImg,
   CustomizeThumbnail as CustomizeThumbnailImg,
 } from '@/assets/images'
-import { useCdCustomData } from '@/entities/playlist/model/useMyCd'
+import { useFinalCdCustom } from '@/features/customize/model/useCustomize'
 import { SubHeader } from '@/pages/mypage/ui/components'
 import { flexColCenter } from '@/shared/styles/mixins'
 import { Loading, Cd } from '@/shared/ui'
@@ -14,7 +14,7 @@ import { Loading, Cd } from '@/shared/ui'
 const CustomizeStep3 = ({ currentCdId }: { currentCdId: number | null }) => {
   const navigate = useNavigate()
 
-  const { data, isLoading, isError } = useCdCustomData(currentCdId as number)
+  const { data, isLoading, isError } = useFinalCdCustom(currentCdId as number)
 
   if (isLoading) {
     return <Loading isLoading={isLoading} />

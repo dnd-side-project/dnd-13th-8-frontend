@@ -3,11 +3,9 @@ import { useNavigate, useParams } from 'react-router-dom'
 
 import styled from 'styled-components'
 
-import { useToast } from '@/app/providers'
-import { LeftArrow, Pin, PinPrimary, Share, Trash } from '@/assets/icons'
-import { useMyPagePlaylist } from '@/entities/playlist/model/useMyPlaylist'
+import { LeftArrow, Trash } from '@/assets/icons'
+import { useMyCdActions } from '@/entities/playlist/model/useMyCd'
 import { useAuthStore } from '@/features/auth/store/authStore'
-import { useShare } from '@/features/share/model/useShare'
 import { Divider } from '@/pages/mypage/ui/components'
 import { MUSIC_GENRES } from '@/shared/config/musicGenres'
 import { flexRowCenter } from '@/shared/styles/mixins'
@@ -29,11 +27,12 @@ const MypageTracklist = () => {
     onCancel: () => setModal((prev) => ({ ...prev, isOpen: false })),
   })
 
-  const { playlistData, isLoading, isError, deletePlaylist, setPrimaryPlaylist } =
-    useMyPagePlaylist(Number(playlistId))
+  const { tracklist, isLoading, isError, deletePlaylist, setPrimaryPlaylist } = useMyCdActions(
+    Number(playlistId)
+  )
   const { userInfo } = useAuthStore()
-  const { mutate: postShare } = useShare()
-  const { toast } = useToast()
+  // const { mutate: postShare } = useShare()
+  // const { toast } = useToast()
 
   const onDeleteClick = () => {
     deletePlaylist.mutate(undefined, {
@@ -53,38 +52,38 @@ const MypageTracklist = () => {
   }
 
   // TODO: share button에 있는 함수 중복, 별도 유틸로 빼기
-  const copyToClipboard = (text: string) => {
-    if (navigator.clipboard?.writeText) {
-      return navigator.clipboard.writeText(text)
-    } else {
-      // 사파리 or 모바일 브라우저
-      const textarea = document.createElement('textarea')
-      textarea.value = text
-      textarea.style.position = 'fixed'
-      textarea.style.opacity = '0'
-      document.body.appendChild(textarea)
-      textarea.focus()
-      textarea.select()
-      try {
-        document.execCommand('copy')
-      } catch (e) {
-        console.error(e)
-      }
-      document.body.removeChild(textarea)
-      return Promise.resolve()
-    }
-  }
+  // const copyToClipboard = (text: string) => {
+  //   if (navigator.clipboard?.writeText) {
+  //     return navigator.clipboard.writeText(text)
+  //   } else {
+  //     // 사파리 or 모바일 브라우저
+  //     const textarea = document.createElement('textarea')
+  //     textarea.value = text
+  //     textarea.style.position = 'fixed'
+  //     textarea.style.opacity = '0'
+  //     document.body.appendChild(textarea)
+  //     textarea.focus()
+  //     textarea.select()
+  //     try {
+  //       document.execCommand('copy')
+  //     } catch (e) {
+  //       console.error(e)
+  //     }
+  //     document.body.removeChild(textarea)
+  //     return Promise.resolve()
+  //   }
+  // }
 
-  const onShareClick = () => {
-    postShare(undefined, {
-      onSuccess: () => {
-        const link = `${window.location.origin}/discover/${playlistId}`
-        copyToClipboard(link).then(() => {
-          toast('LINK')
-        })
-      },
-    })
-  }
+  // const onShareClick = () => {
+  //   postShare(undefined, {
+  //     onSuccess: () => {
+  //       const link = `${window.location.origin}/discover/${playlistId}`
+  //       copyToClipboard(link).then(() => {
+  //         toast('LINK')
+  //       })
+  //     },
+  //   })
+  // }
 
   const onSetPrimaryClick = () => {
     // TODO: 대표 플리 지정 실패
@@ -115,35 +114,25 @@ const MypageTracklist = () => {
         }
       />
       <PlaylistHorizontal
-        genre={MUSIC_GENRES.find((g) => g.id === playlistData?.genre)?.label ?? ''}
-        title={playlistData?.playlistName ?? ''}
+        genre={MUSIC_GENRES.find((g) => g.id === tracklist?.genre)?.label ?? ''}
+        title={tracklist?.playlistName ?? ''}
         username={userInfo.username}
-        stickers={playlistData?.onlyCdResponse?.cdItems ?? []}
+        stickers={tracklist?.cdResponse?.cdItems ?? []}
       />
       <ControlContainer>
         <LeftActions>
           <SvgButton icon={Trash} width={20} height={20} onClick={onDeleteClick} />
-          {playlistData?.isRepresentative && (
+          {/* {tracklist?.isRepresentative && (
             <SvgButton icon={Share} width={20} height={20} onClick={onShareClick} />
-          )}
+          )} */}
         </LeftActions>
         <RightAction type="button" onClick={onSetPrimaryClick}>
-          {playlistData?.isRepresentative ? (
-            <>
-              <PinPrimary />
-              <span>대표 플리</span>
-            </>
-          ) : (
-            <>
-              <Pin />
-              <span>대표로 지정</span>
-            </>
-          )}
+          {/*  */}
         </RightAction>
       </ControlContainer>
       <Divider />
       <SongsContainer>
-        {playlistData?.songs
+        {tracklist?.songs
           .sort((a, b) => a.id - b.id)
           .map((song) => (
             <Link key={song.id} data={song} />

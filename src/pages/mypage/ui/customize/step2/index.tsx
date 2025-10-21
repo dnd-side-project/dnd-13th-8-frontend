@@ -1,14 +1,14 @@
 import { useState, useMemo, useRef, useEffect } from 'react'
 
+import type { DefaultError } from '@tanstack/react-query'
+import type { AxiosError } from 'axios'
 import styled from 'styled-components'
 import { v4 as uuidv4 } from 'uuid'
-
-import type { ModalProps } from '@shared/ui/Modal'
 
 import { Trash, Plus } from '@/assets/icons'
 import overlayUrl from '@/assets/icons/icn_overlay.svg?url'
 import { ExpandBtn, TrashBtn } from '@/assets/images'
-import { useUserSticker } from '@/features/customize/model/useCustomize'
+import { useUserSticker, useCdFinalSave } from '@/features/customize/model/useCustomize'
 import {
   BACKEND_TO_FRONT_THEME,
   getCurrentThemeImages,
@@ -24,6 +24,7 @@ import { StepHeader } from '@/pages/mypage/ui/components'
 import type { CustomizeStepProps } from '@/pages/mypage/ui/customize'
 import { flexRowCenter } from '@/shared/styles/mixins'
 import { Loading } from '@/shared/ui'
+import type { ModalProps } from '@/shared/ui/Modal'
 
 const CustomizeStep2 = ({
   currentStep,
@@ -31,7 +32,7 @@ const CustomizeStep2 = ({
   setCurrentCdId,
   setModal,
   isEditMode,
-  prevPlaylistData,
+  prevTracklist,
 }: CustomizeStepProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const cdContainerRef = useRef<HTMLCanvasElement>(null)
@@ -44,7 +45,8 @@ const CustomizeStep2 = ({
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 })
   const [resizeMode, setResizeMode] = useState<'move' | 'resize' | null>(null)
 
-  const { uploadSticker, uploadLoading, finalSave, editSave } = useUserSticker()
+  const { uploadSticker, uploadLoading } = useUserSticker()
+  const { createMutation, updateMutation } = useCdFinalSave()
 
   // ===============================
   // 스티커 초기 데이터 세팅
@@ -69,11 +71,12 @@ const CustomizeStep2 = ({
   // 헤더 다음 버튼 클릭
   const onHeaderNextClick = () => {
     const payload = {
-      saveCdRequestDto: {
+      saveCdRequest: {
         cdItems: stickers.map((s) => ({
           propId: s.propId ?? 0, // 백엔드 스티커 id
           xCoordinate: s.x,
           yCoordinate: s.y,
+          zCoordinate: s.z,
           height: s.height,
           width: s.width,
           scale: s.scale,
@@ -83,8 +86,8 @@ const CustomizeStep2 = ({
     }
 
     if (isEditMode) {
-      editSave.mutate(
-        { ...payload, playlistId: Number(prevPlaylistData?.playlistId) },
+      updateMutation.mutate(
+        { ...payload, playlistId: Number(prevTracklist?.playlistId) },
         {
           onSuccess: (response) => {
             setCurrentCdId?.(response.playlistId)
@@ -92,19 +95,21 @@ const CustomizeStep2 = ({
           },
           onError: (error) => {
             console.error('CD 저장 실패:', error)
+            onSaveError(error)
           },
         }
       )
       return
     }
 
-    finalSave.mutate(payload, {
+    createMutation.mutate(payload, {
       onSuccess: (response) => {
         setCurrentCdId?.(response.playlistId)
         setCurrentStep(3)
       },
       onError: (error) => {
         console.error('CD 저장 실패:', error)
+        onSaveError(error)
       },
     })
   }
@@ -112,6 +117,42 @@ const CustomizeStep2 = ({
   // 모달 close
   const onModalClose = () => {
     setModal({ isOpen: false } as ModalProps)
+  }
+
+  // step1으로 랜딩
+  const onSessionExpired = () => {
+    const moveToStep1 = () => {
+      setModal({ isOpen: false } as ModalProps)
+      setCurrentStep(1)
+    }
+    setModal({
+      isOpen: true,
+      title: '트랙리스트 임시 저장 시간이 만료되었어요',
+      description: '이전 페이지로 이동할게요',
+      ctaType: 'single',
+      confirmText: '확인',
+      onClose: moveToStep1,
+      onConfirm: moveToStep1,
+    })
+  }
+
+  // 저장 시 에러 핸들링
+  const onSaveError = (error: AxiosError | DefaultError) => {
+    const errorStatus = 'status' in error ? error.status : null
+    if (errorStatus === 409) {
+      onSessionExpired()
+      return
+    }
+    const errorTitle = `${errorStatus === 500 ? '일시적인 오류로 ' : ''}CD를 저장하지 못했어요`
+    setModal({
+      isOpen: true,
+      title: errorTitle,
+      description: '잠시 후 다시 시도해주세요',
+      ctaType: 'single',
+      confirmText: '확인',
+      onClose: onModalClose,
+      onConfirm: onModalClose,
+    })
   }
 
   // 새 스티커 추가 시 다음 z 계산
@@ -198,7 +239,7 @@ const CustomizeStep2 = ({
         confirmText: '확인',
         onClose: () => onModalClose(),
         onConfirm: () => onModalClose(),
-      } as ModalProps)
+      })
       return
     }
 
@@ -263,7 +304,7 @@ const CustomizeStep2 = ({
         return
       },
       onCancel: () => onModalClose(),
-    } as ModalProps)
+    })
   }
 
   // ===============================
@@ -774,8 +815,9 @@ const CustomizeStep2 = ({
 
   // 수정 모드일 경우 스티커 데이터 화면에 렌더링
   useEffect(() => {
-    if (isEditMode && prevPlaylistData?.cdResponse?.cdItems) {
-      const initialStickers: StickerInfoType[] = prevPlaylistData.cdResponse.cdItems.map(
+    if (isEditMode && prevTracklist?.cdResponse?.cdItems) {
+      // TODO: 수정 작업할 때 타입 다시 체크
+      const initialStickers: StickerInfoType[] = prevTracklist.cdResponse.cdItems.map(
         (item, index) => {
           const scaleFactor = 280 / 285
 
@@ -841,7 +883,7 @@ const CustomizeStep2 = ({
         img.src = sticker.src
       })
     }
-  }, [isEditMode, prevPlaylistData])
+  }, [isEditMode, prevTracklist])
 
   // stickers가 변경될 때마다 다시 그리기
   useEffect(() => {

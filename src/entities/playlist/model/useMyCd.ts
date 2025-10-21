@@ -3,8 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   getMyCdList,
   getLikedCdList,
-  getCdCustomData,
-  getMyPagePlaylist,
+  getTracklist,
   deleteMyPagePlaylist,
   setPrimaryPlaylist,
   getMyRepresentativePlaylist,
@@ -26,47 +25,43 @@ export const useMyLikedCdList = (sort: string) => {
   })
 }
 
-export const useMyCdActions = (playlistId: number) => {
+export const useMyCdActions = (cdId: number) => {
   const queryClient = useQueryClient()
 
-  // 조회
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ['myPagePlaylist', playlistId],
-    queryFn: () => getMyPagePlaylist(playlistId),
-    enabled: Number.isInteger(playlistId) && playlistId >= 0,
+  // 트랙리스트 조회
+  const {
+    data: tracklist,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ['getTracklist', cdId],
+    queryFn: () => getTracklist(cdId),
+    enabled: Number.isInteger(cdId) && cdId >= 0,
     refetchOnMount: 'always',
   })
 
-  // 삭제
+  // CD 삭제
   const deleteMutation = useMutation({
-    mutationKey: ['deleteMyPagePlaylist', playlistId],
-    mutationFn: () => deleteMyPagePlaylist(playlistId),
+    mutationKey: ['deleteMyPagePlaylist', cdId],
+    mutationFn: () => deleteMyPagePlaylist(cdId),
   })
 
   // 대표 플리 지정
   const setPrimaryMutation = useMutation({
-    mutationKey: ['setPrimaryPlaylist', playlistId],
-    mutationFn: () => setPrimaryPlaylist(playlistId),
+    mutationKey: ['setPrimaryPlaylist', cdId],
+    mutationFn: () => setPrimaryPlaylist(cdId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['myPagePlaylist'] })
     },
   })
 
   return {
-    playlistData: data,
+    tracklist,
     isLoading,
     isError,
     deletePlaylist: deleteMutation,
     setPrimaryPlaylist: setPrimaryMutation,
   }
-}
-
-export const useCdCustomData = (playlistId: number) => {
-  return useQuery({
-    queryKey: ['cdCustomData', playlistId],
-    queryFn: () => getCdCustomData(playlistId),
-    enabled: Number.isInteger(playlistId) && playlistId >= 0,
-  })
 }
 
 export const useMyRepresentativePlaylist = () => {

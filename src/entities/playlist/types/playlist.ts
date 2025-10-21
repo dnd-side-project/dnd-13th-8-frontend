@@ -7,10 +7,10 @@ export interface CdBasicInfo {
   isPublic: boolean
 }
 
-export interface StickerData {
-  cdItemId: number
+export interface CdCustomData {
+  cdItemId?: number
   propId: number
-  theme: string
+  theme?: string
   xCoordinate: number
   yCoordinate: number
   zCoordinate: number
@@ -18,52 +18,14 @@ export interface StickerData {
   width: number
   scale: number
   angle: number
-  imageUrl: string
+  imageUrl?: string
 }
 
 export interface CdCoverInfo {
-  cdItems: StickerData[]
+  cdItems: CdCustomData[]
 }
 
 export type CdMetaResponse = (CdBasicInfo & { cdResponse: CdCoverInfo })[]
-
-export interface MyCdInfo {
-  playlistId: number
-  playlistName: string
-  isPublic: boolean
-}
-
-export type MyCdListResponse = (MyCdInfo & OnlyCdResponse)[]
-
-export interface MyFollowingInfo {
-  creatorId: string
-  creatorPlaylistId: string
-  creatorNickname: string
-  creatorProfileImageUrl: string | null
-}
-
-export interface MyFollowingListResponse {
-  size: number
-  followPlaylistDto: MyFollowingInfo[]
-}
-
-export interface CdCustomData {
-  cdItemId: number
-  propId: number
-  theme: string
-  xCoordinate: number
-  yCoordinate: number
-  zCoordinate: number
-  height: number
-  width: number
-  scale: number
-  angle: number
-  imageUrl: string
-}
-export interface CdCustomDataResponse {
-  playlistId: number
-  cdItems: CdCustomData[]
-}
 
 export interface OnlyCdResponse {
   cdResponse: {
@@ -71,7 +33,7 @@ export interface OnlyCdResponse {
   }
 }
 
-export interface MyPlaylistResponse extends MyCdInfo, OnlyCdResponse {
+export interface MyPlaylistResponse extends CdBasicInfo, OnlyCdResponse {
   songs: Track[]
   genre: MusicGenreId
 }

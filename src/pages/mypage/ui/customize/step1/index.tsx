@@ -5,7 +5,7 @@ import { AnimatePresence, motion, Reorder } from 'framer-motion'
 import styled from 'styled-components'
 import { v4 as uuidv4 } from 'uuid'
 
-import { CancelCircle, DownArrow, HelpCircle, Plus, PlusBlack } from '@/assets/icons'
+import { CancelCircle, DownArrow, HelpCircle, Plus, PlusBlack, LinkPrimary } from '@/assets/icons'
 import { useCdTempSave } from '@/features/customize/model/useCustomize'
 import type { YoutubeVideoInfo } from '@/features/customize/types/customize'
 import { Divider, StepHeader, ToggleSwitch } from '@/pages/mypage/ui/components'
@@ -23,7 +23,7 @@ const CustomizeStep1 = ({
   setModal,
   // TODO: cd 생성 리팩토링 완료 후 cd 수정 로직 리팩토링
   // isEditMode,
-  prevPlaylistData,
+  prevTracklist,
 }: CustomizeStepProps) => {
   const navigate = useNavigate()
 
@@ -31,8 +31,8 @@ const CustomizeStep1 = ({
 
   const [basicInfoMap, setbasicInfo] = useState({
     name: '',
-    genre: MUSIC_GENRES.find((genre) => genre.id === prevPlaylistData?.genre) ?? null,
-    isPublic: prevPlaylistData?.isPublic ?? true,
+    genre: MUSIC_GENRES.find((genre) => genre.id === prevTracklist?.genre) ?? null,
+    isPublic: prevTracklist?.isPublic ?? true,
   })
   const [tracklist, setTracklist] = useState<(YoutubeVideoInfo & { id: string })[]>([])
   const [currentTrackUrl, setCurrentTrackUrl] = useState('')
@@ -66,8 +66,20 @@ const CustomizeStep1 = ({
             setCurrentStep(2)
           },
           onError: (error) => {
-            console.error('플레이리스트 저장 실패:', error)
-            navigate('/error')
+            const moveToError = () => {
+              setModal({ isOpen: false } as ModalProps)
+              navigate('/error')
+            }
+            console.error(' 저장 실패:', error)
+            setModal({
+              isOpen: true,
+              title: '트랙리스트를 저장하지 못했어요',
+              ctaType: 'single',
+              confirmText: '확인',
+              onClose: moveToError,
+              onConfirm: moveToError,
+            })
+            return
           },
         }
       )
@@ -135,7 +147,7 @@ const CustomizeStep1 = ({
         confirmText: '확인',
         onClose: () => setModal({ isOpen: false } as ModalProps),
         onConfirm: () => setModal({ isOpen: false } as ModalProps),
-      } as ModalProps)
+      })
       return
     }
 
@@ -192,7 +204,7 @@ const CustomizeStep1 = ({
 
       <BasicInfoEditorWrap>
         <BasicInfoContainer>
-          <Cd variant="lg" stickers={prevPlaylistData?.cdResponse?.cdItems ?? []} />
+          <Cd variant="lg" stickers={prevTracklist?.cdResponse?.cdItems ?? []} />
           <BasicInfoBox>
             <GenreDropdown
               $isSelected={!!basicInfoMap.genre?.id}
@@ -252,6 +264,7 @@ const CustomizeStep1 = ({
         </GuideContainer>
 
         <MoveToYoutube href="https://www.youtube.com" target="_blank" rel="noopener noreferrer">
+          <LinkPrimary width={20} height={20} />
           유튜브에서 링크 추가
         </MoveToYoutube>
 
@@ -429,6 +442,7 @@ const PopoverText = styled(motion.div)`
 
 const MoveToYoutube = styled.a`
   ${flexRowCenter}
+  gap: 6px;
   width: 100%;
   padding: 12px 0;
   border-radius: 10px;

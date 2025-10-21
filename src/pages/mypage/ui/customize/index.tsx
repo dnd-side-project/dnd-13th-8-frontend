@@ -17,21 +17,22 @@ export interface CustomizeStepProps {
   setCurrentCdId?: (cdId: number | null) => void
   setModal: (modal: ModalProps) => void
   isEditMode: boolean
-  prevPlaylistData?: MyPlaylistResponse
+  prevTracklist?: MyPlaylistResponse
 }
 
 const Customize = () => {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
-  const playlistId = searchParams.get('playlistId')
+  const cdId = searchParams.get('playlistId')
 
   const [currentStep, setCurrentStep] = useState<CUSTOMIZE_STEP>(1)
   const [currentCdId, setCurrentCdId] = useState<number | null>(null)
-  const [isEditMode] = useState<boolean>(!!playlistId && Number(playlistId) > 0)
+  const [isEditMode] = useState<boolean>(!!cdId && Number(cdId) > 0)
 
   const [modal, setModal] = useState<ModalProps>({
     isOpen: false,
     title: '',
+    description: '',
     ctaType: 'single',
     confirmText: '',
     cancelText: '',
@@ -44,7 +45,11 @@ const Customize = () => {
     },
   })
 
-  const { playlistData, isLoading, isError } = useMyCdActions(isEditMode ? Number(playlistId) : -1)
+  const {
+    tracklist: prevTracklist,
+    isLoading,
+    isError,
+  } = useMyCdActions(isEditMode ? Number(cdId) : -1)
 
   useEffect(() => {
     if (isError) {
@@ -64,7 +69,7 @@ const Customize = () => {
           setCurrentStep={setCurrentStep}
           setModal={setModal}
           isEditMode={isEditMode}
-          prevPlaylistData={playlistData}
+          prevTracklist={prevTracklist}
         />
       )}
 
@@ -75,7 +80,7 @@ const Customize = () => {
           setCurrentCdId={setCurrentCdId}
           setModal={setModal}
           isEditMode={isEditMode}
-          prevPlaylistData={playlistData}
+          prevTracklist={prevTracklist}
         />
       )}
 
@@ -84,6 +89,7 @@ const Customize = () => {
       <Modal
         isOpen={modal.isOpen}
         title={modal.title}
+        description={modal.description}
         ctaType={modal.ctaType}
         confirmText={modal.confirmText}
         cancelText={modal.cancelText}

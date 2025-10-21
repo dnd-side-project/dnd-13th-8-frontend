@@ -81,7 +81,7 @@ const ModalTitle = styled.h2`
 `
 
 const ModalDescription = styled.p`
-  margin-top: 4px;
+  margin-top: 5px;
   width: 100%;
   color: ${({ theme }) => theme.COLOR['gray-50']};
   ${({ theme }) => theme.FONT['body2-normal']}
@@ -92,6 +92,7 @@ const CtaWrapper = styled.div`
   ${flexRowCenter}
   gap: 10px;
   width: 100%;
+
   & > button {
     width: 100%;
   }

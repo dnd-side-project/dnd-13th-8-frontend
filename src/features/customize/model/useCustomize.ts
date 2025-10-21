@@ -1,19 +1,28 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import {
+  getFinalCdCustom,
   postYouTubeVideoInfo,
-  postTempPlaylist,
+  postCdTempSave,
+  postCdFinalCreate,
+  postCdFinalUpdate,
   getUserStickers,
   postUserSticker,
-  postFinalPlaylist,
-  patchEditPlaylist,
 } from '@/features/customize/api/customize'
 import type {
-  TempSavePayload,
+  CdTempSavePayload,
   UserStickerPayload,
-  FinalPlaylistPayload,
-  EditPlaylistPayload,
+  CdFinalCreatePayload,
+  CdFinalUpdatePayload,
 } from '@/features/customize/types/customize'
+
+export const useFinalCdCustom = (cdId: number) => {
+  return useQuery({
+    queryKey: ['finalCdCustom', cdId],
+    queryFn: () => getFinalCdCustom(cdId),
+    enabled: Number.isInteger(cdId) && cdId >= 0,
+  })
+}
 
 export const useCdTempSave = () => {
   return useMutation({
@@ -23,7 +32,7 @@ export const useCdTempSave = () => {
       tempSaveMap,
     }: {
       youtubeLinkList: string[]
-      tempSaveMap: TempSavePayload
+      tempSaveMap: CdTempSavePayload
     }) => {
       const videoResArr = await postYouTubeVideoInfo(youtubeLinkList)
       if (!videoResArr?.length) {
@@ -46,9 +55,32 @@ export const useCdTempSave = () => {
         ...tempSaveMap,
         youTubeVideoInfo: newVideoInfoList,
       }
-      await postTempPlaylist(tempSavePayload)
+      await postCdTempSave(tempSavePayload)
     },
   })
+}
+
+export const useCdFinalSave = () => {
+  // 생성
+  const createMutation = useMutation({
+    mutationKey: ['cdFinalCreate'],
+    mutationFn: (payload: CdFinalCreatePayload) => {
+      return postCdFinalCreate(payload)
+    },
+  })
+
+  // 수정
+  const updateMutation = useMutation({
+    mutationKey: ['cdFinalUpdate'],
+    mutationFn: (payload: CdFinalUpdatePayload) => {
+      return postCdFinalUpdate(payload)
+    },
+  })
+
+  return {
+    createMutation,
+    updateMutation,
+  }
 }
 
 export const useUserSticker = () => {
@@ -75,27 +107,9 @@ export const useUserSticker = () => {
     },
   })
 
-  // 최종 저장
-  const finalSaveMutation = useMutation({
-    mutationKey: ['postFinalPlaylist'],
-    mutationFn: (payload: FinalPlaylistPayload) => {
-      return postFinalPlaylist(payload)
-    },
-  })
-
-  // 수정 저장
-  const editSaveMutation = useMutation({
-    mutationKey: ['patchEditPlaylist'],
-    mutationFn: (payload: EditPlaylistPayload) => {
-      return patchEditPlaylist(payload)
-    },
-  })
-
   return {
     userStickerList,
     uploadSticker: uploadMutation,
     uploadLoading: uploadMutation.isPending,
-    finalSave: finalSaveMutation,
-    editSave: editSaveMutation,
   }
 }
