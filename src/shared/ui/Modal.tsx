@@ -9,6 +9,7 @@ type CtaType = 'single' | 'double'
 export interface ModalProps {
   isOpen: boolean
   title: string
+  description?: string
   ctaType: CtaType
   confirmText?: string
   cancelText?: string
@@ -20,6 +21,7 @@ export interface ModalProps {
 const Modal = ({
   isOpen,
   title,
+  description,
   ctaType,
   confirmText = '확인',
   cancelText = '취소',
@@ -30,7 +32,10 @@ const Modal = ({
   return (
     <Overlay isOpen={isOpen} onClose={onClose}>
       <ModalContainer>
-        <ModalTitle>{title}</ModalTitle>
+        <div>
+          <ModalTitle>{title}</ModalTitle>
+          {description && <ModalDescription>{description}</ModalDescription>}
+        </div>
         <CtaWrapper>
           {ctaType === 'single' && (
             <Button size="M" state="primary" onClick={onConfirm}>
@@ -73,6 +78,14 @@ const ModalTitle = styled.h2`
   overflow-wrap: break-word;
   text-align: center;
   ${({ theme }) => theme.FONT['headline2']}
+`
+
+const ModalDescription = styled.p`
+  margin-top: 4px;
+  width: 100%;
+  color: ${({ theme }) => theme.COLOR['gray-50']};
+  ${({ theme }) => theme.FONT['body2-normal']}
+  text-align: center;
 `
 
 const CtaWrapper = styled.div`
