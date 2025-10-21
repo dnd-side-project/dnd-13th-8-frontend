@@ -5,7 +5,6 @@ import styled from 'styled-components'
 
 import type { PlaylistInfo } from '@/entities/playlist'
 import { useChatSocket } from '@/features/chat/model/sendMessage'
-import { useFollowStatus } from '@/features/follow/model/useFollow'
 import { useDevice } from '@/shared/lib/useDevice'
 import { flexColCenter } from '@/shared/styles/mixins'
 import { Button, Cd, Header, LiveInfo } from '@/shared/ui'
@@ -42,9 +41,6 @@ const PlaylistLayout = ({
   const navigate = useNavigate()
   const isActive = currentPlaylist?.playlistId === data.playlistId
   const { participantCount: listenersNum } = useChatSocket(isActive ? String(data.playlistId) : '')
-  const { data: isFollowing } = useFollowStatus(data.playlistId, {
-    enabled: currentPlaylist?.playlistId === data.playlistId, // active playlist만 호출
-  })
 
   const deviceType = useDevice()
   const isMobile = deviceType === 'mobile'
@@ -85,11 +81,9 @@ const PlaylistLayout = ({
         <ActionBarContainer>
           <ActionBar
             playlistId={data.playlistId}
-            isFollowing={!!isFollowing}
-            userName={data.creator.creatorNickname}
-            showFollow={type !== 'My'}
             creatorId={data.creator.creatorId}
             stickers={data?.cdItems ?? data?.onlyCdResponse?.cdItems ?? []}
+            type="DISCOVER"
           />
         </ActionBarContainer>
       </Wrapper>
@@ -170,4 +164,5 @@ const Overlay = styled.div`
 const ProgressBarWrapper = styled.div`
   position: relative;
   z-index: ${({ theme }) => theme.Z_INDEX.topLayer};
+  padding-top: 32px;
 `

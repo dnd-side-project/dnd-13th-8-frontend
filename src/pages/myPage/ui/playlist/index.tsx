@@ -123,12 +123,12 @@ const MyPagePlaylist = () => {
       <ControlContainer>
         <LeftActions>
           <SvgButton icon={Trash} width={20} height={20} onClick={onDeleteClick} />
-          {playlistData?.isRepresentative && (
+          {playlistData?.isPublic && (
             <SvgButton icon={Share} width={20} height={20} onClick={onShareClick} />
           )}
         </LeftActions>
         <RightAction type="button" onClick={onSetPrimaryClick}>
-          {playlistData?.isRepresentative ? (
+          {playlistData?.isPublic ? (
             <>
               <PinPrimary />
               <span>대표 플리</span>

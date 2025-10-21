@@ -4,6 +4,6 @@ export const BUTTON_TEXT = {
 } as const
 
 export const TITLE_TEXT = {
-  MEMBER: (name: string) => `${name}님! 오늘의 첫 곡,\n여기서 시작하세요`,
+  MEMBER: (name: string) => `${name}님!\n 오늘의 첫 곡, 여기서 시작하세요`,
   GUEST: `오늘의 무드에 어울리는 \n 플레이리스트를 들어 보세요`,
 } as const

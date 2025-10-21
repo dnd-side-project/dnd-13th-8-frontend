@@ -39,7 +39,7 @@ const CdGrid = ({
           onClick={() => navigate(`/mypage/${item.playlistId}/playlist`)}
         >
           <Cd variant="md" stickers={item.onlyCdResponse.cdItems} />
-          {currentTab === 'cd' && item?.isRepresentative && <Badge size="small" text="대표" />}
+          {currentTab === 'cd' && item?.isPublic && <Badge size="small" text="대표" />}
           <p>
             <CdTitle>{item.playlistName}</CdTitle>
             <CdCreator>{userInfo.username}</CdCreator>

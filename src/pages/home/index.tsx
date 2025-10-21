@@ -1,11 +1,10 @@
-import { useMemo } from 'react'
 import { createSearchParams, useNavigate } from 'react-router-dom'
 
 import styled, { css } from 'styled-components'
 
 import { CARD_IMAGES_LARGE } from '@/assets/card'
-import { Logo, Notification, Search } from '@/assets/icons'
-import { useShufflePlaylists } from '@/entities/playlist'
+import { CtaArrow, Logo, Notification, Search } from '@/assets/icons'
+import { HomeCharacter } from '@/assets/images'
 import { useAuthStore } from '@/features/auth/store/authStore'
 import {
   useRecommendationsByRecent,
@@ -13,7 +12,7 @@ import {
   useRecommendedGenres,
 } from '@/features/recommend'
 import { TITLE_TEXT } from '@/pages/home/config/messages'
-import { LoopCarousel } from '@/pages/home/ui'
+import { flexRowCenter } from '@/shared/styles/mixins'
 import { Header, SvgButton, ScrollCarousel } from '@/shared/ui'
 import { Playlist, PlaylistWithSong } from '@/widgets/playlist'
 
@@ -27,9 +26,6 @@ const HomePage = () => {
   const { data: RecentData } = useRecommendationsByRecent()
   const { data: FollowData } = useRecommendationsByFollow()
   const { data: GenreData } = useRecommendedGenres()
-  const { data } = useShufflePlaylists(4)
-
-  const playlists = useMemo(() => data?.pages.flatMap((page) => page.content) ?? [], [data])
 
   const handleKeywordSearch = (genreCode: string) => {
     navigate({
@@ -40,22 +36,30 @@ const HomePage = () => {
       })}`,
     })
   }
+
   return (
     <PageLayout>
-      <Header
-        left={<Logo />}
-        right={
-          <>
-            <SvgButton icon={Notification} onClick={handleNotiClick} />
-            <SvgButton icon={Search} onClick={handleSearchClick} />
-          </>
-        }
-      />
+      <TopSection>
+        <Header
+          left={<Logo />}
+          right={
+            <>
+              <SvgButton icon={Notification} onClick={handleNotiClick} />
+              <SvgButton icon={Search} onClick={handleSearchClick} />
+            </>
+          }
+        />
 
-      <FirstSection>
-        <h1>{isLogin ? TITLE_TEXT.MEMBER(userInfo.username) : TITLE_TEXT.GUEST}</h1>
-        <LoopCarousel data={playlists} isLogin={isLogin} />
-      </FirstSection>
+        <FirstSection>
+          <h1>{isLogin ? TITLE_TEXT.MEMBER(userInfo.username) : TITLE_TEXT.GUEST}</h1>
+
+          <CtaButton onClick={() => (isLogin ? navigate('/mypage/customize') : navigate('/login'))}>
+            CD 커버에 내 취향을 담아요 <CtaArrow />
+          </CtaButton>
+
+          <CharacterBg src={HomeCharacter} />
+        </FirstSection>
+      </TopSection>
       <SecondSection>
         <h1>퇴근길, 귀에 붙는 노래</h1>
         <ScrollCarousel gap={14}>
@@ -66,6 +70,7 @@ const HomePage = () => {
               title={item.playlistName}
               username={item.creatorNickname}
               stickers={item.onlyCdResponse?.cdItems}
+              isLiked={false} // TODO: 실제 값으로 수정 필요
             />
           ))}
         </ScrollCarousel>
@@ -128,11 +133,23 @@ const PageLayout = styled.div`
   flex-direction: column;
 `
 
+const TopSection = styled.section`
+  margin: 0 -20px;
+  padding: 0 20px;
+  background-color: #282c36;
+`
+
 const FirstSection = styled.section`
-  ${({ theme }) => theme.FONT.heading2};
-  letter-spacing: -0.019rem;
-  padding: 16px 0 40px 0;
-  font-weight: 500;
+  h1 {
+    ${({ theme }) => theme.FONT.heading2};
+    color: ${({ theme }) => theme.COLOR['gray-50']};
+    font-weight: 500;
+  }
+
+  padding: 34px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 60px;
 `
 
 const sectionCommonLayout = css`
@@ -163,4 +180,24 @@ const FourthSection = styled.section`
   ${sectionCommonLayout}
   padding: 16px 20px 146px 20px;
   margin-bottom: -98px;
+`
+
+const CtaButton = styled.button`
+  ${flexRowCenter}
+  padding: 6px 18px;
+  gap: 14px;
+  width: 212px;
+  height: 36px;
+  background-color: ${({ theme }) => theme.COLOR['primary-normal']};
+  color: ${({ theme }) => theme.COLOR['gray-900']};
+  border-radius: 86px;
+  ${({ theme }) => theme.FONT.caption1};
+`
+
+const CharacterBg = styled.img`
+  position: absolute;
+  right: -48px;
+  width: 285px;
+  object-fit: contain;
+  object-position: center;
 `

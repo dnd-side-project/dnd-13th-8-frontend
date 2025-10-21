@@ -8,6 +8,7 @@ import {
   deleteMyPagePlaylist,
   setPrimaryPlaylist,
   getMyRepresentativePlaylist,
+  getMyLikedCdList,
 } from '@/entities/playlist/api/playlist'
 
 export const useMyCdList = (sort: string) => {
@@ -73,5 +74,13 @@ export const useMyRepresentativePlaylist = () => {
   return useQuery({
     queryKey: ['myRepresentativePlaylist'],
     queryFn: () => getMyRepresentativePlaylist(),
+  })
+}
+
+export const useMyLikedCdList = (sort: string) => {
+  return useQuery({
+    queryKey: ['myLikedCdList', sort],
+    queryFn: () => getMyLikedCdList(sort),
+    refetchOnMount: 'always',
   })
 }

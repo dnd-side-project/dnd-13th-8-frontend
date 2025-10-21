@@ -1,55 +1,43 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import styled from 'styled-components'
 
-import type { PlaylistInfo } from '@/entities/playlist'
+import type { CdCustomData } from '@/entities/playlist'
 import LoopCarousel from '@/pages/home/ui/LoopCarousel'
+
+interface CarouselPlaylist {
+  playlistId: number
+  playlistName: string
+  onlyCdResponse: { cdItems: CdCustomData[] }
+}
 
 const meta: Meta<typeof LoopCarousel> = {
   title: 'Pages/Home/LoopCarousel',
   component: LoopCarousel,
-  argTypes: {
-    isLogin: {
-      control: { type: 'boolean' },
-      defaultValue: false,
-    },
-  },
 }
 
 export default meta
 type Story = StoryObj<typeof LoopCarousel>
 
-const mockData: PlaylistInfo[] = [
+const mockData: CarouselPlaylist[] = [
   {
     playlistId: 1,
     playlistName: '플레이리스트 #1',
-    genre: '힙합',
-    songs: [],
-    creator: { creatorId: '1', creatorNickname: '사용자1' },
-    representative: false,
+    onlyCdResponse: { cdItems: [] },
   },
   {
     playlistId: 2,
     playlistName: '플레이리스트 #2',
-    genre: '락',
-    songs: [],
-    creator: { creatorId: '2', creatorNickname: '사용자2' },
-    representative: false,
+    onlyCdResponse: { cdItems: [] },
   },
   {
     playlistId: 3,
     playlistName: '플레이리스트 #3',
-    genre: '발라드',
-    songs: [],
-    creator: { creatorId: '3', creatorNickname: '사용자3' },
-    representative: false,
+    onlyCdResponse: { cdItems: [] },
   },
   {
     playlistId: 4,
     playlistName: '플레이리스트 #4',
-    genre: '클래식',
-    songs: [],
-    creator: { creatorId: '4', creatorNickname: '사용자4' },
-    representative: false,
+    onlyCdResponse: { cdItems: [] },
   },
 ]
 
@@ -61,7 +49,7 @@ const StoryContainer = styled.div`
 export const Default: Story = {
   args: {
     data: mockData,
-    isLogin: false,
+    onCenterChange: (playlist) => console.log(playlist.playlistName),
   },
   decorators: [
     (Story) => (

@@ -3,7 +3,7 @@ import type { MusicGenreId } from '@/shared/config/musicGenres'
 export interface MyCdInfo {
   playlistId: number
   playlistName: string
-  isRepresentative: boolean
+  isPublic: boolean
 }
 
 export type MyCdListResponse = (MyCdInfo & OnlyCdResponse)[]
