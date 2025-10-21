@@ -61,6 +61,7 @@ const CdListWrap = styled.ul`
   width: 100%;
   display: flex;
   gap: ${CD_LIST_GAP}px;
+  flex-wrap: wrap;
 
   & > li {
     display: flex;

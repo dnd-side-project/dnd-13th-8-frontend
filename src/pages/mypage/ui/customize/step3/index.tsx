@@ -46,7 +46,7 @@ const CustomizeStep3 = ({ currentCdId }: { currentCdId: number | null }) => {
             <Cd variant="customize" bgColor="none" stickers={data?.cdItems} />
           </MyCdViewContainer>
         </MyCdContainer>
-        <CtaButton type="button" onClick={() => navigate(`/myPage/${currentCdId}/playlist`)}>
+        <CtaButton type="button" onClick={() => navigate(`/mypage/${currentCdId}/tracklist`)}>
           내가 만든 CD 열기
         </CtaButton>
       </CdResultContainer>
