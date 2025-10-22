@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 
 import { useMyCdActions } from '@/entities/playlist/model/useMyCd'
 import type { MyPlaylistResponse } from '@/entities/playlist/types/playlist'
@@ -22,8 +22,8 @@ export interface CustomizeStepProps {
 
 const Customize = () => {
   const navigate = useNavigate()
-  const [searchParams] = useSearchParams()
-  const cdId = searchParams.get('cdId')
+  const location = useLocation()
+  const { cdId } = location.state as { cdId: number }
 
   const [currentStep, setCurrentStep] = useState<CUSTOMIZE_STEP>(1)
   const [currentCdId, setCurrentCdId] = useState<number | null>(null)

@@ -32,6 +32,7 @@ const MypageTracklist = () => {
   })
 
   const { data: cdMetadata, isLoading, isError } = usePlaylistDetail(Number(cdId))
+  console.log('cdMetadata', cdMetadata)
   const { deleteMutation } = useMyCdActions(Number(cdId))
 
   const { copyCdShareUrl } = useCopyCdShareUrl()
@@ -86,7 +87,10 @@ const MypageTracklist = () => {
           <SvgButton icon={LeftArrow} width={24} height={24} onClick={() => navigate('/mypage')} />
         }
         right={
-          <EditButton type="button" onClick={() => navigate(`/mypage/customize?cdId=${cdId}`)}>
+          <EditButton
+            type="button"
+            onClick={() => navigate('/mypage/customize', { state: { cdId } })}
+          >
             편집
           </EditButton>
         }

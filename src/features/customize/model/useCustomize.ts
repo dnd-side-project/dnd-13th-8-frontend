@@ -21,6 +21,7 @@ export const useFinalCdCustom = (cdId: number) => {
     queryKey: ['finalCdCustom', cdId],
     queryFn: () => getFinalCdCustom(cdId),
     enabled: Number.isInteger(cdId) && cdId >= 0,
+    staleTime: 0,
   })
 }
 

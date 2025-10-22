@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 
+import { useQueryClient } from '@tanstack/react-query'
 import styled from 'styled-components'
 
 import {
@@ -13,8 +14,14 @@ import { Loading, Cd } from '@/shared/ui'
 
 const CustomizeStep3 = ({ currentCdId }: { currentCdId: number | null }) => {
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
 
   const { data, isLoading, isError } = useFinalCdCustom(currentCdId as number)
+
+  const moveToTracklist = () => {
+    queryClient.invalidateQueries({ queryKey: ['playlistDetail', currentCdId] })
+    navigate(`/mypage/${currentCdId}/tracklist`)
+  }
 
   if (isLoading) {
     return <Loading isLoading={isLoading} />
@@ -46,7 +53,7 @@ const CustomizeStep3 = ({ currentCdId }: { currentCdId: number | null }) => {
             <Cd variant="customize" bgColor="none" stickers={data?.cdItems} />
           </MyCdViewContainer>
         </MyCdContainer>
-        <CtaButton type="button" onClick={() => navigate(`/mypage/${currentCdId}/tracklist`)}>
+        <CtaButton type="button" onClick={moveToTracklist}>
           내가 만든 CD 열기
         </CtaButton>
       </CdResultContainer>

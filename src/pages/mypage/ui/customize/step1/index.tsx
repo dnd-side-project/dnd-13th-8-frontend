@@ -21,8 +21,7 @@ const CustomizeStep1 = ({
   currentStep,
   setCurrentStep,
   setModal,
-  // TODO: cd 생성 리팩토링 완료 후 cd 수정 로직 리팩토링
-  // isEditMode,
+  isEditMode,
   prevTracklist,
 }: CustomizeStepProps) => {
   const navigate = useNavigate()
@@ -30,9 +29,9 @@ const CustomizeStep1 = ({
   const { mutate, isPending } = useCdTempSave()
 
   const [basicInfoMap, setbasicInfo] = useState({
-    name: '',
+    name: isEditMode ? (prevTracklist?.playlistName ?? '') : '',
     genre: MUSIC_GENRES.find((genre) => genre.id === prevTracklist?.genre) ?? null,
-    isPublic: prevTracklist?.isPublic ?? true,
+    isPublic: isEditMode ? (prevTracklist?.isPublic ?? true) : true,
   })
   const [tracklist, setTracklist] = useState<(YoutubeVideoInfo & { id: string })[]>([])
   const [currentTrackUrl, setCurrentTrackUrl] = useState('')
@@ -186,6 +185,24 @@ const CustomizeStep1 = ({
       })
     )
   }
+
+  // 페이지 최초 진입 시 editMode일 경우 tracklist 데이터 형식 가공
+  useEffect(() => {
+    if (isEditMode && prevTracklist?.songs) {
+      setTracklist(
+        prevTracklist.songs.map((track) => {
+          return {
+            id: track.id.toString(),
+            title: track.title,
+            link: track.youtubeUrl,
+            thumbnailUrl: track.youtubeThumbnail,
+            duration: track.youtubeLength.toString(),
+            orderIndex: track.orderIndex,
+          }
+        })
+      )
+    }
+  }, [])
 
   // 입력 중인 input값 제거 시 에러 메세지 초기화
   useEffect(() => {
