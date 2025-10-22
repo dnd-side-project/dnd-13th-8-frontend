@@ -15,9 +15,16 @@ interface ActionBarProps {
   creatorId: string
   stickers?: CdCustomData[]
   type?: 'MY' | 'DISCOVER'
+  selectedTab?: 'MY' | 'LIKE'
 }
 
-const ActionBar = ({ playlistId, creatorId, stickers, type = 'DISCOVER' }: ActionBarProps) => {
+const ActionBar = ({
+  playlistId,
+  creatorId,
+  stickers,
+  type = 'DISCOVER',
+  selectedTab = 'MY',
+}: ActionBarProps) => {
   const navigate = useNavigate()
 
   const handleMovePlaylist = () => {
@@ -30,7 +37,9 @@ const ActionBar = ({ playlistId, creatorId, stickers, type = 'DISCOVER' }: Actio
 
   return (
     <Wrapper $type={type}>
-      <LikeButton playlistId={playlistId} isLiked={false} type={type} />
+      {type === 'MY' && selectedTab === 'LIKE' && (
+        <LikeButton playlistId={playlistId} isLiked={false} type={type} />
+      )}
       <ChatButton roomId={playlistId} creatorId={creatorId} type={type} />
       <DetailButton $isMy={type === 'MY'} onClick={handleMovePlaylist}>
         <SvgButton

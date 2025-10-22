@@ -153,15 +153,17 @@ const MyCdPage = () => {
               <VolumeButton playerRef={playerRef} isMuted={isMuted} setIsMuted={setIsMuted} />
             )}
             <LiveInfo isOnAir={listenersNum > 0} listenerCount={listenersNum} isOwner={false} />
-            <Button
-              size="S"
-              state="primary"
-              onClick={() =>
-                navigate(`/mypage/customize?playlistId=${currentPlaylist?.playlistId}`)
-              }
-            >
-              편집
-            </Button>
+            {selectedTab === 'MY' && (
+              <Button
+                size="S"
+                state="primary"
+                onClick={() =>
+                  navigate(`/mypage/customize?playlistId=${currentPlaylist?.playlistId}`)
+                }
+              >
+                편집
+              </Button>
+            )}
           </Container>
 
           <LoopCarousel data={playlistData ?? []} onCenterChange={handleCenterChange} />
@@ -171,6 +173,7 @@ const MyCdPage = () => {
             creatorId={currentPlaylist.creator.creatorId}
             stickers={playlistDetail?.cdResponse?.cdItems || []}
             type="MY"
+            selectedTab={selectedTab}
           />
 
           <Title>{centerPlaylist.playlistName}</Title>
