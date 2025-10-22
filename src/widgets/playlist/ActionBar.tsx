@@ -37,7 +37,7 @@ const ActionBar = ({
 
   return (
     <Wrapper $type={type}>
-      {type === 'MY' && selectedTab === 'LIKE' && (
+      {!(type === 'MY' && selectedTab === 'MY') && (
         <LikeButton playlistId={playlistId} isLiked={false} type={type} />
       )}
       <ChatButton roomId={playlistId} creatorId={creatorId} type={type} />

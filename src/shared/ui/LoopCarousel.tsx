@@ -11,7 +11,12 @@ interface LoopCarouselProps {
 }
 
 const LoopCarousel = ({ children, onSelectIndex, onReady }: LoopCarouselProps) => {
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true })
+  const count = React.Children.count(children)
+
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    loop: count >= 3, // 3개 이상일 때만 loop 활성화
+    containScroll: count < 3 ? false : 'trimSnaps',
+  })
 
   useEffect(() => {
     if (!emblaApi) return
@@ -30,19 +35,16 @@ const LoopCarousel = ({ children, onSelectIndex, onReady }: LoopCarouselProps) =
     }
   }, [emblaApi, onSelectIndex, onReady])
 
-  const isSingle = React.Children.count(children) === 1
-
   return (
     <div ref={emblaRef}>
-      <EmblaContainer $single={isSingle}>{children}</EmblaContainer>
+      <EmblaContainer>{children}</EmblaContainer>
     </div>
   )
 }
 
 export default LoopCarousel
 
-const EmblaContainer = styled.div<{ $single?: boolean }>`
+const EmblaContainer = styled.div`
   display: flex;
   touch-action: pan-y pinch-zoom;
-  justify-content: ${({ $single }) => ($single ? 'center' : 'flex-start')};
 `
