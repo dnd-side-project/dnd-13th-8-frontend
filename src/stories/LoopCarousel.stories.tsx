@@ -1,61 +1,47 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import styled from 'styled-components'
 
-import type { CdCustomData } from '@/entities/playlist'
-import LoopCarousel from '@/pages/home/ui/LoopCarousel'
-
-interface CarouselPlaylist {
-  playlistId: number
-  playlistName: string
-  onlyCdResponse: { cdItems: CdCustomData[] }
-}
+import { LoopCarousel } from '@/shared/ui'
 
 const meta: Meta<typeof LoopCarousel> = {
-  title: 'Pages/Home/LoopCarousel',
+  title: 'Shared/LoopCarousel',
   component: LoopCarousel,
+  parameters: {
+    layout: 'centered',
+  },
 }
-
 export default meta
+
 type Story = StoryObj<typeof LoopCarousel>
 
-const mockData: CarouselPlaylist[] = [
-  {
-    playlistId: 1,
-    playlistName: '플레이리스트 #1',
-    onlyCdResponse: { cdItems: [] },
-  },
-  {
-    playlistId: 2,
-    playlistName: '플레이리스트 #2',
-    onlyCdResponse: { cdItems: [] },
-  },
-  {
-    playlistId: 3,
-    playlistName: '플레이리스트 #3',
-    onlyCdResponse: { cdItems: [] },
-  },
-  {
-    playlistId: 4,
-    playlistName: '플레이리스트 #4',
-    onlyCdResponse: { cdItems: [] },
-  },
-]
-
 const StoryContainer = styled.div`
-  width: 420px;
+  width: 280px;
+  height: 280px;
   margin: 0 auto;
+  overflow: hidden;
+`
+
+const Box = styled.div`
+  width: 240px;
+  height: 240px;
+  background-color: ${({ theme }) => theme.COLOR['gray-800']};
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  flex: 0 0 100%;
+  margin: 8px;
 `
 
 export const Default: Story = {
-  args: {
-    data: mockData,
-    onCenterChange: (playlist) => console.log(playlist.playlistName),
-  },
-  decorators: [
-    (Story) => (
-      <StoryContainer>
-        <Story />
-      </StoryContainer>
-    ),
-  ],
+  render: () => (
+    <StoryContainer>
+      <LoopCarousel>
+        <Box>Content 1</Box>
+        <Box>Content 2</Box>
+        <Box>Content 3</Box>
+      </LoopCarousel>
+    </StoryContainer>
+  ),
 }
