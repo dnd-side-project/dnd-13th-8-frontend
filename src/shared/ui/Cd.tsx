@@ -7,7 +7,7 @@ import { THEME_PROP_ID_OFFSET } from '@/pages/myPage/types/mypage'
 import { flexRowCenter } from '@/shared/styles/mixins'
 
 interface CdProps {
-  variant: 'xxl' | 'xl' | 'lg' | 'md' | 'sm' | 'xs' | 'share' | 'customize' | 'carousel'
+  variant: 'xxl' | 'xl' | 'lg' | 'md' | 'sm' | 'xs' | 'share' | 'customize' | 'carousel' | 'home'
   bgColor?: 'none' | 'default' | 'dark'
   stickers?: CdCustomData[]
 }
@@ -98,6 +98,7 @@ const sizeMap = {
   share: { container: 280, base: 220, borderRadius: 24 },
   customize: { container: 220, base: 220, borderRadius: 0 },
   carousel: { container: 260, base: 260, borderRadius: 0 },
+  home: { container: 180, base: 180, borderRadius: 0 },
 } as const
 
 interface StyleProps {

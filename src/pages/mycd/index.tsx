@@ -9,8 +9,7 @@ import { usePlaylistDetail } from '@/entities/playlist'
 import { useMyCdList, useMyLikedCdList } from '@/entities/playlist/model/useMyPlaylist'
 import { useAuthStore } from '@/features/auth/store/authStore'
 import { useChatSocket } from '@/features/chat/model/sendMessage'
-import { LoopCarousel } from '@/pages/home/ui'
-import { HeaderTab } from '@/pages/mycd/ui'
+import { HeaderTab, PlaylistCarousel } from '@/pages/mycd/ui'
 import { getVideoId } from '@/shared/lib'
 import { useDevice } from '@/shared/lib/useDevice'
 import { flexColCenter, flexRowCenter } from '@/shared/styles/mixins'
@@ -166,7 +165,7 @@ const MyCdPage = () => {
             )}
           </Container>
 
-          <LoopCarousel data={playlistData ?? []} onCenterChange={handleCenterChange} />
+          <PlaylistCarousel data={playlistData ?? []} onCenterChange={handleCenterChange} />
 
           <ActionBar
             playlistId={centerPlaylist.playlistId ?? 0}
