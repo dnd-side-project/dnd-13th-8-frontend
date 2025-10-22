@@ -93,7 +93,7 @@ const MyCdPage = () => {
         genre: playlistDetail.genre,
         songs: playlistDetail.songs,
         representative: false,
-        cdItems: playlistDetail.onlyCdResponse?.cdItems || [],
+        cdItems: playlistDetail.cdResponse?.cdItems || [],
       }
 
       setPlaylist(convertedPlaylist, 0, 0)
@@ -168,8 +168,8 @@ const MyCdPage = () => {
 
           <ActionBar
             playlistId={centerPlaylist.playlistId ?? 0}
-            creatorId="currentPlaylist.creator.creatorId"
-            stickers={[]}
+            creatorId={currentPlaylist.creator.creatorId}
+            stickers={playlistDetail?.cdResponse?.cdItems || []}
             type="MY"
           />
 
