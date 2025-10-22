@@ -153,7 +153,13 @@ const MyCdPage = () => {
               <VolumeButton playerRef={playerRef} isMuted={isMuted} setIsMuted={setIsMuted} />
             )}
             <LiveInfo isOnAir={listenersNum > 0} listenerCount={listenersNum} isOwner={false} />
-            <Button size="S" state="primary" onClick={() => navigate('/mypage/customize')}>
+            <Button
+              size="S"
+              state="primary"
+              onClick={() =>
+                navigate(`/mypage/customize?playlistId=${currentPlaylist?.playlistId}`)
+              }
+            >
               편집
             </Button>
           </Container>
