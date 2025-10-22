@@ -23,10 +23,13 @@ const ToastContainer = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
-  background-color: rgba(15, 16, 20, 0.94);
-  border-radius: 10px;
   padding: 12px 16px;
   ${({ theme }) => theme.FONT['body1-normal']};
   color: ${({ theme }) => theme.COLOR['common-white']};
-  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.4);
+
+  background: rgba(93, 100, 111, 0.2);
+  border: 0.5px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(25px);
+  border-radius: 31px;
 `
