@@ -9,6 +9,7 @@ import GuestCharacter from '@/assets/images/img_character_guest.png'
 import MemberCharacter from '@/assets/images/img_character_member.png'
 import type { CdCustomData } from '@/entities/playlist'
 import ShareImage from '@/features/share/ui/ShareImage'
+import { useCopyCdShareUrl } from '@/shared/lib/useCopyCdShareUrl'
 import { flexRowCenter } from '@/shared/styles/mixins'
 import { BottomSheet, Button, Cd, ScrollCarousel, SvgButton } from '@/shared/ui'
 
@@ -21,6 +22,7 @@ const ShareButton = ({ playlistId, stickers }: ShareButtonProps) => {
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false)
   const [selectedIndex, setSelectedIndex] = useState(0)
   const { toast } = useToast()
+  const { copyCdShareUrl } = useCopyCdShareUrl()
   const shareRefs = useRef<(HTMLDivElement | null)[]>([])
 
   const slides = [
@@ -50,35 +52,6 @@ const ShareButton = ({ playlistId, stickers }: ShareButtonProps) => {
     } catch (e) {
       console.error(e)
     }
-  }
-
-  const copyToClipboard = (text: string) => {
-    if (navigator.clipboard?.writeText) {
-      return navigator.clipboard.writeText(text)
-    } else {
-      // 사파리 or 모바일 브라우저
-      const textarea = document.createElement('textarea')
-      textarea.value = text
-      textarea.style.position = 'fixed'
-      textarea.style.opacity = '0'
-      document.body.appendChild(textarea)
-      textarea.focus()
-      textarea.select()
-      try {
-        document.execCommand('copy')
-      } catch (e) {
-        console.error(e)
-      }
-      document.body.removeChild(textarea)
-      return Promise.resolve()
-    }
-  }
-
-  const handleCopyLink = () => {
-    const link = `${window.location.origin}/discover/${playlistId}`
-    copyToClipboard(link).then(() => {
-      toast('LINK')
-    })
   }
 
   return (
@@ -112,7 +85,7 @@ const ShareButton = ({ playlistId, stickers }: ShareButtonProps) => {
             <Button onClick={handleSaveImage} size="M" state="secondary">
               이미지로 저장
             </Button>
-            <Button onClick={handleCopyLink} size="M" state="secondary">
+            <Button onClick={() => copyCdShareUrl(playlistId)} size="M" state="secondary">
               링크 복사
             </Button>
           </ButtonBar>
