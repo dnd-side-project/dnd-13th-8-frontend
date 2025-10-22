@@ -29,9 +29,9 @@ const ActionBar = ({
 
   const handleMovePlaylist = () => {
     if (type === 'DISCOVER') {
-      navigate(`/discover/${playlistId}/playlist`)
+      navigate(`/discover/${playlistId}/tracklist`)
     } else {
-      navigate(`/mycd/playlist`, { state: { playlistId } })
+      navigate(`/mycd/tracklist`, { state: { playlistId } })
     }
   }
 
@@ -41,15 +41,15 @@ const ActionBar = ({
         <LikeButton playlistId={playlistId} isLiked={false} type={type} />
       )}
       <ChatButton roomId={playlistId} creatorId={creatorId} type={type} />
+      <ShareButton playlistId={playlistId} stickers={stickers} type={type} />
       <DetailButton $isMy={type === 'MY'} onClick={handleMovePlaylist}>
         <SvgButton
           icon={Playlist}
           width={type === 'MY' ? 16 : 24}
           height={type === 'MY' ? 16 : 24}
         />
-        {type === 'MY' && <p>목록</p>}
+        {type === 'MY' && <p>트랙리스트</p>}
       </DetailButton>
-      <ShareButton playlistId={playlistId} stickers={stickers} type={type} />
     </Wrapper>
   )
 }

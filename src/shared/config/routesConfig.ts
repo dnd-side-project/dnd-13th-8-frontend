@@ -18,12 +18,12 @@ const SearchResult = lazy(() => import('@/pages/search/SearchResultPage'))
 const DiscoverLayout = lazy(() => import('@/pages/discover/DiscoverLayout'))
 const MyCdLayout = lazy(() => import('@/pages/mycd/MyCdLayout'))
 const DiscoverCarousel = lazy(() => import('@/pages/discover'))
-const PlaylistInfoPage = lazy(() => import('@/pages/discover/playlist'))
+const PlaylistInfoPage = lazy(() => import('@/pages/discover/tracklist'))
 const LoginLayout = lazy(() => import('@/pages/login/LoginLayout'))
 const LoginPage = lazy(() => import('@/pages/login'))
 const LoginCallbackPage = lazy(() => import('@/pages/login/callback'))
 const MyCdPage = lazy(() => import('@/pages/mycd'))
-const MyCdInfoPage = lazy(() => import('@/pages/mycd/playlist'))
+const MyCdInfoPage = lazy(() => import('@/pages/mycd/tracklist'))
 const NotFoundPage = lazy(() => import('@/pages/notFound'))
 const ErrorPage = lazy(() => import('@/pages/error'))
 
@@ -52,7 +52,7 @@ export const routesConfig: RouteConfig[] = [
     children: [
       { path: '', component: RedirectToShuffle }, // /discover → 셔플 리다이렉트
       { path: ':id', component: DiscoverCarousel },
-      { path: ':id/playlist', component: PlaylistInfoPage },
+      { path: ':id/tracklist', component: PlaylistInfoPage },
     ],
   },
 
@@ -64,7 +64,7 @@ export const routesConfig: RouteConfig[] = [
     isNotSuspense: true,
     children: [
       { path: '', component: MyCdPage },
-      { path: 'playlist', component: MyCdInfoPage },
+      { path: 'tracklist', component: MyCdInfoPage },
     ],
   },
 
