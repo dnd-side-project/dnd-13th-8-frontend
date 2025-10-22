@@ -4,8 +4,8 @@ import {
   getMyCdList,
   getLikedCdList,
   getTracklist,
-  deleteMyPagePlaylist,
-  setPrimaryPlaylist,
+  deleteMyCd,
+  patchMyCdPublic,
   getMyRepresentativePlaylist,
 } from '@/entities/playlist/api/playlist'
 
@@ -42,16 +42,16 @@ export const useMyCdActions = (cdId: number) => {
 
   // CD 삭제
   const deleteMutation = useMutation({
-    mutationKey: ['deleteMyPagePlaylist', cdId],
-    mutationFn: () => deleteMyPagePlaylist(cdId),
+    mutationKey: ['deleteMyCd', cdId],
+    mutationFn: () => deleteMyCd(cdId),
   })
 
-  // 대표 플리 지정
-  const setPrimaryMutation = useMutation({
-    mutationKey: ['setPrimaryPlaylist', cdId],
-    mutationFn: () => setPrimaryPlaylist(cdId),
+  // CD 공개여부 토글
+  const togglePublicMutation = useMutation({
+    mutationKey: ['patchMyCdPublic', cdId],
+    mutationFn: () => patchMyCdPublic(cdId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['myPagePlaylist'] })
+      queryClient.invalidateQueries({ queryKey: ['playlistDetail', cdId] })
     },
   })
 
@@ -59,8 +59,8 @@ export const useMyCdActions = (cdId: number) => {
     tracklist,
     isLoading,
     isError,
-    deletePlaylist: deleteMutation,
-    setPrimaryPlaylist: setPrimaryMutation,
+    deleteMutation,
+    togglePublicMutation,
   }
 }
 

@@ -23,14 +23,14 @@ export const getTracklist = (cdId: number) => {
   return api.get<MyPlaylistResponse>(`/main/playlist/mypage/me/${cdId}`)
 }
 
-// 마이페이지 플레이리스트 삭제
-export const deleteMyPagePlaylist = (playlistId: number) => {
-  return api.delete<string | null>(`/main/playlist/${playlistId}`)
+// 나의 CD 공개여부 토글
+export const patchMyCdPublic = (cdId: number) => {
+  return api.patch<null>(`/main/playlist/mypage/me/${cdId}/public`)
 }
 
-// 대표 플레이리스트 설정
-export const setPrimaryPlaylist = (playlistId: number) => {
-  return api.patch<string | null>(`/main/playlist/mypage/me/${playlistId}/representative`)
+// 나의 CD 삭제
+export const deleteMyCd = (cdId: number) => {
+  return api.delete<null>(`/main/playlist/${cdId}`)
 }
 
 // 셔플된 플레이리스트 목록 조회
@@ -38,9 +38,9 @@ export const getShufflePlaylists = (params: PlaylistParams) => {
   return api.get<PlaylistResponse>('/main/playlist/browse', { params })
 }
 
-// 플레이리스트 상세 조회 + 재생 기록 저장
-export const getPlaylistDetail = (playlistId: number) => {
-  return api.get<PlaylistDetailResponse>(`/main/playlist/${playlistId}`)
+// 트랙리스트 상세 조회
+export const getPlaylistDetail = (cdId: number) => {
+  return api.get<PlaylistDetailResponse>(`/main/playlist/${cdId}`)
 }
 
 // 하트비트 시작

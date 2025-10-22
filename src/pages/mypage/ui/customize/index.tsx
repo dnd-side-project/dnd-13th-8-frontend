@@ -23,7 +23,7 @@ export interface CustomizeStepProps {
 const Customize = () => {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
-  const cdId = searchParams.get('playlistId')
+  const cdId = searchParams.get('cdId')
 
   const [currentStep, setCurrentStep] = useState<CUSTOMIZE_STEP>(1)
   const [currentCdId, setCurrentCdId] = useState<number | null>(null)

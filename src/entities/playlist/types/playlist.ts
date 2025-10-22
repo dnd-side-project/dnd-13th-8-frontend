@@ -25,7 +25,7 @@ export interface CdCoverInfo {
   cdItems: CdCustomData[]
 }
 
-export type CdMetaResponse = (CdBasicInfo & { cdResponse: CdCoverInfo })[]
+export type CdMetaResponse = (CdBasicInfo & OnlyCdResponse)[]
 
 export interface OnlyCdResponse {
   cdResponse: {
@@ -44,6 +44,7 @@ export interface Track {
   youtubeUrl: string
   youtubeThumbnail: string
   youtubeLength: number
+  orderIndex: number
 }
 
 export interface Creator {
@@ -56,17 +57,13 @@ export interface PlaylistDetail {
   playlistName: string
   genre: string
   songs: Track[]
-  representative: boolean
+  isPublic: boolean
 }
 
-export interface PlaylistDetailResponse extends PlaylistDetail {
+export interface PlaylistDetailResponse extends PlaylistDetail, OnlyCdResponse {
   creatorId: string
   creatorNickname: string
-
-  // TODO : 타입 맞춰달라고 수정 요청 해야 함
-  onlyCdResponse?: {
-    cdItems: CdCustomData[]
-  }
+  creatorProfileImageUrl?: string
 }
 
 export interface PlaylistInfo extends PlaylistDetail {

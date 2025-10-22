@@ -3,22 +3,26 @@ import { useNavigate, useParams } from 'react-router-dom'
 
 import styled from 'styled-components'
 
-import { LeftArrow, Trash } from '@/assets/icons'
+import { useToast } from '@/app/providers'
+import { LeftArrow, StartBlack, Trash, Share, Eye, EyeSlash } from '@/assets/icons'
 import { useMyCdActions } from '@/entities/playlist/model/useMyCd'
+import { usePlaylistDetail } from '@/entities/playlist/model/usePlaylists'
 import { useAuthStore } from '@/features/auth/store/authStore'
 import { Divider } from '@/pages/mypage/ui/components'
 import { MUSIC_GENRES } from '@/shared/config/musicGenres'
+import { useCopyCdShareUrl } from '@/shared/lib/useCopyCdShareUrl'
 import { flexRowCenter } from '@/shared/styles/mixins'
-import { Header, Loading, SvgButton, Link, Modal } from '@/shared/ui'
+import { Header, SvgButton, Link, Modal, Loading } from '@/shared/ui'
 import type { ModalProps } from '@/shared/ui/Modal'
 import { PlaylistHorizontal } from '@/widgets/playlist'
 
 const MypageTracklist = () => {
   const navigate = useNavigate()
-  const { id: playlistId } = useParams()
+  const { id: cdId } = useParams()
   const [modal, setModal] = useState<ModalProps>({
     isOpen: false,
     title: '',
+    description: '',
     ctaType: 'single',
     confirmText: '확인',
     cancelText: '취소',
@@ -27,73 +31,50 @@ const MypageTracklist = () => {
     onCancel: () => setModal((prev) => ({ ...prev, isOpen: false })),
   })
 
-  const { tracklist, isLoading, isError, deletePlaylist, setPrimaryPlaylist } = useMyCdActions(
-    Number(playlistId)
-  )
-  const { userInfo } = useAuthStore()
-  // const { mutate: postShare } = useShare()
-  // const { toast } = useToast()
+  const { data: cdMetadata, isLoading, isError } = usePlaylistDetail(Number(cdId))
+  const { deleteMutation } = useMyCdActions(Number(cdId))
 
-  const onDeleteClick = () => {
-    deletePlaylist.mutate(undefined, {
-      onSuccess: () => {
-        navigate('/mypage')
+  const { copyCdShareUrl } = useCopyCdShareUrl()
+  const { userInfo } = useAuthStore()
+  const { toast } = useToast()
+
+  const isMyCd = cdMetadata?.creatorId === userInfo?.userId
+
+  const onCdDeleteClick = () => {
+    const onModalClose = () => setModal((prev) => ({ ...prev, isOpen: false }))
+
+    setModal({
+      isOpen: true,
+      title: 'CD를 삭제할까요?',
+      description: '삭제 후에는 되돌릴 수 없어요',
+      ctaType: 'double',
+      confirmText: '삭제하기',
+      cancelText: '취소',
+      onConfirm: () => {
+        deleteMutation.mutate(undefined, {
+          onSuccess: async () => {
+            await toast('CD_DELETE')
+            navigate('/mypage')
+          },
+          onError: () => {
+            setModal({
+              isOpen: true,
+              title: 'CD를 삭제하지 못했어요',
+              description: '잠시 후 다시 시도해주세요',
+              ctaType: 'single',
+              confirmText: '확인',
+              onClose: onModalClose,
+              onConfirm: onModalClose,
+            })
+          },
+        })
       },
-      onError: () => {
-        // TODO: subtitle 넣어서 '다시 시도해주세요' 문구 추가
-        // TODO: 1개 이하여서 삭제 불가능한 케이스 모달 추가 / 판단은 백엔드에서
-        setModal((prev) => ({
-          ...prev,
-          isOpen: true,
-          title: '플레이리스트 삭제에 실패했어요',
-        }))
-      },
+      onCancel: onModalClose,
+      onClose: onModalClose,
     })
   }
 
-  // TODO: share button에 있는 함수 중복, 별도 유틸로 빼기
-  // const copyToClipboard = (text: string) => {
-  //   if (navigator.clipboard?.writeText) {
-  //     return navigator.clipboard.writeText(text)
-  //   } else {
-  //     // 사파리 or 모바일 브라우저
-  //     const textarea = document.createElement('textarea')
-  //     textarea.value = text
-  //     textarea.style.position = 'fixed'
-  //     textarea.style.opacity = '0'
-  //     document.body.appendChild(textarea)
-  //     textarea.focus()
-  //     textarea.select()
-  //     try {
-  //       document.execCommand('copy')
-  //     } catch (e) {
-  //       console.error(e)
-  //     }
-  //     document.body.removeChild(textarea)
-  //     return Promise.resolve()
-  //   }
-  // }
-
-  // const onShareClick = () => {
-  //   postShare(undefined, {
-  //     onSuccess: () => {
-  //       const link = `${window.location.origin}/discover/${playlistId}`
-  //       copyToClipboard(link).then(() => {
-  //         toast('LINK')
-  //       })
-  //     },
-  //   })
-  // }
-
-  const onSetPrimaryClick = () => {
-    // TODO: 대표 플리 지정 실패
-    setPrimaryPlaylist.mutate()
-  }
-
-  if (isLoading) {
-    return <Loading isLoading={isLoading} />
-  }
-
+  if (isLoading) return <Loading isLoading={isLoading} />
   if (isError) {
     navigate('/error')
   }
@@ -105,43 +86,63 @@ const MypageTracklist = () => {
           <SvgButton icon={LeftArrow} width={24} height={24} onClick={() => navigate('/mypage')} />
         }
         right={
-          <EditButton
-            type="button"
-            onClick={() => navigate(`/mypage/customize?playlistId=${playlistId}`)}
-          >
+          <EditButton type="button" onClick={() => navigate(`/mypage/customize?cdId=${cdId}`)}>
             편집
           </EditButton>
         }
       />
       <PlaylistHorizontal
-        genre={MUSIC_GENRES.find((g) => g.id === tracklist?.genre)?.label ?? ''}
-        title={tracklist?.playlistName ?? ''}
-        username={userInfo.username}
-        stickers={tracklist?.cdResponse?.cdItems ?? []}
+        genre={MUSIC_GENRES.find((g) => g.id === cdMetadata?.genre)?.label ?? ''}
+        title={cdMetadata?.playlistName ?? ''}
+        username={cdMetadata?.creatorNickname ?? ''}
+        stickers={cdMetadata?.cdResponse?.cdItems ?? []}
       />
       <ControlContainer>
-        <LeftActions>
-          <SvgButton icon={Trash} width={20} height={20} onClick={onDeleteClick} />
-          {/* {tracklist?.isRepresentative && (
-            <SvgButton icon={Share} width={20} height={20} onClick={onShareClick} />
-          )} */}
-        </LeftActions>
-        <RightAction type="button" onClick={onSetPrimaryClick}>
-          {/*  */}
-        </RightAction>
+        {/* TODO: 모두 재생 브랜치 병합 후 작업 */}
+        <CdPlayButton type="button">
+          <StartBlack width={20} height={20} />
+          모두 재생
+        </CdPlayButton>
+        {isMyCd && (
+          <CdActionButton type="button" aria-label="CD 삭제하기" onClick={onCdDeleteClick}>
+            <Trash width={20} height={20} />
+          </CdActionButton>
+        )}
+        <CdActionButton
+          type="button"
+          aria-label="CD 공유하기"
+          onClick={() => copyCdShareUrl(Number(cdId))}
+        >
+          <Share width={20} height={20} />
+        </CdActionButton>
+        {/* TODO: 공개 토글 백엔드 API 답변 오면 추가 작업 */}
+        {isMyCd && (
+          <CdActionButton
+            type="button"
+            aria-label={cdMetadata?.isPublic ? 'CD 비공개 설정하기' : 'CD 공개 설정하기'}
+            aria-pressed={cdMetadata?.isPublic}
+          >
+            {cdMetadata?.isPublic ? (
+              <Eye width={20} height={20} />
+            ) : (
+              <EyeSlash width={20} height={20} />
+            )}
+          </CdActionButton>
+        )}
       </ControlContainer>
       <Divider />
-      <SongsContainer>
-        {tracklist?.songs
-          .sort((a, b) => a.id - b.id)
-          .map((song) => (
-            <Link key={song.id} data={song} />
+      <TracklistContainer>
+        {cdMetadata?.songs
+          .sort((a, b) => a.orderIndex - b.orderIndex)
+          .map((track) => (
+            <Link key={track.id} data={track} />
           ))}
-      </SongsContainer>
+      </TracklistContainer>
 
       <Modal
         isOpen={modal.isOpen}
         title={modal.title}
+        description={modal.description}
         ctaType={modal.ctaType}
         confirmText={modal.confirmText}
         cancelText={modal.cancelText}
@@ -160,33 +161,38 @@ const EditButton = styled.button`
   border-radius: 20px;
   background: ${({ theme }) => theme.COLOR['primary-normal']};
   color: ${({ theme }) => theme.COLOR['gray-900']};
-  ${({ theme }) => theme.FONT['label']}
+  ${({ theme }) => theme.FONT['body2-normal']}
 `
 
 const ControlContainer = styled.div`
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 20px 0;
+  justify-content: flex-start;
+  gap: 8px;
+  margin-top: 18px;
+  margin-bottom: 14px;
   width: 100%;
 `
 
-const LeftActions = styled.div`
+const CdPlayButton = styled.button`
   ${flexRowCenter}
-  gap: 12px;
+  gap: 6px;
+  padding: 8px 40px;
+  border-radius: 60px;
+  background: ${({ theme }) => theme.COLOR['gray-10']};
+  color: ${({ theme }) => theme.COLOR['gray-600']};
+  ${({ theme }) => theme.FONT['body2-normal']}
 `
 
-const RightAction = styled.button`
+const CdActionButton = styled.button`
   ${flexRowCenter}
-  gap: 4px;
-  padding: 5px 7px;
-  border-radius: 4px;
-  color: ${({ theme }) => theme.COLOR['gray-200']};
-  background-color: ${({ theme }) => theme.COLOR['gray-700']};
-  ${({ theme }) => theme.FONT['label']}
+  width: 36px;
+  height: 36px;
+  border-radius: 60px;
+  background: ${({ theme }) => theme.COLOR['gray-600']};
 `
 
-const SongsContainer = styled.div`
+const TracklistContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 20px;
