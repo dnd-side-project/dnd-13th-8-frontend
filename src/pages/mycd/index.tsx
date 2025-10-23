@@ -127,6 +127,7 @@ const MyCdPage = () => {
 
   if (isError) {
     navigate('/error')
+    return null
   }
 
   const isEmpty = playlistData && playlistData.length === 0
