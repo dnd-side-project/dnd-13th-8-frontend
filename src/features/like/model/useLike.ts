@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { useAuthStore } from '@/features/auth/store/authStore'
 import { postLike, deleteLike, getLikeStatus } from '@/features/like/api/like'
+import type { LikeStatusResponse } from '@/features/like/type/like'
 
 export const useLikeStatus = (playlistId: number, options?: { enabled?: boolean }) => {
   return useQuery({
@@ -20,25 +20,60 @@ const useLike = (playlistId: number) => {
   const { isLogin } = useAuthStore()
   const navigate = useNavigate()
 
-  const [isLiked, setIsLiked] = useState<boolean>(false)
   const { data: statusData, isLoading } = useLikeStatus(playlistId, { enabled: isLogin })
-
-  useEffect(() => {
-    setIsLiked(statusData?.isLiked ?? false)
-  }, [statusData])
+  const isLiked = statusData?.isLiked ?? false
 
   const likeMutation = useMutation({
     mutationFn: () => postLike(playlistId),
-    onSuccess: () => {
-      setIsLiked(true)
+
+    onMutate: async () => {
+      await queryClient.cancelQueries({ queryKey: ['likeStatus', playlistId] })
+      const previous = queryClient.getQueryData(['likeStatus', playlistId])
+
+      // 낙관적 업데이트
+      queryClient.setQueryData<LikeStatusResponse>(['likeStatus', playlistId], (old) => ({
+        ...(old ?? { isLiked: false }),
+        isLiked: true,
+      }))
+
+      return { previous }
+    },
+    onError: (_err, _vars, context) => {
+      // context는 onMutate의 return 값(previous)
+      if (context?.previous) {
+        // 실패 시 UI를 원래대로 돌림
+        queryClient.setQueryData(['likeStatus', playlistId], context.previous)
+      }
+    },
+
+    // 성공 실패 관계 없이 무조건 실행
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['likeStatus', playlistId] })
     },
   })
 
   const unlikeMutation = useMutation({
     mutationFn: () => deleteLike(playlistId),
-    onSuccess: () => {
-      setIsLiked(false)
+
+    onMutate: async () => {
+      await queryClient.cancelQueries({ queryKey: ['likeStatus', playlistId] })
+      const previous = queryClient.getQueryData(['likeStatus', playlistId])
+
+      queryClient.setQueryData<LikeStatusResponse>(['likeStatus', playlistId], (old) => ({
+        ...(old ?? { isLiked: false }),
+        isLiked: true,
+      }))
+
+      return { previous }
+    },
+
+    onError: (_err, _vars, context) => {
+      if (context?.previous) {
+        queryClient.setQueryData(['likeStatus', playlistId], context.previous)
+      }
+    },
+
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['likeStatus', playlistId] })
     },
   })
@@ -49,13 +84,8 @@ const useLike = (playlistId: number) => {
       return
     }
 
-    if (likeMutation.isPending || unlikeMutation.isPending) return
-
-    if (isLiked) {
-      unlikeMutation.mutate()
-    } else {
-      likeMutation.mutate()
-    }
+    if (isLiked) unlikeMutation.mutate()
+    else likeMutation.mutate()
   }
 
   return { liked: isLiked, toggleLike, isLoading }
