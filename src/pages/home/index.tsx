@@ -56,7 +56,6 @@ const HomePage = () => {
               title={item.playlistName}
               username={item.creatorNickname}
               stickers={item.onlyCdResponse?.cdItems}
-              isLiked={false} // TODO: 실제 값으로 수정 필요
             />
           ))}
         </ScrollCarousel>

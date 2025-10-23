@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
@@ -6,25 +6,40 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useAuthStore } from '@/features/auth/store/authStore'
 import { postLike, deleteLike, getLikeStatus } from '@/features/like/api/like'
 
-const useLike = (playlistId: number, initialIsLiked: boolean) => {
+export const useLikeStatus = (playlistId: number, options?: { enabled?: boolean }) => {
+  return useQuery({
+    queryKey: ['likeStatus', playlistId],
+    queryFn: () => getLikeStatus(playlistId),
+    staleTime: 0,
+    enabled: playlistId !== undefined && (options?.enabled ?? true),
+  })
+}
+
+const useLike = (playlistId: number) => {
   const queryClient = useQueryClient()
-  const [isLiked, setIsLiked] = useState(initialIsLiked)
-  const navigate = useNavigate()
   const { isLogin } = useAuthStore()
+  const navigate = useNavigate()
+
+  const [isLiked, setIsLiked] = useState<boolean>(false)
+  const { data: statusData, isLoading } = useLikeStatus(playlistId, { enabled: isLogin })
+
+  useEffect(() => {
+    setIsLiked(statusData?.isLiked ?? false)
+  }, [statusData])
 
   const likeMutation = useMutation({
-    mutationFn: (playlistId: number) => postLike(playlistId),
+    mutationFn: () => postLike(playlistId),
     onSuccess: () => {
       setIsLiked(true)
-      queryClient.invalidateQueries({ queryKey: ['playlistDetail', playlistId] })
+      queryClient.invalidateQueries({ queryKey: ['likeStatus', playlistId] })
     },
   })
 
   const unlikeMutation = useMutation({
-    mutationFn: (playlistId: number) => deleteLike(playlistId),
+    mutationFn: () => deleteLike(playlistId),
     onSuccess: () => {
       setIsLiked(false)
-      queryClient.invalidateQueries({ queryKey: ['playlistDetail', playlistId] })
+      queryClient.invalidateQueries({ queryKey: ['likeStatus', playlistId] })
     },
   })
 
@@ -37,22 +52,13 @@ const useLike = (playlistId: number, initialIsLiked: boolean) => {
     if (likeMutation.isPending || unlikeMutation.isPending) return
 
     if (isLiked) {
-      unlikeMutation.mutate(playlistId)
+      unlikeMutation.mutate()
     } else {
-      likeMutation.mutate(playlistId)
+      likeMutation.mutate()
     }
   }
 
-  return { liked: isLiked, toggleLike, likeMutation, unlikeMutation }
+  return { liked: isLiked, toggleLike, isLoading }
 }
 
 export default useLike
-
-export const useLikeStatus = (playlistId: number, options?: { enabled?: boolean }) => {
-  return useQuery({
-    queryKey: ['likeStatus', playlistId],
-    queryFn: () => getLikeStatus(playlistId),
-    staleTime: 0,
-    enabled: playlistId !== undefined && (options?.enabled ?? true),
-  })
-}

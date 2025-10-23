@@ -9,7 +9,6 @@ import SvgButton from '@/shared/ui/SvgButton'
 
 interface LikeButtonProps {
   playlistId: number
-  isLiked: boolean
   type?: 'HOME' | 'DISCOVER' | 'MY'
 }
 
@@ -19,9 +18,9 @@ const ICON_STYLE = {
   MY: { size: 16, Icon: LikeStroke },
 } as const
 
-const LikeButton = ({ playlistId, isLiked, type = 'HOME' }: LikeButtonProps) => {
+const LikeButton = ({ playlistId, type = 'HOME' }: LikeButtonProps) => {
   const theme = useTheme()
-  const { liked, toggleLike } = useLike(playlistId, isLiked)
+  const { liked, toggleLike } = useLike(playlistId)
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()

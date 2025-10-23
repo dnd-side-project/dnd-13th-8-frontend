@@ -1,3 +1,4 @@
+import type { LikeStatusResponse } from '@/features/like/type/like'
 import { api } from '@/shared/api/httpClient'
 
 export const postLike = (playlistId: number) => {
@@ -9,5 +10,5 @@ export const deleteLike = (playlistId: number) => {
 }
 
 export const getLikeStatus = (playlistId: number) => {
-  return api.get(`/main/likes/${playlistId}`)
+  return api.get<LikeStatusResponse>(`/main/likes/${playlistId}`)
 }
