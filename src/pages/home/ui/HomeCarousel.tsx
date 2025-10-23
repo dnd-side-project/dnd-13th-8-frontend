@@ -35,11 +35,12 @@ const HomeCarousel = ({ data, isLogin }: HomeCarouselProps) => {
         <EmblaSlide key="image">
           <Slide $active={activeIndex === 0}>
             <FirstContent>
-              {isLogin ? (
-                <img src={MemberCharacter} alt="Member Character" width={160} height={160} />
-              ) : (
-                <img src={GuestCharacter} alt="Guest Character" width={160} height={160} />
-              )}
+              <img
+                src={isLogin ? MemberCharacter : GuestCharacter}
+                alt={isLogin ? 'Member Character' : 'Guest Character'}
+                width={160}
+                height={160}
+              />
               <Button
                 size="S"
                 state="primary"
@@ -55,7 +56,7 @@ const HomeCarousel = ({ data, isLogin }: HomeCarouselProps) => {
           <EmblaSlide key={slide.playlistId}>
             <Slide
               $active={activeIndex === index + 1}
-              onClick={() => navigate(`discover/${slide.playlistId}`)}
+              onClick={() => navigate(`/discover/${slide.playlistId}`)}
             >
               <Cd variant="home" bgColor="none" stickers={slide.cdItems} />
               <SlideOverlay $active={activeIndex === index + 1}>
