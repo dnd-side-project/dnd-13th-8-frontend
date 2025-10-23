@@ -1,6 +1,5 @@
 import type {
   CdMetaResponse,
-  MyPlaylistResponse,
   PlaylistDetailResponse,
   PlaylistParams,
   PlaylistResponse,
@@ -20,7 +19,7 @@ export const getLikedCdList = (sort: string) => {
 
 // 나의 CD 트랙리스트 조회
 export const getTracklist = (cdId: number) => {
-  return api.get<MyPlaylistResponse>(`/main/playlist/mypage/me/${cdId}`)
+  return api.get<PlaylistDetailResponse>(`/main/playlist/mypage/me/${cdId}`)
 }
 
 // 나의 CD 공개여부 토글

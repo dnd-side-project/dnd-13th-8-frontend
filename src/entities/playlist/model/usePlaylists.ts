@@ -42,10 +42,11 @@ export const useShufflePlaylists = (size: number = 5) => {
   })
 }
 
-export const usePlaylistDetail = (playlistId: number) => {
+export const usePlaylistDetail = (playlistId: number, options?: { enabled?: boolean }) => {
   return useQuery({
     queryKey: ['playlistDetail', playlistId],
     queryFn: () => getPlaylistDetail(playlistId),
+    enabled: options?.enabled ?? true,
   })
 }
 

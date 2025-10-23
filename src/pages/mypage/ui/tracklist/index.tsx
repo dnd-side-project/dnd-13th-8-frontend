@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
 import styled from 'styled-components'
 
@@ -18,6 +18,7 @@ import { PlaylistHorizontal } from '@/widgets/playlist'
 
 const MypageTracklist = () => {
   const navigate = useNavigate()
+  const { state } = useLocation()
   const { id: cdId } = useParams()
   const [modal, setModal] = useState<ModalProps>({
     isOpen: false,
@@ -31,14 +32,16 @@ const MypageTracklist = () => {
     onCancel: () => setModal((prev) => ({ ...prev, isOpen: false })),
   })
 
-  const { data: cdMetadata, isLoading, isError } = usePlaylistDetail(Number(cdId))
-  console.log('cdMetadata', cdMetadata)
-  const { deleteMutation } = useMyCdActions(Number(cdId))
+  const isFromMyCdList = state?.isFromMyCdList === true
+
+  const { data, isLoading, isError } = usePlaylistDetail(Number(cdId), { enabled: !isFromMyCdList })
+  const { tracklist, deleteMutation } = useMyCdActions(Number(cdId), { enabled: isFromMyCdList })
 
   const { copyCdShareUrl } = useCopyCdShareUrl()
   const { userInfo } = useAuthStore()
   const { toast } = useToast()
 
+  const cdMetadata = isFromMyCdList ? tracklist : data
   const isMyCd = cdMetadata?.creatorId === userInfo?.userId
 
   const onCdDeleteClick = () => {

@@ -39,7 +39,11 @@ const MyCdList = () => {
           <li key={item.playlistId}>
             <CdButton
               type="button"
-              onClick={() => navigate(`/mypage/${item.playlistId}/tracklist`)}
+              onClick={() =>
+                navigate(`/mypage/${item.playlistId}/tracklist`, {
+                  state: { isFromMyCdList: true },
+                })
+              }
             >
               <Cd variant="responsive" stickers={item?.cdResponse?.cdItems} />
               {!item?.isPublic && <PrivateBadge>비공개</PrivateBadge>}

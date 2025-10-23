@@ -33,11 +33,6 @@ export interface OnlyCdResponse {
   }
 }
 
-export interface MyPlaylistResponse extends CdBasicInfo, OnlyCdResponse {
-  songs: Track[]
-  genre: MusicGenreId
-}
-
 export interface Track {
   id: number
   title: string

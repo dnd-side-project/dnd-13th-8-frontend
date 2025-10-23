@@ -25,7 +25,7 @@ export const useMyLikedCdList = (sort: string) => {
   })
 }
 
-export const useMyCdActions = (cdId: number) => {
+export const useMyCdActions = (cdId: number, options?: { enabled?: boolean }) => {
   const queryClient = useQueryClient()
 
   // 트랙리스트 조회
@@ -36,7 +36,7 @@ export const useMyCdActions = (cdId: number) => {
   } = useQuery({
     queryKey: ['getTracklist', cdId],
     queryFn: () => getTracklist(cdId),
-    enabled: Number.isInteger(cdId) && cdId >= 0,
+    enabled: Number.isInteger(cdId) && cdId >= 0 && (options?.enabled ?? true),
     refetchOnMount: 'always',
   })
 
