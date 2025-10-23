@@ -20,6 +20,7 @@ const MypageTracklist = () => {
   const navigate = useNavigate()
   const { state } = useLocation()
   const { id: cdId } = useParams()
+
   const [modal, setModal] = useState<ModalProps>({
     isOpen: false,
     title: '',
@@ -35,7 +36,9 @@ const MypageTracklist = () => {
   const isFromMyCdList = state?.isFromMyCdList === true
 
   const { data, isLoading, isError } = usePlaylistDetail(Number(cdId), { enabled: !isFromMyCdList })
-  const { tracklist, deleteMutation } = useMyCdActions(Number(cdId), { enabled: isFromMyCdList })
+  const { tracklist, deleteMutation, togglePublicMutation } = useMyCdActions(Number(cdId), {
+    enabled: isFromMyCdList,
+  })
 
   const { copyCdShareUrl } = useCopyCdShareUrl()
   const { userInfo } = useAuthStore()
@@ -44,9 +47,9 @@ const MypageTracklist = () => {
   const cdMetadata = isFromMyCdList ? tracklist : data
   const isMyCd = cdMetadata?.creatorId === userInfo?.userId
 
-  const onCdDeleteClick = () => {
-    const onModalClose = () => setModal((prev) => ({ ...prev, isOpen: false }))
+  const onModalClose = () => setModal((prev) => ({ ...prev, isOpen: false }))
 
+  const onCdDeleteClick = () => {
     setModal({
       isOpen: true,
       title: 'CD를 삭제할까요?',
@@ -75,6 +78,22 @@ const MypageTracklist = () => {
       },
       onCancel: onModalClose,
       onClose: onModalClose,
+    })
+  }
+
+  const onCdTogglePublicClick = () => {
+    togglePublicMutation.mutate(undefined, {
+      onError: () => {
+        setModal({
+          isOpen: true,
+          title: 'CD 공개 설정을 변경하지 못했어요',
+          description: '잠시 후 다시 시도해주세요',
+          ctaType: 'single',
+          confirmText: '확인',
+          onClose: onModalClose,
+          onConfirm: onModalClose,
+        })
+      },
     })
   }
 
@@ -128,6 +147,7 @@ const MypageTracklist = () => {
             type="button"
             aria-label={cdMetadata?.isPublic ? 'CD 비공개 설정하기' : 'CD 공개 설정하기'}
             aria-pressed={cdMetadata?.isPublic}
+            onClick={onCdTogglePublicClick}
           >
             {cdMetadata?.isPublic ? (
               <Eye width={20} height={20} />

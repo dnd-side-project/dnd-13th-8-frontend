@@ -51,7 +51,7 @@ export const useMyCdActions = (cdId: number, options?: { enabled?: boolean }) =>
     mutationKey: ['patchMyCdPublic', cdId],
     mutationFn: () => patchMyCdPublic(cdId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['playlistDetail', cdId] })
+      queryClient.invalidateQueries({ queryKey: ['getTracklist', cdId] })
     },
   })
 
