@@ -3,6 +3,7 @@ import { useState } from 'react'
 import styled from 'styled-components'
 
 import { Message } from '@/assets/icons'
+import { useChatCount } from '@/features/chat/model/useChat'
 import { flexColCenter, myCdButton } from '@/shared/styles/mixins'
 import { SvgButton } from '@/shared/ui'
 
@@ -17,6 +18,8 @@ interface ChatButtonProps {
 const ChatButton = ({ roomId, creatorId, type = 'DISCOVER' }: ChatButtonProps) => {
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false)
 
+  const { data, isLoading, isError } = useChatCount(String(roomId))
+
   return (
     <>
       <ButtonWrapper $isMy={type === 'MY'} onClick={() => setIsBottomSheetOpen(true)}>
@@ -25,7 +28,7 @@ const ChatButton = ({ roomId, creatorId, type = 'DISCOVER' }: ChatButtonProps) =
           width={type === 'MY' ? 16 : 24}
           height={type === 'MY' ? 16 : 24}
         />
-        <Count>28</Count>
+        <Count>{isLoading || isError ? '···' : (data?.totalCount ?? 0)}</Count>
       </ButtonWrapper>
 
       {isBottomSheetOpen && (
