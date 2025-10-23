@@ -62,6 +62,5 @@ const Wrapper = styled.div<{ $type: 'MY' | 'DISCOVER' }>`
 `
 
 const DetailButton = styled.div<{ $isMy: boolean }>`
-  ${flexRowCenter};
   ${({ $isMy }) => $isMy && myCdButton};
 `
