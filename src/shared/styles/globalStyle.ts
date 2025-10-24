@@ -23,6 +23,10 @@ const GlobalStyle = createGlobalStyle`
     line-height: 1.5;
   }
 
+  button, input, textarea, select, a {
+    font-family: inherit;
+  }
+
   button {
     background: none;
     border: none;
