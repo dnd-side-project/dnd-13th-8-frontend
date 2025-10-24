@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useState } from 'react'
+import { useEffect, useCallback, useState, useMemo } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
 import styled from 'styled-components'
@@ -46,7 +46,13 @@ const MyCdPage = () => {
   const likedCdPlaylist = useMyLikedCdList('RECENT')
 
   const playlistQuery = selectedTab === 'MY' ? myCdPlaylist : likedCdPlaylist
-  const playlistData = playlistQuery.data
+
+  const playlistData = useMemo(
+    () => playlistQuery.data?.filter((p) => selectedTab !== 'MY' || p.isPublic), // 좋아요 탭일 경우 isPublic true만 필터링
+
+    [playlistQuery.data, selectedTab]
+  )
+
   const isError = playlistQuery.isError
 
   const [centerPlaylist, setCenterPlaylist] = useState<{
