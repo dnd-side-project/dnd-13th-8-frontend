@@ -29,7 +29,6 @@ export interface CdProps {
 }
 
 const Cd = ({ variant, bgColor = 'default', stickers, isPublic = true }: CdProps) => {
-  console.log('variant', variant)
   const baseRef = useRef<HTMLDivElement>(null)
   const [dynamicBase, setDynamicBase] = useState(0)
 

@@ -14,7 +14,6 @@ interface PlaylistProps {
   stickers?: CdCustomData[]
   cdVariant?: CdProps['variant']
   isPublic?: boolean
-  isShowInfobox?: boolean
 }
 
 const Playlist = ({
@@ -24,11 +23,14 @@ const Playlist = ({
   stickers,
   cdVariant = 'xl',
   isPublic = true,
-  isShowInfobox = true,
 }: PlaylistProps) => {
   const navigate = useNavigate()
 
+  // 마이페이지에서만 아래 옵션을 사용하고 있어 구분하기 위함
+  const isFromMypage = cdVariant === 'responsive'
+
   const handleClick = () => {
+    if (isFromMypage) return
     navigate(`/discover/${id}`)
   }
 
@@ -40,7 +42,7 @@ const Playlist = ({
           <LikeButton playlistId={id} type="HOME" />
         </ButtonContainer>
       </CdBox>
-      {isShowInfobox && (
+      {!isFromMypage && (
         <InfoBox>
           <Title>{title}</Title>
           <UserName>{username}</UserName>
