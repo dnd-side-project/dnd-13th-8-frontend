@@ -1,11 +1,12 @@
 import {
   useInfiniteQuery,
   useMutation,
+  useQuery,
   useQueryClient,
   type InfiniteData,
 } from '@tanstack/react-query'
 
-import { deleteChatMessage, getChatHistory } from '@/features/chat/api/chat'
+import { deleteChatMessage, getChatCount, getChatHistory } from '@/features/chat/api/chat'
 import type { ChatHistoryResponse } from '@/features/chat/types/chat'
 
 export const useInfiniteChatHistory = (roomId: string, limit = 50) => {
@@ -34,5 +35,13 @@ export const useDeleteChatMessage = (roomId: string, removeMessage: (id: string)
       queryClient.invalidateQueries({ queryKey: ['chat-history', roomId] })
       removeMessage(messageId) //  소켓 state 업데이트
     },
+  })
+}
+
+export const useChatCount = (roomId: string) => {
+  return useQuery({
+    queryKey: ['chatCount', roomId],
+    queryFn: () => getChatCount(roomId),
+    staleTime: 0,
   })
 }

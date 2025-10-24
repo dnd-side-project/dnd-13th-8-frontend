@@ -49,6 +49,7 @@ const Setting = () => {
               icon={RightArrow}
               width={16}
               height={20}
+              stroke="#BDBDBD"
               onClick={() => navigate('/mypage/terms')}
             />
           </SettingItem>
@@ -58,6 +59,7 @@ const Setting = () => {
               icon={RightArrow}
               width={16}
               height={20}
+              stroke="#BDBDBD"
               onClick={() => navigate('/mypage/privacy')}
             />
           </SettingItem>

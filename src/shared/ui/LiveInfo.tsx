@@ -34,6 +34,7 @@ const Wrapper = styled.div`
   align-items: center;
   gap: 8px;
   ${({ theme }) => theme.FONT.caption1};
+  padding: 8px 0;
 `
 
 const OnAirBadge = styled.button<{ $isOnAir: boolean }>`
@@ -41,7 +42,7 @@ const OnAirBadge = styled.button<{ $isOnAir: boolean }>`
   color: ${({ theme, $isOnAir }) =>
     $isOnAir ? theme.COLOR['primary-normal'] : theme.COLOR['gray-300']};
   font-weight: 600;
-  padding: 6px 11px;
+  padding: 4px 10px;
   border-radius: 6px;
   ${({ theme }) => theme.FONT.label};
 

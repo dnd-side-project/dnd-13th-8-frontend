@@ -5,14 +5,10 @@ import styled from 'styled-components'
 
 import type { PlaylistInfo } from '@/entities/playlist'
 import { useChatSocket } from '@/features/chat/model/sendMessage'
-import { useFollowStatus } from '@/features/follow/model/useFollow'
-import { getTrackOrderLabel } from '@/shared/lib'
 import { useDevice } from '@/shared/lib/useDevice'
 import { flexColCenter } from '@/shared/styles/mixins'
 import { Button, Cd, Header, LiveInfo } from '@/shared/ui'
-import { ActionBar, ProgressBar } from '@/widgets/playlist'
-import ControlBar from '@/widgets/playlist/ControlBar'
-import VolumeButton from '@/widgets/playlist/VolumeButton'
+import { ActionBar, PlayButton, ProgressBar, VolumeButton } from '@/widgets/playlist'
 
 interface PlaylistSlideProps {
   data: PlaylistInfo
@@ -36,8 +32,6 @@ const PlaylistLayout = ({
   currentTrackIndex,
   isPlaying,
   onPlayPause,
-  onNext,
-  onPrev,
   onSelectTrack,
   playerRef,
   isMuted,
@@ -47,9 +41,6 @@ const PlaylistLayout = ({
   const navigate = useNavigate()
   const isActive = currentPlaylist?.playlistId === data.playlistId
   const { participantCount: listenersNum } = useChatSocket(isActive ? String(data.playlistId) : '')
-  const { data: isFollowing } = useFollowStatus(data.playlistId, {
-    enabled: currentPlaylist?.playlistId === data.playlistId, // active playlist만 호출
-  })
 
   const deviceType = useDevice()
   const isMobile = deviceType === 'mobile'
@@ -63,15 +54,12 @@ const PlaylistLayout = ({
 
   return (
     <>
-      <Header
-        center={
-          <>
-            <span>{data.playlistName}</span>
-            <span>{getTrackOrderLabel(Number(currentTrackIndex))}</span>
-          </>
-        }
-      />
+      <Overlay onClick={onPlayPause} />
+      <Header center={<span>둘러보기</span>} />
       <Container>
+        {isMobile && isMuted && (
+          <VolumeButton playerRef={playerRef} isMuted={isMuted} setIsMuted={setIsMuted} />
+        )}
         <LiveInfo isOnAir={listenersNum > 0} listenerCount={listenersNum} isOwner={false} />
         {type === 'My' && (
           <Button size="S" state="primary" onClick={() => navigate('/mypage/customize')}>
@@ -80,38 +68,36 @@ const PlaylistLayout = ({
         )}
       </Container>
       <Wrapper>
-        <CdWrapper $isPlaying={isPlaying}>
-          {isMobile && (
-            <VolumeButton playerRef={playerRef} isMuted={isMuted} setIsMuted={setIsMuted} />
-          )}
-          <Cd
-            variant="xxl"
-            bgColor="none"
+        <CdContainer>
+          {!isPlaying && <PlayButton onPlayPause={onPlayPause} />}
+          <CdSpinner $isPlaying={isPlaying}>
+            <Cd
+              variant="xxl"
+              bgColor="none"
+              stickers={data?.cdItems ?? data?.onlyCdResponse?.cdItems ?? []}
+            />
+          </CdSpinner>
+        </CdContainer>
+        <ActionBarContainer>
+          <ActionBar
+            playlistId={data.playlistId}
+            creatorId={data.creator.creatorId}
             stickers={data?.cdItems ?? data?.onlyCdResponse?.cdItems ?? []}
+            type="DISCOVER"
           />
-        </CdWrapper>
-        <ActionBar
-          playlistId={data.playlistId}
-          isFollowing={!!isFollowing}
-          userName={data.creator.creatorNickname}
-          showFollow={type !== 'My'}
-          creatorId={data.creator.creatorId}
-          stickers={data?.cdItems ?? data?.onlyCdResponse?.cdItems ?? []}
-        />
+        </ActionBarContainer>
       </Wrapper>
 
-      <ProgressBar
-        trackLengths={currentPlaylist?.songs.map((t) => t.youtubeLength) || []}
-        currentIndex={currentTrackIndex}
-        onClick={handleProgressClick}
-      />
+      <Title>{data.playlistName}</Title>
+      <Creator>{data.creator.creatorNickname}</Creator>
 
-      <ControlBar
-        isPlaying={isPlaying}
-        onTogglePlay={onPlayPause}
-        onNext={onNext}
-        onPrev={onPrev}
-      />
+      <ProgressBarWrapper>
+        <ProgressBar
+          trackLengths={currentPlaylist?.songs.map((t) => t.youtubeLength) || []}
+          currentIndex={currentTrackIndex}
+          onClick={handleProgressClick}
+        />
+      </ProgressBarWrapper>
     </>
   )
 }
@@ -120,8 +106,7 @@ export default PlaylistLayout
 
 const Wrapper = styled.div`
   ${flexColCenter}
-  padding: 16px 0;
-  gap: 24px;
+  padding-top: 16px;
   position: relative;
 `
 
@@ -130,7 +115,7 @@ const Container = styled.div`
   justify-content: space-between;
 `
 
-const CdWrapper = styled.div<{ $isPlaying: boolean }>`
+const CdSpinner = styled.div<{ $isPlaying: boolean }>`
   position: relative;
   animation: spin 40s linear infinite;
   animation-play-state: ${(props) => (props.$isPlaying ? 'running' : 'paused')};
@@ -144,4 +129,40 @@ const CdWrapper = styled.div<{ $isPlaying: boolean }>`
       transform: rotate(360deg);
     }
   }
+`
+
+const Title = styled.p`
+  ${({ theme }) => theme.FONT.headline1};
+`
+
+const Creator = styled.p`
+  ${({ theme }) => theme.FONT['body2-normal']};
+  color: ${({ theme }) => theme.COLOR['gray-300']};
+`
+const ActionBarContainer = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  margin: -40px 0 0 auto;
+  position: relative;
+  z-index: ${({ theme }) => theme.Z_INDEX.topLayer};
+`
+
+const CdContainer = styled.div`
+  position: relative;
+`
+
+const Overlay = styled.div`
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100dvh;
+  z-index: ${({ theme }) => theme.Z_INDEX.overlay};
+
+  pointer-events: auto;
+`
+
+const ProgressBarWrapper = styled.div`
+  position: relative;
+  z-index: ${({ theme }) => theme.Z_INDEX.topLayer};
+  padding-top: 32px;
 `

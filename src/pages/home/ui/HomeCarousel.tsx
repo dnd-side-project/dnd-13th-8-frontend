@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import useEmblaCarousel from 'embla-carousel-react'
+import type { EmblaCarouselType } from 'embla-carousel'
 import styled, { css } from 'styled-components'
 
 import { GuestCharacter, MemberCharacter } from '@/assets/images'
@@ -9,72 +9,64 @@ import type { PlaylistInfo } from '@/entities/playlist'
 import { BUTTON_TEXT } from '@/pages/home/config/messages'
 import { getGenreLabel } from '@/shared/lib'
 import { flexColCenter, flexRowCenter } from '@/shared/styles/mixins'
-import { Button, Badge, Cd } from '@/shared/ui'
+import { Button, Badge, Cd, LoopCarousel } from '@/shared/ui'
 
 import { DotButton, useDotButton } from './DotButton'
 
-interface LoopCarouselProps {
+interface HomeCarouselProps {
   data: PlaylistInfo[]
   isLogin: boolean
 }
 
-const LoopCarousel = ({ data, isLogin }: LoopCarouselProps) => {
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true })
+const HomeCarousel = ({ data, isLogin }: HomeCarouselProps) => {
   const [activeIndex, setActiveIndex] = useState(0)
+  const [emblaApi, setEmblaApi] = useState<EmblaCarouselType | undefined>(undefined)
+
   const navigate = useNavigate()
-
-  useEffect(() => {
-    if (!emblaApi) return
-    const onSelect = () => setActiveIndex(emblaApi.selectedScrollSnap())
-    emblaApi.on('select', onSelect)
-    onSelect()
-
-    return () => {
-      emblaApi.off('select', onSelect) // 언마운트 시 이벤트 해제
-    }
-  }, [emblaApi])
 
   const { selectedIndex, scrollSnaps, onDotButtonClick } = useDotButton(emblaApi)
 
   return (
     <Embla>
-      <div ref={emblaRef}>
-        <EmblaContainer>
-          <EmblaSlide key="image">
-            <Slide $active={activeIndex === 0}>
-              <FirstContent>
-                {isLogin ? (
-                  <img src={MemberCharacter} alt="Member Character" width={160} height={160} />
-                ) : (
-                  <img src={GuestCharacter} alt="Guest Character" width={160} height={160} />
-                )}
-                <Button
-                  size="S"
-                  state="primary"
-                  onClick={() => (isLogin ? navigate('/mypage/customize') : navigate('/login'))}
-                >
-                  {isLogin ? BUTTON_TEXT.MEMBER : BUTTON_TEXT.GUEST}
-                </Button>
-              </FirstContent>
+      <LoopCarousel
+        onSelectIndex={(index) => setActiveIndex(index)}
+        onReady={(api) => setEmblaApi(api)}
+      >
+        <EmblaSlide key="image">
+          <Slide $active={activeIndex === 0}>
+            <FirstContent>
+              <img
+                src={isLogin ? MemberCharacter : GuestCharacter}
+                alt={isLogin ? 'Member Character' : 'Guest Character'}
+                width={160}
+                height={160}
+              />
+              <Button
+                size="S"
+                state="primary"
+                onClick={() => (isLogin ? navigate('/mypage/customize') : navigate('/login'))}
+              >
+                {isLogin ? BUTTON_TEXT.MEMBER : BUTTON_TEXT.GUEST}
+              </Button>
+            </FirstContent>
+          </Slide>
+        </EmblaSlide>
+
+        {data.map((slide, index) => (
+          <EmblaSlide key={slide.playlistId}>
+            <Slide
+              $active={activeIndex === index + 1}
+              onClick={() => navigate(`/discover/${slide.playlistId}`)}
+            >
+              <Cd variant="home" bgColor="none" stickers={slide.cdItems} />
+              <SlideOverlay $active={activeIndex === index + 1}>
+                <Badge size="large" text={getGenreLabel(slide.genre)} />
+                <Title>{slide.playlistName}</Title>
+              </SlideOverlay>
             </Slide>
           </EmblaSlide>
-
-          {data.map((slide, index) => (
-            <EmblaSlide key={slide.playlistId}>
-              <Slide
-                $active={activeIndex === index + 1}
-                onClick={() => navigate(`discover/${slide.playlistId}`)}
-              >
-                <Cd variant="carousel" bgColor="none" stickers={slide.cdItems} />
-                <SlideOverlay $active={activeIndex === index + 1}>
-                  <Badge size="large" text={getGenreLabel(slide.genre)} />
-                  <Title>{slide.playlistName}</Title>
-                </SlideOverlay>
-              </Slide>
-            </EmblaSlide>
-          ))}
-        </EmblaContainer>
-      </div>
+        ))}
+      </LoopCarousel>
 
       <EmblaControls>
         {scrollSnaps.map((_, index) => (
@@ -89,16 +81,11 @@ const LoopCarousel = ({ data, isLogin }: LoopCarouselProps) => {
   )
 }
 
-export default LoopCarousel
+export default HomeCarousel
 
 const Embla = styled.div`
   overflow: visible;
   margin-top: 20px;
-`
-
-const EmblaContainer = styled.div`
-  display: flex;
-  touch-action: pan-y pinch-zoom;
 `
 
 const EmblaSlide = styled.div`
@@ -144,7 +131,6 @@ const Title = styled.p`
   color: ${({ theme }) => theme.COLOR['common-white']};
   ${({ theme }) => theme.FONT['body1-normal']};
   font-weight: 600;
-
   display: -webkit-box;
   -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
@@ -167,7 +153,6 @@ const SlideOverlay = styled.div<{ $active: boolean }>`
     0px 4px 4px rgba(0, 0, 0, 0.25),
     0px 0px 12px rgba(0, 0, 0, 0.04);
   backdrop-filter: blur(8px);
-
   transition: all 0.5s ease;
 
   ${({ $active }) =>

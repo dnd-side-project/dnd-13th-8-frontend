@@ -18,3 +18,7 @@ export interface ChatHistoryResponse {
   messages: ChatHistoryMessage[]
   nextCursor?: string
 }
+
+export interface ChatCountResponse {
+  totalCount: number
+}

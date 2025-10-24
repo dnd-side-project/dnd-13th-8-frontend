@@ -1,73 +1,47 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import styled from 'styled-components'
 
-import type { PlaylistInfo } from '@/entities/playlist'
-import LoopCarousel from '@/pages/home/ui/LoopCarousel'
+import { LoopCarousel } from '@/shared/ui'
 
 const meta: Meta<typeof LoopCarousel> = {
-  title: 'Pages/Home/LoopCarousel',
+  title: 'Shared/LoopCarousel',
   component: LoopCarousel,
-  argTypes: {
-    isLogin: {
-      control: { type: 'boolean' },
-      defaultValue: false,
-    },
+  parameters: {
+    layout: 'centered',
   },
 }
-
 export default meta
+
 type Story = StoryObj<typeof LoopCarousel>
 
-const mockData: PlaylistInfo[] = [
-  {
-    playlistId: 1,
-    playlistName: '플레이리스트 #1',
-    genre: '힙합',
-    songs: [],
-    creator: { creatorId: '1', creatorNickname: '사용자1' },
-    representative: false,
-  },
-  {
-    playlistId: 2,
-    playlistName: '플레이리스트 #2',
-    genre: '락',
-    songs: [],
-    creator: { creatorId: '2', creatorNickname: '사용자2' },
-    representative: false,
-  },
-  {
-    playlistId: 3,
-    playlistName: '플레이리스트 #3',
-    genre: '발라드',
-    songs: [],
-    creator: { creatorId: '3', creatorNickname: '사용자3' },
-    representative: false,
-  },
-  {
-    playlistId: 4,
-    playlistName: '플레이리스트 #4',
-    genre: '클래식',
-    songs: [],
-    creator: { creatorId: '4', creatorNickname: '사용자4' },
-    representative: false,
-  },
-]
-
 const StoryContainer = styled.div`
-  width: 420px;
+  width: 280px;
+  height: 280px;
   margin: 0 auto;
+  overflow: hidden;
+`
+
+const Box = styled.div`
+  width: 240px;
+  height: 240px;
+  background-color: ${({ theme }) => theme.COLOR['gray-800']};
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  flex: 0 0 100%;
+  margin: 8px;
 `
 
 export const Default: Story = {
-  args: {
-    data: mockData,
-    isLogin: false,
-  },
-  decorators: [
-    (Story) => (
-      <StoryContainer>
-        <Story />
-      </StoryContainer>
-    ),
-  ],
+  render: () => (
+    <StoryContainer>
+      <LoopCarousel>
+        <Box>Content 1</Box>
+        <Box>Content 2</Box>
+        <Box>Content 3</Box>
+      </LoopCarousel>
+    </StoryContainer>
+  ),
 }

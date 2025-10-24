@@ -130,7 +130,7 @@ const StyledOverlay = styled(motion.div)<{
   $childrenAlign?: 'center' | 'bottom'
   $layoutWidth: string
 }>`
-  z-index: 1000;
+  z-index: ${({ theme }) => theme.Z_INDEX.overlay};
   position: fixed;
   bottom: 0;
   display: flex;

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
 import type { CdCustomData } from '@/entities/playlist'
+import { LikeButton } from '@/features/like'
 import Cd from '@/shared/ui/Cd'
 
 interface PlaylistProps {
@@ -23,6 +24,9 @@ const Playlist = ({ id, title, username, stickers }: PlaylistProps) => {
     <Wrapper onClick={handleClick}>
       <CdBox>
         <Cd variant="xl" stickers={stickers} />
+        <ButtonContainer>
+          <LikeButton playlistId={id} type="HOME" />
+        </ButtonContainer>
       </CdBox>
       <InfoBox>
         <Title>{title}</Title>
@@ -39,7 +43,6 @@ const Wrapper = styled.div`
   flex-direction: column;
   gap: 12px;
   width: 140px;
-  cursor: pointer;
 `
 
 const CdBox = styled.div`
@@ -51,6 +54,12 @@ const CdBox = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+`
+
+const ButtonContainer = styled.div`
+  position: absolute;
+  top: 6px;
+  right: 6px;
 `
 
 const Title = styled.h3`

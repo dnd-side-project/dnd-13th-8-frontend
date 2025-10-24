@@ -192,7 +192,7 @@ const NavContainer = styled.div<{
   $layoutWidth: string
   $layoutBottomGap: number
 }>`
-  z-index: 100;
+  z-index: ${({ theme }) => theme.Z_INDEX.overlay};
   position: fixed;
   bottom: 0;
   margin: 0 -20px 0 0;

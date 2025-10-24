@@ -1,25 +1,20 @@
-import { useMemo } from 'react'
 import { createSearchParams, useNavigate } from 'react-router-dom'
 
 import styled, { css } from 'styled-components'
 
 import { CARD_IMAGES_LARGE } from '@/assets/card'
 import { Logo, Search } from '@/assets/icons'
-import { useShufflePlaylists } from '@/entities/playlist'
-import { useAuthStore } from '@/features/auth/store/authStore'
 import {
   useRecommendationsByRecent,
   useRecommendationsByFollow,
   useRecommendedGenres,
 } from '@/features/recommend'
-import { TITLE_TEXT } from '@/pages/home/config/messages'
-import { LoopCarousel } from '@/pages/home/ui'
+import { FirstSection } from '@/pages/home/ui'
 import { Header, SvgButton, ScrollCarousel } from '@/shared/ui'
 import { Playlist, PlaylistWithSong } from '@/widgets/playlist'
 
 const HomePage = () => {
   const navigate = useNavigate()
-  const { isLogin, userInfo } = useAuthStore()
 
   // TODO: 알림 기능 2차 스프린트 시 작업 예정
   // const handleNotiClick = () => navigate('/mypage/notification')
@@ -28,9 +23,6 @@ const HomePage = () => {
   const { data: RecentData } = useRecommendationsByRecent()
   const { data: FollowData } = useRecommendationsByFollow()
   const { data: GenreData } = useRecommendedGenres()
-  const { data } = useShufflePlaylists(4)
-
-  const playlists = useMemo(() => data?.pages.flatMap((page) => page.content) ?? [], [data])
 
   const handleKeywordSearch = (genreCode: string) => {
     navigate({
@@ -54,10 +46,8 @@ const HomePage = () => {
         }
       />
 
-      <FirstSection>
-        <h1>{isLogin ? TITLE_TEXT.MEMBER(userInfo.username) : TITLE_TEXT.GUEST}</h1>
-        <LoopCarousel data={playlists} isLogin={isLogin} />
-      </FirstSection>
+      <FirstSection />
+
       <SecondSection>
         <h1>퇴근길, 귀에 붙는 노래</h1>
         <ScrollCarousel gap={14}>
@@ -128,13 +118,6 @@ const Slide = styled.button<{ $bgImage?: string }>`
 const PageLayout = styled.div`
   display: flex;
   flex-direction: column;
-`
-
-const FirstSection = styled.section`
-  ${({ theme }) => theme.FONT.heading2};
-  letter-spacing: -0.019rem;
-  padding: 16px 0 40px 0;
-  font-weight: 500;
 `
 
 const sectionCommonLayout = css`

@@ -10,15 +10,16 @@ import MemberCharacter from '@/assets/images/img_character_member.png'
 import type { CdCustomData } from '@/entities/playlist'
 import ShareImage from '@/features/share/ui/ShareImage'
 import { useCopyCdShareUrl } from '@/shared/lib/useCopyCdShareUrl'
-import { flexRowCenter } from '@/shared/styles/mixins'
+import { flexRowCenter, myCdButton } from '@/shared/styles/mixins'
 import { BottomSheet, Button, Cd, ScrollCarousel, SvgButton } from '@/shared/ui'
 
 interface ShareButtonProps {
   playlistId: number
   stickers?: CdCustomData[]
+  type?: 'MY' | 'DISCOVER'
 }
 
-const ShareButton = ({ playlistId, stickers }: ShareButtonProps) => {
+const ShareButton = ({ playlistId, stickers, type = 'DISCOVER' }: ShareButtonProps) => {
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false)
   const [selectedIndex, setSelectedIndex] = useState(0)
   const { toast } = useToast()
@@ -56,7 +57,10 @@ const ShareButton = ({ playlistId, stickers }: ShareButtonProps) => {
 
   return (
     <>
-      <SvgButton icon={Share} width={24} height={24} onClick={handleShare} />
+      <ButtonWrapper $isMy={type === 'MY'} onClick={handleShare}>
+        <SvgButton icon={Share} width={type === 'MY' ? 16 : 24} height={type === 'MY' ? 16 : 24} />
+        {type === 'MY' && <p>공유</p>}
+      </ButtonWrapper>
 
       <BottomSheet
         isOpen={isBottomSheetOpen}
@@ -112,4 +116,8 @@ const ButtonBar = styled.div`
   & button {
     flex: 1;
   }
+`
+
+const ButtonWrapper = styled.div<{ $isMy: boolean }>`
+  ${({ $isMy }) => $isMy && myCdButton};
 `

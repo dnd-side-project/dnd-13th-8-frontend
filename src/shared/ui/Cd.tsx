@@ -21,6 +21,7 @@ interface CdProps {
     | 'customize'
     | 'carousel'
     | 'responsive'
+    | 'home'
   bgColor?: 'none' | 'default' | 'dark'
   stickers?: CdCustomData[]
   isPublic?: boolean
@@ -135,6 +136,7 @@ const sizeMap = {
   customize: { container: 220, base: 220, borderRadius: 0 },
   carousel: { container: 180, base: 180, borderRadius: 0 },
   responsive: { borderRadius: 10 },
+  home: { container: 180, base: 180, borderRadius: 0 },
 } as const
 
 interface StyleProps {
