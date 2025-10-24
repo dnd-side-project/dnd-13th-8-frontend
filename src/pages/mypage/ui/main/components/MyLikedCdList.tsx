@@ -40,8 +40,10 @@ const MyLikedCdList = () => {
         ) : (
           myLikedCdList?.map((item) => (
             <li key={item.playlistId}>
-              {/* TODO: 나의CD 이동 후 좋아요한 CD 재생은 각 브랜치 병합 이후 작업 */}
-              <CdButton type="button" onClick={() => navigate('/mycd')}>
+              <CdButton
+                type="button"
+                onClick={() => navigate(`/mypage/${item.playlistId}/tracklist`)}
+              >
                 {/* TODO: CD 컴포넌트 좋아요는 각 브랜치 병합 이후 작업 (10/20~) */}
                 <Cd
                   variant="responsive"

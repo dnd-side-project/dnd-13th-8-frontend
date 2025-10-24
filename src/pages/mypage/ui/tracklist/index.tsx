@@ -49,6 +49,10 @@ const MypageTracklist = () => {
 
   const onModalClose = () => setModal((prev) => ({ ...prev, isOpen: false }))
 
+  const onCdPlayClick = () => {
+    navigate(`/mycd?id=${cdMetadata?.playlistId}${isFromMyCdList ? '' : '&type=LIKE'}`)
+  }
+
   const onCdDeleteClick = () => {
     setModal({
       isOpen: true,
@@ -125,8 +129,7 @@ const MypageTracklist = () => {
         stickers={cdMetadata?.cdResponse?.cdItems ?? []}
       />
       <ControlContainer>
-        {/* TODO: 모두 재생 브랜치 병합 후 작업 */}
-        <CdPlayButton type="button">
+        <CdPlayButton type="button" onClick={onCdPlayClick}>
           <StartBlack width={20} height={20} />
           모두 재생
         </CdPlayButton>
@@ -142,7 +145,6 @@ const MypageTracklist = () => {
         >
           <Share width={20} height={20} />
         </CdActionButton>
-        {/* TODO: 공개 토글 백엔드 API 답변 오면 추가 작업 */}
         {isMyCd && (
           <CdActionButton
             type="button"
