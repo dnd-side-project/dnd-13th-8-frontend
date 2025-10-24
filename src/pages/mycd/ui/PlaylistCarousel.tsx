@@ -1,11 +1,12 @@
-import { useState, useCallback, type Key } from 'react'
+import { useState, useCallback, useEffect, type Key } from 'react'
+import { useParams } from 'react-router-dom'
 
 import styled from 'styled-components'
 
-import type { CdCustomData } from '@/entities/playlist'
+import type { CdCustomData, PlaylistInfo } from '@/entities/playlist'
+import { SwipeCarousel } from '@/features/swipe'
 import { flexRowCenter } from '@/shared/styles/mixins'
 import { Cd } from '@/shared/ui'
-import LoopCarousel from '@/shared/ui/LoopCarousel'
 
 interface CarouselPlaylist {
   playlistId: number
@@ -19,7 +20,17 @@ interface PlaylistCarouselProps {
 }
 
 const PlaylistCarousel = ({ data, onCenterChange }: PlaylistCarouselProps) => {
+  const { id: playlistId } = useParams()
   const [activeIndex, setActiveIndex] = useState(0)
+
+  // url 기준으로 active index 동기화
+  useEffect(() => {
+    if (!playlistId) return
+
+    const index = data.findIndex((p) => p.playlistId === Number(playlistId))
+
+    if (index >= 0) setActiveIndex(index)
+  }, [playlistId, data])
 
   const handleSelectIndex = useCallback(
     (index: number) => {
@@ -35,20 +46,34 @@ const PlaylistCarousel = ({ data, onCenterChange }: PlaylistCarouselProps) => {
     [data, onCenterChange]
   )
 
+  const playlistInfoData: PlaylistInfo[] = data.map((p) => ({
+    playlistId: p.playlistId,
+    playlistName: p.playlistName,
+    creator: { creatorId: '0', creatorNickname: '' },
+    genre: '',
+    songs: [],
+    isPublic: true,
+  }))
+
   return (
-    <LoopCarousel onSelectIndex={handleSelectIndex}>
+    <SwipeCarousel
+      data={playlistInfoData}
+      onSelectIndexChange={handleSelectIndex}
+      axis="x"
+      basePath="/mycd"
+    >
       {data.map((slide, index: Key) => (
         <EmblaSlide key={index}>
           <Slide $active={activeIndex === index}>
             <Cd
-              variant="carousel"
+              variant="mycd"
               bgColor="none"
               stickers={activeIndex === index ? slide.cdResponse.cdItems : []}
             />
           </Slide>
         </EmblaSlide>
       ))}
-    </LoopCarousel>
+    </SwipeCarousel>
   )
 }
 

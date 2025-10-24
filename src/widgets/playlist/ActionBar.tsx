@@ -31,7 +31,7 @@ const ActionBar = ({
     if (type === 'DISCOVER') {
       navigate(`/discover/${playlistId}/tracklist`)
     } else {
-      navigate(`/mycd/tracklist`, { state: { playlistId } })
+      navigate(`/mycd/${playlistId}/tracklist`)
     }
   }
 
