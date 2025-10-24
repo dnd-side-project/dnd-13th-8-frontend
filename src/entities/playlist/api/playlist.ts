@@ -1,43 +1,34 @@
 import type {
-  MyCdListResponse,
-  MyFollowingListResponse,
-  CdCustomDataResponse,
-  MyPlaylistResponse,
+  CdMetaResponse,
   PlaylistDetailResponse,
   PlaylistParams,
   PlaylistResponse,
-  MyRepresentResponse,
 } from '@/entities/playlist/types/playlist'
 import { api } from '@/shared/api/httpClient'
 
 // 나의 CD 리스트 조회
 export const getMyCdList = (sort: string) => {
-  return api.get<MyCdListResponse>(`/main/playlist/mypage/me?sort=${sort}`)
+  return api.get<CdMetaResponse>(`/main/playlist/mypage/me?sort=${sort}`)
 }
 
-// 나의 팔로잉 리스트 조회
-export const getMyFollowingList = (sort: string) => {
-  return api.get<MyFollowingListResponse>(`/main/playlist/mypage/me/follows?sort=${sort}`)
+// 좋아요한 CD 리스트 조회
+export const getLikedCdList = (sort: string) => {
+  return api.get<CdMetaResponse>(`/main/playlist/mypage/me/likes?sort=${sort}`)
 }
 
-// 단일 cd 커스텀 데이터 조회
-export const getCdCustomData = (playlistId: number) => {
-  return api.get<CdCustomDataResponse>(`/main/cd/${playlistId}`)
+// 나의 CD 트랙리스트 조회
+export const getTracklist = (cdId: number) => {
+  return api.get<PlaylistDetailResponse>(`/main/playlist/mypage/me/${cdId}`)
 }
 
-// 마이페이지 플레이리스트 조회
-export const getMyPagePlaylist = (playlistId: number) => {
-  return api.get<MyPlaylistResponse>(`/main/playlist/mypage/me/${playlistId}`)
+// 나의 CD 공개여부 토글
+export const patchMyCdPublic = (cdId: number) => {
+  return api.patch<null>(`/main/playlist/mypage/me/${cdId}/public`)
 }
 
-// 마이페이지 플레이리스트 삭제
-export const deleteMyPagePlaylist = (playlistId: number) => {
-  return api.delete<string | null>(`/main/playlist/${playlistId}`)
-}
-
-// 대표 플레이리스트 설정
-export const setPrimaryPlaylist = (playlistId: number) => {
-  return api.patch<string | null>(`/main/playlist/mypage/me/${playlistId}/representative`)
+// 나의 CD 삭제
+export const deleteMyCd = (cdId: number) => {
+  return api.delete<null>(`/main/playlist/${cdId}`)
 }
 
 // 셔플된 플레이리스트 목록 조회
@@ -45,9 +36,9 @@ export const getShufflePlaylists = (params: PlaylistParams) => {
   return api.get<PlaylistResponse>('/main/playlist/browse', { params })
 }
 
-// 플레이리스트 상세 조회 + 재생 기록 저장
-export const getPlaylistDetail = (playlistId: number) => {
-  return api.get<PlaylistDetailResponse>(`/main/playlist/${playlistId}`)
+// 트랙리스트 상세 조회
+export const getPlaylistDetail = (cdId: number) => {
+  return api.get<PlaylistDetailResponse>(`/main/playlist/${cdId}`)
 }
 
 // 하트비트 시작
@@ -63,14 +54,4 @@ export const postPlaylistConfirm = (playlistId: number) => {
 // 플리 조회수 단건 조회
 export const getPlaylistViewCounts = (playlistId: number) => {
   return api.get(`/main/playlist/browse/view-counts/${playlistId}`)
-}
-
-// 내 대표 플레이리스트 조회
-export const getMyRepresentativePlaylist = () => {
-  return api.get<MyRepresentResponse>('/main/playlist/mypage/me/representative')
-}
-
-// 좋아요한 플레이리스트 조회
-export const getMyLikedCdList = (sort: string) => {
-  return api.get<MyCdListResponse>(`/main/playlist/mypage/me/likes?sort=${sort}`)
 }

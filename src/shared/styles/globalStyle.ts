@@ -31,8 +31,16 @@ const GlobalStyle = createGlobalStyle`
     color: inherit;
   }
 
+  a {
+    color: inherit;
+    text-decoration: none;
+    -webkit-text-fill-color: inherit;
+    -webkit-text-highlight-color: transparent;
+    cursor: pointer;
+  }
+
   textarea {
-    all: unset;       
+    all: unset;
   }
 
   /* 모든 텍스트 요소에 white-space 적용 */
@@ -70,6 +78,11 @@ const GlobalStyle = createGlobalStyle`
   }
   ::-webkit-scrollbar {
     display: none;
+  }
+
+  /* 전화번호, 이메일 등을 자동으로 링크화하지 않게 함 */
+  meta[name="format-detection"] {
+    content: "telephone=no, email=no, address=no";
   }
 `
 

@@ -4,15 +4,15 @@ import type { ComponentType, LazyExoticComponent } from 'react'
 import RedirectToShuffle from '@/pages/discover/ui/RedirectToShuffle'
 
 const HomePage = lazy(() => import('@/pages/home'))
-const MyPageLayout = lazy(() => import('@/pages/myPage/ui/MyPageLayout'))
-const MyPage = lazy(() => import('@/pages/myPage/ui'))
-const Customize = lazy(() => import('@/pages/myPage/ui/customize'))
-const MyPagePlaylist = lazy(() => import('@/pages/myPage/ui/playlist'))
-const Setting = lazy(() => import('@/pages/myPage/ui/setting'))
-const Terms = lazy(() => import('@/pages/myPage/ui/terms'))
-const Privacy = lazy(() => import('@/pages/myPage/ui/privacy'))
-const Unregister = lazy(() => import('@/pages/myPage/ui/unregister'))
-const Notification = lazy(() => import('@/pages/myPage/ui/notification'))
+const MypageLayout = lazy(() => import('@/pages/mypage/ui/MypageLayout'))
+const Mypage = lazy(() => import('@/pages/mypage/ui/main'))
+const Customize = lazy(() => import('@/pages/mypage/ui/customize'))
+const MypageTracklist = lazy(() => import('@/pages/mypage/ui/tracklist'))
+const Setting = lazy(() => import('@/pages/mypage/ui/setting'))
+const Terms = lazy(() => import('@/pages/mypage/ui/terms'))
+const Privacy = lazy(() => import('@/pages/mypage/ui/privacy'))
+const Unregister = lazy(() => import('@/pages/mypage/ui/unregister'))
+const Notification = lazy(() => import('@/pages/mypage/ui/notification'))
 const SearchPage = lazy(() => import('@/pages/search'))
 const SearchResult = lazy(() => import('@/pages/search/SearchResultPage'))
 const DiscoverLayout = lazy(() => import('@/pages/discover/DiscoverLayout'))
@@ -71,14 +71,14 @@ export const routesConfig: RouteConfig[] = [
   // 마이페이지
   {
     path: '/mypage',
-    component: MyPageLayout,
+    component: MypageLayout,
     hideNav: true,
     isPrivate: true,
     isNotSuspense: true,
     children: [
-      { path: '', component: MyPage, hideNav: false, isNotSuspense: false },
+      { path: '', component: Mypage, hideNav: false, isNotSuspense: false },
       { path: 'customize', component: Customize, isNotSuspense: false },
-      { path: ':id/playlist', component: MyPagePlaylist, hideNav: false },
+      { path: ':id/tracklist', component: MypageTracklist, hideNav: false },
       { path: 'setting', component: Setting },
       { path: 'terms', component: Terms },
       { path: 'privacy', component: Privacy },

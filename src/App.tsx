@@ -95,7 +95,7 @@ const App = () => {
   return (
     <RootWrapper>
       {deviceType !== 'mobile' && (
-        <>
+        <div aria-hidden="true">
           <CommonBgElement src={CommonBg} alt="background" />
           <LogoElement src={Logo} alt="logo" />
           <MusicElement src={OpacityMusic} alt="music" />
@@ -134,7 +134,7 @@ const App = () => {
               </li>
             </TextListContainer>
           </DescriptionElement>
-        </>
+        </div>
       )}
 
       <MainLayout

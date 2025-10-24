@@ -1,51 +1,34 @@
-import type { MusicGenreId } from '@/shared/config/musicGenres'
-
-export interface MyCdInfo {
+export interface CdBasicInfo {
   playlistId: number
   playlistName: string
+  creatorNickname?: string
   isPublic: boolean
 }
 
-export type MyCdListResponse = (MyCdInfo & OnlyCdResponse)[]
-
-export interface MyFollowingInfo {
-  creatorId: string
-  creatorPlaylistId: string
-  creatorNickname: string
-  creatorProfileImageUrl: string | null
-}
-
-export interface MyFollowingListResponse {
-  size: number
-  followPlaylistDto: MyFollowingInfo[]
-}
-
 export interface CdCustomData {
-  cdItemId: number
+  cdItemId?: number
   propId: number
-  theme: string
+  theme?: string
   xCoordinate: number
   yCoordinate: number
+  zCoordinate: number
   height: number
   width: number
   scale: number
   angle: number
-  imageUrl: string
+  imageUrl?: string
 }
-export interface CdCustomDataResponse {
-  playlistId: number
+
+export interface CdCoverInfo {
   cdItems: CdCustomData[]
 }
 
+export type CdMetaResponse = (CdBasicInfo & OnlyCdResponse)[]
+
 export interface OnlyCdResponse {
-  onlyCdResponse: {
+  cdResponse: {
     cdItems: CdCustomData[]
   }
-}
-
-export interface MyPlaylistResponse extends MyCdInfo, OnlyCdResponse {
-  songs: Track[]
-  genre: MusicGenreId
 }
 
 export interface Track {
@@ -54,6 +37,7 @@ export interface Track {
   youtubeUrl: string
   youtubeThumbnail: string
   youtubeLength: number
+  orderIndex: number
 }
 
 export interface Creator {
@@ -66,17 +50,13 @@ export interface PlaylistDetail {
   playlistName: string
   genre: string
   songs: Track[]
-  representative: boolean
+  isPublic: boolean
 }
 
-export interface PlaylistDetailResponse extends PlaylistDetail {
+export interface PlaylistDetailResponse extends PlaylistDetail, OnlyCdResponse {
   creatorId: string
   creatorNickname: string
-
-  // TODO : 타입 맞춰달라고 수정 요청 해야 함
-  onlyCdResponse?: {
-    cdItems: CdCustomData[]
-  }
+  creatorProfileImageUrl?: string
 }
 
 export interface PlaylistInfo extends PlaylistDetail {
@@ -110,15 +90,4 @@ export interface PlaylistParams {
   cursorPosition?: number
   cursorCardId?: number
   size?: number
-}
-
-export interface MyRepresentResponse {
-  playlistId: number
-  playlistName: string
-  isRepresentative: boolean
-  songs: Track[]
-  genre: MusicGenreId
-  onlyCdResponse: {
-    cdItems: CdCustomData[]
-  }
 }

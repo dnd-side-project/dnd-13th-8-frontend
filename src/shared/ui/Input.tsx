@@ -28,6 +28,8 @@ interface InputProps {
   onBlur?: FocusEventHandler<HTMLInputElement>
   onClickIcon?: () => void
   onKeyDown?: React.KeyboardEventHandler<HTMLInputElement>
+  required?: boolean
+  disabled?: boolean
 }
 
 const Input = ({
@@ -46,6 +48,8 @@ const Input = ({
   onBlur,
   onClickIcon,
   onKeyDown,
+  required = false,
+  disabled = false,
 }: InputProps) => {
   return (
     <InputWrap $width={width ?? '100%'}>
@@ -65,6 +69,8 @@ const Input = ({
           onFocus={onFocus}
           onBlur={onBlur}
           onKeyDown={onKeyDown}
+          required={required}
+          disabled={disabled}
         />
       </InputContainer>
       {error && errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
@@ -75,6 +81,7 @@ const Input = ({
 export default Input
 
 const InputWrap = styled.div<{ $width: string }>`
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -99,12 +106,13 @@ const InputContainer = styled.div<{
   &:focus-within {
     border: 1px solid
       ${({ theme, $error }) =>
-    $error ? theme.COLOR['common-error'] : theme.COLOR['primary-normal']};
+        $error ? theme.COLOR['common-error'] : theme.COLOR['primary-normal']};
   }
 `
 
 const StyledInput = styled.input`
   width: 100%;
+  height: 100%;
   color: ${({ theme }) => theme.COLOR['gray-10']};
   ${({ theme }) => theme.FONT['body2-normal']};
 
@@ -114,6 +122,9 @@ const StyledInput = styled.input`
 `
 
 const ErrorMessage = styled.span`
+  position: absolute;
+  left: 0;
+  bottom: -20px;
   color: ${({ theme }) => theme.COLOR['common-error']};
   ${({ theme }) => theme.FONT['caption1']};
 `

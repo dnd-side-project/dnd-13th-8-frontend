@@ -6,7 +6,7 @@ import styled from 'styled-components'
 import { usePlaylist } from '@/app/providers/PlayerProvider'
 import { MemberCharacter } from '@/assets/images'
 import { usePlaylistDetail } from '@/entities/playlist'
-import { useMyCdList, useMyLikedCdList } from '@/entities/playlist/model/useMyPlaylist'
+import { useMyCdList, useMyLikedCdList } from '@/entities/playlist/model/useMyCd'
 import { useAuthStore } from '@/features/auth/store/authStore'
 import { useChatSocket } from '@/features/chat/model/sendMessage'
 import { HeaderTab, PlaylistCarousel } from '@/pages/mycd/ui'
@@ -91,7 +91,7 @@ const MyCdPage = () => {
         playlistName: playlistDetail.playlistName,
         genre: playlistDetail.genre,
         songs: playlistDetail.songs,
-        representative: false,
+        isPublic: playlistDetail.isPublic,
         cdItems: playlistDetail.cdResponse?.cdItems || [],
       }
 

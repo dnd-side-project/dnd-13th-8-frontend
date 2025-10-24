@@ -11,6 +11,11 @@ export const getAnonymousLogin = () => {
   return api.get<string>('/auth/anonymous')
 }
 
+// 회원 탈퇴
+export const deleteAccount = () => {
+  return api.delete<null>('/main/user/account')
+}
+
 // 채팅 내 이름/아이디 확인
 export const getUserInfo = () => {
   return api.get<UserInfo>('/chat/user')

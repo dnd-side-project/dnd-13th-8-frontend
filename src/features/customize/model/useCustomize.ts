@@ -1,60 +1,87 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import {
+  getFinalCdCustom,
   postYouTubeVideoInfo,
-  postTempPlaylist,
+  postCdTempSave,
+  postCdFinalCreate,
+  postCdFinalUpdate,
   getUserStickers,
   postUserSticker,
-  postFinalPlaylist,
-  patchEditPlaylist,
 } from '@/features/customize/api/customize'
 import type {
-  YoutubeVideoInfoPayload,
-  PlaylistMetaInfo,
+  CdTempSavePayload,
   UserStickerPayload,
-  FinalPlaylistPayload,
-  EditPlaylistPayload,
+  CdFinalCreatePayload,
+  CdFinalUpdatePayload,
 } from '@/features/customize/types/customize'
 
-export const useTempSavePlaylist = () => {
-  return useMutation({
-    mutationKey: ['tempSavePlaylist'],
-    mutationFn: async ({
-      videoPayload,
-      metaInfo,
-    }: {
-      videoPayload: YoutubeVideoInfoPayload
-      metaInfo: PlaylistMetaInfo
-    }) => {
-      const { videoLinks } = videoPayload
-      const videoResArr = await postYouTubeVideoInfo(videoLinks)
+export const useFinalCdCustom = (cdId: number) => {
+  return useQuery({
+    queryKey: ['finalCdCustom', cdId],
+    queryFn: () => getFinalCdCustom(cdId),
+    enabled: Number.isInteger(cdId) && cdId >= 0,
+    staleTime: 0,
+  })
+}
 
+export const useCdTempSave = () => {
+  return useMutation({
+    mutationKey: ['cdTempSave'],
+    mutationFn: async ({
+      youtubeLinkList,
+      tempSaveMap,
+    }: {
+      youtubeLinkList: string[]
+      tempSaveMap: CdTempSavePayload
+    }) => {
+      const videoResArr = await postYouTubeVideoInfo(youtubeLinkList)
       if (!videoResArr?.length) {
-        throw new Error('유튜브 영상 정보를 가져오지 못했습니다.') // onError 던짐
+        throw new Error('유튜브 영상 정보를 가져오지 못했습니다.')
       }
 
-      // res.link는 payload의 링크와 동일하므로 null일 수 없음
-      const videoResMap = new Map(videoResArr.map((res) => [res.link, res]))
-      const youTubeVideoInfo = videoLinks.flatMap((link) => {
-        const videoData = videoResMap.get(link)
-        return videoData?.title
-          ? [
-              {
-                link: videoData.link,
-                title: videoData.title,
-                thumbnailUrl: videoData.thumbnailUrl,
-                duration: videoData.duration,
-              },
-            ]
-          : []
+      const newVideoInfoList = tempSaveMap.youTubeVideoInfo.map((e) => {
+        const resMap = videoResArr.find((res) => e.link === res.link)
+        if (!resMap) throw new Error('일치하는 유튜브 영상 정보를 찾지 못했습니다.')
+        const { duration, thumbnailUrl, title } = resMap
+        return {
+          ...e,
+          duration,
+          thumbnailUrl,
+          title,
+        }
       })
 
-      await postTempPlaylist({
-        ...metaInfo,
-        youTubeVideoInfo,
-      })
+      const tempSavePayload = {
+        ...tempSaveMap,
+        youTubeVideoInfo: newVideoInfoList,
+      }
+      await postCdTempSave(tempSavePayload)
     },
   })
+}
+
+export const useCdFinalSave = () => {
+  // 생성
+  const createMutation = useMutation({
+    mutationKey: ['cdFinalCreate'],
+    mutationFn: (payload: CdFinalCreatePayload) => {
+      return postCdFinalCreate(payload)
+    },
+  })
+
+  // 수정
+  const updateMutation = useMutation({
+    mutationKey: ['cdFinalUpdate'],
+    mutationFn: (payload: CdFinalUpdatePayload) => {
+      return postCdFinalUpdate(payload)
+    },
+  })
+
+  return {
+    createMutation,
+    updateMutation,
+  }
 }
 
 export const useUserSticker = () => {
@@ -81,27 +108,9 @@ export const useUserSticker = () => {
     },
   })
 
-  // 최종 저장
-  const finalSaveMutation = useMutation({
-    mutationKey: ['postFinalPlaylist'],
-    mutationFn: (payload: FinalPlaylistPayload) => {
-      return postFinalPlaylist(payload)
-    },
-  })
-
-  // 수정 저장
-  const editSaveMutation = useMutation({
-    mutationKey: ['patchEditPlaylist'],
-    mutationFn: (payload: EditPlaylistPayload) => {
-      return patchEditPlaylist(payload)
-    },
-  })
-
   return {
     userStickerList,
     uploadSticker: uploadMutation,
     uploadLoading: uploadMutation.isPending,
-    finalSave: finalSaveMutation,
-    editSave: editSaveMutation,
   }
 }

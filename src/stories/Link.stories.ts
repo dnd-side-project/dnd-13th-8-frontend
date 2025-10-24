@@ -26,6 +26,7 @@ const defaultData = {
   youtubeUrl: 'https://youtu.be/test1',
   youtubeThumbnail: '',
   youtubeLength: 180,
+  orderIndex: 1,
 }
 
 export const Interactive: Story = {

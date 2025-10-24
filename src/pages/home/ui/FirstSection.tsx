@@ -6,12 +6,11 @@ import styled from 'styled-components'
 import { RightArrow } from '@/assets/icons'
 import { HomeCharacter } from '@/assets/images'
 import { useShufflePlaylists } from '@/entities/playlist'
-import { useMyCdList } from '@/entities/playlist/model/useMyPlaylist'
+import { useMyCdList } from '@/entities/playlist/model/useMyCd'
 import { useAuthStore } from '@/features/auth/store/authStore'
 import { BUTTON_TEXT, TITLE_TEXT } from '@/pages/home/config/messages'
 import { HomeCarousel } from '@/pages/home/ui'
 import { flexRowCenter } from '@/shared/styles/mixins'
-
 
 const FirstSection = () => {
   const { isLogin, userInfo } = useAuthStore()

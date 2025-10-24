@@ -1,25 +1,39 @@
-import type { StickerThemeUpperType } from '@/pages/myPage/types/mypage'
+import type { CdCoverInfo } from '@/entities/playlist/types/playlist'
+import type { StickerThemeUpperType } from '@/pages/mypage/types/mypage'
 import type { MusicGenreId } from '@/shared/config/musicGenres'
 
-export interface YoutubeVideoInfoPayload {
-  videoLinks: string[]
-}
-
-export interface YouTubeVideoInfo {
+export interface YoutubeVideoInfo {
   link: string
   title: string
   thumbnailUrl: string
   duration: string
+  orderIndex: number
 }
 
-export interface PlaylistMetaInfo {
+export type CdTempSavePayload = {
   name: string
   genre: MusicGenreId
-  isRepresentative: boolean
+  isPublic: boolean
+  youTubeVideoInfo: YoutubeVideoInfo[]
 }
 
-export interface TempPlaylistPayload extends PlaylistMetaInfo {
-  youTubeVideoInfo: YouTubeVideoInfo[]
+export type CdFinalCreatePayload = { saveCdRequest: CdCoverInfo }
+
+export type CdFinalUpdatePayload = CdFinalCreatePayload & { playlistId: number }
+
+export type CdCustomResponse = CdCoverInfo & { playlistId: number }
+
+export type CdFinalSaveResponse = {
+  playlistId: number
+  songs: {
+    id: number
+    playlistId: number
+    youtubeUrl: string
+    youtubeTitle: string
+    youtubeThumbnail: string
+    youtubeLength: number
+    orderIndex: number
+  }[]
 }
 
 export interface UserEachStickerResponse {
@@ -35,41 +49,4 @@ export interface UserStickerListResponse {
 export interface UserStickerPayload {
   theme: StickerThemeUpperType
   file: File
-}
-
-export interface CdItem {
-  propId: number
-  xCoordinate: number
-  yCoordinate: number
-  height: number
-  width: number
-  scale: number
-  angle: number
-}
-
-export interface SaveCdRequestDto {
-  cdItems: CdItem[]
-}
-
-export interface FinalPlaylistPayload {
-  saveCdRequestDto: SaveCdRequestDto
-}
-
-export interface EditPlaylistPayload extends FinalPlaylistPayload {
-  playlistId: number
-  saveCdRequestDto: SaveCdRequestDto
-}
-
-export interface SongItem {
-  id: number
-  playlistId: number
-  youtubeUrl: string
-  youtubeTitle: string
-  youtubeThumbnail: string
-  youtubeLength: number
-}
-
-export interface FinalPlaylistResponse {
-  playlistId: number
-  songs: SongItem[]
 }
