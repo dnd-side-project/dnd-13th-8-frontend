@@ -41,7 +41,7 @@ const PlaylistCarousel = ({ data, onCenterChange }: PlaylistCarouselProps) => {
         <EmblaSlide key={index}>
           <Slide $active={activeIndex === index}>
             <Cd
-              variant="carousel"
+              variant="mycd"
               bgColor="none"
               stickers={activeIndex === index ? slide.cdResponse.cdItems : []}
             />
