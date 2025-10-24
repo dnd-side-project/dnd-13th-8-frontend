@@ -50,6 +50,7 @@ const MypageTracklist = () => {
   const onModalClose = () => setModal((prev) => ({ ...prev, isOpen: false }))
 
   const onCdPlayClick = () => {
+    if (!cdMetadata?.playlistId) return
     navigate(`/mycd?id=${cdMetadata?.playlistId}${isFromMyCdList ? '' : '&type=LIKE'}`)
   }
 

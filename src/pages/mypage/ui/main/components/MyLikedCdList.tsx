@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import styled from 'styled-components'
@@ -8,7 +8,7 @@ import { useMyLikedCdList } from '@/entities/playlist/model/useMyCd'
 import { CdNameInfo } from '@/pages/mypage/ui/main/components'
 import { useSingleSelect } from '@/shared/lib/useSingleSelect'
 import { flexColCenter } from '@/shared/styles/mixins'
-import { Loading, Error, ContentHeader, Modal } from '@/shared/ui'
+import { Loading, Error as ErrorUi, ContentHeader, Modal } from '@/shared/ui'
 import type { SortType } from '@/shared/ui/ContentHeader'
 import type { ModalProps } from '@/shared/ui/Modal'
 import { Playlist } from '@/widgets/playlist'
@@ -35,24 +35,27 @@ const MyLikedCdList = () => {
   const { selected: currentSort, onSelect: setCurrentSort } = useSingleSelect<SortType>('POPULAR')
   const { data: myLikedCdList, isLoading, isError, isSuccess } = useMyLikedCdList(currentSort)
 
-  const onLikedCdClick = (cdId: number, isPublic: boolean) => {
-    if (!cdId) return
-    if (!isPublic) {
-      setModal({
-        isOpen: true,
-        title: '비공개된 CD는 재생할 수 없어요.',
-        ctaType: 'single',
-        confirmText: '확인',
-        onClose: () => setModal((p) => ({ ...p, isOpen: false })),
-        onConfirm: () => setModal((p) => ({ ...p, isOpen: false })),
-      })
-      return
-    }
-    navigate(`/mypage/${cdId}/tracklist`)
-  }
+  const onLikedCdClick = useCallback(
+    (cdId: number, isPublic: boolean) => {
+      if (!cdId) return
+      if (!isPublic) {
+        setModal({
+          isOpen: true,
+          title: '비공개된 CD는 재생할 수 없어요.',
+          ctaType: 'single',
+          confirmText: '확인',
+          onClose: () => setModal((p) => ({ ...p, isOpen: false })),
+          onConfirm: () => setModal((p) => ({ ...p, isOpen: false })),
+        })
+        return
+      }
+      navigate(`/mypage/${cdId}/tracklist`)
+    },
+    [navigate]
+  )
 
   if (isLoading) return <Loading isLoading={isLoading} />
-  if (isError || !isSuccess) return <Error />
+  if (isError || !isSuccess) return <ErrorUi />
 
   return (
     <>
@@ -80,9 +83,8 @@ const MyLikedCdList = () => {
               >
                 <Playlist
                   id={item.playlistId}
-                  key={item.playlistId}
                   title={item.playlistName}
-                  username={item.playlistName}
+                  username={item?.creatorNickname || ''}
                   stickers={item?.cdResponse?.cdItems}
                   cdVariant="responsive"
                   isPublic={item.isPublic}
@@ -131,9 +133,6 @@ const CdButton = styled.button`
   width: 100%;
   aspect-ratio: 1 / 1;
   border-radius: 10px;
-
-  & > {
-  }
 `
 
 const NoLikedWrapper = styled.div`
