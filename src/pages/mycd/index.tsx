@@ -9,12 +9,10 @@ import { usePlaylistDetail } from '@/entities/playlist'
 import { useMyCdList, useMyLikedCdList } from '@/entities/playlist/model/useMyPlaylist'
 import { useAuthStore } from '@/features/auth/store/authStore'
 import { useChatSocket } from '@/features/chat/model/sendMessage'
-import { BUTTON_TEXT } from '@/pages/home/config/messages'
-import { LoopCarousel } from '@/pages/home/ui'
-import { HeaderTab } from '@/pages/mycd/ui'
+import { HeaderTab, PlaylistCarousel } from '@/pages/mycd/ui'
 import { getVideoId } from '@/shared/lib'
 import { useDevice } from '@/shared/lib/useDevice'
-import { flexColCenter } from '@/shared/styles/mixins'
+import { flexColCenter, flexRowCenter } from '@/shared/styles/mixins'
 import { Button, LiveInfo } from '@/shared/ui'
 import { ActionBar, ControlBar, ProgressBar, VolumeButton, YoutubePlayer } from '@/widgets/playlist'
 
@@ -94,7 +92,7 @@ const MyCdPage = () => {
         genre: playlistDetail.genre,
         songs: playlistDetail.songs,
         representative: false,
-        cdItems: playlistDetail.onlyCdResponse?.cdItems || [],
+        cdItems: playlistDetail.cdResponse?.cdItems || [],
       }
 
       setPlaylist(convertedPlaylist, 0, 0)
@@ -128,13 +126,20 @@ const MyCdPage = () => {
     : null
 
   if (isError) {
+    navigate('/error')
+    return null
+  }
+
+  const isEmpty = playlistData && playlistData.length === 0
+
+  if (isEmpty) {
     return (
-      <ErrorContainer>
+      <ViewContainer>
         <img src={MemberCharacter} alt="Guest Character" width={160} height={160} />
-        <Button size="S" state="primary" onClick={() => navigate('/mypage/customize')}>
-          {BUTTON_TEXT.MEMBER}
-        </Button>
-      </ErrorContainer>
+        <NavigateBtn onClick={() => navigate('/mypage/customize')}>
+          새로운 CD에 취향 담기
+        </NavigateBtn>
+      </ViewContainer>
     )
   }
 
@@ -148,18 +153,27 @@ const MyCdPage = () => {
               <VolumeButton playerRef={playerRef} isMuted={isMuted} setIsMuted={setIsMuted} />
             )}
             <LiveInfo isOnAir={listenersNum > 0} listenerCount={listenersNum} isOwner={false} />
-            <Button size="S" state="primary" onClick={() => navigate('/mypage/customize')}>
-              편집
-            </Button>
+            {selectedTab === 'MY' && (
+              <Button
+                size="S"
+                state="primary"
+                onClick={() =>
+                  navigate(`/mypage/customize?playlistId=${currentPlaylist?.playlistId}`)
+                }
+              >
+                편집
+              </Button>
+            )}
           </Container>
 
-          <LoopCarousel data={playlistData ?? []} onCenterChange={handleCenterChange} />
+          <PlaylistCarousel data={playlistData ?? []} onCenterChange={handleCenterChange} />
 
           <ActionBar
             playlistId={centerPlaylist.playlistId ?? 0}
-            creatorId="currentPlaylist.creator.creatorId"
-            stickers={[]}
+            creatorId={currentPlaylist.creator.creatorId}
+            stickers={playlistDetail?.cdResponse?.cdItems || []}
             type="MY"
+            selectedTab={selectedTab}
           />
 
           <Title>{centerPlaylist.playlistName}</Title>
@@ -218,8 +232,18 @@ const BottomWrapper = styled.div`
   gap: 20px;
 `
 
-const ErrorContainer = styled.div`
+const ViewContainer = styled.div`
   ${flexColCenter}
-  height: 100dvh;
-  gap: 12px;
+  height: 100%;
+  gap: 16px;
+`
+
+const NavigateBtn = styled.button`
+  ${flexRowCenter}
+  background-color: ${({ theme }) => theme.COLOR['primary-normal']};
+  border-radius: 99px;
+  color: ${({ theme }) => theme.COLOR['gray-800']};
+  padding: 6px 20px;
+  height: 32px;
+  ${({ theme }) => theme.FONT['body2-normal']};
 `

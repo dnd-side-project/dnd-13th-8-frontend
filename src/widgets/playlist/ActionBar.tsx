@@ -15,32 +15,41 @@ interface ActionBarProps {
   creatorId: string
   stickers?: CdCustomData[]
   type?: 'MY' | 'DISCOVER'
+  selectedTab?: 'MY' | 'LIKE'
 }
 
-const ActionBar = ({ playlistId, creatorId, stickers, type = 'DISCOVER' }: ActionBarProps) => {
+const ActionBar = ({
+  playlistId,
+  creatorId,
+  stickers,
+  type = 'DISCOVER',
+  selectedTab = 'MY',
+}: ActionBarProps) => {
   const navigate = useNavigate()
 
   const handleMovePlaylist = () => {
     if (type === 'DISCOVER') {
-      navigate(`/discover/${playlistId}/playlist`)
+      navigate(`/discover/${playlistId}/tracklist`)
     } else {
-      navigate(`/mycd/playlist`, { state: { playlistId } })
+      navigate(`/mycd/tracklist`, { state: { playlistId } })
     }
   }
 
   return (
     <Wrapper $type={type}>
-      <LikeButton playlistId={playlistId} isLiked={false} type={type} />
+      {!(type === 'MY' && selectedTab === 'MY') && (
+        <LikeButton playlistId={playlistId} type={type} />
+      )}
       <ChatButton roomId={playlistId} creatorId={creatorId} type={type} />
+      <ShareButton playlistId={playlistId} stickers={stickers} type={type} />
       <DetailButton $isMy={type === 'MY'} onClick={handleMovePlaylist}>
         <SvgButton
           icon={Playlist}
           width={type === 'MY' ? 16 : 24}
           height={type === 'MY' ? 16 : 24}
         />
-        {type === 'MY' && <p>목록</p>}
+        {type === 'MY' && <p>트랙리스트</p>}
       </DetailButton>
-      <ShareButton playlistId={playlistId} stickers={stickers} type={type} />
     </Wrapper>
   )
 }
@@ -53,6 +62,5 @@ const Wrapper = styled.div<{ $type: 'MY' | 'DISCOVER' }>`
 `
 
 const DetailButton = styled.div<{ $isMy: boolean }>`
-  ${flexRowCenter};
   ${({ $isMy }) => $isMy && myCdButton};
 `

@@ -11,10 +11,9 @@ interface PlaylistProps {
   username: string
   id: number
   stickers?: CdCustomData[]
-  isLiked: boolean
 }
 
-const Playlist = ({ id, title, username, stickers, isLiked }: PlaylistProps) => {
+const Playlist = ({ id, title, username, stickers }: PlaylistProps) => {
   const navigate = useNavigate()
 
   const handleClick = () => {
@@ -26,7 +25,7 @@ const Playlist = ({ id, title, username, stickers, isLiked }: PlaylistProps) => 
       <CdBox>
         <Cd variant="xl" stickers={stickers} />
         <ButtonContainer>
-          <LikeButton playlistId={id} isLiked={isLiked} />
+          <LikeButton playlistId={id} type="HOME" />
         </ButtonContainer>
       </CdBox>
       <InfoBox>

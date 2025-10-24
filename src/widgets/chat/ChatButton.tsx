@@ -3,7 +3,8 @@ import { useState } from 'react'
 import styled from 'styled-components'
 
 import { Message } from '@/assets/icons'
-import { flexRowCenter, myCdButton } from '@/shared/styles/mixins'
+import { useChatCount } from '@/features/chat/model/useChat'
+import { flexColCenter, myCdButton } from '@/shared/styles/mixins'
 import { SvgButton } from '@/shared/ui'
 
 import ChatBottomSheet from './ChatBottomSheet'
@@ -17,6 +18,8 @@ interface ChatButtonProps {
 const ChatButton = ({ roomId, creatorId, type = 'DISCOVER' }: ChatButtonProps) => {
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false)
 
+  const { data, isLoading, isError } = useChatCount(String(roomId))
+
   return (
     <>
       <ButtonWrapper $isMy={type === 'MY'} onClick={() => setIsBottomSheetOpen(true)}>
@@ -25,7 +28,7 @@ const ChatButton = ({ roomId, creatorId, type = 'DISCOVER' }: ChatButtonProps) =
           width={type === 'MY' ? 16 : 24}
           height={type === 'MY' ? 16 : 24}
         />
-        {type === 'MY' && <p>28</p>}
+        <Count>{isLoading || isError ? '···' : (data?.totalCount ?? 0)}</Count>
       </ButtonWrapper>
 
       {isBottomSheetOpen && (
@@ -43,6 +46,16 @@ const ChatButton = ({ roomId, creatorId, type = 'DISCOVER' }: ChatButtonProps) =
 export default ChatButton
 
 const ButtonWrapper = styled.div<{ $isMy: boolean }>`
-  ${flexRowCenter};
-  ${({ $isMy }) => $isMy && myCdButton};
+  ${({ $isMy }) =>
+    $isMy
+      ? myCdButton
+      : `
+        ${flexColCenter};
+        gap: 2px;
+      `}
+`
+
+const Count = styled.p`
+  ${({ theme }) => theme.FONT.caption1}
+  color: ${({ theme }) => theme.COLOR['gray-100']};
 `

@@ -4,12 +4,11 @@ import styled, { useTheme } from 'styled-components'
 
 import { Like, LikeStroke } from '@/assets/icons'
 import { useLike } from '@/features/like'
-import { flexRowCenter, myCdButton } from '@/shared/styles/mixins'
+import { myCdButton } from '@/shared/styles/mixins'
 import SvgButton from '@/shared/ui/SvgButton'
 
 interface LikeButtonProps {
   playlistId: number
-  isLiked: boolean
   type?: 'HOME' | 'DISCOVER' | 'MY'
 }
 
@@ -19,9 +18,9 @@ const ICON_STYLE = {
   MY: { size: 16, Icon: LikeStroke },
 } as const
 
-const LikeButton = ({ playlistId, isLiked, type = 'HOME' }: LikeButtonProps) => {
+const LikeButton = ({ playlistId, type = 'HOME' }: LikeButtonProps) => {
   const theme = useTheme()
-  const { liked, toggleLike } = useLike(playlistId, isLiked)
+  const { liked, toggleLike } = useLike(playlistId)
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
@@ -58,6 +57,5 @@ export default LikeButton
 
 const Wrapper = styled.div<{ $opacity?: number; $isMy: boolean }>`
   opacity: ${({ $opacity }) => $opacity};
-  ${flexRowCenter};
   ${({ $isMy }) => $isMy && myCdButton};
 `

@@ -45,7 +45,7 @@ const PlaylistInfo = ({ playlistData, isLoading, isError }: PlaylistInfoProps) =
   return (
     <Wrapper>
       <Header
-        left={<span>플레이리스트</span>}
+        left={<span>트랙리스트</span>}
         right={<SvgButton icon={Cancel} onClick={() => navigate(-1)} />}
       />
       <Content>

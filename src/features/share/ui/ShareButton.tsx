@@ -146,6 +146,5 @@ const ButtonBar = styled.div`
 `
 
 const ButtonWrapper = styled.div<{ $isMy: boolean }>`
-  ${flexRowCenter};
   ${({ $isMy }) => $isMy && myCdButton};
 `

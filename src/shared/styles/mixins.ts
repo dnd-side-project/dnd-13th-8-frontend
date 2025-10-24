@@ -22,4 +22,5 @@ export const myCdButton = css`
   cursor: pointer;
   ${({ theme }) => theme.FONT.label};
   color: ${({ theme }) => theme.COLOR['gray-100']};
+  ${flexRowCenter}
 `
