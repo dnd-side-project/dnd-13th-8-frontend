@@ -7,8 +7,9 @@ import { useMyLikedCdList } from '@/entities/playlist/model/useMyCd'
 import { CdNameInfo } from '@/pages/mypage/ui/main/components'
 import { useSingleSelect } from '@/shared/lib/useSingleSelect'
 import { flexColCenter } from '@/shared/styles/mixins'
-import { Loading, Error, ContentHeader, Cd } from '@/shared/ui'
+import { Loading, Error, ContentHeader } from '@/shared/ui'
 import type { SortType } from '@/shared/ui/ContentHeader'
+import { Playlist } from '@/widgets/playlist'
 
 const MyLikedCdList = () => {
   const navigate = useNavigate()
@@ -44,11 +45,15 @@ const MyLikedCdList = () => {
                 type="button"
                 onClick={() => navigate(`/mypage/${item.playlistId}/tracklist`)}
               >
-                {/* TODO: CD 컴포넌트 좋아요는 각 브랜치 병합 이후 작업 (10/20~) */}
-                <Cd
-                  variant="responsive"
+                <Playlist
+                  id={item.playlistId}
+                  key={item.playlistId}
+                  title={item.playlistName}
+                  username={item.playlistName}
                   stickers={item?.cdResponse?.cdItems}
-                  isPublic={item?.isPublic}
+                  cdVariant="responsive"
+                  isPublic={item.isPublic}
+                  isShowInfobox={false}
                 />
               </CdButton>
               <CdNameInfo title={item?.playlistName || ''} creator={item?.creatorNickname || ''} />
@@ -82,6 +87,9 @@ const CdButton = styled.button`
   width: 100%;
   aspect-ratio: 1 / 1;
   border-radius: 10px;
+
+  & > {
+  }
 `
 
 const NoLikedWrapper = styled.div`

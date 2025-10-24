@@ -9,7 +9,7 @@ import { THEME_IMAGES_MAP } from '@/pages/mypage/lib/customizeTheme'
 import { THEME_PROP_ID_OFFSET } from '@/pages/mypage/types/mypage'
 import { flexRowCenter, flexColCenter } from '@/shared/styles/mixins'
 
-interface CdProps {
+export interface CdProps {
   variant:
     | 'xxl'
     | 'xl'
@@ -29,6 +29,7 @@ interface CdProps {
 }
 
 const Cd = ({ variant, bgColor = 'default', stickers, isPublic = true }: CdProps) => {
+  console.log('variant', variant)
   const baseRef = useRef<HTMLDivElement>(null)
   const [dynamicBase, setDynamicBase] = useState(0)
 
