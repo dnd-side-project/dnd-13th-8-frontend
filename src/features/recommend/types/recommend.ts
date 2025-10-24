@@ -6,12 +6,9 @@ export interface Playlist {
   creatorId: string
   creatorNickname: string
   songs: Track[]
-
-  // TODO : 스티커 정보는 둘 중 하나로 올 수 있음 추후 통일 필요
-  onlyCdResponse?: {
+  cdResponse?: {
     cdItems: CdCustomData[]
   }
-  cdItems?: CdCustomData[]
 }
 
 export type RecommendationsResponse = Playlist[]
