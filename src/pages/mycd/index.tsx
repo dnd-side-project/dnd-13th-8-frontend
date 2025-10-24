@@ -91,7 +91,7 @@ const MyCdPage = () => {
         playlistName: playlistDetail.playlistName,
         genre: playlistDetail.genre,
         songs: playlistDetail.songs,
-        representative: false,
+        isPublic: playlistDetail.isPublic,
         cdItems: playlistDetail.cdResponse?.cdItems || [],
       }
 

@@ -53,7 +53,7 @@ const PlaylistInfo = ({ playlistData, isLoading, isError }: PlaylistInfoProps) =
           genre={getGenreLabel(playlistData?.genre || '')}
           title={playlistData?.playlistName || ''}
           username={playlistData?.creatorNickname || ''}
-          stickers={playlistData?.onlyCdResponse?.cdItems || []}
+          stickers={playlistData?.cdResponse?.cdItems || []}
         />
         <TrackInfo>
           {playlistData.songs &&

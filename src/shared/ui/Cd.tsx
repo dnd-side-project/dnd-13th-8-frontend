@@ -44,7 +44,7 @@ const Cd = ({ variant, bgColor = 'default', stickers, isPublic = true }: CdProps
         ? 'neonObject'
         : theme === 'PEOPLE&ANIMALS'
           ? 'people&animals'
-          : theme.toLowerCase()
+          : theme?.toLowerCase()
 
     const images = THEME_IMAGES_MAP[convertThemeName as keyof typeof THEME_IMAGES_MAP]
     if (!images) {

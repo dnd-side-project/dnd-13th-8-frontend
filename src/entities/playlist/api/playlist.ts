@@ -3,7 +3,6 @@ import type {
   PlaylistDetailResponse,
   PlaylistParams,
   PlaylistResponse,
-  MyRepresentResponse,
 } from '@/entities/playlist/types/playlist'
 import { api } from '@/shared/api/httpClient'
 
@@ -55,14 +54,4 @@ export const postPlaylistConfirm = (playlistId: number) => {
 // 플리 조회수 단건 조회
 export const getPlaylistViewCounts = (playlistId: number) => {
   return api.get(`/main/playlist/browse/view-counts/${playlistId}`)
-}
-
-// 내 대표 플레이리스트 조회
-export const getMyRepresentativePlaylist = () => {
-  return api.get<MyRepresentResponse>('/main/playlist/mypage/me/representative')
-}
-
-// 좋아요한 플레이리스트 조회
-export const getMyLikedCdList = (sort: string) => {
-  return api.get<MyCdListResponse>(`/main/playlist/mypage/me/likes?sort=${sort}`)
 }

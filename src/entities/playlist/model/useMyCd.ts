@@ -6,7 +6,6 @@ import {
   getTracklist,
   deleteMyCd,
   patchMyCdPublic,
-  getMyRepresentativePlaylist,
 } from '@/entities/playlist/api/playlist'
 
 export const useMyCdList = (sort: string) => {
@@ -62,11 +61,4 @@ export const useMyCdActions = (cdId: number, options?: { enabled?: boolean }) =>
     deleteMutation,
     togglePublicMutation,
   }
-}
-
-export const useMyRepresentativePlaylist = () => {
-  return useQuery({
-    queryKey: ['myRepresentativePlaylist'],
-    queryFn: () => getMyRepresentativePlaylist(),
-  })
 }

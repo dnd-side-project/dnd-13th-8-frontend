@@ -1,5 +1,3 @@
-import type { MusicGenreId } from '@/shared/config/musicGenres'
-
 export interface CdBasicInfo {
   playlistId: number
   playlistName: string
@@ -92,15 +90,4 @@ export interface PlaylistParams {
   cursorPosition?: number
   cursorCardId?: number
   size?: number
-}
-
-export interface MyRepresentResponse {
-  playlistId: number
-  playlistName: string
-  isRepresentative: boolean
-  songs: Track[]
-  genre: MusicGenreId
-  onlyCdResponse: {
-    cdItems: CdCustomData[]
-  }
 }

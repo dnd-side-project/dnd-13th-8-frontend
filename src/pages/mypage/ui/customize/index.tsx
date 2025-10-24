@@ -52,7 +52,10 @@ const Customize = () => {
   } = useMyCdActions(isEditMode ? Number(cdId) : -1)
 
   if (isLoading) return <Loading isLoading={isLoading} />
-  if (isError) return navigate('/error')
+  if (isError) {
+    navigate('/error')
+    return null
+  }
 
   return (
     <>

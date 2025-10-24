@@ -68,14 +68,14 @@ const DiscoverPage = () => {
     return {
       playlistId: playlistDetail.playlistId,
       playlistName: playlistDetail.playlistName,
+      isPublic: playlistDetail.isPublic,
       genre: playlistDetail.genre,
       songs: playlistDetail.songs,
-      representative: playlistDetail.representative,
       creator: {
         creatorId: playlistDetail.creatorId,
         creatorNickname: playlistDetail.creatorNickname,
       },
-      onlyCdResponse: playlistDetail.onlyCdResponse,
+      cdResponse: playlistDetail.cdResponse,
     }
   }, [playlistDetail])
 

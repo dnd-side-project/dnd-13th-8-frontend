@@ -24,7 +24,10 @@ const CustomizeStep3 = ({ currentCdId }: { currentCdId: number | null }) => {
   }
 
   if (isLoading) return <Loading isLoading={isLoading} />
-  if (isError) return navigate('/error')
+  if (isError) {
+    navigate('/error')
+    return null
+  }
 
   return (
     <>

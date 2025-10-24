@@ -24,6 +24,7 @@ const defaultSongs: Track[] = [
     youtubeUrl: 'https://youtu.be/test1',
     youtubeThumbnail: '',
     youtubeLength: 180,
+    orderIndex: 1,
   },
   {
     id: 2,
@@ -31,6 +32,7 @@ const defaultSongs: Track[] = [
     youtubeUrl: 'https://youtu.be/test2',
     youtubeThumbnail: '',
     youtubeLength: 180,
+    orderIndex: 2,
   },
   {
     id: 3,
@@ -38,6 +40,7 @@ const defaultSongs: Track[] = [
     youtubeUrl: 'https://youtu.be/test3',
     youtubeThumbnail: '',
     youtubeLength: 180,
+    orderIndex: 3,
   },
 ]
 
