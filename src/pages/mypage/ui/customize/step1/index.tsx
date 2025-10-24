@@ -28,7 +28,7 @@ const CustomizeStep1 = ({
 
   const { mutate, isPending } = useCdTempSave()
 
-  const [basicInfoMap, setbasicInfo] = useState({
+  const [basicInfoMap, sestBasicInfoMap] = useState({
     name: isEditMode ? (prevTracklist?.playlistName ?? '') : '',
     genre: MUSIC_GENRES.find((genre) => genre.id === prevTracklist?.genre) ?? null,
     isPublic: isEditMode ? (prevTracklist?.isPublic ?? true) : true,
@@ -56,8 +56,7 @@ const CustomizeStep1 = ({
           tempSaveMap: {
             ...basicInfoMap,
             genre: basicInfoMap.genre!.id,
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            youTubeVideoInfo: tracklist.map(({ id, ...rest }) => rest),
+            youTubeVideoInfo: tracklist.map(({ id: _id, ...rest }) => rest),
           },
         },
         {
@@ -93,7 +92,7 @@ const CustomizeStep1 = ({
 
   // 장르 선택
   const onGenreClick = (genre: MusicGenre) => {
-    setbasicInfo((prev) => ({ ...prev, genre }))
+    sestBasicInfoMap((prev) => ({ ...prev, genre }))
     setIsBottomSheetOpen(false)
   }
 
@@ -116,20 +115,24 @@ const CustomizeStep1 = ({
         return ''
       }
 
-      // 3. 영상 유효성 검증
+      // 3. 썸네일 로드 여부로 영상 유효성 검증
       setIsThumbnailLoading(true)
       const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/default.jpg`
-      const res = await fetch(thumbnailUrl)
-      if (!res?.ok) {
+      const isLoaded = await new Promise<boolean>((resolve) => {
+        const img = new Image()
+        img.onload = () => resolve(true)
+        img.onerror = () => resolve(false)
+        img.src = thumbnailUrl
+      })
+      if (!isLoaded) {
         setTrackErrMsg('삭제되었거나 비공개된 영상이에요')
         return ''
       }
-
       setTrackErrMsg('')
-      return thumbnailUrl ?? ''
+      return thumbnailUrl
     } catch (error) {
       console.error('유튜브 영상 정보 확인 중 오류 발생:', error)
-      setTrackErrMsg('유튜브 영상 정보를 불러오는 중 오류가 발생헀어요')
+      setTrackErrMsg('유튜브 영상 정보를 불러오는 중 오류가 발생했어요')
       return ''
     } finally {
       setIsThumbnailLoading(false)
@@ -235,7 +238,7 @@ const CustomizeStep1 = ({
               placeholder="CD명"
               value={basicInfoMap.name}
               maxLength={24}
-              onChange={(e) => setbasicInfo((prev) => ({ ...prev, name: e.target.value }))}
+              onChange={(e) => sestBasicInfoMap((prev) => ({ ...prev, name: e.target.value }))}
               required
             />
           </BasicInfoBox>
@@ -246,7 +249,7 @@ const CustomizeStep1 = ({
           <ToggleSwitch
             aria-label="CD 공개 여부"
             isOn={basicInfoMap.isPublic}
-            setIsOn={(isOn) => setbasicInfo((prev) => ({ ...prev, isPublic: isOn }))}
+            setIsOn={(isOn) => sestBasicInfoMap((prev) => ({ ...prev, isPublic: isOn }))}
           />
         </PublicControler>
       </BasicInfoEditorWrap>

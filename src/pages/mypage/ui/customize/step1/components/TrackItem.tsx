@@ -88,7 +88,6 @@ const TrackUrlBox = styled.div`
 
 const TrackDeleteButton = styled.button`
   position: absolute;
-  position: absolute;
   top: 9px;
   right: 12px;
 `
