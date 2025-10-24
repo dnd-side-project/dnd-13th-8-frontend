@@ -46,7 +46,7 @@ export const usePlaylistDetail = (playlistId: number | null, options?: { enabled
   return useQuery({
     queryKey: ['playlistDetail', playlistId],
     queryFn: () => getPlaylistDetail(playlistId as number),
-    enabled: !!playlistId || options?.enabled,
+    enabled: options?.enabled ?? !!playlistId,
   })
 }
 
