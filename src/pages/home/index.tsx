@@ -57,7 +57,7 @@ const HomePage = () => {
               key={item.playlistId}
               title={item.playlistName}
               username={item.creatorNickname}
-              stickers={item.onlyCdResponse?.cdItems}
+              stickers={item.cdResponse?.cdItems}
             />
           ))}
         </ScrollCarousel>
@@ -73,7 +73,7 @@ const HomePage = () => {
               title={playlist.playlistName}
               username={playlist.creatorNickname}
               songs={playlist.songs}
-              stickers={playlist.onlyCdResponse?.cdItems}
+              stickers={playlist.cdResponse?.cdItems}
             />
           ))}
         </ScrollCarousel>

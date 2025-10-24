@@ -1,3 +1,4 @@
+import { useState, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import styled from 'styled-components'
@@ -7,18 +8,54 @@ import { useMyLikedCdList } from '@/entities/playlist/model/useMyCd'
 import { CdNameInfo } from '@/pages/mypage/ui/main/components'
 import { useSingleSelect } from '@/shared/lib/useSingleSelect'
 import { flexColCenter } from '@/shared/styles/mixins'
-import { Loading, Error, ContentHeader, Cd } from '@/shared/ui'
+import { Loading, Error as ErrorUi, ContentHeader, Modal } from '@/shared/ui'
 import type { SortType } from '@/shared/ui/ContentHeader'
+import type { ModalProps } from '@/shared/ui/Modal'
+import { Playlist } from '@/widgets/playlist'
 
 const MyLikedCdList = () => {
   const navigate = useNavigate()
 
-  const { selected: currentSort, onSelect: setCurrentSort } = useSingleSelect<SortType>('POPULAR')
+  const [modal, setModal] = useState<ModalProps>({
+    isOpen: false,
+    title: '',
+    description: '',
+    ctaType: 'single',
+    confirmText: '',
+    cancelText: '',
+    onClose: () => {
+      setModal((prev) => ({ ...prev, isOpen: false }))
+    },
+    onConfirm: () => {},
+    onCancel: () => {
+      setModal((prev) => ({ ...prev, isOpen: false }))
+    },
+  })
 
+  const { selected: currentSort, onSelect: setCurrentSort } = useSingleSelect<SortType>('POPULAR')
   const { data: myLikedCdList, isLoading, isError, isSuccess } = useMyLikedCdList(currentSort)
 
+  const onLikedCdClick = useCallback(
+    (cdId: number, isPublic: boolean) => {
+      if (!cdId) return
+      if (!isPublic) {
+        setModal({
+          isOpen: true,
+          title: '비공개된 CD는 재생할 수 없어요.',
+          ctaType: 'single',
+          confirmText: '확인',
+          onClose: () => setModal((p) => ({ ...p, isOpen: false })),
+          onConfirm: () => setModal((p) => ({ ...p, isOpen: false })),
+        })
+        return
+      }
+      navigate(`/mypage/${cdId}/tracklist`)
+    },
+    [navigate]
+  )
+
   if (isLoading) return <Loading isLoading={isLoading} />
-  if (isError || !isSuccess) return <Error />
+  if (isError || !isSuccess) return <ErrorUi />
 
   return (
     <>
@@ -40,13 +77,17 @@ const MyLikedCdList = () => {
         ) : (
           myLikedCdList?.map((item) => (
             <li key={item.playlistId}>
-              {/* TODO: 나의CD 이동 후 좋아요한 CD 재생은 각 브랜치 병합 이후 작업 */}
-              <CdButton type="button" onClick={() => navigate('/mycd')}>
-                {/* TODO: CD 컴포넌트 좋아요는 각 브랜치 병합 이후 작업 (10/20~) */}
-                <Cd
-                  variant="responsive"
+              <CdButton
+                type="button"
+                onClick={() => onLikedCdClick(item?.playlistId, item?.isPublic)}
+              >
+                <Playlist
+                  id={item.playlistId}
+                  title={item.playlistName}
+                  username={item?.creatorNickname || ''}
                   stickers={item?.cdResponse?.cdItems}
-                  isPublic={item?.isPublic}
+                  cdVariant="responsive"
+                  isPublic={item.isPublic}
                 />
               </CdButton>
               <CdNameInfo title={item?.playlistName || ''} creator={item?.creatorNickname || ''} />
@@ -54,6 +95,18 @@ const MyLikedCdList = () => {
           ))
         )}
       </CdListWrap>
+
+      <Modal
+        isOpen={modal.isOpen}
+        title={modal.title}
+        description={modal.description}
+        ctaType={modal.ctaType}
+        confirmText={modal.confirmText}
+        cancelText={modal.cancelText}
+        onClose={modal.onClose}
+        onConfirm={modal.onConfirm}
+        onCancel={modal.onCancel}
+      />
     </>
   )
 }

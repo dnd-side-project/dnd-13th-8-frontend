@@ -9,7 +9,7 @@ import { THEME_IMAGES_MAP } from '@/pages/mypage/lib/customizeTheme'
 import { THEME_PROP_ID_OFFSET } from '@/pages/mypage/types/mypage'
 import { flexRowCenter, flexColCenter } from '@/shared/styles/mixins'
 
-interface CdProps {
+export interface CdProps {
   variant:
     | 'xxl'
     | 'xl'
