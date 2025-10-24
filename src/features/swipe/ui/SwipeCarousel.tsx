@@ -47,7 +47,7 @@ const SwipeCarousel = ({
     if (newId != null && playlistId !== String(newId)) {
       navigate(`${basePath}/${newId}${location.search}`, { replace: true })
     }
-  }, [emblaApi, data, navigate, playlistId, onSelectIndexChange])
+  }, [emblaApi, data, navigate, playlistId, onSelectIndexChange, basePath, location.search])
 
   useEffect(() => {
     if (!emblaApi) return
