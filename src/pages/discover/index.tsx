@@ -151,7 +151,12 @@ const DiscoverPage = () => {
   return (
     <Page>
       {showCoachmark && <DiscoverCoachMark onClose={handleCloseCoachmark} />}
-      <SwipeCarousel data={playlistsData} onSelectIndexChange={handleSelectPlaylist}>
+      <SwipeCarousel
+        data={playlistsData}
+        onSelectIndexChange={handleSelectPlaylist}
+        axis="y"
+        basePath="/discover"
+      >
         {playlistsData.map((data) => (
           <Slide key={data.playlistId}>
             <PlaylistLayout

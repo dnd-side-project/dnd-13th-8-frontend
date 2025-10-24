@@ -1,5 +1,5 @@
 import { useEffect, useCallback, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
 import styled from 'styled-components'
 
@@ -10,6 +10,7 @@ import { useMyCdList, useMyLikedCdList } from '@/entities/playlist/model/useMyCd
 import { useAuthStore } from '@/features/auth/store/authStore'
 import { useChatSocket } from '@/features/chat/model/sendMessage'
 import { HeaderTab, PlaylistCarousel } from '@/pages/mycd/ui'
+import type { MyCdTab } from '@/pages/mycd/ui/HeaderTab'
 import { getVideoId } from '@/shared/lib'
 import { useDevice } from '@/shared/lib/useDevice'
 import { flexColCenter, flexRowCenter } from '@/shared/styles/mixins'
@@ -29,16 +30,17 @@ const MyCdPage = () => {
     currentTime,
     playerRef,
   } = usePlaylist()
+
   const [isMuted, setIsMuted] = useState<boolean | null>(null)
-  const [selectedTab, setSelectedTab] = useState<'MY' | 'LIKE'>('MY')
   const { userInfo } = useAuthStore()
   const navigate = useNavigate()
   const deviceType = useDevice()
   const isMobile = deviceType === 'mobile'
 
-  const handleTabSelect = (tab: 'MY' | 'LIKE') => {
-    setSelectedTab(tab)
-  }
+  const { id: routePlaylistId } = useParams<{ id?: string }>()
+  const { search } = useLocation()
+  const typeParam = new URLSearchParams(search).get('type')
+  const [selectedTab, setSelectedTab] = useState<MyCdTab>(typeParam === 'LIKE' ? 'LIKE' : 'MY')
 
   const myCdPlaylist = useMyCdList('RECENT')
   const likedCdPlaylist = useMyLikedCdList('RECENT')
@@ -53,16 +55,42 @@ const MyCdPage = () => {
   }>({ playlistId: null, playlistName: '' })
 
   useEffect(() => {
-    if (playlistData && playlistData.length > 0 && centerPlaylist.playlistId === null) {
+    if (playlistQuery.isLoading || !playlistData) return
+
+    const routeId = routePlaylistId ? Number(routePlaylistId) : null
+    const found = routeId ? playlistData.find((p) => p.playlistId === routeId) : null
+
+    if (found) {
+      setCenterPlaylist({
+        playlistId: found.playlistId,
+        playlistName: found.playlistName,
+      })
+    } else if (playlistData.length > 0) {
       const first = playlistData[0]
       setCenterPlaylist({
         playlistId: first.playlistId,
         playlistName: first.playlistName,
       })
-    }
-  }, [playlistData, centerPlaylist.playlistId])
 
-  // LoopCarousel 센터 컨텐츠 변경 핸들러
+      const path =
+        selectedTab === 'LIKE' ? `/mycd/${first.playlistId}?type=LIKE` : `/mycd/${first.playlistId}`
+
+      navigate(path, { replace: true })
+    }
+  }, [playlistData, playlistQuery.isLoading, routePlaylistId, navigate, selectedTab])
+
+  /* 좋아요 탭 선택 시 url query param 반영 */
+  const handleTabSelect = (tab: MyCdTab) => {
+    setSelectedTab(tab)
+
+    const basePath = centerPlaylist.playlistId ? `/mycd/${centerPlaylist.playlistId}` : '/mycd'
+
+    const path = tab === 'LIKE' ? `${basePath}?type=LIKE` : basePath
+
+    navigate(path, { replace: true })
+  }
+
+  /* 캐러셀 드래그 시 URL 갱신 */
   const handleCenterChange = useCallback(
     (playlist: { playlistId: number; playlistName: string }) => {
       if (playlist) {
@@ -70,16 +98,22 @@ const MyCdPage = () => {
           playlistId: playlist.playlistId,
           playlistName: playlist.playlistName,
         })
+
+        const path =
+          selectedTab === 'LIKE'
+            ? `/mycd/${playlist.playlistId}?type=LIKE`
+            : `/mycd/${playlist.playlistId}`
+
+        navigate(path, { replace: true })
       }
     },
-    []
+    [navigate, selectedTab]
   )
 
+  /* 플레이리스트 세팅 */
   const { data: playlistDetail } = usePlaylistDetail(centerPlaylist.playlistId)
-
   useEffect(() => {
     if (playlistDetail && userInfo) {
-      // 이미 같은 playlist면 재설정 안함
       if (currentPlaylist?.playlistId === playlistDetail.playlistId) return
 
       const convertedPlaylist = {

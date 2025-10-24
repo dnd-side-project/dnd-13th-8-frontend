@@ -63,8 +63,8 @@ export const routesConfig: RouteConfig[] = [
     isPrivate: true,
     isNotSuspense: true,
     children: [
-      { path: '', component: MyCdPage },
-      { path: 'tracklist', component: MyCdInfoPage },
+      { path: ':id?', component: MyCdPage },
+      { path: ':id?/tracklist', component: MyCdInfoPage },
     ],
   },
 

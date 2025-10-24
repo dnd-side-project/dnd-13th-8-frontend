@@ -2,10 +2,10 @@ import { useState, useCallback, type Key } from 'react'
 
 import styled from 'styled-components'
 
-import type { CdCustomData } from '@/entities/playlist'
+import type { CdCustomData, PlaylistInfo } from '@/entities/playlist'
+import { SwipeCarousel } from '@/features/swipe'
 import { flexRowCenter } from '@/shared/styles/mixins'
 import { Cd } from '@/shared/ui'
-import LoopCarousel from '@/shared/ui/LoopCarousel'
 
 interface CarouselPlaylist {
   playlistId: number
@@ -35,8 +35,22 @@ const PlaylistCarousel = ({ data, onCenterChange }: PlaylistCarouselProps) => {
     [data, onCenterChange]
   )
 
+  const playlistInfoData: PlaylistInfo[] = data.map((p) => ({
+    playlistId: p.playlistId,
+    playlistName: p.playlistName,
+    creator: { creatorId: '0', creatorNickname: '' },
+    genre: '',
+    songs: [],
+    isPublic: true,
+  }))
+
   return (
-    <LoopCarousel onSelectIndex={handleSelectIndex}>
+    <SwipeCarousel
+      data={playlistInfoData}
+      onSelectIndexChange={handleSelectIndex}
+      axis="x"
+      basePath="/mycd"
+    >
       {data.map((slide, index: Key) => (
         <EmblaSlide key={index}>
           <Slide $active={activeIndex === index}>
@@ -48,7 +62,7 @@ const PlaylistCarousel = ({ data, onCenterChange }: PlaylistCarouselProps) => {
           </Slide>
         </EmblaSlide>
       ))}
-    </LoopCarousel>
+    </SwipeCarousel>
   )
 }
 
