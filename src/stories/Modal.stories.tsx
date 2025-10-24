@@ -43,6 +43,7 @@ export const Default: Story = {
           onClose={() => setIsOpen(false)}
           ctaType="single"
           title={'single 모달은\nonConfirm(), onClose()만 실행됩니다.'}
+          description="descsription은 props로 내려올 경우에만 보여집니다."
           onConfirm={() => {
             alert('확인 버튼 클릭!')
             setIsOpen(false)
@@ -74,6 +75,7 @@ export const DoubleButton: Story = {
           title={
             'double 모달은\nonConfirm(), onClose(), onCancel()\n모두 실행됩니다.\ntitle에 개행이 필요한 경우\n"\\n"을 이용해 줄바꿈을 넣어주세요.'
           }
+          description="descsription은 props로 내려올 경우에만 보여집니다."
           onConfirm={() => {
             alert('확인 버튼 클릭!')
             setIsOpen(false)
