@@ -98,9 +98,7 @@ const MypageTracklist = () => {
   }
 
   if (isLoading) return <Loading isLoading={isLoading} />
-  if (isError) {
-    navigate('/error')
-  }
+  if (isError) return navigate('/error')
 
   return (
     <>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 
 import { useMyCdActions } from '@/entities/playlist/model/useMyCd'
@@ -51,15 +51,8 @@ const Customize = () => {
     isError,
   } = useMyCdActions(isEditMode ? Number(cdId) : -1)
 
-  useEffect(() => {
-    if (isError) {
-      navigate('/error')
-    }
-  }, [isError, navigate])
-
-  if (isLoading) {
-    return <Loading isLoading={isLoading} />
-  }
+  if (isLoading) return <Loading isLoading={isLoading} />
+  if (isError) return navigate('/error')
 
   return (
     <>

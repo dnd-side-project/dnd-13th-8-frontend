@@ -23,13 +23,8 @@ const CustomizeStep3 = ({ currentCdId }: { currentCdId: number | null }) => {
     navigate(`/mypage/${currentCdId}/tracklist`)
   }
 
-  if (isLoading) {
-    return <Loading isLoading={isLoading} />
-  }
-
-  if (isError) {
-    navigate('/error')
-  }
+  if (isLoading) return <Loading isLoading={isLoading} />
+  if (isError) return navigate('/error')
 
   return (
     <>
