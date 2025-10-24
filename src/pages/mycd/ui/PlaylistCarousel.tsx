@@ -1,4 +1,5 @@
-import { useState, useCallback, type Key } from 'react'
+import { useState, useCallback, useEffect, type Key } from 'react'
+import { useParams } from 'react-router-dom'
 
 import styled from 'styled-components'
 
@@ -19,7 +20,17 @@ interface PlaylistCarouselProps {
 }
 
 const PlaylistCarousel = ({ data, onCenterChange }: PlaylistCarouselProps) => {
+  const { id: playlistId } = useParams()
   const [activeIndex, setActiveIndex] = useState(0)
+
+  // url 기준으로 active index 동기화
+  useEffect(() => {
+    if (!playlistId) return
+
+    const index = data.findIndex((p) => p.playlistId === Number(playlistId))
+
+    if (index >= 0) setActiveIndex(index)
+  }, [playlistId, data])
 
   const handleSelectIndex = useCallback(
     (index: number) => {
