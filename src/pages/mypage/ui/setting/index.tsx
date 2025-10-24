@@ -5,11 +5,19 @@ import styled from 'styled-components'
 import { SvgButton } from '@shared/ui'
 
 import { RightArrow } from '@/assets/icons'
+import { useAuthStore } from '@/features/auth/store/authStore'
 import { SubHeader } from '@/pages/mypage/ui/components'
 import { flexRowCenter } from '@/shared/styles/mixins'
 
 const Setting = () => {
   const navigate = useNavigate()
+
+  const { setLogout } = useAuthStore()
+
+  const onLogoutClick = () => {
+    setLogout()
+    navigate('/', { replace: true })
+  }
 
   return (
     <>
@@ -57,7 +65,9 @@ const Setting = () => {
       </SectionWrap>
 
       <BottomCraWrap>
-        <button type="button">로그아웃</button>
+        <button type="button" onClick={onLogoutClick}>
+          로그아웃
+        </button>
         <button type="button" onClick={() => navigate('/mypage/unregister')}>
           탈퇴하기
         </button>

@@ -1,14 +1,66 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import styled from 'styled-components'
 
+import { useDeleteAccount } from '@/features/auth/model/useAuth'
+import { useAuthStore } from '@/features/auth/store/authStore'
 import { SubHeader } from '@/pages/mypage/ui/components'
 import { flexRowCenter } from '@/shared/styles/mixins'
 import { TermsContainer, TermsItems } from '@/shared/styles/terms'
-import { Button } from '@/shared/ui'
+import { Button, Modal } from '@/shared/ui'
+import type { ModalProps } from '@/shared/ui/Modal'
 
 const Unregister = () => {
   const navigate = useNavigate()
+
+  const { mutate } = useDeleteAccount()
+  const { setLogout } = useAuthStore()
+
+  const [modal, setModal] = useState<ModalProps>({
+    isOpen: false,
+    title: '',
+    description: '',
+    ctaType: 'single',
+    confirmText: '확인',
+    cancelText: '취소',
+    onClose: () => setModal((prev) => ({ ...prev, isOpen: false })),
+    onConfirm: () => setModal((prev) => ({ ...prev, isOpen: false })),
+    onCancel: () => setModal((prev) => ({ ...prev, isOpen: false })),
+  })
+
+  const onUnregisterClick = () => {
+    mutate(undefined, {
+      onSuccess: () => {
+        const moveToHome = () => {
+          setLogout()
+          setModal((prev) => ({ ...prev, isOpen: false }))
+          navigate('/', { replace: true })
+        }
+        setModal({
+          isOpen: true,
+          title: '회원탈퇴가 완료되었어요',
+          description: '지금까지 함께해주셔서 감사해요',
+          ctaType: 'single',
+          confirmText: '확인',
+          onClose: moveToHome,
+          onConfirm: moveToHome,
+        })
+      },
+      onError: (e) => {
+        console.error('회원 탈퇴 실패:', e)
+        setModal({
+          isOpen: true,
+          title: '회원탈퇴 중 오류가 발생했어요',
+          description: '잠시 후 다시 시도해주세요',
+          ctaType: 'single',
+          confirmText: '확인',
+          onClose: () => setModal((prev) => ({ ...prev, isOpen: false })),
+          onConfirm: () => setModal((prev) => ({ ...prev, isOpen: false })),
+        })
+      },
+    })
+  }
 
   return (
     <>
@@ -49,10 +101,22 @@ const Unregister = () => {
       </TermsContainer>
 
       <BottomCraWrap>
-        <Button size="L" state="secondary" onClick={() => navigate('/')}>
+        <Button size="L" state="secondary" onClick={onUnregisterClick}>
           탈퇴하기
         </Button>
       </BottomCraWrap>
+
+      <Modal
+        isOpen={modal.isOpen}
+        title={modal.title}
+        description={modal.description}
+        ctaType={modal.ctaType}
+        confirmText={modal.confirmText}
+        cancelText={modal.cancelText}
+        onClose={modal.onClose}
+        onConfirm={modal.onConfirm}
+        onCancel={modal.onCancel}
+      />
     </>
   )
 }
