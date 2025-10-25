@@ -23,6 +23,7 @@ import type {
 import { THEME_PROP_ID_OFFSET } from '@/pages/mypage/types/mypage'
 import { StepHeader } from '@/pages/mypage/ui/components'
 import type { CustomizeStepProps } from '@/pages/mypage/ui/customize'
+import { useDragScroll } from '@/shared/lib/useDragScroll'
 import { flexRowCenter } from '@/shared/styles/mixins'
 import { Loading } from '@/shared/ui'
 import type { ModalProps } from '@/shared/ui/Modal'
@@ -40,6 +41,7 @@ const CustomizeStep2 = ({
   const fileInputRef = useRef<HTMLInputElement>(null)
   const cdContainerRef = useRef<HTMLCanvasElement>(null)
   const imageCache = useRef<{ [key: string]: HTMLImageElement | null }>({})
+  const themeListRef = useRef<HTMLUListElement>(null)
 
   const [currentThemeId, setCurrentThemeId] = useState<StickerThemeType>('deulak')
   const [stickers, setStickers] = useState<StickerInfoType[]>([])
@@ -50,6 +52,8 @@ const CustomizeStep2 = ({
 
   const { uploadSticker, uploadLoading } = useUserSticker()
   const { createMutation, updateMutation } = useCdFinalSave()
+
+  useDragScroll(themeListRef as React.RefObject<HTMLElement>)
 
   // ===============================
   // 스티커 초기 데이터 세팅
@@ -934,7 +938,7 @@ const CustomizeStep2 = ({
           </AllDeleteBtn>
         </CdAreaWrap>
         <StickerAreaWrap>
-          <ThemeListContainer>
+          <ThemeListContainer ref={themeListRef}>
             {STICKER_THEME_LIST.map((theme) => (
               <li key={theme.id}>
                 <ThemeButton
