@@ -112,7 +112,14 @@ const MypageTracklist = () => {
     <>
       <Header
         left={
-          <SvgButton icon={LeftArrow} width={24} height={24} onClick={() => navigate('/mypage')} />
+          <SvgButton
+            icon={LeftArrow}
+            width={24}
+            height={24}
+            onClick={() =>
+              navigate('/mypage', { state: { prevSelectedTab: isFromMyCdList ? null : 'like' } })
+            }
+          />
         }
         right={
           <EditButton
