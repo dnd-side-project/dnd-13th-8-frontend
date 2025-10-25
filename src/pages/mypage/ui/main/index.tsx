@@ -26,8 +26,10 @@ const Mypage = () => {
   useEffect(() => {
     if (state?.prevSelectedTab) {
       setCurrentTab(state?.prevSelectedTab as MYPAGE_TAB_TYPE)
+      // 새로고침 시 값이 남아있지 않도록 일회성 사용 후 히스토리 state 초기화
+      navigate(location.pathname, { replace: true, state: null })
     }
-  }, [state, setCurrentTab])
+  }, [])
 
   return (
     <>
