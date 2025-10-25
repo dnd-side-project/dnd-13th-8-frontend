@@ -31,6 +31,7 @@ export const useMyCdActions = (cdId: number, options?: { enabled?: boolean }) =>
   const {
     data: tracklist,
     isLoading,
+    isFetching,
     isError,
   } = useQuery({
     queryKey: ['getTracklist', cdId],
@@ -57,6 +58,7 @@ export const useMyCdActions = (cdId: number, options?: { enabled?: boolean }) =>
   return {
     tracklist,
     isLoading,
+    isFetching,
     isError,
     deleteMutation,
     togglePublicMutation,
