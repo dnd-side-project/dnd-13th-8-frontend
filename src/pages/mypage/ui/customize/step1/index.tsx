@@ -397,13 +397,14 @@ const GenreDropdown = styled.button<{ $isSelected: boolean }>`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 11px;
+  padding: 16px 12px;
   width: 100%;
   height: 42px;
   border-radius: 10px;
   color: ${({ theme, $isSelected }) =>
     $isSelected ? theme.COLOR['gray-10'] : theme.COLOR['gray-300']};
-  background-color: ${({ theme }) => theme.COLOR['gray-800']};
+  background-color: ${({ theme }) => theme.COLOR['gray-700']};
+  ${({ theme }) => theme.FONT['body2-normal']}
 `
 
 const EachGenre = styled.button<{ $currentGenre: boolean }>`
