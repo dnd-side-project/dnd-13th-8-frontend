@@ -1,4 +1,5 @@
-import { useNavigate } from 'react-router-dom'
+import { useEffect } from 'react'
+import { useNavigate, useLocation } from 'react-router-dom'
 
 import styled from 'styled-components'
 
@@ -13,6 +14,7 @@ import { flexRowCenter } from '@/shared/styles/mixins'
 
 const Mypage = () => {
   const navigate = useNavigate()
+  const { state } = useLocation()
 
   const { selected: currentTab, onSelect: setCurrentTab } = useSingleSelect<MYPAGE_TAB_TYPE>('cd')
 
@@ -20,6 +22,14 @@ const Mypage = () => {
     { label: '나의 CD', value: 'cd' },
     { label: '나의 좋아요', value: 'like' },
   ]
+
+  useEffect(() => {
+    if (state?.prevSelectedTab) {
+      setCurrentTab(state?.prevSelectedTab as MYPAGE_TAB_TYPE)
+      // 새로고침 시 값이 남아있지 않도록 일회성 사용 후 히스토리 state 초기화
+      navigate(location.pathname, { replace: true, state: null })
+    }
+  }, [])
 
   return (
     <>

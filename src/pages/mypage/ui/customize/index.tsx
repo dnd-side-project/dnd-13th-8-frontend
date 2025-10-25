@@ -48,10 +48,11 @@ const Customize = () => {
   const {
     tracklist: prevTracklist,
     isLoading,
+    isFetching,
     isError,
   } = useMyCdActions(isEditMode ? Number(cdId) : -1)
 
-  if (isLoading) return <Loading isLoading={isLoading} />
+  if (isLoading || isFetching) return <Loading isLoading={isLoading || isFetching} />
   if (isError) {
     navigate('/error')
     return null

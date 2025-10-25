@@ -51,7 +51,7 @@ const MypageTracklist = () => {
 
   const onCdPlayClick = () => {
     if (!cdMetadata?.playlistId) return
-    navigate(`/mycd?id=${cdMetadata?.playlistId}${isFromMyCdList ? '' : '&type=LIKE'}`)
+    navigate(`/mycd/${cdMetadata?.playlistId}${isFromMyCdList ? '' : '?type=LIKE'}`)
   }
 
   const onCdDeleteClick = () => {
@@ -112,15 +112,24 @@ const MypageTracklist = () => {
     <>
       <Header
         left={
-          <SvgButton icon={LeftArrow} width={24} height={24} onClick={() => navigate('/mypage')} />
+          <SvgButton
+            icon={LeftArrow}
+            width={24}
+            height={24}
+            onClick={() =>
+              navigate('/mypage', { state: { prevSelectedTab: isFromMyCdList ? null : 'like' } })
+            }
+          />
         }
         right={
-          <EditButton
-            type="button"
-            onClick={() => navigate('/mypage/customize', { state: { cdId } })}
-          >
-            편집
-          </EditButton>
+          isMyCd && (
+            <EditButton
+              type="button"
+              onClick={() => navigate('/mypage/customize', { state: { cdId } })}
+            >
+              편집
+            </EditButton>
+          )
         }
       />
       <PlaylistHorizontal

@@ -13,6 +13,7 @@ export const useMyCdList = (sort: string) => {
     queryKey: ['myCdList', sort],
     queryFn: () => getMyCdList(sort),
     refetchOnMount: 'always',
+    placeholderData: undefined, // 이전 데이터 즉시 제거
   })
 }
 
@@ -21,6 +22,7 @@ export const useMyLikedCdList = (sort: string) => {
     queryKey: ['myLikeList', sort],
     queryFn: () => getLikedCdList(sort),
     refetchOnMount: 'always',
+    placeholderData: undefined,
   })
 }
 
@@ -31,6 +33,7 @@ export const useMyCdActions = (cdId: number, options?: { enabled?: boolean }) =>
   const {
     data: tracklist,
     isLoading,
+    isFetching,
     isError,
   } = useQuery({
     queryKey: ['getTracklist', cdId],
@@ -57,6 +60,7 @@ export const useMyCdActions = (cdId: number, options?: { enabled?: boolean }) =>
   return {
     tracklist,
     isLoading,
+    isFetching,
     isError,
     deleteMutation,
     togglePublicMutation,

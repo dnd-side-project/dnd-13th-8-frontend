@@ -16,9 +16,9 @@ const MyCdList = () => {
 
   const { selected: currentSort, onSelect: setCurrentSort } = useSingleSelect<SortType>('POPULAR')
 
-  const { data: myCdList, isLoading, isError, isSuccess } = useMyCdList(currentSort)
+  const { data: myCdList, isLoading, isFetching, isError, isSuccess } = useMyCdList(currentSort)
 
-  if (isLoading) return <Loading isLoading={isLoading} />
+  if (isLoading || isFetching) return <Loading isLoading={isLoading || isFetching} />
   if (isError || !isSuccess) return <Error />
 
   return (

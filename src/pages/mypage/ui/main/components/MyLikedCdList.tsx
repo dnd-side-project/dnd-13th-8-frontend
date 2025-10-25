@@ -33,7 +33,13 @@ const MyLikedCdList = () => {
   })
 
   const { selected: currentSort, onSelect: setCurrentSort } = useSingleSelect<SortType>('POPULAR')
-  const { data: myLikedCdList, isLoading, isError, isSuccess } = useMyLikedCdList(currentSort)
+  const {
+    data: myLikedCdList,
+    isLoading,
+    isFetching,
+    isError,
+    isSuccess,
+  } = useMyLikedCdList(currentSort)
 
   const onLikedCdClick = useCallback(
     (cdId: number, isPublic: boolean) => {
@@ -54,7 +60,7 @@ const MyLikedCdList = () => {
     [navigate]
   )
 
-  if (isLoading) return <Loading isLoading={isLoading} />
+  if (isLoading || isFetching) return <Loading isLoading={isLoading || isFetching} />
   if (isError || !isSuccess) return <ErrorUi />
 
   return (
@@ -120,6 +126,7 @@ const CdListWrap = styled.ul`
   width: 100%;
   display: flex;
   gap: ${CD_LIST_GAP}px;
+  flex-wrap: wrap;
 
   & > li {
     display: flex;

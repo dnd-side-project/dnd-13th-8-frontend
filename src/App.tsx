@@ -304,7 +304,6 @@ const LogoContainer = styled.div`
   gap: 17px;
   & > img:first-child {
     width: 186px;
-    height: 45px;
   }
   & > p {
     font-size: 46px;

@@ -198,7 +198,9 @@ const MyCdPage = () => {
                 size="S"
                 state="primary"
                 onClick={() =>
-                  navigate(`/mypage/customize?playlistId=${currentPlaylist?.playlistId}`)
+                  navigate(`/mypage/customize`, {
+                    state: { cdId: currentPlaylist?.playlistId },
+                  })
                 }
               >
                 편집
