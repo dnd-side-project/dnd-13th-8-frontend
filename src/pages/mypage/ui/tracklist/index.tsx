@@ -51,7 +51,7 @@ const MypageTracklist = () => {
 
   const onCdPlayClick = () => {
     if (!cdMetadata?.playlistId) return
-    navigate(`/mycd?id=${cdMetadata?.playlistId}${isFromMyCdList ? '' : '&type=LIKE'}`)
+    navigate(`/mycd/${cdMetadata?.playlistId}${isFromMyCdList ? '' : '?type=LIKE'}`)
   }
 
   const onCdDeleteClick = () => {
