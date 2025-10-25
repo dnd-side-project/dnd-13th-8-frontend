@@ -122,12 +122,14 @@ const MypageTracklist = () => {
           />
         }
         right={
-          <EditButton
-            type="button"
-            onClick={() => navigate('/mypage/customize', { state: { cdId } })}
-          >
-            편집
-          </EditButton>
+          isMyCd && (
+            <EditButton
+              type="button"
+              onClick={() => navigate('/mypage/customize', { state: { cdId } })}
+            >
+              편집
+            </EditButton>
+          )
         }
       />
       <PlaylistHorizontal
