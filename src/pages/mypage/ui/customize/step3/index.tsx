@@ -122,5 +122,5 @@ const CtaButton = styled.button`
   background-color: ${({ theme }) => theme.COLOR['primary-normal']};
   border-radius: 20px;
   color: ${({ theme }) => theme.COLOR['gray-900']};
-  ${({ theme }) => theme.FONT['label']}
+  ${({ theme }) => theme.FONT['body2-normal']}
 `
