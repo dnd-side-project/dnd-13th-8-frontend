@@ -95,7 +95,7 @@ const Cd = ({ variant, bgColor = 'default', stickers, isPublic = true }: CdProps
             style={{
               position: 'absolute',
               left: xCoordinate * ratio,
-              top: yCoordinate * ratio,
+              top: yCoordinate * ratio - 1,
               width: width * ratio,
               height: height * ratio,
               transform: `scale(${scale}) rotate(${angle}rad)`,
