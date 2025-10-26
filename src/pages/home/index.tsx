@@ -3,22 +3,17 @@ import { createSearchParams, useNavigate } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 
 import { CARD_IMAGES_LARGE } from '@/assets/card'
-import { Logo, Search } from '@/assets/icons'
 import {
   useRecommendationsByRecent,
   useRecommendationsByFollow,
   useRecommendedGenres,
 } from '@/features/recommend'
 import { FirstSection } from '@/pages/home/ui'
-import { Header, SvgButton, ScrollCarousel } from '@/shared/ui'
+import { ScrollCarousel } from '@/shared/ui'
 import { Playlist, PlaylistWithSong } from '@/widgets/playlist'
 
 const HomePage = () => {
   const navigate = useNavigate()
-
-  // TODO: 알림 기능 2차 스프린트 시 작업 예정
-  // const handleNotiClick = () => navigate('/mypage/notification')
-  const handleSearchClick = () => navigate('/search')
 
   const { data: RecentData } = useRecommendationsByRecent()
   const { data: FollowData } = useRecommendationsByFollow()
@@ -35,17 +30,6 @@ const HomePage = () => {
   }
   return (
     <PageLayout>
-      <Header
-        left={<Logo />}
-        right={
-          <>
-            {/* TODO: 알림 기능 2차 스프린트 시 작업 예정 */}
-            {/* <SvgButton icon={Notification} onClick={handleNotiClick} /> */}
-            <SvgButton icon={Search} onClick={handleSearchClick} />
-          </>
-        }
-      />
-
       <FirstSection />
 
       <SecondSection>
