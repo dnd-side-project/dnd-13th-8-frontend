@@ -47,11 +47,7 @@ const MyCdPage = () => {
 
   const playlistQuery = selectedTab === 'MY' ? myCdPlaylist : likedCdPlaylist
 
-  const playlistData = useMemo(
-    () => playlistQuery.data?.filter((p) => selectedTab !== 'MY' || p.isPublic), // my 탭일 경우 isPublic true만 필터링
-
-    [playlistQuery.data, selectedTab]
-  )
+  const playlistData = useMemo(() => playlistQuery.data ?? [], [playlistQuery.data])
 
   const isError = playlistQuery.isError
 
