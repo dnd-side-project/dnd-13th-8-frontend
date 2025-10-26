@@ -71,14 +71,14 @@ const PlaylistLayout = ({
         <CdContainer>
           {!isPlaying && <PlayButton onPlayPause={onPlayPause} />}
           <CdSpinner $isPlaying={isPlaying}>
-            <Cd variant="xxl" bgColor="none" stickers={data?.cdItems ?? data?.cdItems ?? []} />
+            <Cd variant="xxl" bgColor="none" stickers={data?.cdItems ?? []} />
           </CdSpinner>
         </CdContainer>
         <ActionBarContainer>
           <ActionBar
             playlistId={data.playlistId}
             creatorId={data.creator.creatorId}
-            stickers={data?.cdItems ?? data?.cdItems ?? []}
+            stickers={data?.cdItems ?? []}
             type="DISCOVER"
           />
         </ActionBarContainer>
