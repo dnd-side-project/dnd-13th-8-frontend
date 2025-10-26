@@ -50,7 +50,7 @@ const MyCdPage = () => {
 
   const isError = playlistQuery.isError
 
-  const [centerItem, setcenterItem] = useState<{
+  const [centerItem, setCenterItem] = useState<{
     playlistId: number | null
     playlistName: string
   }>({ playlistId: null, playlistName: '' })
@@ -62,13 +62,13 @@ const MyCdPage = () => {
     const found = routeId ? playlistData.find((p) => p.playlistId === routeId) : null
 
     if (found) {
-      setcenterItem({
+      setCenterItem({
         playlistId: found.playlistId,
         playlistName: found.playlistName,
       })
     } else if (playlistData.length > 0) {
       const first = playlistData[0]
-      setcenterItem({
+      setCenterItem({
         playlistId: first.playlistId,
         playlistName: first.playlistName,
       })
@@ -95,7 +95,7 @@ const MyCdPage = () => {
   const handleCenterChange = useCallback(
     (playlist: { playlistId: number; playlistName: string }) => {
       if (playlist) {
-        setcenterItem({
+        setCenterItem({
           playlistId: playlist.playlistId,
           playlistName: playlist.playlistName,
         })
