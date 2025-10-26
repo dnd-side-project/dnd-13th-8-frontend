@@ -141,7 +141,7 @@ const Handle = styled.div<{ $left: number }>`
   border-radius: 99px;
   top: 50%;
   transform: translate(-50%, -50%);
-  z-index: ${({ theme }) => theme.Z_INDEX.topLayer};
+  z-index: 50; // TODO: 레이어 정리 후 theme z-index 리팩토링 필요
   background-color: ${({ theme }) => theme.COLOR['common-white']};
   left: ${({ $left }) => $left}%;
 `
