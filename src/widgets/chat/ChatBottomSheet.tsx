@@ -57,14 +57,20 @@ const ChatBottomSheet = ({ isOpen, onClose, roomId, creatorId }: ChatBottomSheet
     }
   }
 
-  const handleSendMessage = (content: string) => {
+  const handleSendMessage = async (content: string) => {
     if (!content.trim() || !userData?.userId || !userData?.username) return
+    const origin = queryClient.getQueryData<ChatCountResponse>(['chat-count', roomId])
 
     queryClient.setQueryData(['chat-count', roomId], (prev: ChatCountResponse) => ({
       totalCount: (prev?.totalCount ?? 0) + 1,
     }))
 
-    sendMessage(userData.userId, userData.username, content)
+    try {
+      await sendMessage(userData.userId, userData.username, content)
+    } catch (error) {
+      console.error(error)
+      queryClient.setQueryData(['chat-count', roomId], origin)
+    }
   }
 
   return (
