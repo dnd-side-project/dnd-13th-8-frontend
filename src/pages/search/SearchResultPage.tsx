@@ -174,7 +174,7 @@ const SearchResultPage = () => {
                       imageUrl={item.tracks?.[0]?.youtubeThumbnail ?? ''}
                       userName={item.type === 'PLAYLIST' ? item.creatorNickname : undefined}
                       onClick={() => handleItemClick(item.playlistId)}
-                      stickers={item.onlyCdResponse?.cdItems}
+                      stickers={item.cdResponse?.cdItems}
                     />
                   ))
                 : categorySearchResult.map((item: Playlist) => (
@@ -184,7 +184,7 @@ const SearchResultPage = () => {
                       searchResult={item.playlistName}
                       userName={item.creatorNickname}
                       onClick={() => handleItemClick(item.playlistId)}
-                      stickers={item.onlyCdResponse?.cdItems}
+                      stickers={item.cdResponse?.cdItems}
                     />
                   ))}
             </ResultList>
@@ -211,7 +211,7 @@ const Result = styled.section`
   flex-direction: column;
   gap: 16px;
   overflow-y: auto;
-  height: calc(100vh - 100px);
+  max-height: calc(100vh - 100px);
 `
 
 const ResultList = styled.div`

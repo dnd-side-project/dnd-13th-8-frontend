@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
 
-import styled from 'styled-components'
+import styled, { useTheme } from 'styled-components'
 
 import { Send } from '@/assets/icons'
 import { flexRowCenter } from '@/shared/styles/mixins'
@@ -18,7 +18,18 @@ const MAX_LINES = 4
 
 const ChatInput = ({ value, onChange, onSend, onFocus }: ChatInputProps) => {
   const [isExpanded, setIsExpanded] = useState(false)
+  const [isFocused, setIsFocused] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const theme = useTheme()
+
+  const handleFocus = () => {
+    setIsFocused(true)
+    onFocus?.()
+  }
+
+  const handleBlur = () => {
+    setIsFocused(false)
+  }
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     onChange(e.target.value)
@@ -49,24 +60,29 @@ const ChatInput = ({ value, onChange, onSend, onFocus }: ChatInputProps) => {
   }, [value])
 
   return (
-    <Wrapper $isExpanded={isExpanded}>
+    <Wrapper $isExpanded={isExpanded} $isFocused={isFocused}>
       <StyledInput
         ref={textareaRef}
         placeholder="실시간 채팅달기"
         value={value}
         onChange={handleChange}
         onKeyDown={handleKeyPress}
-        onFocus={onFocus}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
         rows={1}
       />
-      <SvgButton icon={Send} onClick={onSend} />
+      <SvgButton
+        icon={Send}
+        onClick={onSend}
+        fill={value.length > 0 ? theme.COLOR['gray-50'] : theme.COLOR['gray-400']}
+      />
     </Wrapper>
   )
 }
 
 export default ChatInput
 
-const Wrapper = styled.div<{ $isExpanded: boolean }>`
+const Wrapper = styled.div<{ $isExpanded: boolean; $isFocused: boolean }>`
   ${flexRowCenter}
   gap: 16px;
   background-color: ${({ theme }) => theme.COLOR['gray-600']};
@@ -75,6 +91,9 @@ const Wrapper = styled.div<{ $isExpanded: boolean }>`
   width: 100%;
   height: fit-content;
   align-items: ${({ $isExpanded }) => ($isExpanded ? 'flex-end' : 'center')};
+
+  border: 1px solid
+    ${({ $isFocused, theme }) => ($isFocused ? theme.COLOR['primary-normal'] : 'transparent')};
 `
 
 const StyledInput = styled.textarea`

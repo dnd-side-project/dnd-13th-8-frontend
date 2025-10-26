@@ -245,7 +245,7 @@ const CustomizeStep1 = ({
         </BasicInfoContainer>
 
         <PublicControler>
-          <span aria-hidden="true">공개</span>
+          <span aria-hidden="true"> {basicInfoMap.isPublic ? '공개' : '비공개'}</span>
           <ToggleSwitch
             aria-label="CD 공개 여부"
             isOn={basicInfoMap.isPublic}
