@@ -211,7 +211,7 @@ const Result = styled.section`
   flex-direction: column;
   gap: 16px;
   overflow-y: auto;
-  height: calc(100vh - 100px);
+  max-height: calc(100vh - 100px);
 `
 
 const ResultList = styled.div`
