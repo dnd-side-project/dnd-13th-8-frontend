@@ -57,6 +57,16 @@ const ChatBottomSheet = ({ isOpen, onClose, roomId, creatorId }: ChatBottomSheet
     }
   }
 
+  const handleSendMessage = (content: string) => {
+    if (!content.trim() || !userData?.userId || !userData?.username) return
+
+    queryClient.setQueryData(['chat-count', roomId], (prev: ChatCountResponse) => ({
+      totalCount: (prev?.totalCount ?? 0) + 1,
+    }))
+
+    sendMessage(userData.userId, userData.username, content)
+  }
+
   return (
     <BottomSheet isOpen={isOpen} onClose={onClose} height="fit-content">
       <Title>실시간 채팅</Title>
@@ -95,29 +105,13 @@ const ChatBottomSheet = ({ isOpen, onClose, roomId, creatorId }: ChatBottomSheet
         )}
       </CommentSection>
       <BottomSection>
-        <EmojiCarousel
-          onClick={(value) => {
-            if (!value || !userData?.userId || !userData?.username) return
-
-            queryClient.setQueryData(['chat-count', roomId], (prev: ChatCountResponse) => ({
-              totalCount: (prev?.totalCount ?? 0) + 1,
-            }))
-
-            sendMessage(userData.userId, userData.username, value)
-          }}
-        />
+        <EmojiCarousel onClick={(value) => handleSendMessage(value)} />
 
         <ChatInput
           value={input}
           onChange={setInput}
           onSend={() => {
-            if (!input.trim() || !userData?.userId || !userData?.username) return
-
-            queryClient.setQueryData(['chat-count', roomId], (prev: ChatCountResponse) => ({
-              totalCount: (prev?.totalCount ?? 0) + 1,
-            }))
-
-            sendMessage(userData.userId, userData.username, input)
+            handleSendMessage(input)
             setInput('')
           }}
         />
