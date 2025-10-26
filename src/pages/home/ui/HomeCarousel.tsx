@@ -5,7 +5,7 @@ import type { EmblaCarouselType } from 'embla-carousel'
 import styled, { css } from 'styled-components'
 
 import { GuestCharacter, MemberCharacter } from '@/assets/images'
-import type { PlaylistInfo } from '@/entities/playlist'
+import type { CdCustomData } from '@/entities/playlist'
 import { BUTTON_TEXT } from '@/pages/home/config/messages'
 import { getGenreLabel } from '@/shared/lib'
 import { flexColCenter, flexRowCenter } from '@/shared/styles/mixins'
@@ -13,8 +13,16 @@ import { Button, Badge, Cd, LoopCarousel } from '@/shared/ui'
 
 import { DotButton, useDotButton } from './DotButton'
 
+interface Slide {
+  playlistId: number
+  playlistName: string
+  genre?: string
+  cdItems?: CdCustomData[]
+  cdResponse?: { cdItems?: CdCustomData[] }
+}
+
 interface HomeCarouselProps {
-  data: PlaylistInfo[]
+  data: Slide[]
   isLogin: boolean
 }
 
@@ -58,9 +66,13 @@ const HomeCarousel = ({ data, isLogin }: HomeCarouselProps) => {
               $active={activeIndex === index + 1}
               onClick={() => navigate(`/discover/${slide.playlistId}`)}
             >
-              <Cd variant="home" bgColor="none" stickers={slide.cdItems} />
+              <Cd
+                variant="home"
+                bgColor="none"
+                stickers={slide.cdItems ?? slide.cdResponse?.cdItems ?? []}
+              />
               <SlideOverlay $active={activeIndex === index + 1}>
-                <Badge size="large" text={getGenreLabel(slide.genre)} />
+                <Badge size="large" text={getGenreLabel(slide.genre ?? '')} />
                 <Title>{slide.playlistName}</Title>
               </SlideOverlay>
             </Slide>
