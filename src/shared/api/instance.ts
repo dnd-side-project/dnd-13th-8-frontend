@@ -2,6 +2,7 @@ import axios, { AxiosError } from 'axios'
 import type { AxiosResponse, InternalAxiosRequestConfig } from 'axios'
 
 import { useAuthStore } from '@/features/auth/store/authStore'
+import { useGlobalModalStore } from '@/shared/store/globalModalStore'
 
 export const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -25,6 +26,9 @@ axiosInstance.interceptors.request.use(
   (error) => Promise.reject(error)
 )
 
+// 에러 모달 호출용 임시 코드
+const store = useGlobalModalStore
+
 // 응답 interceptor
 axiosInstance.interceptors.response.use(
   (response: AxiosResponse) => response.data,
@@ -33,6 +37,9 @@ axiosInstance.interceptors.response.use(
     const status = error.response?.status
     const { isLogin, setLogout } = useAuthStore.getState()
     const currentPath = window.location.pathname
+
+    // const { openModal } = useGlobalModalStore.getState()
+    const msg = error.response?.data?.message ?? ''
 
     if (code === 'COMMON-401' || status === 401) {
       if (isLogin) {
@@ -71,6 +78,14 @@ axiosInstance.interceptors.response.use(
         })()
       }
     }
+
+    store.setState({
+      isOpen: true,
+      title: `[${status}] ${code}`,
+      description: msg,
+      ctaType: 'single',
+      confirmText: '확인',
+    })
 
     console.error('Axios Error: ', error.response ?? error)
     return Promise.reject(error)
