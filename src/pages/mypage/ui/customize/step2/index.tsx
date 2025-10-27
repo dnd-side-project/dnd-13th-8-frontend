@@ -202,33 +202,37 @@ const CustomizeStep2 = ({
       { theme: 'USER', file },
       {
         onSuccess: (response) => {
-          const width = 50
-          const height = 50
           const center = getCDCenter()
-
-          const newSticker: StickerInfoType = {
-            id: uuidv4(),
-            propId: response.propId,
-            type: 'custom',
-            src: response.imageUrl,
-            x: center.x - width / 2 + 85,
-            y: center.y - height / 2,
-            z: getNextZIndex(),
-            width,
-            height,
-            scale: 1,
-            rotation: 0,
-          }
 
           const img = new Image()
           img.onload = () => {
             imageCache.current[response.imageUrl] = img
+
+            const width = 50
+            const aspectRatio = img.naturalWidth / img.naturalHeight
+            const height = width / aspectRatio
+
+            const newSticker: StickerInfoType = {
+              id: uuidv4(),
+              propId: response.propId,
+              type: 'custom',
+              src: response.imageUrl,
+              x: center.x - width / 2 + 85,
+              y: center.y - height / 2,
+              z: getNextZIndex(),
+              width,
+              height,
+              scale: 1,
+              rotation: 0,
+            }
+
             setStickers((prev) => {
               const updated = [...prev, newSticker]
               setSelectedSticker(updated.length - 1)
               return updated
             })
           }
+
           img.src = response.imageUrl
 
           // 유저 스티커 리스트 재조회
