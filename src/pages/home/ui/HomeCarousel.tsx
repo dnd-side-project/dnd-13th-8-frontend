@@ -64,7 +64,11 @@ const HomeCarousel = ({ data, isLogin }: HomeCarouselProps) => {
           <EmblaSlide key={slide.playlistId}>
             <Slide
               $active={activeIndex === index + 1}
-              onClick={() => navigate(`/discover/${slide.playlistId}`)}
+              onClick={() =>
+                isLogin
+                  ? navigate(`/mycd/${slide.playlistId}`)
+                  : navigate(`/discover/${slide.playlistId}`)
+              }
             >
               <Cd
                 variant="home"
