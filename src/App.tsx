@@ -21,6 +21,7 @@ import {
 } from '@/assets/images'
 import { useAnonymousLogin } from '@/features/auth/model/useAuth'
 import { useAuthStore } from '@/features/auth/store/authStore'
+import { GlobalErrorModal } from '@/shared/ui'
 import NavBar, { NAV_HEIGHT } from '@/widgets/layout/NavBar'
 
 const LAYOUT_BOTTOM_GAP = 34
@@ -149,6 +150,7 @@ const App = () => {
               <NavBar />
             </NavContainer>
           )}
+          <GlobalErrorModal />
         </ToastProvider>
       </MainLayout>
     </RootWrapper>
