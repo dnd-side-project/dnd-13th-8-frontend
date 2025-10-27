@@ -1,10 +1,11 @@
 import { useState, useRef, useEffect } from 'react'
 
+import { useQueryClient } from '@tanstack/react-query'
 import styled from 'styled-components'
 
 import { Comment } from '@/entities/comment'
 import { useUserInfo } from '@/features/auth/model/useAuth'
-import { parseMessage } from '@/features/chat'
+import { parseMessage, type ChatCountResponse } from '@/features/chat'
 import { useChatSocket } from '@/features/chat/model/sendMessage'
 import { useInfiniteChatHistory } from '@/features/chat/model/useChat'
 import { flexColCenter } from '@/shared/styles/mixins'
@@ -23,6 +24,7 @@ interface ChatBottomSheetProps {
 const ChatBottomSheet = ({ isOpen, onClose, roomId, creatorId }: ChatBottomSheetProps) => {
   const [input, setInput] = useState('')
   const scrollRef = useRef<HTMLDivElement>(null)
+  const queryClient = useQueryClient()
 
   const { messages: socketMessages, sendMessage, removeMessage } = useChatSocket(roomId)
   const {
@@ -52,6 +54,22 @@ const ChatBottomSheet = ({ isOpen, onClose, roomId, creatorId }: ChatBottomSheet
     if (!scrollRef.current) return
     if (scrollRef.current.scrollTop === 0 && hasNextPage && !isFetchingNextPage) {
       fetchNextPage()
+    }
+  }
+
+  const handleSendMessage = async (content: string) => {
+    if (!content.trim() || !userData?.userId || !userData?.username) return
+    const origin = queryClient.getQueryData<ChatCountResponse>(['chat-count', roomId])
+
+    queryClient.setQueryData(['chat-count', roomId], (prev: ChatCountResponse) => ({
+      totalCount: (prev?.totalCount ?? 0) + 1,
+    }))
+
+    try {
+      await sendMessage(userData.userId, userData.username, content)
+    } catch (error) {
+      console.error(error)
+      queryClient.setQueryData(['chat-count', roomId], origin)
     }
   }
 
@@ -93,24 +111,14 @@ const ChatBottomSheet = ({ isOpen, onClose, roomId, creatorId }: ChatBottomSheet
         )}
       </CommentSection>
       <BottomSection>
-        <EmojiCarousel
-          onClick={(value) => {
-            if (!value) return
-            if (userData?.userId && userData?.username) {
-              sendMessage(userData.userId, userData.username, value)
-            }
-          }}
-        />
+        <EmojiCarousel onClick={(value) => handleSendMessage(value)} />
+
         <ChatInput
           value={input}
           onChange={setInput}
           onSend={() => {
-            if (input.trim()) {
-              if (userData?.userId && userData?.username) {
-                sendMessage(userData.userId, userData.username, input)
-              }
-              setInput('')
-            }
+            handleSendMessage(input)
+            setInput('')
           }}
         />
       </BottomSection>

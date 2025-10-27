@@ -5,8 +5,7 @@ import styled from 'styled-components'
 
 import { usePlaylist } from '@/app/providers/PlayerProvider'
 import { MemberCharacter } from '@/assets/images'
-import { usePlaylistDetail } from '@/entities/playlist'
-import { useMyCdList, useMyLikedCdList } from '@/entities/playlist/model/useMyCd'
+import { useMyCdActions, useMyCdList, useMyLikedCdList } from '@/entities/playlist/model/useMyCd'
 import { useAuthStore } from '@/features/auth/store/authStore'
 import { useChatSocket } from '@/features/chat/model/sendMessage'
 import { HeaderTab, PlaylistCarousel } from '@/pages/mycd/ui'
@@ -47,15 +46,11 @@ const MyCdPage = () => {
 
   const playlistQuery = selectedTab === 'MY' ? myCdPlaylist : likedCdPlaylist
 
-  const playlistData = useMemo(
-    () => playlistQuery.data?.filter((p) => selectedTab !== 'MY' || p.isPublic), // my 탭일 경우 isPublic true만 필터링
-
-    [playlistQuery.data, selectedTab]
-  )
+  const playlistData = useMemo(() => playlistQuery.data ?? [], [playlistQuery.data])
 
   const isError = playlistQuery.isError
 
-  const [centerPlaylist, setCenterPlaylist] = useState<{
+  const [centerItem, setCenterItem] = useState<{
     playlistId: number | null
     playlistName: string
   }>({ playlistId: null, playlistName: '' })
@@ -67,13 +62,13 @@ const MyCdPage = () => {
     const found = routeId ? playlistData.find((p) => p.playlistId === routeId) : null
 
     if (found) {
-      setCenterPlaylist({
+      setCenterItem({
         playlistId: found.playlistId,
         playlistName: found.playlistName,
       })
     } else if (playlistData.length > 0) {
       const first = playlistData[0]
-      setCenterPlaylist({
+      setCenterItem({
         playlistId: first.playlistId,
         playlistName: first.playlistName,
       })
@@ -89,7 +84,7 @@ const MyCdPage = () => {
   const handleTabSelect = (tab: MyCdTab) => {
     setSelectedTab(tab)
 
-    const basePath = centerPlaylist.playlistId ? `/mycd/${centerPlaylist.playlistId}` : '/mycd'
+    const basePath = centerItem.playlistId ? `/mycd/${centerItem.playlistId}` : '/mycd'
 
     const path = tab === 'LIKE' ? `${basePath}?type=LIKE` : basePath
 
@@ -100,7 +95,7 @@ const MyCdPage = () => {
   const handleCenterChange = useCallback(
     (playlist: { playlistId: number; playlistName: string }) => {
       if (playlist) {
-        setCenterPlaylist({
+        setCenterItem({
           playlistId: playlist.playlistId,
           playlistName: playlist.playlistName,
         })
@@ -117,7 +112,9 @@ const MyCdPage = () => {
   )
 
   /* 플레이리스트 세팅 */
-  const { data: playlistDetail } = usePlaylistDetail(centerPlaylist.playlistId)
+  const { tracklist: playlistDetail } = useMyCdActions(Number(centerItem.playlistId), {
+    enabled: !!centerItem.playlistId,
+  })
   useEffect(() => {
     if (playlistDetail && userInfo) {
       if (currentPlaylist?.playlistId === playlistDetail.playlistId) return
@@ -141,7 +138,7 @@ const MyCdPage = () => {
 
   const isActive = currentPlaylist?.playlistId === playlistDetail?.playlistId
   const { participantCount: listenersNum } = useChatSocket(
-    isActive && centerPlaylist.playlistId ? String(centerPlaylist.playlistId) : ''
+    isActive && centerItem.playlistId ? String(centerItem.playlistId) : ''
   )
 
   const handlePlayerStateChange = useCallback(
@@ -211,14 +208,14 @@ const MyCdPage = () => {
           <PlaylistCarousel data={playlistData ?? []} onCenterChange={handleCenterChange} />
 
           <ActionBar
-            playlistId={centerPlaylist.playlistId ?? 0}
+            playlistId={centerItem.playlistId ?? 0}
             creatorId={currentPlaylist.creator.creatorId}
             stickers={playlistDetail?.cdResponse?.cdItems || []}
             type="MY"
             selectedTab={selectedTab}
           />
 
-          <Title>{centerPlaylist.playlistName}</Title>
+          <Title>{centerItem.playlistName}</Title>
 
           <BottomWrapper>
             <ProgressBar

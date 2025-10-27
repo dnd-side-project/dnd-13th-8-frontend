@@ -58,7 +58,7 @@ const FirstSection = () => {
       ) : (
         <CarouselContainer>
           <Title>{isLogin ? TITLE_TEXT.MEMBER(userInfo.username) : TITLE_TEXT.GUEST}</Title>
-          <HomeCarousel data={playlists} isLogin={isLogin} />
+          <HomeCarousel data={isLogin ? (MyCdData ?? playlists) : playlists} isLogin={isLogin} />
         </CarouselContainer>
       )}
     </Container>
