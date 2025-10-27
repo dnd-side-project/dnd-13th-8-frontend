@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
 import styled from 'styled-components'
@@ -8,9 +8,9 @@ import { LeftArrow, StartBlack, Trash, Share, Eye, EyeSlash } from '@/assets/ico
 import { useMyCdActions } from '@/entities/playlist/model/useMyCd'
 import { usePlaylistDetail } from '@/entities/playlist/model/usePlaylists'
 import { useAuthStore } from '@/features/auth/store/authStore'
+import { ShareButton } from '@/features/share'
 import { Divider } from '@/pages/mypage/ui/components'
 import { MUSIC_GENRES } from '@/shared/config/musicGenres'
-import { useCopyCdShareUrl } from '@/shared/lib/useCopyCdShareUrl'
 import { flexRowCenter } from '@/shared/styles/mixins'
 import { Header, SvgButton, Link, Modal, Loading } from '@/shared/ui'
 import type { ModalProps } from '@/shared/ui/Modal'
@@ -20,6 +20,8 @@ const MypageTracklist = () => {
   const navigate = useNavigate()
   const { state } = useLocation()
   const { id: cdId } = useParams()
+
+  const shareRef = useRef<{ openShare: () => void }>(null)
 
   const [modal, setModal] = useState<ModalProps>({
     isOpen: false,
@@ -40,7 +42,6 @@ const MypageTracklist = () => {
     enabled: isFromMyCdList,
   })
 
-  const { copyCdShareUrl } = useCopyCdShareUrl()
   const { userInfo } = useAuthStore()
   const { toast } = useToast()
 
@@ -151,8 +152,14 @@ const MypageTracklist = () => {
         <CdActionButton
           type="button"
           aria-label="CD 공유하기"
-          onClick={() => copyCdShareUrl(Number(cdId))}
+          onClick={() => shareRef.current?.openShare()}
         >
+          <ShareButton
+            ref={shareRef}
+            playlistId={cdMetadata?.playlistId ?? 0}
+            stickers={cdMetadata?.cdResponse?.cdItems ?? []}
+            type="TRACKLIST"
+          />
           <Share width={20} height={20} />
         </CdActionButton>
         {isMyCd && (

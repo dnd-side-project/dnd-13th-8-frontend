@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useRef, useState, useImperativeHandle } from 'react'
 
 import { toPng } from 'html-to-image'
 import styled from 'styled-components'
@@ -16,10 +16,11 @@ import { BottomSheet, Button, Cd, ScrollCarousel, SvgButton } from '@/shared/ui'
 interface ShareButtonProps {
   playlistId: number
   stickers?: CdCustomData[]
-  type?: 'MY' | 'DISCOVER'
+  type?: 'MY' | 'DISCOVER' | 'TRACKLIST'
+  ref?: React.Ref<{ openShare: () => void }>
 }
 
-const ShareButton = ({ playlistId, stickers, type = 'DISCOVER' }: ShareButtonProps) => {
+const ShareButton = ({ playlistId, stickers, type = 'DISCOVER', ref }: ShareButtonProps) => {
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false)
   const [selectedIndex, setSelectedIndex] = useState(0)
   const { toast } = useToast()
@@ -44,7 +45,7 @@ const ShareButton = ({ playlistId, stickers, type = 'DISCOVER' }: ShareButtonPro
     const currentRef = shareRefs.current[selectedIndex]
     if (!currentRef) return
     try {
-      const dataUrl = await toPng(currentRef)
+      const dataUrl = await toPng(currentRef, { cacheBust: true })
       const link = document.createElement('a')
       link.href = dataUrl
       link.download = `playlist-${playlistId}-${slides[selectedIndex].id}.png`
@@ -55,12 +56,23 @@ const ShareButton = ({ playlistId, stickers, type = 'DISCOVER' }: ShareButtonPro
     }
   }
 
+  // ref를 통해 부모 컴포넌트에서 handleShare 호출 (type이 TRACKLIST인 케이스)
+  useImperativeHandle(ref, () => ({
+    openShare: handleShare,
+  }))
+
   return (
     <>
-      <ButtonWrapper $isMy={type === 'MY'} onClick={handleShare}>
-        <SvgButton icon={Share} width={type === 'MY' ? 16 : 24} height={type === 'MY' ? 16 : 24} />
-        {type === 'MY' && <p>공유</p>}
-      </ButtonWrapper>
+      {type !== 'TRACKLIST' && (
+        <ButtonWrapper $isMy={type === 'MY'} onClick={handleShare}>
+          <SvgButton
+            icon={Share}
+            width={type === 'MY' ? 16 : 24}
+            height={type === 'MY' ? 16 : 24}
+          />
+          {type === 'MY' && <p>공유</p>}
+        </ButtonWrapper>
+      )}
 
       <BottomSheet
         isOpen={isBottomSheetOpen}
