@@ -9,7 +9,7 @@ import {
   useRecommendedGenres,
 } from '@/features/recommend'
 import { FirstSection } from '@/pages/home/ui'
-import { ScrollCarousel } from '@/shared/ui'
+import { CategoryButton, ScrollCarousel } from '@/shared/ui'
 import { Playlist, PlaylistWithSong } from '@/widgets/playlist'
 
 const HomePage = () => {
@@ -67,13 +67,13 @@ const HomePage = () => {
         <h1>오늘은 이런 기분</h1>
         <ScrollCarousel gap={12}>
           {GenreData?.map((item) => (
-            <Slide
+            <CategoryButton
               key={item.code}
-              $bgImage={CARD_IMAGES_LARGE[item.code as keyof typeof CARD_IMAGES_LARGE]}
+              size="large"
+              text={item.displayName}
+              bgImage={CARD_IMAGES_LARGE[item.code as keyof typeof CARD_IMAGES_LARGE]}
               onClick={() => handleKeywordSearch(item.code)}
-            >
-              {item.displayName}
-            </Slide>
+            />
           ))}
         </ScrollCarousel>
       </FourthSection>
@@ -82,22 +82,6 @@ const HomePage = () => {
 }
 
 export default HomePage
-
-const Slide = styled.button<{ $bgImage?: string }>`
-  border-radius: 10px;
-  width: 160px;
-  height: 200px;
-  color: ${({ theme }) => theme.COLOR['gray-100']};
-  ${({ theme }) => theme.FONT['body1-normal']};
-  background-color: ${({ theme }) => theme.COLOR['gray-600']};
-  background-image: url(${({ $bgImage }) => $bgImage});
-  background-size: cover;
-  background-position: center;
-  padding: 12px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-`
 
 const PageLayout = styled.div`
   display: flex;
