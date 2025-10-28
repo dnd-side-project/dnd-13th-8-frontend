@@ -206,9 +206,7 @@ const MyCdPage = () => {
               </Button>
             )}
           </Container>
-
           <PlaylistCarousel data={playlistData ?? []} onCenterChange={handleCenterChange} />
-
           <ActionBar
             playlistId={centerItem.playlistId ?? 0}
             creatorId={currentPlaylist.creator.creatorId}
@@ -216,8 +214,10 @@ const MyCdPage = () => {
             type="MY"
             selectedTab={selectedTab}
           />
-
           <Title>{centerItem.playlistName}</Title>
+          {selectedTab === 'LIKE' && playlistDetail?.creatorNickname && (
+            <Creator>{playlistDetail.creatorNickname}</Creator>
+          )}
 
           <BottomWrapper>
             <ProgressBar
@@ -287,4 +287,8 @@ const NavigateBtn = styled.button`
   padding: 6px 20px;
   height: 32px;
   ${({ theme }) => theme.FONT['body2-normal']};
+`
+const Creator = styled.p`
+  ${({ theme }) => theme.FONT['body2-normal']};
+  color: ${({ theme }) => theme.COLOR['gray-300']};
 `
