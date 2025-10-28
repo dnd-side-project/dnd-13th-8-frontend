@@ -200,6 +200,7 @@ export default DiscoverPage
 
 const Slide = styled.div`
   flex: 0 0 100%;
+  position: relative;
 `
 const Page = styled.div`
   position: relative;

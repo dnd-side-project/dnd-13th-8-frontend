@@ -151,10 +151,8 @@ const Overlay = styled.div`
   position: absolute;
   inset: 0;
   width: 100%;
-  height: 100dvh;
+  height: 100%;
   z-index: ${({ theme }) => theme.Z_INDEX.overlay};
-
-  pointer-events: auto;
 `
 
 const ProgressBarWrapper = styled.div`
