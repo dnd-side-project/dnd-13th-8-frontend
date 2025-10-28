@@ -13,7 +13,7 @@ import type { MyCdTab } from '@/pages/mycd/ui/HeaderTab'
 import { getVideoId } from '@/shared/lib'
 import { useDevice } from '@/shared/lib/useDevice'
 import { flexColCenter, flexRowCenter } from '@/shared/styles/mixins'
-import { Button, LiveInfo } from '@/shared/ui'
+import { Button, LiveInfo, Loading } from '@/shared/ui'
 import { ActionBar, ControlBar, ProgressBar, VolumeButton, YoutubePlayer } from '@/widgets/playlist'
 
 const MyCdPage = () => {
@@ -45,10 +45,10 @@ const MyCdPage = () => {
   const likedCdPlaylist = useMyLikedCdList('RECENT')
 
   const playlistQuery = selectedTab === 'MY' ? myCdPlaylist : likedCdPlaylist
-
   const playlistData = useMemo(() => playlistQuery.data ?? [], [playlistQuery.data])
-
+  const isLoading = playlistQuery.isLoading
   const isError = playlistQuery.isError
+  const isEmpty = !isLoading && playlistData.length === 0
 
   const [centerItem, setCenterItem] = useState<{
     playlistId: number | null
@@ -162,12 +162,14 @@ const MyCdPage = () => {
     ? getVideoId(currentPlaylist.songs[currentTrackIndex]?.youtubeUrl)
     : null
 
+  if (isLoading) {
+    return <Loading isLoading />
+  }
+
   if (isError) {
     navigate('/error')
     return null
   }
-
-  const isEmpty = playlistData && playlistData.length === 0
 
   if (isEmpty) {
     return (
