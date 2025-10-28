@@ -6,7 +6,7 @@ import styled from 'styled-components'
 import { Comment } from '@/entities/comment'
 import { useUserInfo } from '@/features/auth/model/useAuth'
 import { parseMessage, type ChatCountResponse } from '@/features/chat'
-import { useChatSocket } from '@/features/chat/model/sendMessage'
+import { useChatSocket, type ChatMessage } from '@/features/chat/model/sendMessage'
 import { useInfiniteChatHistory } from '@/features/chat/model/useChat'
 import { flexColCenter } from '@/shared/styles/mixins'
 import { BottomSheet } from '@/shared/ui'
@@ -35,12 +35,20 @@ const ChatBottomSheet = ({ isOpen, onClose, roomId, creatorId }: ChatBottomSheet
   } = useInfiniteChatHistory(roomId)
   const { data: userData } = useUserInfo()
 
-  const historyMessages = historyData?.pages.flatMap((page) => page.messages) ?? []
+  const historyMessages: ChatMessage[] = historyData?.pages.flatMap((page) => page.messages) ?? []
 
   // 히스토리 + 실시간 메시지 합치고 오래된 순으로 정렬
-  const allMessages = [...historyMessages, ...socketMessages].sort(
-    (a, b) => new Date(a.sentAt!).getTime() - new Date(b.sentAt!).getTime()
-  )
+  const allMessages = (() => {
+    const messageMap = new Map<string, ChatMessage>()
+
+    ;[...historyMessages, ...socketMessages].forEach((msg: ChatMessage) => {
+      messageMap.set(msg.messageId, msg)
+    })
+
+    return Array.from(messageMap.values()).sort(
+      (a, b) => new Date(a.sentAt!).getTime() - new Date(b.sentAt!).getTime()
+    )
+  })()
 
   // 스크롤 맨 아래 유지
   useEffect(() => {
