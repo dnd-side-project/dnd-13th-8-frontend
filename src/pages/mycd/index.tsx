@@ -214,7 +214,7 @@ const MyCdPage = () => {
             type="MY"
             selectedTab={selectedTab}
           />
-          <Title>{centerItem.playlistName}</Title>
+          <Title $isMobile={isMobile}> {centerItem.playlistName}</Title>
           {selectedTab === 'LIKE' && playlistDetail?.creatorNickname && (
             <Creator>{playlistDetail.creatorNickname}</Creator>
           )}
@@ -261,22 +261,16 @@ const Container = styled.div`
   height: 30px;
 `
 
-const Title = styled.p`
+const Title = styled.p<{ $isMobile?: boolean }>`
   ${({ theme }) => theme.FONT.headline1};
-  padding-top: 40px;
+  padding-top: ${({ $isMobile }) => ($isMobile ? '24px' : '40px')};
 `
 
 const BottomWrapper = styled.div`
-  padding-top: 24px;
+  padding-top: 20px;
   display: flex;
   flex-direction: column;
   gap: 20px;
-`
-
-const ViewContainer = styled.div`
-  ${flexColCenter}
-  height: 100%;
-  gap: 16px;
 `
 
 const NavigateBtn = styled.button`
@@ -291,4 +285,10 @@ const NavigateBtn = styled.button`
 const Creator = styled.p`
   ${({ theme }) => theme.FONT['body2-normal']};
   color: ${({ theme }) => theme.COLOR['gray-300']};
+`
+
+const ViewContainer = styled.div`
+  ${flexColCenter}
+  height: 100%;
+  gap: 16px;
 `

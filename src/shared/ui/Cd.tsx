@@ -17,12 +17,12 @@ export interface CdProps {
     | 'md'
     | 'sm'
     | 'xs'
-    | 'share'
     | 'customize'
     | 'carousel'
     | 'responsive'
     | 'home'
     | 'mycd'
+    | 'mycd_mo'
   bgColor?: 'none' | 'default' | 'dark'
   stickers?: CdCustomData[]
   isPublic?: boolean
@@ -133,12 +133,12 @@ const sizeMap = {
   md: { container: 104, base: 88, borderRadius: 10 },
   sm: { container: 88, base: 72, borderRadius: 10 },
   xs: { container: 56, base: 48, borderRadius: 6 },
-  share: { container: 280, base: 220, borderRadius: 24 },
   customize: { container: 220, base: 220, borderRadius: 0 },
   carousel: { container: 180, base: 180, borderRadius: 0 },
   responsive: { borderRadius: 10 },
   home: { container: 180, base: 180, borderRadius: 0 },
   mycd: { container: 260, base: 260, borderRadius: 0 },
+  mycd_mo: { container: 240, base: 240, borderRadius: 0 },
 } as const
 
 interface StyleProps {
