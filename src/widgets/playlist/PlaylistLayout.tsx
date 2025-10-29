@@ -74,7 +74,7 @@ const PlaylistLayout = ({
             <Cd variant="xxl" bgColor="none" stickers={data?.cdItems ?? []} />
           </CdSpinner>
         </CdContainer>
-        <ActionBarContainer>
+        <ActionBarContainer $isMobile={isMobile}>
           <ActionBar
             playlistId={data.playlistId}
             creatorId={data.creator.creatorId}
@@ -135,10 +135,10 @@ const Creator = styled.p`
   ${({ theme }) => theme.FONT['body2-normal']};
   color: ${({ theme }) => theme.COLOR['gray-300']};
 `
-const ActionBarContainer = styled.div`
+const ActionBarContainer = styled.div<{ $isMobile?: boolean }>`
   display: flex;
   justify-content: flex-end;
-  margin: -40px 0 0 auto;
+  margin: ${({ $isMobile }) => ($isMobile ? '-105px 0 0 auto' : '-40px 0 0 auto')};
   position: relative;
   z-index: ${({ theme }) => theme.Z_INDEX.topLayer};
 `
