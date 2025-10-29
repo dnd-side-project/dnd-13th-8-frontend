@@ -66,8 +66,7 @@ export interface PlaylistInfo extends PlaylistDetail {
   totalTime?: string
   creator: Creator
 
-  // TODO : 타입 맞춰달라고 수정 요청 해야 함
-  onlyCdResponse?: {
+  cdResponse?: {
     cdItems: CdCustomData[]
   }
   cdItems?: CdCustomData[]
