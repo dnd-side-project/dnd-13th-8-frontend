@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import styled from 'styled-components'
@@ -38,6 +38,7 @@ const PlaylistLayout = ({
   setIsMuted,
   type = 'Discover',
 }: PlaylistSlideProps) => {
+  const [showPlayButton, setShowPlayButton] = useState(false)
   const navigate = useNavigate()
   const isActive = currentPlaylist?.playlistId === data.playlistId
   const { participantCount: listenersNum } = useChatSocket(isActive ? String(data.playlistId) : '')
@@ -52,9 +53,15 @@ const PlaylistLayout = ({
     [onSelectTrack]
   )
 
+  const handleOverlayClick = () => {
+    onPlayPause()
+    setShowPlayButton(true)
+    setTimeout(() => setShowPlayButton(false), 1000)
+  }
+
   return (
     <>
-      <Overlay onClick={onPlayPause} />
+      <Overlay onClick={handleOverlayClick} />
       <Header center={<span>둘러보기</span>} />
       <Container>
         {isMobile && isMuted && (
@@ -69,7 +76,7 @@ const PlaylistLayout = ({
       </Container>
       <Wrapper>
         <CdContainer>
-          {!isPlaying && <PlayButton onPlayPause={onPlayPause} />}
+          {showPlayButton && <PlayButton onPlayPause={onPlayPause} show={showPlayButton} />}
           <CdSpinner $isPlaying={isPlaying}>
             <Cd
               variant="xxl"
