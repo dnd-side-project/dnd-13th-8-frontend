@@ -71,7 +71,7 @@ const PlaylistCarousel = ({ data, onCenterChange }: PlaylistCarouselProps) => {
             <Cd
               variant={isMobile ? 'mycd_mo' : 'mycd'}
               bgColor="none"
-              stickers={activeIndex === index ? slide.cdResponse.cdItems : []}
+              stickers={slide.cdResponse.cdItems}
             />
           </Slide>
         </EmblaSlide>
