@@ -6,6 +6,7 @@ import styled from 'styled-components'
 import { usePlaylist } from '@/app/providers/PlayerProvider'
 import { NoLike } from '@/assets/icons'
 import { MemberCharacter } from '@/assets/images'
+import { usePlaylistDetail } from '@/entities/playlist'
 import { useMyCdActions, useMyCdList, useMyLikedCdList } from '@/entities/playlist/model/useMyCd'
 import { useAuthStore } from '@/features/auth/store/authStore'
 import { useChatSocket } from '@/features/chat/model/sendMessage'
@@ -114,9 +115,15 @@ const MyCdPage = () => {
   )
 
   /* 플레이리스트 세팅 */
-  const { tracklist: playlistDetail } = useMyCdActions(Number(centerItem.playlistId), {
-    enabled: !!centerItem.playlistId,
+  const myCdDetail = useMyCdActions(Number(centerItem.playlistId), {
+    enabled: selectedTab === 'MY' && !!centerItem.playlistId,
   })
+
+  const likedCdDetail = usePlaylistDetail(centerItem.playlistId, {
+    enabled: selectedTab === 'LIKE' && !!centerItem.playlistId,
+  })
+
+  const playlistDetail = selectedTab === 'MY' ? myCdDetail.tracklist : likedCdDetail.data
   useEffect(() => {
     if (playlistDetail && userInfo) {
       if (currentPlaylist?.playlistId === playlistDetail.playlistId) return
