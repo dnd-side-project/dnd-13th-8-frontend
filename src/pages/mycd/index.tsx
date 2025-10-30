@@ -4,6 +4,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { usePlaylist } from '@/app/providers/PlayerProvider'
+import { NoLike } from '@/assets/icons'
 import { MemberCharacter } from '@/assets/images'
 import { useMyCdActions, useMyCdList, useMyLikedCdList } from '@/entities/playlist/model/useMyCd'
 import { useAuthStore } from '@/features/auth/store/authStore'
@@ -48,7 +49,8 @@ const MyCdPage = () => {
   const playlistData = useMemo(() => playlistQuery.data ?? [], [playlistQuery.data])
   const isLoading = playlistQuery.isLoading
   const isError = playlistQuery.isError
-  const isEmpty = !isLoading && playlistData.length === 0
+  const isMyEmpty = !myCdPlaylist.isLoading && (myCdPlaylist.data?.length ?? 0) === 0
+  const isLikedEmpty = !likedCdPlaylist.isLoading && (likedCdPlaylist.data?.length ?? 0) === 0
 
   const [centerItem, setCenterItem] = useState<{
     playlistId: number | null
@@ -171,14 +173,32 @@ const MyCdPage = () => {
     return null
   }
 
-  if (isEmpty) {
+  if (selectedTab === 'MY' && isMyEmpty) {
     return (
-      <ViewContainer>
-        <img src={MemberCharacter} alt="Guest Character" width={160} height={160} />
-        <NavigateBtn onClick={() => navigate('/mypage/customize')}>
-          새로운 CD에 취향 담기
-        </NavigateBtn>
-      </ViewContainer>
+      <EmptyPage>
+        <HeaderTab selectedTab={selectedTab} onSelect={handleTabSelect} />
+        <CenterContent>
+          <img src={MemberCharacter} alt="Guest Character" width={160} height={160} />
+          <NavigateBtn onClick={() => navigate('/mypage/customize')}>
+            새로운 CD에 취향 담기
+          </NavigateBtn>
+        </CenterContent>
+      </EmptyPage>
+    )
+  }
+
+  if (selectedTab === 'LIKE' && isLikedEmpty) {
+    return (
+      <EmptyPage>
+        <HeaderTab selectedTab={selectedTab} onSelect={handleTabSelect} />
+        <CenterContent>
+          <NoLike width={160} height={160} />
+          <SubText>
+            아직 좋아요한 CD가 없어요. <br /> 새로운 음악을 찾아볼까요?
+          </SubText>
+          <NavigateBtn onClick={() => navigate('/discover')}>둘러보기로 가기</NavigateBtn>
+        </CenterContent>
+      </EmptyPage>
     )
   }
 
@@ -281,14 +301,27 @@ const NavigateBtn = styled.button`
   padding: 6px 20px;
   height: 32px;
   ${({ theme }) => theme.FONT['body2-normal']};
+  margin-top: 16px;
 `
 const Creator = styled.p`
   ${({ theme }) => theme.FONT['body2-normal']};
   color: ${({ theme }) => theme.COLOR['gray-300']};
 `
 
-const ViewContainer = styled.div`
-  ${flexColCenter}
+const SubText = styled.p`
+  ${({ theme }) => theme.FONT['body1-normal']}
+  color: ${({ theme }) => theme.COLOR['gray-50']};
+`
+
+const EmptyPage = styled.div`
+  display: flex;
+  flex-direction: column;
   height: 100%;
-  gap: 16px;
+  background-color: ${({ theme }) => theme.COLOR['gray-900']};
+`
+
+const CenterContent = styled.div`
+  flex: 1;
+  ${flexColCenter};
+  text-align: center;
 `
