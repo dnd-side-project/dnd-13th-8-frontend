@@ -48,7 +48,6 @@ const ActionBar = ({
           width={type === 'MY' ? 16 : 24}
           height={type === 'MY' ? 16 : 24}
         />
-        {type === 'MY' && <p>트랙리스트</p>}
       </DetailButton>
     </Wrapper>
   )

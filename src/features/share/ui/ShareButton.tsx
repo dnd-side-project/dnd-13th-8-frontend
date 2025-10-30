@@ -59,7 +59,6 @@ const ShareButton = ({ playlistId, stickers, type = 'DISCOVER' }: ShareButtonPro
     <>
       <ButtonWrapper $isMy={type === 'MY'} onClick={handleShare}>
         <SvgButton icon={Share} width={type === 'MY' ? 16 : 24} height={type === 'MY' ? 16 : 24} />
-        {type === 'MY' && <p>공유</p>}
       </ButtonWrapper>
 
       <BottomSheet
