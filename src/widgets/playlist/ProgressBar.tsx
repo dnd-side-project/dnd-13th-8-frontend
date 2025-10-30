@@ -104,7 +104,7 @@ const ProgressBar = ({ trackLengths, currentIndex, onClick }: ProgressBarProps) 
       window.removeEventListener('pointermove', handlePointerMove)
       window.removeEventListener('pointerup', handlePointerUp)
     }
-  }, [isDragging, dragTime])
+  }, [isDragging, dragTime, trackLengths, onClick])
 
   let prevTotal = 0
   const accPercent = (accTime / totalTime) * 100
