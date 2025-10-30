@@ -38,13 +38,13 @@ const ProgressBar = ({ trackLengths, currentIndex, onClick }: ProgressBarProps) 
   const [isDragging, setIsDragging] = useState(false)
   const [dragTime, setDragTime] = useState<number | null>(null)
   const handleRef = useRef<HTMLDivElement>(null)
-  const [barRect, setHandleRef] = useState<DOMRect | null>(null)
+  const [barRect, setBarRef] = useState<DOMRect | null>(null)
 
   // 핸들 위치 초기값 및 리사이즈 대응
   useLayoutEffect(() => {
     const handleResize = () => {
       if (!handleRef.current) return
-      setHandleRef(handleRef.current.getBoundingClientRect())
+      setBarRef(handleRef.current.getBoundingClientRect())
     }
     window.addEventListener('resize', handleResize)
     handleResize() // 마운트 시
@@ -70,7 +70,7 @@ const ProgressBar = ({ trackLengths, currentIndex, onClick }: ProgressBarProps) 
   const handleProgress = (clientX: number) => {
     if (!handleRef.current) return
     const rect = handleRef.current.getBoundingClientRect()
-    setHandleRef(rect) // portal 위치용
+    setBarRef(rect) // portal 위치용
     const x = Math.min(Math.max(clientX - rect.left, 0), rect.width)
     const progress = x / rect.width
     setDragTime(progress * totalTime)
