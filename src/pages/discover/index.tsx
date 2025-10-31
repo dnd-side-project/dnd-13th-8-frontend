@@ -164,7 +164,7 @@ const DiscoverPage = () => {
               currentPlaylist={currentPlaylist}
               currentTrackIndex={currentTrackIndex}
               currentTime={currentTime}
-              isPlaying={isPlaying}
+              isPlaying={isPlaying && !showCoachmark}
               onPlayPause={() => (isPlaying ? pause() : play())}
               onNext={nextTrack}
               onPrev={prevTrack}
@@ -179,14 +179,16 @@ const DiscoverPage = () => {
         ))}
       </SwipeCarousel>
 
-      {videoId && (
+      {!showCoachmark && videoId && (
         <YoutubePlayer
           videoId={videoId}
           onReady={(event) => {
             playerRef.current = event.target
             playerRef.current?.seekTo(currentTime, true)
-            if (isPlaying) playerRef.current?.playVideo()
-            else playerRef.current?.pauseVideo()
+            if (!isPlaying) {
+              playerRef.current?.pauseVideo()
+            }
+
             setIsMuted(playerRef.current?.isMuted() ?? null)
           }}
           onStateChange={handlePlayerStateChange}
@@ -200,6 +202,7 @@ export default DiscoverPage
 
 const Slide = styled.div`
   flex: 0 0 100%;
+  position: relative;
 `
 const Page = styled.div`
   position: relative;

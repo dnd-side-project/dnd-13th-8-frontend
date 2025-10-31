@@ -24,18 +24,21 @@ import { useAuthStore } from '@/features/auth/store/authStore'
 import { GlobalErrorModal } from '@/shared/ui'
 import NavBar, { NAV_HEIGHT } from '@/widgets/layout/NavBar'
 
-const LAYOUT_BOTTOM_GAP = 34
-
 const App = () => {
   const deviceType = useDevice()
   const location = useLocation()
+  const isMobile = deviceType === 'mobile'
 
   const { isLogin } = useAuthStore()
   const { mutate } = useAnonymousLogin()
 
   const [isNavVisible, setIsNavVisible] = useState(true)
 
-  const LAYOUT_WIDTH = deviceType === 'mobile' ? 'clamp(320px, 100dvw, 430px)' : '430px'
+  const LAYOUT_WIDTH = isMobile ? 'clamp(320px, 100dvw, 430px)' : '430px'
+
+  const isMobileView =
+    isMobile && (location.pathname.startsWith('/mycd') || location.pathname.startsWith('/discover'))
+  const LAYOUT_BOTTOM_GAP = isMobileView ? 16 : 34
 
   // 비회원일 경우 API 호출을 위한 익명 토큰 발급
   // TODO: 토큰 만료됐을 경우 응답 체크해서 해당 값일 경우 토큰 재발급

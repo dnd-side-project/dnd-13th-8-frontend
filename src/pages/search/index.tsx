@@ -38,7 +38,7 @@ const SearchPage = () => {
       />
       <Input
         type="search"
-        placeholder="플레이리스트명 또는 닉네임으로 검색"
+        placeholder="듣고 싶은 키워드로 검색"
         value={searchValue}
         onChange={(e) => setSearchValue(e.target.value)}
         icon={Search}

@@ -4,7 +4,9 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { usePlaylist } from '@/app/providers/PlayerProvider'
+import { NoLike } from '@/assets/icons'
 import { MemberCharacter } from '@/assets/images'
+import { usePlaylistDetail } from '@/entities/playlist'
 import { useMyCdActions, useMyCdList, useMyLikedCdList } from '@/entities/playlist/model/useMyCd'
 import { useAuthStore } from '@/features/auth/store/authStore'
 import { useChatSocket } from '@/features/chat/model/sendMessage'
@@ -13,7 +15,7 @@ import type { MyCdTab } from '@/pages/mycd/ui/HeaderTab'
 import { getVideoId } from '@/shared/lib'
 import { useDevice } from '@/shared/lib/useDevice'
 import { flexColCenter, flexRowCenter } from '@/shared/styles/mixins'
-import { Button, LiveInfo } from '@/shared/ui'
+import { Button, LiveInfo, Loading } from '@/shared/ui'
 import { ActionBar, ControlBar, ProgressBar, VolumeButton, YoutubePlayer } from '@/widgets/playlist'
 
 const MyCdPage = () => {
@@ -45,10 +47,11 @@ const MyCdPage = () => {
   const likedCdPlaylist = useMyLikedCdList('RECENT')
 
   const playlistQuery = selectedTab === 'MY' ? myCdPlaylist : likedCdPlaylist
-
   const playlistData = useMemo(() => playlistQuery.data ?? [], [playlistQuery.data])
-
+  const isLoading = playlistQuery.isLoading
   const isError = playlistQuery.isError
+  const isMyEmpty = !myCdPlaylist.isLoading && (myCdPlaylist.data?.length ?? 0) === 0
+  const isLikedEmpty = !likedCdPlaylist.isLoading && (likedCdPlaylist.data?.length ?? 0) === 0
 
   const [centerItem, setCenterItem] = useState<{
     playlistId: number | null
@@ -112,9 +115,15 @@ const MyCdPage = () => {
   )
 
   /* 플레이리스트 세팅 */
-  const { tracklist: playlistDetail } = useMyCdActions(Number(centerItem.playlistId), {
-    enabled: !!centerItem.playlistId,
+  const myCdDetail = useMyCdActions(Number(centerItem.playlistId), {
+    enabled: selectedTab === 'MY' && !!centerItem.playlistId,
   })
+
+  const likedCdDetail = usePlaylistDetail(centerItem.playlistId, {
+    enabled: selectedTab === 'LIKE' && !!centerItem.playlistId,
+  })
+
+  const playlistDetail = selectedTab === 'MY' ? myCdDetail.tracklist : likedCdDetail.data
   useEffect(() => {
     if (playlistDetail && userInfo) {
       if (currentPlaylist?.playlistId === playlistDetail.playlistId) return
@@ -162,21 +171,41 @@ const MyCdPage = () => {
     ? getVideoId(currentPlaylist.songs[currentTrackIndex]?.youtubeUrl)
     : null
 
+  if (isLoading) {
+    return <Loading isLoading />
+  }
+
   if (isError) {
     navigate('/error')
     return null
   }
 
-  const isEmpty = playlistData && playlistData.length === 0
-
-  if (isEmpty) {
+  if (selectedTab === 'MY' && isMyEmpty) {
     return (
-      <ViewContainer>
-        <img src={MemberCharacter} alt="Guest Character" width={160} height={160} />
-        <NavigateBtn onClick={() => navigate('/mypage/customize')}>
-          새로운 CD에 취향 담기
-        </NavigateBtn>
-      </ViewContainer>
+      <EmptyPage>
+        <HeaderTab selectedTab={selectedTab} onSelect={handleTabSelect} />
+        <CenterContent>
+          <img src={MemberCharacter} alt="Guest Character" width={160} height={160} />
+          <NavigateBtn onClick={() => navigate('/mypage/customize')}>
+            새로운 CD에 취향 담기
+          </NavigateBtn>
+        </CenterContent>
+      </EmptyPage>
+    )
+  }
+
+  if (selectedTab === 'LIKE' && isLikedEmpty) {
+    return (
+      <EmptyPage>
+        <HeaderTab selectedTab={selectedTab} onSelect={handleTabSelect} />
+        <CenterContent>
+          <NoLike width={160} height={160} />
+          <SubText>
+            아직 좋아요한 CD가 없어요. <br /> 새로운 음악을 찾아볼까요?
+          </SubText>
+          <NavigateBtn onClick={() => navigate('/discover')}>둘러보기로 가기</NavigateBtn>
+        </CenterContent>
+      </EmptyPage>
     )
   }
 
@@ -204,9 +233,7 @@ const MyCdPage = () => {
               </Button>
             )}
           </Container>
-
           <PlaylistCarousel data={playlistData ?? []} onCenterChange={handleCenterChange} />
-
           <ActionBar
             playlistId={centerItem.playlistId ?? 0}
             creatorId={currentPlaylist.creator.creatorId}
@@ -214,8 +241,10 @@ const MyCdPage = () => {
             type="MY"
             selectedTab={selectedTab}
           />
-
-          <Title>{centerItem.playlistName}</Title>
+          <Title $isMobile={isMobile}> {centerItem.playlistName}</Title>
+          {selectedTab === 'LIKE' && playlistDetail?.creatorNickname && (
+            <Creator>{playlistDetail.creatorNickname}</Creator>
+          )}
 
           <BottomWrapper>
             <ProgressBar
@@ -259,22 +288,16 @@ const Container = styled.div`
   height: 30px;
 `
 
-const Title = styled.p`
+const Title = styled.p<{ $isMobile?: boolean }>`
   ${({ theme }) => theme.FONT.headline1};
-  padding-top: 40px;
+  padding-top: ${({ $isMobile }) => ($isMobile ? '24px' : '40px')};
 `
 
 const BottomWrapper = styled.div`
-  padding-top: 24px;
+  padding-top: 20px;
   display: flex;
   flex-direction: column;
   gap: 20px;
-`
-
-const ViewContainer = styled.div`
-  ${flexColCenter}
-  height: 100%;
-  gap: 16px;
 `
 
 const NavigateBtn = styled.button`
@@ -285,4 +308,27 @@ const NavigateBtn = styled.button`
   padding: 6px 20px;
   height: 32px;
   ${({ theme }) => theme.FONT['body2-normal']};
+  margin-top: 16px;
+`
+const Creator = styled.p`
+  ${({ theme }) => theme.FONT['body2-normal']};
+  color: ${({ theme }) => theme.COLOR['gray-300']};
+`
+
+const SubText = styled.p`
+  ${({ theme }) => theme.FONT['body1-normal']}
+  color: ${({ theme }) => theme.COLOR['gray-50']};
+`
+
+const EmptyPage = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: ${({ theme }) => theme.COLOR['gray-900']};
+`
+
+const CenterContent = styled.div`
+  flex: 1;
+  ${flexColCenter};
+  text-align: center;
 `

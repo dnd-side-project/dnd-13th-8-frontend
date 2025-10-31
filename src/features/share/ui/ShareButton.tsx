@@ -27,7 +27,7 @@ const ShareButton = ({ playlistId, stickers, type = 'DISCOVER' }: ShareButtonPro
   const shareRefs = useRef<(HTMLDivElement | null)[]>([])
 
   const slides = [
-    { id: 'cd', content: <Cd variant="share" bgColor="none" stickers={stickers} /> },
+    { id: 'cd', content: <Cd variant="customize" bgColor="none" stickers={stickers} /> },
     {
       id: 'member',
       content: <img src={MemberCharacter} alt="Member Character" width={220} height={220} />,
@@ -59,7 +59,6 @@ const ShareButton = ({ playlistId, stickers, type = 'DISCOVER' }: ShareButtonPro
     <>
       <ButtonWrapper $isMy={type === 'MY'} onClick={handleShare}>
         <SvgButton icon={Share} width={type === 'MY' ? 16 : 24} height={type === 'MY' ? 16 : 24} />
-        {type === 'MY' && <p>공유</p>}
       </ButtonWrapper>
 
       <BottomSheet
