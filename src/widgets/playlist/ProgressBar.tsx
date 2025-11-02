@@ -52,8 +52,6 @@ const ProgressBar = ({ trackLengths, currentIndex, onClick }: ProgressBarProps) 
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
-  console.log(barRect)
-
   // 재생 시간 업데이트
   useEffect(() => {
     if (!isPlaying || isDragging) return

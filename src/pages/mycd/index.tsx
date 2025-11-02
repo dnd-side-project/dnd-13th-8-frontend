@@ -12,11 +12,10 @@ import { useAuthStore } from '@/features/auth/store/authStore'
 import { useChatSocket } from '@/features/chat/model/sendMessage'
 import { HeaderTab, PlaylistCarousel } from '@/pages/mycd/ui'
 import type { MyCdTab } from '@/pages/mycd/ui/HeaderTab'
-import { getVideoId } from '@/shared/lib'
 import { useDevice } from '@/shared/lib/useDevice'
 import { flexColCenter, flexRowCenter } from '@/shared/styles/mixins'
 import { Button, LiveInfo, Loading } from '@/shared/ui'
-import { ActionBar, ControlBar, ProgressBar, VolumeButton, YoutubePlayer } from '@/widgets/playlist'
+import { ActionBar, ControlBar, ProgressBar, VolumeButton } from '@/widgets/playlist'
 
 const MyCdPage = () => {
   const {
@@ -28,7 +27,6 @@ const MyCdPage = () => {
     prevTrack,
     play,
     pause,
-    currentTime,
     playerRef,
   } = usePlaylist()
 
@@ -150,13 +148,6 @@ const MyCdPage = () => {
     isActive && centerItem.playlistId ? String(centerItem.playlistId) : ''
   )
 
-  const handlePlayerStateChange = useCallback(
-    (event: YT.OnStateChangeEvent) => {
-      if (event.data === window.YT.PlayerState.ENDED) nextTrack()
-    },
-    [nextTrack]
-  )
-
   const handleProgressClick = useCallback(
     (trackIndex: number, seconds: number) => {
       if (!currentPlaylist) return
@@ -166,10 +157,6 @@ const MyCdPage = () => {
     },
     [currentPlaylist, setPlaylist, playerRef, isPlaying, play]
   )
-
-  const videoId = currentPlaylist
-    ? getVideoId(currentPlaylist.songs[currentTrackIndex]?.youtubeUrl)
-    : null
 
   if (isLoading) {
     return <Loading isLoading />
@@ -261,20 +248,6 @@ const MyCdPage = () => {
             />
           </BottomWrapper>
         </>
-      )}
-
-      {videoId && (
-        <YoutubePlayer
-          key="my-cd"
-          videoId={videoId}
-          onReady={(event) => {
-            playerRef.current = event.target
-            playerRef.current?.seekTo(currentTime, true)
-            if (isPlaying) playerRef.current?.playVideo()
-            else playerRef.current?.pauseVideo()
-          }}
-          onStateChange={handlePlayerStateChange}
-        />
       )}
     </div>
   )

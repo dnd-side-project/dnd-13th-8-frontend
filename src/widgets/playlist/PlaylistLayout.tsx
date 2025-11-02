@@ -8,7 +8,7 @@ import { useChatSocket } from '@/features/chat/model/sendMessage'
 import { useDevice } from '@/shared/lib/useDevice'
 import { flexColCenter } from '@/shared/styles/mixins'
 import { Button, Cd, Header, LiveInfo } from '@/shared/ui'
-import { ActionBar, PlayButton, ProgressBar, VolumeButton } from '@/widgets/playlist'
+import { ActionBar, PlayButton, ProgressBar } from '@/widgets/playlist'
 
 interface PlaylistSlideProps {
   data: PlaylistInfo
@@ -21,8 +21,8 @@ interface PlaylistSlideProps {
   onPrev: () => void
   onSelectTrack: (trackIndex: number, time?: number) => void
   playerRef: React.RefObject<YT.Player | null>
-  isMuted: boolean | null
-  setIsMuted: React.Dispatch<React.SetStateAction<boolean | null>>
+  isMuted?: boolean | null
+  setIsMuted?: React.Dispatch<React.SetStateAction<boolean | null>>
   type?: 'My' | 'Discover'
 }
 
@@ -33,9 +33,6 @@ const PlaylistLayout = ({
   isPlaying,
   onPlayPause,
   onSelectTrack,
-  playerRef,
-  isMuted,
-  setIsMuted,
   type = 'Discover',
 }: PlaylistSlideProps) => {
   const [showPlayButton, setShowPlayButton] = useState(false)
@@ -64,9 +61,6 @@ const PlaylistLayout = ({
       <Overlay onClick={handleOverlayClick} />
       <Header center={<span>둘러보기</span>} />
       <Container>
-        {isMobile && isMuted && (
-          <VolumeButton playerRef={playerRef} isMuted={isMuted} setIsMuted={setIsMuted} />
-        )}
         <LiveInfo isOnAir={listenersNum > 0} listenerCount={listenersNum} isOwner={false} />
         {type === 'My' && (
           <Button size="S" state="primary" onClick={() => navigate('/mypage/customize')}>

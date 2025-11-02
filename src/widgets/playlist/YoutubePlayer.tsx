@@ -8,9 +8,10 @@ interface YoutubePlayerProps {
   videoId: string
   onReady: (event: YouTubeEvent<YouTubePlayer>) => void
   onStateChange: (event: YouTubeEvent<YouTubePlayer>) => void
+  setIsMuted?: (muted: boolean) => void
 }
 
-function YoutubePlayer({ videoId, onReady, onStateChange }: YoutubePlayerProps) {
+const YoutubePlayer = ({ videoId, onReady, onStateChange, setIsMuted }: YoutubePlayerProps) => {
   const playerRef = useRef<YouTubePlayer | null>(null)
   const deviceType = useDevice()
   const isMobile = deviceType === 'mobile'
@@ -30,6 +31,9 @@ function YoutubePlayer({ videoId, onReady, onStateChange }: YoutubePlayerProps) 
         opts={playerOpts}
         onReady={(e) => {
           playerRef.current = e.target
+          if (isMobile && setIsMuted) {
+            setIsMuted(e.target.isMuted())
+          }
           onReady(e)
         }}
         onStateChange={onStateChange}
