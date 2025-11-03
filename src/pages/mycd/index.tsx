@@ -220,7 +220,12 @@ const MyCdPage = () => {
               </Button>
             )}
           </Container>
-          <PlaylistCarousel data={playlistData ?? []} onCenterChange={handleCenterChange} />
+          <PlaylistCarousel
+            data={playlistData ?? []}
+            onCenterChange={handleCenterChange}
+            currentPlaylistId={currentPlaylist?.playlistId}
+            isPlaying={isPlaying}
+          />
           <ActionBar
             playlistId={centerItem.playlistId ?? 0}
             creatorId={currentPlaylist.creator.creatorId}
