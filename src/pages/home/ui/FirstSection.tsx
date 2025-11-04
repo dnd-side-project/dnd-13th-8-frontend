@@ -30,20 +30,22 @@ const FirstSection = () => {
 
   return (
     <Container $isEmpty={isEmpty}>
-      <Header
-        left={<Logo />}
-        right={
-          <>
-            {/* TODO: 알림 기능 2차 스프린트 시 작업 예정 */}
-            {/* <SvgButton icon={Notification} onClick={handleNotiClick} /> */}
-            <SvgButton
-              icon={Search}
-              onClick={handleSearchClick}
-              fill={isEmpty ? '#282c36' : 'none'}
-            />
-          </>
-        }
-      />
+      <HeaderWrapper>
+        <Header
+          left={<Logo />}
+          right={
+            <>
+              {/* TODO: 알림 기능 2차 스프린트 시 작업 예정 */}
+              {/* <SvgButton icon={Notification} onClick={handleNotiClick} /> */}
+              <SvgButton
+                icon={Search}
+                onClick={handleSearchClick}
+                fill={isEmpty ? '#282c36' : 'none'}
+              />
+            </>
+          }
+        />
+      </HeaderWrapper>
 
       {isEmpty ? (
         <CtaContainer>
@@ -91,11 +93,12 @@ const CtaButton = styled.button`
   color: ${({ theme }) => theme.COLOR['gray-900']};
   border-radius: 86px;
   ${({ theme }) => theme.FONT['body2-normal']};
+  margin-left: 20px;
 `
 
 const CharacterBg = styled.img`
   position: absolute;
-  right: 0;
+  right: 20px;
   top: -20px;
   width: 290px;
   object-fit: contain;
@@ -106,10 +109,13 @@ const Title = styled.h1`
   ${({ theme }) => theme.FONT.heading2};
   color: ${({ theme }) => theme.COLOR['gray-50']};
   font-weight: 500;
+  padding-left: 20px;
 `
 
 const Container = styled.div<{ $isEmpty: boolean }>`
-  background-color: ${({ $isEmpty }) => ($isEmpty ? '#282c36' : 'transparent')};
-  margin: 0 -20px;
+  background-color: ${({ $isEmpty, theme }) => ($isEmpty ? '#282c36' : theme.COLOR['gray-900'])};
+  border-radius: 0 0 20px 20px;
+`
+const HeaderWrapper = styled.div`
   padding: 0 20px;
 `

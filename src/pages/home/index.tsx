@@ -86,16 +86,15 @@ export default HomePage
 const PageLayout = styled.div`
   display: flex;
   flex-direction: column;
+  background-color: ${({ theme }) => theme.COLOR['gray-800']};
+  margin: 0 -20px;
 `
 
 const sectionCommonLayout = css`
   display: flex;
   flex-direction: column;
   gap: 12px;
-  background-color: ${({ theme }) => theme.COLOR['gray-800']};
   ${({ theme }) => theme.FONT.headline1};
-  width: calc(100% + 40px);
-  margin: 0 -20px;
 
   h1 {
     font-weight: 600;
