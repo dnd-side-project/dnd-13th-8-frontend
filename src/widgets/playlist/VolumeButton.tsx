@@ -51,4 +51,5 @@ const StyledButton = styled.button`
   padding: 10px;
   gap: 4px;
   border-radius: 4px;
+  white-space: nowrap;
 `

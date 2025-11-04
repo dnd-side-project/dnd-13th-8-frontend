@@ -1,5 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { createPortal } from 'react-dom'
+import { useEffect, useRef, useState } from 'react'
 
 import styled from 'styled-components'
 
@@ -37,22 +36,7 @@ const ProgressBar = ({ trackLengths, currentIndex, onClick }: ProgressBarProps) 
   const { currentTime, updateCurrentTime, playerRef, isPlaying } = usePlaylist()
   const [isDragging, setIsDragging] = useState(false)
   const [dragTime, setDragTime] = useState<number | null>(null)
-  const handleRef = useRef<HTMLDivElement>(null)
-  const [barRect, setBarRef] = useState<DOMRect | null>(null)
-
-  // 핸들 위치 초기값 및 리사이즈 대응
-  useLayoutEffect(() => {
-    const handleResize = () => {
-      if (!handleRef.current) return
-      setBarRef(handleRef.current.getBoundingClientRect())
-    }
-    window.addEventListener('resize', handleResize)
-    handleResize() // 마운트 시
-
-    return () => window.removeEventListener('resize', handleResize)
-  }, [])
-
-  console.log(barRect)
+  const barRef = useRef<HTMLDivElement>(null)
 
   // 재생 시간 업데이트
   useEffect(() => {
@@ -68,9 +52,9 @@ const ProgressBar = ({ trackLengths, currentIndex, onClick }: ProgressBarProps) 
     isDragging && dragTime !== null ? dragTime : getAccTime(trackLengths, currentIndex, currentTime)
 
   const handleProgress = (clientX: number) => {
-    if (!handleRef.current) return
-    const rect = handleRef.current.getBoundingClientRect()
-    setBarRef(rect) // portal 위치용
+    if (!barRef.current) return
+    const rect = barRef.current.getBoundingClientRect()
+
     const x = Math.min(Math.max(clientX - rect.left, 0), rect.width)
     const progress = x / rect.width
     setDragTime(progress * totalTime)
@@ -104,14 +88,14 @@ const ProgressBar = ({ trackLengths, currentIndex, onClick }: ProgressBarProps) 
       window.removeEventListener('pointermove', handlePointerMove)
       window.removeEventListener('pointerup', handlePointerUp)
     }
-  }, [isDragging, dragTime, trackLengths, onClick])
+  }, [isDragging, dragTime])
 
   let prevTotal = 0
   const accPercent = (accTime / totalTime) * 100
 
   return (
     <Wrapper>
-      <BarContainer ref={handleRef} onPointerDown={handlePointerDown}>
+      <BarContainer ref={barRef} onPointerDown={handlePointerDown}>
         {trackLengths.map((len, idx) => {
           const start = prevTotal
           const end = start + len
@@ -128,18 +112,9 @@ const ProgressBar = ({ trackLengths, currentIndex, onClick }: ProgressBarProps) 
             </Track>
           )
         })}
+        <Handle $left={accPercent} $isDragging={isDragging} />
       </BarContainer>
-      {barRect &&
-        createPortal(
-          <Handle
-            $isDragging={isDragging}
-            style={{
-              left: (barRect.width * accPercent) / 100 + barRect.left,
-              top: barRect.top + barRect.height / 2,
-            }}
-          />,
-          document.body
-        )}
+
       <TimeBox>
         <span>{formatTime(accTime)}</span>
         <span>{formatTime(totalTime)}</span>
@@ -188,14 +163,15 @@ const Track = styled.div<{ $width: number }>`
   background-color: ${({ theme }) => theme.COLOR['gray-500']};
   border-radius: 1px;
 `
+const Handle = styled.div<{ $left: number; $isDragging?: boolean }>`
+  position: absolute;
 
-const Handle = styled.div<{ $isDragging?: boolean }>`
-  position: fixed;
   width: ${({ $isDragging }) => ($isDragging ? '20px' : '12px')};
   height: ${({ $isDragging }) => ($isDragging ? '20px' : '12px')};
   border-radius: 99px;
+  top: 50%;
   transform: translate(-50%, -50%);
   z-index: 50; // TODO: 레이어 정리 후 theme z-index 리팩토링 필요
   background-color: ${({ theme }) => theme.COLOR['common-white']};
-  pointer-events: none;
+  left: ${({ $left }) => $left}%;
 `
