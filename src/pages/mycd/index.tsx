@@ -15,7 +15,7 @@ import type { MyCdTab } from '@/pages/mycd/ui/HeaderTab'
 import { useDevice } from '@/shared/lib/useDevice'
 import { flexColCenter, flexRowCenter } from '@/shared/styles/mixins'
 import { Button, LiveInfo, Loading } from '@/shared/ui'
-import { ActionBar, ControlBar, ProgressBar, VolumeButton } from '@/widgets/playlist'
+import { ActionBar, ControlBar, ProgressBar } from '@/widgets/playlist'
 
 const MyCdPage = () => {
   const {
@@ -28,9 +28,9 @@ const MyCdPage = () => {
     play,
     pause,
     playerRef,
+    unmuteOnce,
   } = usePlaylist()
 
-  const [isMuted, setIsMuted] = useState<boolean | null>(null)
   const { userInfo } = useAuthStore()
   const navigate = useNavigate()
   const deviceType = useDevice()
@@ -139,7 +139,7 @@ const MyCdPage = () => {
         cdItems: playlistDetail.cdResponse?.cdItems || [],
       }
 
-      setPlaylist(convertedPlaylist, 0, 0)
+      setPlaylist(convertedPlaylist, 0, 0, !isMobile) // 모바일이면 자동재생 off
     }
   }, [playlistDetail, userInfo, setPlaylist, currentPlaylist])
 
@@ -202,9 +202,6 @@ const MyCdPage = () => {
         <>
           <HeaderTab selectedTab={selectedTab} onSelect={handleTabSelect} />
           <Container>
-            {isMobile && isMuted && (
-              <VolumeButton playerRef={playerRef} isMuted={isMuted} setIsMuted={setIsMuted} />
-            )}
             <LiveInfo isOnAir={listenersNum > 0} listenerCount={listenersNum} isOwner={false} />
             {selectedTab === 'MY' && (
               <Button
@@ -247,7 +244,17 @@ const MyCdPage = () => {
 
             <ControlBar
               isPlaying={isPlaying}
-              onTogglePlay={isPlaying ? pause : play}
+              onTogglePlay={() => {
+                if (isMobile && !isPlaying) {
+                  unmuteOnce()
+                }
+
+                if (isPlaying) {
+                  pause()
+                } else {
+                  play()
+                }
+              }}
               onNext={nextTrack}
               onPrev={prevTrack}
             />

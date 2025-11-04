@@ -32,7 +32,6 @@ const Content = () => {
 
       {videoId && (
         <YoutubePlayer
-          key="my-cd"
           videoId={videoId}
           onReady={(event) => {
             playerRef.current = event.target
