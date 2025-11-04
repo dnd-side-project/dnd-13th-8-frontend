@@ -78,6 +78,8 @@ export default SwipeCarousel
 const EmblaViewport = styled.div`
   height: 100vh;
   overflow: hidden;
+  margin: 0 -20px;
+  padding: 0 20px;
 `
 
 const VerticalContainer = styled.div`
