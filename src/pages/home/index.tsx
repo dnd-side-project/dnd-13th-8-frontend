@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { createSearchParams, useNavigate } from 'react-router-dom'
 
 import styled, { css } from 'styled-components'
@@ -8,12 +9,21 @@ import {
   useRecommendationsByFollow,
   useRecommendedGenres,
 } from '@/features/recommend'
-import { FirstSection } from '@/pages/home/ui'
+import { FeedbackBottomSheet, FirstSection } from '@/pages/home/ui'
 import { CategoryButton, ScrollCarousel } from '@/shared/ui'
 import { Playlist, PlaylistWithSong } from '@/widgets/playlist'
 
 const HomePage = () => {
   const navigate = useNavigate()
+  const [isBottomSheetOpen, setisBottomSheetOpen] = useState(false)
+
+  useEffect(() => {
+    setisBottomSheetOpen(true)
+  }, [])
+
+  const handleFeedbackClose = () => {
+    setisBottomSheetOpen(false)
+  }
 
   const { data: RecentData } = useRecommendationsByRecent()
   const { data: FollowData } = useRecommendationsByFollow()
@@ -77,6 +87,8 @@ const HomePage = () => {
           ))}
         </ScrollCarousel>
       </FourthSection>
+
+      <FeedbackBottomSheet isOpen={isBottomSheetOpen} onClose={handleFeedbackClose} />
     </PageLayout>
   )
 }
