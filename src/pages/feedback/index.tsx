@@ -28,6 +28,9 @@ const FeedbackPage = () => {
       if (error) throw error
 
       toast('SUBMIT')
+      const today = new Date().toISOString().split('T')[0]
+      localStorage.setItem('hideDate', today)
+
       setPhone('')
       setFeedback('')
       setIsChecked(false)
