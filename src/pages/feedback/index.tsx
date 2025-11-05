@@ -3,7 +3,9 @@ import { useNavigate } from 'react-router-dom'
 
 import styled from 'styled-components'
 
+import { useToast } from '@/app/providers'
 import { Checkbox, Checked, DownArrow, LeftArrow } from '@/assets/icons'
+import { supabase } from '@/shared/api/supabaseClient'
 import { Button, Header, Input, SvgButton } from '@/shared/ui'
 
 const FeedbackPage = () => {
@@ -12,8 +14,28 @@ const FeedbackPage = () => {
   const [phone, setPhone] = useState('')
   const [feedback, setFeedback] = useState('')
   const [isChecked, setIsChecked] = useState(false)
+  const { toast } = useToast()
 
-  const handleSubmit = () => {}
+  const handleSubmit = async () => {
+    try {
+      const { error } = await supabase.from('Feedback').insert([
+        {
+          phone_number: phone,
+          comment: feedback,
+        },
+      ])
+
+      if (error) throw error
+
+      toast('SUBMIT')
+      setPhone('')
+      setFeedback('')
+      setIsChecked(false)
+      navigate(-1)
+    } catch (err) {
+      console.error(err)
+    }
+  }
 
   const isButtonDisabled = !phone.trim() || !feedback.trim() || !isChecked
 
