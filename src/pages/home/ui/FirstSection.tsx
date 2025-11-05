@@ -8,6 +8,7 @@ import { HomeCharacter } from '@/assets/images'
 import { useShufflePlaylists } from '@/entities/playlist'
 import { useMyCdList } from '@/entities/playlist/model/useMyCd'
 import { useAuthStore } from '@/features/auth/store/authStore'
+import { FeedbackIcon } from '@/pages/feedback/ui'
 import { BUTTON_TEXT, TITLE_TEXT } from '@/pages/home/config/messages'
 import { HomeCarousel } from '@/pages/home/ui'
 import { flexRowCenter } from '@/shared/styles/mixins'
@@ -37,6 +38,7 @@ const FirstSection = () => {
             <>
               {/* TODO: 알림 기능 2차 스프린트 시 작업 예정 */}
               {/* <SvgButton icon={Notification} onClick={handleNotiClick} /> */}
+              <FeedbackIcon />
               <SvgButton
                 icon={Search}
                 onClick={handleSearchClick}

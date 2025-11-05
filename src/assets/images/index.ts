@@ -14,3 +14,4 @@ export { default as OpacityCharacterBlue } from './img_opacity_character_blue.pn
 export { default as OpacityCharacterPink } from './img_opacity_character_pink.png'
 export { default as OpacityMusic } from './img_opacity_music.png'
 export { default as HomeCharacter } from './img_character_home.png'
+export { default as FeedbackImg } from './img_feedback.png'

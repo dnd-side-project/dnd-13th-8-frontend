@@ -32,6 +32,7 @@ interface BottomSheetProps {
   onClose: () => void
   children: React.ReactNode
   height?: string
+  showHandle?: boolean
 }
 
 const BottomSheet = ({
@@ -39,6 +40,7 @@ const BottomSheet = ({
   onClose,
   children,
   height = BOTTOM_SHEET_CONSTANTS.DEFAULT_HEIGHT,
+  showHandle = true,
 }: BottomSheetProps) => {
   const prevOverflowRef = useRef<string | null>(null)
   const deviceType = useDevice()
@@ -124,7 +126,9 @@ const BottomSheet = ({
             $deviceType={deviceType}
             $height={height}
           >
-            <Handle type="button" aria-label="바텀시트 닫기" onClick={handleHandleClick} />
+            {showHandle && (
+              <Handle type="button" aria-label="바텀시트 닫기" onClick={handleHandleClick} />
+            )}
             <Content>{children}</Content>
           </SheetContainer>
         </Overlay>
