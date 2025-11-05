@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import styled from 'styled-components'
@@ -10,34 +9,27 @@ import { BottomSheet, Button, SvgButton } from '@/shared/ui'
 
 interface FeedbackBottomSheetProps {
   isOpen: boolean
-  onClose: () => void
+  onClose: (forToday?: boolean) => void
 }
 
 const FeedbackBottomSheet = ({ isOpen, onClose }: FeedbackBottomSheetProps) => {
   const navigate = useNavigate()
-  const [visible, setVisible] = useState(true)
-
-  const today = new Date().toISOString().split('T')[0]
-
-  useEffect(() => {
-    const hideDate = localStorage.getItem('hideDate')
-
-    if (hideDate === today) {
-      setVisible(false)
-    }
-  }, [])
 
   const handleClose = (forToday: boolean) => {
     if (forToday) {
+      const today = new Date().toISOString().split('T')[0]
       localStorage.setItem('hideDate', today)
     }
-    setVisible(false)
+    onClose(forToday)
   }
 
-  if (!visible) return null
-
   return (
-    <BottomSheet isOpen={isOpen} onClose={onClose} height="fit-content" showHandle={false}>
+    <BottomSheet
+      isOpen={isOpen}
+      onClose={() => onClose(false)}
+      height="fit-content"
+      showHandle={false}
+    >
       <CloseButton>
         <SvgButton icon={Cancel} width={24} height={24} onClick={() => handleClose(false)} />
       </CloseButton>

@@ -18,7 +18,11 @@ const HomePage = () => {
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false)
 
   useEffect(() => {
-    setIsBottomSheetOpen(true)
+    const hideDate = localStorage.getItem('hideDate')
+    const today = new Date().toISOString().split('T')[0]
+    if (hideDate !== today) {
+      setIsBottomSheetOpen(true)
+    }
   }, [])
 
   const handleFeedbackClose = () => {
@@ -88,7 +92,9 @@ const HomePage = () => {
         </ScrollCarousel>
       </FourthSection>
 
-      <FeedbackBottomSheet isOpen={isBottomSheetOpen} onClose={handleFeedbackClose} />
+      {isBottomSheetOpen && (
+        <FeedbackBottomSheet isOpen={isBottomSheetOpen} onClose={handleFeedbackClose} />
+      )}
     </PageLayout>
   )
 }
