@@ -8,18 +8,19 @@ import { FeedbackImg } from '@/assets/images'
 import { flexColCenter } from '@/shared/styles/mixins'
 import { BottomSheet, Button, SvgButton } from '@/shared/ui'
 
-interface ChatBottomSheetProps {
+interface FeedbackBottomSheetProps {
   isOpen: boolean
   onClose: () => void
 }
 
-const FeedbackBottomSheet = ({ isOpen, onClose }: ChatBottomSheetProps) => {
+const FeedbackBottomSheet = ({ isOpen, onClose }: FeedbackBottomSheetProps) => {
   const navigate = useNavigate()
   const [visible, setVisible] = useState(true)
 
+  const today = new Date().toISOString().split('T')[0]
+
   useEffect(() => {
     const hideDate = localStorage.getItem('hideDate')
-    const today = new Date().toISOString().split('T')[0]
 
     if (hideDate === today) {
       setVisible(false)
@@ -28,7 +29,6 @@ const FeedbackBottomSheet = ({ isOpen, onClose }: ChatBottomSheetProps) => {
 
   const handleClose = (forToday: boolean) => {
     if (forToday) {
-      const today = new Date().toISOString().split('T')[0]
       localStorage.setItem('hideDate', today)
     }
     setVisible(false)
@@ -70,7 +70,6 @@ const Title = styled.h1`
 
 const Subtitle = styled.h3`
   ${({ theme }) => theme.FONT['body2-normal']};
-  font-weight: 600;
   color: ${({ theme }) => theme.COLOR['gray-100']};
   padding: 6px 0;
   font-weight: 400;

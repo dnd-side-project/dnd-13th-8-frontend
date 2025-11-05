@@ -15,14 +15,14 @@ import { Playlist, PlaylistWithSong } from '@/widgets/playlist'
 
 const HomePage = () => {
   const navigate = useNavigate()
-  const [isBottomSheetOpen, setisBottomSheetOpen] = useState(false)
+  const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false)
 
   useEffect(() => {
-    setisBottomSheetOpen(true)
+    setIsBottomSheetOpen(true)
   }, [])
 
   const handleFeedbackClose = () => {
-    setisBottomSheetOpen(false)
+    setIsBottomSheetOpen(false)
   }
 
   const { data: RecentData } = useRecommendationsByRecent()
