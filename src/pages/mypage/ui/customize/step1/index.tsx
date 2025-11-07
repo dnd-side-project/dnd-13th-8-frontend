@@ -61,6 +61,8 @@ const CustomizeStep1 = ({
         },
         {
           onSuccess: () => {
+            sessionStorage.setItem('tempBasicInfo', JSON.stringify(basicInfoMap))
+            sessionStorage.setItem('tempTracklist', JSON.stringify(tracklist))
             setCurrentStep(2)
           },
           onError: (error) => {
@@ -189,8 +191,9 @@ const CustomizeStep1 = ({
     )
   }
 
-  // 페이지 최초 진입 시 editMode일 경우 tracklist 데이터 형식 가공
+  // 페이지 최초 진입 시 데이터 형식 가공
   useEffect(() => {
+    // editMode일 경우 tracklist response 형식 가공
     if (isEditMode && prevTracklist?.songs) {
       setTracklist(
         prevTracklist.songs.map((track) => {
@@ -204,6 +207,15 @@ const CustomizeStep1 = ({
           }
         })
       )
+      return
+    }
+
+    // 생성일 경우 sessionStorage에서 임시 저장 데이터 호출
+    const storedTracklist =
+      sessionStorage.getItem('tempBasicInfo') && sessionStorage.getItem('tempTracklist')
+    if (storedTracklist) {
+      sestBasicInfoMap(JSON.parse(sessionStorage.getItem('tempBasicInfo') ?? '{}'))
+      setTracklist(JSON.parse(sessionStorage.getItem('tempTracklist') ?? '[]'))
     }
   }, [])
 

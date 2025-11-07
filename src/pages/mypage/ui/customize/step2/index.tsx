@@ -99,6 +99,8 @@ const CustomizeStep2 = ({
           onSuccess: (response) => {
             setCurrentCdId?.(response.playlistId)
             setCurrentStep(3)
+            sessionStorage.removeItem('tempBasicInfo')
+            sessionStorage.removeItem('tempTracklist')
           },
           onError: (error) => {
             console.error('CD 저장 실패:', error)
@@ -113,6 +115,8 @@ const CustomizeStep2 = ({
       onSuccess: (response) => {
         setCurrentCdId?.(response.playlistId)
         setCurrentStep(3)
+        sessionStorage.removeItem('tempBasicInfo')
+        sessionStorage.removeItem('tempTracklist')
       },
       onError: (error) => {
         console.error('CD 저장 실패:', error)
