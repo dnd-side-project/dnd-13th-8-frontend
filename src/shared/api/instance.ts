@@ -79,7 +79,7 @@ axiosInstance.interceptors.response.use(
       }
     }
 
-    if (import.meta.env.ENVIRONMENT_TYPE !== 'PROD') {
+    if (import.meta.env.VITE_ENVIRONMENT_TYPE !== 'PROD') {
       store.setState({
         isOpen: true,
         title: `[${status}] ${code}`,
