@@ -20,7 +20,9 @@ const CustomizeStep3 = ({ currentCdId }: { currentCdId: number | null }) => {
 
   const moveToTracklist = () => {
     queryClient.invalidateQueries({ queryKey: ['playlistDetail', currentCdId] })
-    navigate(`/mypage/${currentCdId}/tracklist`)
+    navigate(`/mypage/${currentCdId}/tracklist`, {
+      state: { isFromMyCdList: true },
+    })
   }
 
   if (isLoading) return <Loading isLoading={isLoading} />
