@@ -28,7 +28,7 @@ const CustomizeStep1 = ({
 
   const { mutate, isPending } = useCdTempSave()
 
-  const [basicInfoMap, sestBasicInfoMap] = useState({
+  const [basicInfoMap, setBasicInfoMap] = useState({
     name: isEditMode ? (prevTracklist?.playlistName ?? '') : '',
     genre: MUSIC_GENRES.find((genre) => genre.id === prevTracklist?.genre) ?? null,
     isPublic: isEditMode ? (prevTracklist?.isPublic ?? true) : true,
@@ -94,7 +94,7 @@ const CustomizeStep1 = ({
 
   // 장르 선택
   const onGenreClick = (genre: MusicGenre) => {
-    sestBasicInfoMap((prev) => ({ ...prev, genre }))
+    setBasicInfoMap((prev) => ({ ...prev, genre }))
     setIsBottomSheetOpen(false)
   }
 
@@ -211,10 +211,10 @@ const CustomizeStep1 = ({
     }
 
     // 생성일 경우 sessionStorage에서 임시 저장 데이터 호출
-    const storedTracklist =
+    const isTempDataAvailable =
       sessionStorage.getItem('tempBasicInfo') && sessionStorage.getItem('tempTracklist')
-    if (storedTracklist) {
-      sestBasicInfoMap(JSON.parse(sessionStorage.getItem('tempBasicInfo') ?? '{}'))
+    if (isTempDataAvailable) {
+      setBasicInfoMap(JSON.parse(sessionStorage.getItem('tempBasicInfo') ?? '{}'))
       setTracklist(JSON.parse(sessionStorage.getItem('tempTracklist') ?? '[]'))
     }
   }, [])
@@ -250,7 +250,7 @@ const CustomizeStep1 = ({
               placeholder="CD명"
               value={basicInfoMap.name}
               maxLength={24}
-              onChange={(e) => sestBasicInfoMap((prev) => ({ ...prev, name: e.target.value }))}
+              onChange={(e) => setBasicInfoMap((prev) => ({ ...prev, name: e.target.value }))}
               required
             />
           </BasicInfoBox>
@@ -261,7 +261,7 @@ const CustomizeStep1 = ({
           <ToggleSwitch
             aria-label="CD 공개 여부"
             isOn={basicInfoMap.isPublic}
-            setIsOn={(isOn) => sestBasicInfoMap((prev) => ({ ...prev, isPublic: isOn }))}
+            setIsOn={(isOn) => setBasicInfoMap((prev) => ({ ...prev, isPublic: isOn }))}
           />
         </PublicControler>
       </BasicInfoEditorWrap>

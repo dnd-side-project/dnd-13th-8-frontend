@@ -77,6 +77,11 @@ const CustomizeStep2 = ({
 
   // 헤더 다음 버튼 클릭
   const onHeaderNextClick = () => {
+    const removeTempData = () => {
+      sessionStorage.removeItem('tempBasicInfo')
+      sessionStorage.removeItem('tempTracklist')
+    }
+
     const payload = {
       saveCdRequest: {
         cdItems: stickers.map((s) => ({
@@ -99,8 +104,7 @@ const CustomizeStep2 = ({
           onSuccess: (response) => {
             setCurrentCdId?.(response.playlistId)
             setCurrentStep(3)
-            sessionStorage.removeItem('tempBasicInfo')
-            sessionStorage.removeItem('tempTracklist')
+            removeTempData()
           },
           onError: (error) => {
             console.error('CD 저장 실패:', error)
@@ -115,8 +119,7 @@ const CustomizeStep2 = ({
       onSuccess: (response) => {
         setCurrentCdId?.(response.playlistId)
         setCurrentStep(3)
-        sessionStorage.removeItem('tempBasicInfo')
-        sessionStorage.removeItem('tempTracklist')
+        removeTempData()
       },
       onError: (error) => {
         console.error('CD 저장 실패:', error)
