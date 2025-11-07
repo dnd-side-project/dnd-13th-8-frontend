@@ -54,7 +54,6 @@ const PlaylistLayout = ({
     onPlayPause()
     setShowPlayButton(true)
     const duration = isPlaying ? 1000 : 2000
-    console.log(duration)
     setTimeout(() => setShowPlayButton(false), duration)
   }
 
