@@ -79,13 +79,15 @@ axiosInstance.interceptors.response.use(
       }
     }
 
-    store.setState({
-      isOpen: true,
-      title: `[${status}] ${code}`,
-      description: msg,
-      ctaType: 'single',
-      confirmText: '확인',
-    })
+    if (import.meta.env.ENVIRONMENT_TYPE !== 'PROD') {
+      store.setState({
+        isOpen: true,
+        title: `[${status}] ${code}`,
+        description: msg,
+        ctaType: 'single',
+        confirmText: '확인',
+      })
+    }
 
     console.error('Axios Error: ', error.response ?? error)
     return Promise.reject(error)
