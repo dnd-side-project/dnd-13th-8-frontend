@@ -242,17 +242,17 @@ const Privacy = () => {
                     <td style={{ textAlign: 'center' }}>개인정보침해 신고센터</td>
                     <td style={{ textAlign: 'center' }}>(국번없이) 118</td>
                     <td style={{ textAlign: 'center' }}>https://privacy.kisa.or.kr/</td>
-                  </tr>{' '}
+                  </tr>
                   <tr>
                     <td style={{ textAlign: 'center' }}>개인정보 분쟁조정위원회</td>
                     <td style={{ textAlign: 'center' }}>(국번없이) 1833-6972</td>
                     <td style={{ textAlign: 'center' }}>https://www.kopico.go.kr/</td>
-                  </tr>{' '}
+                  </tr>
                   <tr>
                     <td style={{ textAlign: 'center' }}>대검찰청 사이버범죄수사단</td>
                     <td style={{ textAlign: 'center' }}>(국번없이) 1301</td>
                     <td style={{ textAlign: 'center' }}>https://www.spo.go.kr/</td>
-                  </tr>{' '}
+                  </tr>
                   <tr>
                     <td style={{ textAlign: 'center' }}>경찰청 사이버안전지킴이</td>
                     <td style={{ textAlign: 'center' }}>(국번없이) 182</td>
