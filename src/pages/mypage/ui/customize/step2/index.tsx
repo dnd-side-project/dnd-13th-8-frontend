@@ -349,16 +349,15 @@ const CustomizeStep2 = ({
     // 클릭한 위치가 원형 cd 내부인지 확인
     const canvas = cdContainerRef.current
     if (canvas) {
-      const centerX = canvas.width / 2
-      const centerY = canvas.height / 2
-      const radius = canvas.width / 2 - 5
+      const centerX = canvas.width / 2 / (window.devicePixelRatio || 1)
+      const centerY = canvas.height / 2 / (window.devicePixelRatio || 1)
+      const radius = canvas.width / 2 / (window.devicePixelRatio || 1) - 5
 
       const dx = x - centerX
       const dy = y - centerY
-      if (dx * dx + dy * dy > radius * radius) {
-        // 원 밖이면 무시
-        return
-      }
+
+      // 원 밖이면 무시
+      if (dx * dx + dy * dy > radius * radius) return
     }
 
     // 선택된 스티커의 버튼들 클릭 확인
@@ -932,7 +931,11 @@ const CustomizeStep2 = ({
               ref={cdContainerRef}
               width={280}
               height={280}
-              style={{ touchAction: 'none', WebkitUserSelect: 'none', WebkitTouchCallout: 'none' }}
+              style={{
+                touchAction: 'none',
+                WebkitUserSelect: 'none',
+                WebkitTouchCallout: 'none',
+              }}
               onPointerDown={handlePointerDown}
               onPointerMove={handlePointerMove}
               onPointerUp={handlePointerUp}
