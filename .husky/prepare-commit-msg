@@ -1,0 +1,28 @@
+# 현재 브랜치에서 issue 번호 추출
+BRANCH_NAME=$(git branch --show-current)
+ISSUE_NUMBER=$(echo "$BRANCH_NAME" | grep -o '#[0-9]*' || echo "")
+
+# 커밋 메시지 파일 경로
+COMMIT_MSG_FILE=$1
+
+# 커밋 메시지 읽기
+COMMIT_MSG=$(cat "$COMMIT_MSG_FILE")
+
+# 이미 issue 번호가 있는지 확인
+if echo "$COMMIT_MSG" | grep -q "#[0-9]*"; then
+  echo "커밋메세지에 이슈 번호가 포함되어 있습니다."
+  exit 0
+fi
+
+# issue 번호가 없고 브랜치에서 추출한 번호가 있으면 추가
+if [ -n "$ISSUE_NUMBER" ]; then
+  # #숫자 형식을 (#숫자) 형식으로 변환
+  FORMATTED_ISSUE=$(echo "$ISSUE_NUMBER" | sed 's/#/(#/' | sed 's/$/)/')
+  # 마지막 줄에 issue 번호 추가
+  echo "$COMMIT_MSG" | sed "1s/$/ $FORMATTED_ISSUE/" > "$COMMIT_MSG_FILE"
+  echo "커밋 메세지에 이슈 번호 $FORMATTED_ISSUE 을(를) 추가했습니다."
+elif ! echo "$COMMIT_MSG" | grep -q "(no-issue)"; then
+  # issue 번호가 없으면 (no-issue) 추가
+  echo "$COMMIT_MSG" | sed "s/$/ (no-issue)/" > "$COMMIT_MSG_FILE"
+  echo "이슈 번호를 찾을 수 없어 커밋 메세지에 (no-issue)을(를) 추가했습니다."
+fi

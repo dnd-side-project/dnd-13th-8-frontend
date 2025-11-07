@@ -1,0 +1,26 @@
+import styled from 'styled-components'
+
+interface TrendKeywordProps {
+  text: string
+  onClick?: () => void
+}
+
+const TrendKeyword = ({ text, onClick }: TrendKeywordProps) => {
+  return <StyledButton onClick={onClick}>{text}</StyledButton>
+}
+
+export default TrendKeyword
+
+const StyledButton = styled.button`
+  width: fit-content;
+  background-color: ${({ theme }) => theme.COLOR['gray-700']};
+  color: ${({ theme }) => theme.COLOR['gray-50']};
+  padding: 6px 12px;
+  border-radius: 99px;
+  ${({ theme }) => theme.FONT['body2-normal']};
+
+  &:active {
+    background-color: ${({ theme }) => theme.COLOR['primary-normal']};
+    color: ${({ theme }) => theme.COLOR['gray-900']};
+  }
+`

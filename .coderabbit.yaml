@@ -1,0 +1,114 @@
+# 리뷰 언어를 한국어로 설정
+language: ko
+
+# 리뷰 관련 설정
+reviews:
+  # 자동 리뷰 설정
+  auto_review:
+    enabled: true
+    # 리뷰를 진행할 타겟 브랜치 (기본 브랜치 외)
+    base_branches:
+      - main
+      - develop
+    # PR이 열렸을 때와 업데이트될 때 자동 리뷰
+    auto_incremental_review: true
+
+  # 리뷰 정도 설정 (chill, assertive)
+  profile: 'chill'
+
+  # 리뷰에서 제외할 파일/폴더 패턴 (! 접두사 사용)
+  path_filters:
+    - '!**/node_modules/**'
+    - '!**/dist/**'
+    - '!**/*.test.ts'
+    - '!**/__mocks__/**'
+
+  # 파일별 리뷰 가이드라인
+  path_instructions:
+    - path: '**/*.{ts,tsx,js,jsx}'
+      instructions: |
+        ## 1. 일반적인 코딩 컨벤션
+
+        ### 포맷팅
+        - `.prettierrc` 설정에 따라 포맷팅 확인
+        - 들여쓰기: 2칸 스페이스
+        - 최대 줄 길이: 100자
+        - 세미콜론 사용 안함
+        - 따옴표: 작은따옴표 사용
+        - 괄호 안 공백: 있음
+        - 화살표 함수 괄호: 항상 사용
+        - 줄바꿈: LF 사용
+
+        ### 네이밍 컨벤션
+        - 컴포넌트: PascalCase (예: UserProfile)
+        - 유틸리티/훅/변수: camelCase (예: getUserData, useUserInfo)
+        - 상수: UPPER_SNAKE_CASE (예: API_BASE_URL)
+        - 이미지 파일: kebab-case (예: user-profile-icon.png)
+
+        ### 주석 사용
+        - 복잡한 로직에만 주석 추가
+        - 불필요한 주석 지양 (코드로 설명 가능한 것)
+        - TODO/FIXME 형식: `// TODO: 설명 - 작성자`
+
+        ### 가독성
+        - 매직 넘버 지양, 의미있는 상수 사용
+        - 함수는 하나의 책임만 가지도록 작성 (최대 20줄 권장)
+        - 중첩 깊이 최소화 (3단계 이하 권장)
+
+        ## 2. React 모범 사례
+
+        ### 컴포넌트 작성
+        - 최신 React hooks 사용 권장
+        - 컴포넌트는 단일 책임 원칙 준수
+        - Presentational/Container 컴포넌트 분리
+        - 성능 최적화: memo, useCallback, useMemo 적절히 사용
+        - 대용량 리스트는 가상화 라이브러리 사용 고려
+
+        ### 상태 관리
+        - Zustand와 Tanstack Query를 일관되게 사용
+        - 상태 구조는 정규화된 형태로 관리
+        - 에러 처리: Error Boundary와 try-catch 또는 onError 콜백 활용
+
+        ## 3. 스타일링
+
+        ### Styled Components
+        - Styled Components 일관되게 사용
+        - 스타일드 컴포넌트명은 의미있게 작성
+        - 동적 스타일링은 props나 CSS 변수 활용
+        - 테마 시스템 활용하여 글로벌 스타일 관리
+        - 재사용 가능한 스타일은 mixin이나 확장으로 관리
+        - CSS 포맷팅 가독성 유지
+        - 사용하지 않는 스타일이나 중복 스타일 제거
+
+        ## 4. Vite 및 빌드 최적화
+
+        - 모듈 import 최적화 (tree-shaking 고려)
+        - 환경변수는 .env 파일로 관리
+        - vite.config.ts에서 빌드 성능 튜닝 (sourcemap 설정, 플러그인 최적화 등)
+
+        ## 5. 아키텍처 및 개발 환경
+
+        ### 폴더 구조
+        - Feature-Sliced Design (FSD) 구조 준수
+        - 레이어별 참조 규칙 엄격히 적용
+
+        ### 타입스크립트
+        - strict 모드 사용
+        - 타입 명시적으로 작성 (any 사용 지양)
+        - path alias (@/_) 절대 경로 import 사용
+
+        ### Git 훅
+        - Husky 설정으로 pre-commit, commit-msg 린팅 확인
+
+        ## 6. 기타 가이드라인
+
+        - 충분한 근거와 함께 리뷰 제공
+        - 정보 검증 후 답변
+        - 간결하고 명확한 응답
+        - 필요시 추가 컨텍스트 요청
+        - 검증되지 않은 주장 지양
+        - 가능한 경우 출처 명시
+        - 별도 언급 없으면 JavaScript 기준
+        - 한국어로 응답
+        - 대부분 브라우저에서 지원하는 ES6+ 기능 활용
+        - 코드 리뷰를 통한 유지보수성 향상에 적극 활용

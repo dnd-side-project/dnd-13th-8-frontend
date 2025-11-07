@@ -1,0 +1,58 @@
+name: Auto Sync to Forked Repo
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+
+jobs:
+  auto_sync:
+    name: Auto Sync Fork
+    runs-on: ubuntu-latest
+    if: github.repository == 'dnd-side-project/dnd-13th-8-frontend'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.AUTO_SYNC_DEULAK }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.12.0
+
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 9
+
+      - name: Cache pnpm store
+        uses: actions/cache@v4
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Run Lint
+        run: pnpm lint
+
+      - name: Build
+        run: pnpm build
+
+      - name: Add remote fork
+        run: |
+          git remote add forked_repo https://maylh:${{ secrets.AUTO_SYNC_DEULAK }}@github.com/maylh/dnd-13th-8-frontend
+          git config user.name maylh
+          git config user.email gus_05@naver.com
+
+      - name: Push to forked repo (main)
+        if: github.ref == 'refs/heads/main'
+        run: git push -f forked_repo HEAD:refs/heads/main
+
+      - name: Push to forked repo (develop)
+        if: github.ref == 'refs/heads/develop'
+        run: git push -f forked_repo HEAD:refs/heads/develop
