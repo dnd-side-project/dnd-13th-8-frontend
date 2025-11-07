@@ -4,18 +4,18 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { usePlaylist } from '@/app/providers/PlayerProvider'
+import { NoLike } from '@/assets/icons'
 import { MemberCharacter } from '@/assets/images'
 import { usePlaylistDetail } from '@/entities/playlist'
-import { useMyCdList, useMyLikedCdList } from '@/entities/playlist/model/useMyCd'
+import { useMyCdActions, useMyCdList, useMyLikedCdList } from '@/entities/playlist/model/useMyCd'
 import { useAuthStore } from '@/features/auth/store/authStore'
 import { useChatSocket } from '@/features/chat/model/sendMessage'
 import { HeaderTab, PlaylistCarousel } from '@/pages/mycd/ui'
 import type { MyCdTab } from '@/pages/mycd/ui/HeaderTab'
-import { getVideoId } from '@/shared/lib'
 import { useDevice } from '@/shared/lib/useDevice'
 import { flexColCenter, flexRowCenter } from '@/shared/styles/mixins'
-import { Button, LiveInfo } from '@/shared/ui'
-import { ActionBar, ControlBar, ProgressBar, VolumeButton, YoutubePlayer } from '@/widgets/playlist'
+import { Button, LiveInfo, Loading } from '@/shared/ui'
+import { ActionBar, ControlBar, ProgressBar } from '@/widgets/playlist'
 
 const MyCdPage = () => {
   const {
@@ -27,11 +27,10 @@ const MyCdPage = () => {
     prevTrack,
     play,
     pause,
-    currentTime,
     playerRef,
+    unmuteOnce,
   } = usePlaylist()
 
-  const [isMuted, setIsMuted] = useState<boolean | null>(null)
   const { userInfo } = useAuthStore()
   const navigate = useNavigate()
   const deviceType = useDevice()
@@ -46,16 +45,13 @@ const MyCdPage = () => {
   const likedCdPlaylist = useMyLikedCdList('RECENT')
 
   const playlistQuery = selectedTab === 'MY' ? myCdPlaylist : likedCdPlaylist
-
-  const playlistData = useMemo(
-    () => playlistQuery.data?.filter((p) => selectedTab !== 'MY' || p.isPublic), // my 탭일 경우 isPublic true만 필터링
-
-    [playlistQuery.data, selectedTab]
-  )
-
+  const playlistData = useMemo(() => playlistQuery.data ?? [], [playlistQuery.data])
+  const isLoading = playlistQuery.isLoading
   const isError = playlistQuery.isError
+  const isMyEmpty = !myCdPlaylist.isLoading && (myCdPlaylist.data?.length ?? 0) === 0
+  const isLikedEmpty = !likedCdPlaylist.isLoading && (likedCdPlaylist.data?.length ?? 0) === 0
 
-  const [centerPlaylist, setCenterPlaylist] = useState<{
+  const [centerItem, setCenterItem] = useState<{
     playlistId: number | null
     playlistName: string
   }>({ playlistId: null, playlistName: '' })
@@ -67,13 +63,13 @@ const MyCdPage = () => {
     const found = routeId ? playlistData.find((p) => p.playlistId === routeId) : null
 
     if (found) {
-      setCenterPlaylist({
+      setCenterItem({
         playlistId: found.playlistId,
         playlistName: found.playlistName,
       })
     } else if (playlistData.length > 0) {
       const first = playlistData[0]
-      setCenterPlaylist({
+      setCenterItem({
         playlistId: first.playlistId,
         playlistName: first.playlistName,
       })
@@ -89,7 +85,7 @@ const MyCdPage = () => {
   const handleTabSelect = (tab: MyCdTab) => {
     setSelectedTab(tab)
 
-    const basePath = centerPlaylist.playlistId ? `/mycd/${centerPlaylist.playlistId}` : '/mycd'
+    const basePath = centerItem.playlistId ? `/mycd/${centerItem.playlistId}` : '/mycd'
 
     const path = tab === 'LIKE' ? `${basePath}?type=LIKE` : basePath
 
@@ -100,7 +96,7 @@ const MyCdPage = () => {
   const handleCenterChange = useCallback(
     (playlist: { playlistId: number; playlistName: string }) => {
       if (playlist) {
-        setCenterPlaylist({
+        setCenterItem({
           playlistId: playlist.playlistId,
           playlistName: playlist.playlistName,
         })
@@ -117,7 +113,15 @@ const MyCdPage = () => {
   )
 
   /* 플레이리스트 세팅 */
-  const { data: playlistDetail } = usePlaylistDetail(centerPlaylist.playlistId)
+  const myCdDetail = useMyCdActions(Number(centerItem.playlistId), {
+    enabled: selectedTab === 'MY' && !!centerItem.playlistId,
+  })
+
+  const likedCdDetail = usePlaylistDetail(centerItem.playlistId, {
+    enabled: selectedTab === 'LIKE' && !!centerItem.playlistId,
+  })
+
+  const playlistDetail = selectedTab === 'MY' ? myCdDetail.tracklist : likedCdDetail.data
   useEffect(() => {
     if (playlistDetail && userInfo) {
       if (currentPlaylist?.playlistId === playlistDetail.playlistId) return
@@ -135,20 +139,13 @@ const MyCdPage = () => {
         cdItems: playlistDetail.cdResponse?.cdItems || [],
       }
 
-      setPlaylist(convertedPlaylist, 0, 0)
+      setPlaylist(convertedPlaylist, 0, 0, !isMobile) // 모바일이면 자동재생 off
     }
   }, [playlistDetail, userInfo, setPlaylist, currentPlaylist])
 
   const isActive = currentPlaylist?.playlistId === playlistDetail?.playlistId
   const { participantCount: listenersNum } = useChatSocket(
-    isActive && centerPlaylist.playlistId ? String(centerPlaylist.playlistId) : ''
-  )
-
-  const handlePlayerStateChange = useCallback(
-    (event: YT.OnStateChangeEvent) => {
-      if (event.data === window.YT.PlayerState.ENDED) nextTrack()
-    },
-    [nextTrack]
+    isActive && centerItem.playlistId ? String(centerItem.playlistId) : ''
   )
 
   const handleProgressClick = useCallback(
@@ -161,25 +158,41 @@ const MyCdPage = () => {
     [currentPlaylist, setPlaylist, playerRef, isPlaying, play]
   )
 
-  const videoId = currentPlaylist
-    ? getVideoId(currentPlaylist.songs[currentTrackIndex]?.youtubeUrl)
-    : null
+  if (isLoading) {
+    return <Loading isLoading />
+  }
 
   if (isError) {
     navigate('/error')
     return null
   }
 
-  const isEmpty = playlistData && playlistData.length === 0
-
-  if (isEmpty) {
+  if (selectedTab === 'MY' && isMyEmpty) {
     return (
-      <ViewContainer>
-        <img src={MemberCharacter} alt="Guest Character" width={160} height={160} />
-        <NavigateBtn onClick={() => navigate('/mypage/customize')}>
-          새로운 CD에 취향 담기
-        </NavigateBtn>
-      </ViewContainer>
+      <EmptyPage>
+        <HeaderTab selectedTab={selectedTab} onSelect={handleTabSelect} />
+        <CenterContent>
+          <img src={MemberCharacter} alt="Guest Character" width={160} height={160} />
+          <NavigateBtn onClick={() => navigate('/mypage/customize')}>
+            새로운 CD에 취향 담기
+          </NavigateBtn>
+        </CenterContent>
+      </EmptyPage>
+    )
+  }
+
+  if (selectedTab === 'LIKE' && isLikedEmpty) {
+    return (
+      <EmptyPage>
+        <HeaderTab selectedTab={selectedTab} onSelect={handleTabSelect} />
+        <CenterContent>
+          <NoLike width={160} height={160} />
+          <SubText>
+            아직 좋아요한 CD가 없어요. <br /> 새로운 음악을 찾아볼까요?
+          </SubText>
+          <NavigateBtn onClick={() => navigate('/discover')}>둘러보기로 가기</NavigateBtn>
+        </CenterContent>
+      </EmptyPage>
     )
   }
 
@@ -189,9 +202,6 @@ const MyCdPage = () => {
         <>
           <HeaderTab selectedTab={selectedTab} onSelect={handleTabSelect} />
           <Container>
-            {isMobile && isMuted && (
-              <VolumeButton playerRef={playerRef} isMuted={isMuted} setIsMuted={setIsMuted} />
-            )}
             <LiveInfo isOnAir={listenersNum > 0} listenerCount={listenersNum} isOwner={false} />
             {selectedTab === 'MY' && (
               <Button
@@ -207,18 +217,23 @@ const MyCdPage = () => {
               </Button>
             )}
           </Container>
-
-          <PlaylistCarousel data={playlistData ?? []} onCenterChange={handleCenterChange} />
-
+          <PlaylistCarousel
+            data={playlistData ?? []}
+            onCenterChange={handleCenterChange}
+            currentPlaylistId={currentPlaylist?.playlistId}
+            isPlaying={isPlaying}
+          />
           <ActionBar
-            playlistId={centerPlaylist.playlistId ?? 0}
+            playlistId={centerItem.playlistId ?? 0}
             creatorId={currentPlaylist.creator.creatorId}
             stickers={playlistDetail?.cdResponse?.cdItems || []}
             type="MY"
             selectedTab={selectedTab}
           />
-
-          <Title>{centerPlaylist.playlistName}</Title>
+          <Title $isMobile={isMobile}> {centerItem.playlistName}</Title>
+          {selectedTab === 'LIKE' && playlistDetail?.creatorNickname && (
+            <Creator>{playlistDetail.creatorNickname}</Creator>
+          )}
 
           <BottomWrapper>
             <ProgressBar
@@ -229,26 +244,22 @@ const MyCdPage = () => {
 
             <ControlBar
               isPlaying={isPlaying}
-              onTogglePlay={isPlaying ? pause : play}
+              onTogglePlay={() => {
+                if (isMobile && !isPlaying) {
+                  unmuteOnce()
+                }
+
+                if (isPlaying) {
+                  pause()
+                } else {
+                  play()
+                }
+              }}
               onNext={nextTrack}
               onPrev={prevTrack}
             />
           </BottomWrapper>
         </>
-      )}
-
-      {videoId && (
-        <YoutubePlayer
-          key="my-cd"
-          videoId={videoId}
-          onReady={(event) => {
-            playerRef.current = event.target
-            playerRef.current?.seekTo(currentTime, true)
-            if (isPlaying) playerRef.current?.playVideo()
-            else playerRef.current?.pauseVideo()
-          }}
-          onStateChange={handlePlayerStateChange}
-        />
       )}
     </div>
   )
@@ -262,22 +273,16 @@ const Container = styled.div`
   height: 30px;
 `
 
-const Title = styled.p`
+const Title = styled.p<{ $isMobile?: boolean }>`
   ${({ theme }) => theme.FONT.headline1};
-  padding-top: 40px;
+  padding-top: ${({ $isMobile }) => ($isMobile ? '24px' : '40px')};
 `
 
 const BottomWrapper = styled.div`
-  padding-top: 24px;
+  padding-top: 20px;
   display: flex;
   flex-direction: column;
   gap: 20px;
-`
-
-const ViewContainer = styled.div`
-  ${flexColCenter}
-  height: 100%;
-  gap: 16px;
 `
 
 const NavigateBtn = styled.button`
@@ -288,4 +293,27 @@ const NavigateBtn = styled.button`
   padding: 6px 20px;
   height: 32px;
   ${({ theme }) => theme.FONT['body2-normal']};
+  margin-top: 16px;
+`
+const Creator = styled.p`
+  ${({ theme }) => theme.FONT['body2-normal']};
+  color: ${({ theme }) => theme.COLOR['gray-300']};
+`
+
+const SubText = styled.p`
+  ${({ theme }) => theme.FONT['body1-normal']}
+  color: ${({ theme }) => theme.COLOR['gray-50']};
+`
+
+const EmptyPage = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: ${({ theme }) => theme.COLOR['gray-900']};
+`
+
+const CenterContent = styled.div`
+  flex: 1;
+  ${flexColCenter};
+  text-align: center;
 `

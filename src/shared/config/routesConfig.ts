@@ -26,6 +26,7 @@ const MyCdPage = lazy(() => import('@/pages/mycd'))
 const MyCdInfoPage = lazy(() => import('@/pages/mycd/tracklist'))
 const NotFoundPage = lazy(() => import('@/pages/notFound'))
 const ErrorPage = lazy(() => import('@/pages/error'))
+const FeedbackPage = lazy(() => import('@/pages/feedback'))
 
 export interface RouteConfig {
   path: string
@@ -97,6 +98,13 @@ export const routesConfig: RouteConfig[] = [
       { path: '', component: LoginPage },
       { path: 'callback', component: LoginCallbackPage },
     ],
+  },
+
+  // 의견제안
+  {
+    path: '/feedback',
+    component: FeedbackPage,
+    hideNav: true,
   },
 
   // 에러 페이지

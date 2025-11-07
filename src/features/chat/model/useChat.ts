@@ -33,6 +33,8 @@ export const useDeleteChatMessage = (roomId: string, removeMessage: (id: string)
     mutationFn: (messageId: string) => deleteChatMessage(roomId, messageId),
     onSuccess: (_, messageId) => {
       queryClient.invalidateQueries({ queryKey: ['chat-history', roomId] })
+      queryClient.invalidateQueries({ queryKey: ['chat-count', roomId] })
+
       removeMessage(messageId) //  소켓 state 업데이트
     },
   })
@@ -40,8 +42,10 @@ export const useDeleteChatMessage = (roomId: string, removeMessage: (id: string)
 
 export const useChatCount = (roomId: string) => {
   return useQuery({
-    queryKey: ['chatCount', roomId],
+    queryKey: ['chat-count', roomId],
     queryFn: () => getChatCount(roomId),
+    enabled: !!roomId, // roomId가 있을 때만 실행
     staleTime: 0,
+    refetchOnWindowFocus: false,
   })
 }

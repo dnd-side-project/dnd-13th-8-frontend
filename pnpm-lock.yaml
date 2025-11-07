@@ -11,6 +11,9 @@ importers:
       '@stomp/stompjs':
         specifier: ^7.1.1
         version: 7.1.1
+      '@supabase/supabase-js':
+        specifier: ^2.79.0
+        version: 2.79.0
       '@tanstack/react-query':
         specifier: ^5.84.2
         version: 5.84.2(react@19.1.0)
@@ -869,6 +872,30 @@ packages:
       typescript:
         optional: true
 
+  '@supabase/auth-js@2.79.0':
+    resolution: {integrity: sha512-p2GKvdbF9d/6C+dtS6iNcSicPr6eUfkvovD60HWlWsD+oOjC483DzFWrzGjNpBwnswhfMRP8Qn3rYA0VWaOfjw==}
+    engines: {node: '>=20.0.0'}
+
+  '@supabase/functions-js@2.79.0':
+    resolution: {integrity: sha512-WaiU6b+Z+ZfJOjFhpMKdajt42weiFUrA6TVW5oGd6WfPGajFiKZJJIAvuK0g7KDKaYowtQrOo5+Ais+PcuZ1qA==}
+    engines: {node: '>=20.0.0'}
+
+  '@supabase/postgrest-js@2.79.0':
+    resolution: {integrity: sha512-2i8EFm3/49ecjt6dk/TGVROBbtOmhryiC4NL3u0FBIrm2hqj+FvbELv1jjM6r+a6abnh+uzIV/bFsWHAa/k3/w==}
+    engines: {node: '>=20.0.0'}
+
+  '@supabase/realtime-js@2.79.0':
+    resolution: {integrity: sha512-foaZujNBycAqLizUcuLyyFyDitfPnEMVO4CiKXNwaMCDVMoVX4QR6n4gpJLUC5BGzc20Mte6vSJLbk4MN90Prw==}
+    engines: {node: '>=20.0.0'}
+
+  '@supabase/storage-js@2.79.0':
+    resolution: {integrity: sha512-PLSeKX1/BZhGWCT972w4TvVOCcw/xh4TsowtUBiZvPx4OdHT7dB1q0DXKwVUfKbWk5UUC+6XAq4ZU/ZCtdgn6w==}
+    engines: {node: '>=20.0.0'}
+
+  '@supabase/supabase-js@2.79.0':
+    resolution: {integrity: sha512-x9ndEaBSwoRnFOOZGhh2CeV69Uz4B/EOSGCbKysDhTiYakiCAdDXaNuLPluviKU/Aot+F7BglXZDZ0YJ3GpGrw==}
+    engines: {node: '>=20.0.0'}
+
   '@svgr/babel-plugin-add-jsx-attribute@8.0.0':
     resolution: {integrity: sha512-b9MIk7yhdS1pMCZM8VeNfUlSKVRhsHZNMl5O9SfaX0l0t5wjdgu4IDzGB8bpnGBBOjGST3rRFVsaaEtI4W6f7g==}
     engines: {node: '>=14'}
@@ -1004,6 +1031,9 @@ packages:
   '@types/node@24.1.0':
     resolution: {integrity: sha512-ut5FthK5moxFKH2T1CUOC6ctR67rQRvvHdFLCD2Ql6KXmMuCrjsSsRI9UsLCm9M18BMwClv4pn327UvB7eeO1w==}
 
+  '@types/phoenix@1.6.6':
+    resolution: {integrity: sha512-PIzZZlEppgrpoT2QgbnDU+MMzuR6BbCjllj0bM70lWoejMeNJAxCchxnv7J3XFkI8MpygtRpzXrIlmWUBclP5A==}
+
   '@types/react-dom@19.1.6':
     resolution: {integrity: sha512-4hOiT/dwO8Ko0gV1m/TJZYk3y0KBnY9vzDh7W+DH17b2HFSOGgdj33dhihPeuy3l0q23+4e+hoXHV6hCC4dCXw==}
     peerDependencies:
@@ -1020,6 +1050,9 @@ packages:
 
   '@types/stylis@4.2.5':
     resolution: {integrity: sha512-1Xve+NMN7FWjY14vLoY5tL3BVEQ/n42YLwaqJIPYhotZ9uBHt87VceMwWQpzmdEt2TNXIorIFG+YeCUUW7RInw==}
+
+  '@types/ws@8.18.1':
+    resolution: {integrity: sha512-ThVF6DCVhA8kUGy+aazFQ4kXQ7E1Ty7A3ypFOe0IcJV8O/M511G99AW24irKrW56Wt44yG9+ij8FaqoBGkuBXg==}
 
   '@types/youtube@0.1.2':
     resolution: {integrity: sha512-n1/KqusanheyQRWHamNZv8K3kydlRqyEsZEKxMTeNWXQTC15lZprITCUt+WgL1vAIvKHCjPBIWz/gf/KQLsB3g==}
@@ -3206,6 +3239,9 @@ packages:
   tslib@2.6.2:
     resolution: {integrity: sha512-AEYxH93jGFPn/a2iVAwW87VuUIkR1FVUKB77NwMF7nBTDkDrrT/Hpt/IrCJ0QXhW27jTBDcf5ZY7w6RiqTMw2Q==}
 
+  tslib@2.8.1:
+    resolution: {integrity: sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==}
+
   type-check@0.4.0:
     resolution: {integrity: sha512-XleUoc9uwGXqjWwXaUTZAmzMcFZ5858QA2vvx1Ur5xIcixXIP+8LnFDgRplU30us6teqdlskFfu+ae4K79Ooew==}
     engines: {node: '>= 0.8.0'}
@@ -4125,6 +4161,43 @@ snapshots:
     optionalDependencies:
       typescript: 5.8.3
 
+  '@supabase/auth-js@2.79.0':
+    dependencies:
+      tslib: 2.8.1
+
+  '@supabase/functions-js@2.79.0':
+    dependencies:
+      tslib: 2.8.1
+
+  '@supabase/postgrest-js@2.79.0':
+    dependencies:
+      tslib: 2.8.1
+
+  '@supabase/realtime-js@2.79.0':
+    dependencies:
+      '@types/phoenix': 1.6.6
+      '@types/ws': 8.18.1
+      tslib: 2.8.1
+      ws: 8.18.3
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+
+  '@supabase/storage-js@2.79.0':
+    dependencies:
+      tslib: 2.8.1
+
+  '@supabase/supabase-js@2.79.0':
+    dependencies:
+      '@supabase/auth-js': 2.79.0
+      '@supabase/functions-js': 2.79.0
+      '@supabase/postgrest-js': 2.79.0
+      '@supabase/realtime-js': 2.79.0
+      '@supabase/storage-js': 2.79.0
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+
   '@svgr/babel-plugin-add-jsx-attribute@8.0.0(@babel/core@7.28.0)':
     dependencies:
       '@babel/core': 7.28.0
@@ -4279,6 +4352,8 @@ snapshots:
     dependencies:
       undici-types: 7.8.0
 
+  '@types/phoenix@1.6.6': {}
+
   '@types/react-dom@19.1.6(@types/react@19.1.8)':
     dependencies:
       '@types/react': 19.1.8
@@ -4292,6 +4367,10 @@ snapshots:
   '@types/sockjs-client@1.5.4': {}
 
   '@types/stylis@4.2.5': {}
+
+  '@types/ws@8.18.1':
+    dependencies:
+      '@types/node': 24.1.0
 
   '@types/youtube@0.1.2': {}
 
@@ -6669,6 +6748,8 @@ snapshots:
       strip-bom: 3.0.0
 
   tslib@2.6.2: {}
+
+  tslib@2.8.1: {}
 
   type-check@0.4.0:
     dependencies:

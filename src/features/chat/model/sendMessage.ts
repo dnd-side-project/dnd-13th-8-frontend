@@ -8,7 +8,7 @@ export interface ChatMessage {
   messageId: string
   username: string | null
   content: string
-  sentAt?: string
+  sentAt: string
   profileImage: string | null
   systemMessage?: boolean
   roomId: string

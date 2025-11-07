@@ -1,6 +1,6 @@
 import { useRef, useState, useImperativeHandle } from 'react'
 
-import { toPng } from 'html-to-image'
+import { toBlob } from 'html-to-image'
 import styled from 'styled-components'
 
 import { useToast } from '@/app/providers'
@@ -20,6 +20,80 @@ interface ShareButtonProps {
   ref?: React.Ref<{ openShare: () => void }>
 }
 
+// 이미지 로드 완료를 명시적으로 보장하고 총 개수를 반환하는 함수
+const isImagesLoaded = (element: HTMLElement): Promise<number> => {
+  const images = element.querySelectorAll('img')
+  const loadingPromises: Promise<void>[] = []
+
+  images.forEach((img) => {
+    if (img.complete) return
+
+    loadingPromises.push(
+      new Promise((resolve, reject) => {
+        img.onload = () => resolve()
+        img.onerror = () => reject()
+        if (img.complete) resolve()
+      })
+    )
+  })
+
+  return Promise.all(loadingPromises).then(() => images.length)
+}
+
+const buildBlobWithRetry = async (element: HTMLElement, maxAttempts: number) => {
+  let bestBlob: Blob | null = null
+  let bestSize = 0
+  let attempt = 0
+
+  let lastSize = 0
+  let count = 0
+
+  while (attempt < maxAttempts) {
+    let currentBlob: Blob | null = null
+
+    try {
+      currentBlob = await toBlob(element, {
+        cacheBust: true,
+        pixelRatio: 3,
+      })
+    } catch (e) {
+      console.error(e)
+      currentBlob = null
+    }
+
+    if (currentBlob) {
+      const currentSize = currentBlob.size
+
+      // 최대 크기 추적
+      if (currentSize > bestSize) {
+        bestSize = currentSize
+        bestBlob = currentBlob
+      }
+
+      // 연속 동일 크기 확인 로직
+      if (currentSize === lastSize && currentSize > 0) {
+        count += 1
+      } else {
+        count = 1
+      }
+      lastSize = currentSize
+
+      // 연속 3회 동일 크기 도달 시 조기 종료
+      if (count >= 3) {
+        break
+      }
+    } else {
+      count = 0 // blob 생성 실패 시 연속 횟수 초기화
+    }
+
+    attempt += 1
+    // 500ms 대기 후 재시도
+    await new Promise((resolve) => setTimeout(resolve, 500))
+  }
+
+  return bestBlob
+}
+
 const ShareButton = ({ playlistId, stickers, type = 'DISCOVER', ref }: ShareButtonProps) => {
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false)
   const [selectedIndex, setSelectedIndex] = useState(0)
@@ -28,7 +102,7 @@ const ShareButton = ({ playlistId, stickers, type = 'DISCOVER', ref }: ShareButt
   const shareRefs = useRef<(HTMLDivElement | null)[]>([])
 
   const slides = [
-    { id: 'cd', content: <Cd variant="share" bgColor="none" stickers={stickers} /> },
+    { id: 'cd', content: <Cd variant="customize" bgColor="none" stickers={stickers} /> },
     {
       id: 'member',
       content: <img src={MemberCharacter} alt="Member Character" width={220} height={220} />,
@@ -44,13 +118,36 @@ const ShareButton = ({ playlistId, stickers, type = 'DISCOVER', ref }: ShareButt
   const handleSaveImage = async () => {
     const currentRef = shareRefs.current[selectedIndex]
     if (!currentRef) return
+
     try {
-      const dataUrl = await toPng(currentRef, { cacheBust: true })
-      const link = document.createElement('a')
-      link.href = dataUrl
-      link.download = `playlist-${playlistId}-${slides[selectedIndex].id}.png`
-      link.click()
-      toast('IMAGE')
+      // 이미지 로딩을 기다리고 총 개수를 얻음
+      const totalImages = await isImagesLoaded(currentRef)
+
+      // 렌더링 안정화를 위해 100ms 대기
+      await new Promise((resolve) => setTimeout(resolve, 100))
+
+      // 최대 시도 횟수 계산
+      const maxAttempts = totalImages + 2
+
+      // 로딩 완료 후, 최대 횟수까지 재시도 및 가장 큰 Blob 선택
+      const blob = await buildBlobWithRetry(currentRef, maxAttempts)
+
+      if (blob) {
+        const fileName = `playlist-${playlistId}-${slides[selectedIndex].id}.png`
+
+        // 다운로드
+        const url = URL.createObjectURL(blob)
+        const link = document.createElement('a')
+
+        link.href = url
+        link.download = fileName
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+        URL.revokeObjectURL(url)
+
+        toast('IMAGE')
+      }
     } catch (e) {
       console.error(e)
     }
@@ -70,7 +167,6 @@ const ShareButton = ({ playlistId, stickers, type = 'DISCOVER', ref }: ShareButt
             width={type === 'MY' ? 16 : 24}
             height={type === 'MY' ? 16 : 24}
           />
-          {type === 'MY' && <p>공유</p>}
         </ButtonWrapper>
       )}
 

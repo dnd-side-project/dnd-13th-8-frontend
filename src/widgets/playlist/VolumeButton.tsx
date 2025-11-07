@@ -16,11 +16,20 @@ const VolumeButton = ({ playerRef, isMuted, setIsMuted }: VolumeButtonProps) => 
 
   const toggleMute = () => {
     if (!playerRef.current) return
-    if (isMuted) playerRef.current.unMute()
-    else playerRef.current.mute()
+
+    if (isMuted) {
+      playerRef.current.unMute()
+
+      const playerState = playerRef.current.getPlayerState()
+      // 1 === 재생상태
+      if (playerState !== 1) {
+        playerRef.current.playVideo()
+      }
+    } else {
+      playerRef.current.mute()
+    }
     setIsMuted(!isMuted)
   }
-
   return (
     <StyledButton onClick={toggleMute}>
       <Volume />
@@ -42,4 +51,5 @@ const StyledButton = styled.button`
   padding: 10px;
   gap: 4px;
   border-radius: 4px;
+  white-space: nowrap;
 `

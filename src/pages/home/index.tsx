@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { createSearchParams, useNavigate } from 'react-router-dom'
 
 import styled, { css } from 'styled-components'
@@ -8,12 +9,25 @@ import {
   useRecommendationsByFollow,
   useRecommendedGenres,
 } from '@/features/recommend'
-import { FirstSection } from '@/pages/home/ui'
-import { ScrollCarousel } from '@/shared/ui'
+import { FeedbackBottomSheet, FirstSection } from '@/pages/home/ui'
+import { CategoryButton, ScrollCarousel } from '@/shared/ui'
 import { Playlist, PlaylistWithSong } from '@/widgets/playlist'
 
 const HomePage = () => {
   const navigate = useNavigate()
+  const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false)
+
+  useEffect(() => {
+    const hideDate = localStorage.getItem('hideDate')
+    const today = new Date().toISOString().split('T')[0]
+    if (hideDate !== today) {
+      setIsBottomSheetOpen(true)
+    }
+  }, [])
+
+  const handleFeedbackClose = () => {
+    setIsBottomSheetOpen(false)
+  }
 
   const { data: RecentData } = useRecommendationsByRecent()
   const { data: FollowData } = useRecommendationsByFollow()
@@ -67,51 +81,38 @@ const HomePage = () => {
         <h1>오늘은 이런 기분</h1>
         <ScrollCarousel gap={12}>
           {GenreData?.map((item) => (
-            <Slide
+            <CategoryButton
               key={item.code}
-              $bgImage={CARD_IMAGES_LARGE[item.code as keyof typeof CARD_IMAGES_LARGE]}
+              size="large"
+              text={item.displayName}
+              bgImage={CARD_IMAGES_LARGE[item.code as keyof typeof CARD_IMAGES_LARGE]}
               onClick={() => handleKeywordSearch(item.code)}
-            >
-              {item.displayName}
-            </Slide>
+            />
           ))}
         </ScrollCarousel>
       </FourthSection>
+
+      {isBottomSheetOpen && (
+        <FeedbackBottomSheet isOpen={isBottomSheetOpen} onClose={handleFeedbackClose} />
+      )}
     </PageLayout>
   )
 }
 
 export default HomePage
 
-const Slide = styled.button<{ $bgImage?: string }>`
-  border-radius: 10px;
-  width: 160px;
-  height: 200px;
-  color: ${({ theme }) => theme.COLOR['gray-100']};
-  ${({ theme }) => theme.FONT['body1-normal']};
-  background-color: ${({ theme }) => theme.COLOR['gray-600']};
-  background-image: url(${({ $bgImage }) => $bgImage});
-  background-size: cover;
-  background-position: center;
-  padding: 12px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-`
-
 const PageLayout = styled.div`
   display: flex;
   flex-direction: column;
+  background-color: ${({ theme }) => theme.COLOR['gray-800']};
+  margin: 0 -20px;
 `
 
 const sectionCommonLayout = css`
   display: flex;
   flex-direction: column;
   gap: 12px;
-  background-color: ${({ theme }) => theme.COLOR['gray-800']};
   ${({ theme }) => theme.FONT.headline1};
-  width: calc(100% + 40px);
-  margin: 0 -20px;
 
   h1 {
     font-weight: 600;

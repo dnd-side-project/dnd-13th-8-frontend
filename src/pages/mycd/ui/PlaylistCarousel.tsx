@@ -1,10 +1,11 @@
-import { useState, useCallback, useEffect, type Key } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 
 import styled from 'styled-components'
 
 import type { CdCustomData, PlaylistInfo } from '@/entities/playlist'
 import { SwipeCarousel } from '@/features/swipe'
+import { useDevice } from '@/shared/lib/useDevice'
 import { flexRowCenter } from '@/shared/styles/mixins'
 import { Cd } from '@/shared/ui'
 
@@ -17,11 +18,20 @@ interface CarouselPlaylist {
 interface PlaylistCarouselProps {
   data: CarouselPlaylist[]
   onCenterChange?: (playlist: { playlistId: number; playlistName: string }) => void
+  currentPlaylistId?: number | null
+  isPlaying?: boolean
 }
 
-const PlaylistCarousel = ({ data, onCenterChange }: PlaylistCarouselProps) => {
+const PlaylistCarousel = ({
+  data,
+  onCenterChange,
+  currentPlaylistId,
+  isPlaying,
+}: PlaylistCarouselProps) => {
   const { id: playlistId } = useParams()
   const [activeIndex, setActiveIndex] = useState(0)
+  const deviceType = useDevice()
+  const isMobile = deviceType === 'mobile'
 
   // url 기준으로 active index 동기화
   useEffect(() => {
@@ -62,27 +72,33 @@ const PlaylistCarousel = ({ data, onCenterChange }: PlaylistCarouselProps) => {
       axis="x"
       basePath="/mycd"
     >
-      {data.map((slide, index: Key) => (
-        <EmblaSlide key={index}>
-          <Slide $active={activeIndex === index}>
-            <Cd
-              variant="mycd"
-              bgColor="none"
-              stickers={activeIndex === index ? slide.cdResponse.cdItems : []}
-            />
-          </Slide>
-        </EmblaSlide>
-      ))}
+      {data.map((slide, index) => {
+        const isNowPlaying = slide.playlistId === currentPlaylistId && isPlaying
+
+        return (
+          <EmblaSlide key={slide.playlistId} $isMobile={isMobile}>
+            <Slide $active={activeIndex === index}>
+              <CdSpinner $isNowPlaying={!!isNowPlaying}>
+                <Cd
+                  variant={isMobile ? 'mycd_mo' : 'mycd'}
+                  bgColor="none"
+                  stickers={slide.cdResponse.cdItems}
+                />
+              </CdSpinner>
+            </Slide>
+          </EmblaSlide>
+        )
+      })}
     </SwipeCarousel>
   )
 }
 
 export default PlaylistCarousel
 
-const EmblaSlide = styled.div`
+const EmblaSlide = styled.div<{ $isMobile?: boolean }>`
   flex: 0 0 50%;
   ${flexRowCenter}
-  padding: 16px 0;
+  padding: ${({ $isMobile }) => ($isMobile ? '0' : '16px 0')};
 `
 
 const Slide = styled.div<{ $active?: boolean }>`
@@ -90,5 +106,21 @@ const Slide = styled.div<{ $active?: boolean }>`
   ${flexRowCenter}
   transition: transform 0.8s ease;
   margin: 24px;
-  opacity: ${({ $active }) => ($active ? 1 : 0.6)};
+  opacity: ${({ $active }) => ($active ? 1 : 0.5)};
+`
+
+const CdSpinner = styled.div<{ $isNowPlaying: boolean }>`
+  position: relative;
+  animation: spin 40s linear infinite;
+  animation-play-state: ${(props) => (props.$isNowPlaying ? 'running' : 'paused')};
+  transform-origin: center;
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
 `

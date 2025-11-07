@@ -6,6 +6,7 @@ import styled from 'styled-components'
 import { Header, SvgButton } from '@shared/ui'
 
 import { Gear } from '@/assets/icons'
+import { FeedbackIcon } from '@/pages/feedback/ui'
 import type { MYPAGE_TAB_TYPE } from '@/pages/mypage/types/mypage'
 import { Divider } from '@/pages/mypage/ui/components'
 import { UserProfile, MyCdList, MyLikedCdList } from '@/pages/mypage/ui/main/components'
@@ -44,6 +45,7 @@ const Mypage = () => {
               height={24}
               onClick={() => navigate('/mypage/notification')}
             /> */}
+            <FeedbackIcon />
             <SvgButton
               icon={Gear}
               width={24}

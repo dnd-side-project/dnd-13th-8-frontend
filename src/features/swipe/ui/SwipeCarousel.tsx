@@ -66,7 +66,7 @@ const SwipeCarousel = ({
         </div>
       ) : (
         <EmblaViewport ref={emblaRef}>
-          <VerticaContainer>{children}</VerticaContainer>
+          <VerticalContainer>{children}</VerticalContainer>
         </EmblaViewport>
       )}
     </>
@@ -78,9 +78,11 @@ export default SwipeCarousel
 const EmblaViewport = styled.div`
   height: 100vh;
   overflow: hidden;
+  margin: 0 -20px;
+  padding: 0 20px;
 `
 
-const VerticaContainer = styled.div`
+const VerticalContainer = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;

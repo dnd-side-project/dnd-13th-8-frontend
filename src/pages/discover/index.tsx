@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 
 import styled from 'styled-components'
@@ -12,9 +12,7 @@ import {
   useShufflePlaylists,
 } from '@/entities/playlist'
 import { SwipeCarousel } from '@/features/swipe'
-import { DiscoverCoachMark } from '@/pages/discover/ui'
-import { getVideoId } from '@/shared/lib'
-import { PlaylistLayout, YoutubePlayer } from '@/widgets/playlist'
+import { PlaylistLayout } from '@/widgets/playlist'
 
 const DiscoverPage = () => {
   const { id: playlistId } = useParams()
@@ -29,24 +27,7 @@ const DiscoverPage = () => {
     pause,
     nextTrack,
     prevTrack,
-    handlePlayerStateChange,
   } = usePlaylist()
-
-  const [showCoachmark, setShowCoachmark] = useState(false)
-  const [isMuted, setIsMuted] = useState<boolean | null>(null)
-
-  // 코치마크
-  useEffect(() => {
-    const seen = localStorage.getItem('hasSeenDiscoverCoachmark')
-    if (!seen) {
-      setShowCoachmark(true)
-    }
-  }, [])
-
-  const handleCloseCoachmark = () => {
-    setShowCoachmark(false)
-    localStorage.setItem('hasSeenDiscoverCoachmark', 'true')
-  }
 
   const { mutate: startPlaylist } = usePlaylistStartMutation()
   const { mutate: confirmPlaylist } = usePlaylistConfirmMutation()
@@ -95,10 +76,6 @@ const DiscoverPage = () => {
     }
     return [playlistAsInfo, ...shufflePlaylists]
   }, [playlistAsInfo, shufflePlaylists])
-
-  const videoId = currentPlaylist
-    ? getVideoId(currentPlaylist.songs[currentTrackIndex]?.youtubeUrl)
-    : null
 
   const isReady = !!playlistAsInfo && shuffleData !== undefined
 
@@ -150,7 +127,6 @@ const DiscoverPage = () => {
 
   return (
     <Page>
-      {showCoachmark && <DiscoverCoachMark onClose={handleCloseCoachmark} />}
       <SwipeCarousel
         data={playlistsData}
         onSelectIndexChange={handleSelectPlaylist}
@@ -172,26 +148,10 @@ const DiscoverPage = () => {
                 if (currentPlaylist) setPlaylist(currentPlaylist, trackIndex, time)
               }}
               playerRef={playerRef}
-              isMuted={isMuted}
-              setIsMuted={setIsMuted}
             />
           </Slide>
         ))}
       </SwipeCarousel>
-
-      {videoId && (
-        <YoutubePlayer
-          videoId={videoId}
-          onReady={(event) => {
-            playerRef.current = event.target
-            playerRef.current?.seekTo(currentTime, true)
-            if (isPlaying) playerRef.current?.playVideo()
-            else playerRef.current?.pauseVideo()
-            setIsMuted(playerRef.current?.isMuted() ?? null)
-          }}
-          onStateChange={handlePlayerStateChange}
-        />
-      )}
     </Page>
   )
 }
@@ -200,6 +160,7 @@ export default DiscoverPage
 
 const Slide = styled.div`
   flex: 0 0 100%;
+  position: relative;
 `
 const Page = styled.div`
   position: relative;

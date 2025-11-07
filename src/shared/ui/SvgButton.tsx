@@ -11,6 +11,7 @@ interface SvgButtonProps {
   height?: number
   fill?: string
   stroke?: string
+  className?: string
 }
 
 const SvgButton = ({
@@ -20,9 +21,10 @@ const SvgButton = ({
   height = 24,
   fill,
   stroke,
+  className,
 }: SvgButtonProps) => {
   return (
-    <Button type="button" onClick={onClick} $width={width} $height={height}>
+    <Button type="button" onClick={onClick} $width={width} $height={height} className={className}>
       <Icon fill={fill} stroke={stroke} />
     </Button>
   )

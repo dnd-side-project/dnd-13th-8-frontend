@@ -10,8 +10,8 @@ interface CategoryButtonProps {
 const CategoryButton = ({ text, size, bgImage, onClick }: CategoryButtonProps) => {
   return (
     <StyledButton $size={size} onClick={onClick}>
-      {bgImage && <BgImage src={bgImage} alt={`${text} background`} />}
-      <Text>{text}</Text>
+      {bgImage && <BgObject type="image/svg+xml" data={bgImage} />}
+      <Text $size={size}>{text}</Text>
     </StyledButton>
   )
 }
@@ -36,17 +36,25 @@ const StyledButton = styled.button<{ $size: 'small' | 'large' }>`
   ${({ $size }) => css(sizes[$size])}
 `
 
-const BgImage = styled.img`
+const BgObject = styled.object`
   position: absolute;
-  top: 0;
-  left: 0;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  z-index: 0;
+  pointer-events: none;
+  z-index: 1;
 `
 
-const Text = styled.span`
-  position: relative;
-  z-index: 1;
+const Text = styled.span<{ $size: 'small' | 'large' }>`
+  font-weight: 500;
+  z-index: 2;
+  ${({ theme, $size }) =>
+    $size === 'small'
+      ? css`
+          ${theme.FONT['body2-normal']};
+        `
+      : css`
+          ${theme.FONT['body1-normal']};
+        `}
 `
