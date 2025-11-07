@@ -1,4 +1,4 @@
-import { useRef, useState, useImperativeHandle } from 'react'
+import { useRef, useState, useImperativeHandle, forwardRef } from 'react'
 
 import { toBlob } from 'html-to-image'
 import styled from 'styled-components'
@@ -94,118 +94,123 @@ const buildBlobWithRetry = async (element: HTMLElement, maxAttempts: number) => 
   return bestBlob
 }
 
-const ShareButton = ({ playlistId, stickers, type = 'DISCOVER', ref }: ShareButtonProps) => {
-  const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false)
-  const [selectedIndex, setSelectedIndex] = useState(0)
-  const { toast } = useToast()
-  const { copyCdShareUrl } = useCopyCdShareUrl()
-  const shareRefs = useRef<(HTMLDivElement | null)[]>([])
+// const ShareButton = ({ playlistId, stickers, type = 'DISCOVER', ref }: ShareButtonProps) => {
+const ShareButton = forwardRef<{ openShare: () => void }, Omit<ShareButtonProps, 'ref'>>(
+  ({ playlistId, stickers, type = 'DISCOVER' }, ref) => {
+    const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false)
+    const [selectedIndex, setSelectedIndex] = useState(0)
+    const { toast } = useToast()
+    const { copyCdShareUrl } = useCopyCdShareUrl()
+    const shareRefs = useRef<(HTMLDivElement | null)[]>([])
 
-  const slides = [
-    { id: 'cd', content: <Cd variant="customize" bgColor="none" stickers={stickers} /> },
-    {
-      id: 'member',
-      content: <img src={MemberCharacter} alt="Member Character" width={220} height={220} />,
-    },
-    {
-      id: 'guest',
-      content: <img src={GuestCharacter} alt="Guest Character" width={220} height={220} />,
-    },
-  ]
+    const slides = [
+      { id: 'cd', content: <Cd variant="customize" bgColor="none" stickers={stickers} /> },
+      {
+        id: 'member',
+        content: <img src={MemberCharacter} alt="Member Character" width={220} height={220} />,
+      },
+      {
+        id: 'guest',
+        content: <img src={GuestCharacter} alt="Guest Character" width={220} height={220} />,
+      },
+    ]
 
-  const handleShare = () => setIsBottomSheetOpen(true)
+    const handleShare = () => setIsBottomSheetOpen(true)
 
-  const handleSaveImage = async () => {
-    const currentRef = shareRefs.current[selectedIndex]
-    if (!currentRef) return
+    const handleSaveImage = async () => {
+      const currentRef = shareRefs.current[selectedIndex]
+      if (!currentRef) return
 
-    try {
-      // 이미지 로딩을 기다리고 총 개수를 얻음
-      const totalImages = await isImagesLoaded(currentRef)
+      try {
+        // 이미지 로딩을 기다리고 총 개수를 얻음
+        const totalImages = await isImagesLoaded(currentRef)
 
-      // 렌더링 안정화를 위해 100ms 대기
-      await new Promise((resolve) => setTimeout(resolve, 100))
+        // 렌더링 안정화를 위해 100ms 대기
+        await new Promise((resolve) => setTimeout(resolve, 100))
 
-      // 최대 시도 횟수 계산
-      const maxAttempts = totalImages + 2
+        // 최대 시도 횟수 계산
+        const maxAttempts = totalImages + 2
 
-      // 로딩 완료 후, 최대 횟수까지 재시도 및 가장 큰 Blob 선택
-      const blob = await buildBlobWithRetry(currentRef, maxAttempts)
+        // 로딩 완료 후, 최대 횟수까지 재시도 및 가장 큰 Blob 선택
+        const blob = await buildBlobWithRetry(currentRef, maxAttempts)
 
-      if (blob) {
-        const fileName = `playlist-${playlistId}-${slides[selectedIndex].id}.png`
+        if (blob) {
+          const fileName = `playlist-${playlistId}-${slides[selectedIndex].id}.png`
 
-        // 다운로드
-        const url = URL.createObjectURL(blob)
-        const link = document.createElement('a')
+          // 다운로드
+          const url = URL.createObjectURL(blob)
+          const link = document.createElement('a')
 
-        link.href = url
-        link.download = fileName
-        document.body.appendChild(link)
-        link.click()
-        document.body.removeChild(link)
-        URL.revokeObjectURL(url)
+          link.href = url
+          link.download = fileName
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          URL.revokeObjectURL(url)
 
-        toast('IMAGE')
+          toast('IMAGE')
+        }
+      } catch (e) {
+        console.error(e)
       }
-    } catch (e) {
-      console.error(e)
     }
+
+    // ref를 통해 부모 컴포넌트에서 handleShare 호출 (type이 TRACKLIST인 케이스)
+    useImperativeHandle(ref, () => ({
+      openShare: handleShare,
+    }))
+
+    return (
+      <>
+        {type !== 'TRACKLIST' && (
+          <ButtonWrapper $isMy={type === 'MY'} onClick={handleShare}>
+            <SvgButton
+              icon={Share}
+              width={type === 'MY' ? 16 : 24}
+              height={type === 'MY' ? 16 : 24}
+            />
+          </ButtonWrapper>
+        )}
+
+        <BottomSheet
+          isOpen={isBottomSheetOpen}
+          onClose={() => setIsBottomSheetOpen(false)}
+          height="fit-content"
+        >
+          <BottomSheetWrapper>
+            <ScrollCarousel
+              gap={20}
+              onSelectIndex={setSelectedIndex}
+              options={{ dragFree: false, containScroll: false }}
+            >
+              {slides.map((slide, idx) => (
+                <div
+                  key={slide.id}
+                  ref={(el: HTMLDivElement | null) => {
+                    shareRefs.current[idx] = el
+                  }}
+                >
+                  <ShareImage>{slide.content}</ShareImage>
+                </div>
+              ))}
+            </ScrollCarousel>
+
+            <ButtonBar>
+              <Button onClick={handleSaveImage} size="M" state="secondary">
+                이미지로 저장
+              </Button>
+              <Button onClick={() => copyCdShareUrl(playlistId)} size="M" state="secondary">
+                링크 복사
+              </Button>
+            </ButtonBar>
+          </BottomSheetWrapper>
+        </BottomSheet>
+      </>
+    )
   }
+)
 
-  // ref를 통해 부모 컴포넌트에서 handleShare 호출 (type이 TRACKLIST인 케이스)
-  useImperativeHandle(ref, () => ({
-    openShare: handleShare,
-  }))
-
-  return (
-    <>
-      {type !== 'TRACKLIST' && (
-        <ButtonWrapper $isMy={type === 'MY'} onClick={handleShare}>
-          <SvgButton
-            icon={Share}
-            width={type === 'MY' ? 16 : 24}
-            height={type === 'MY' ? 16 : 24}
-          />
-        </ButtonWrapper>
-      )}
-
-      <BottomSheet
-        isOpen={isBottomSheetOpen}
-        onClose={() => setIsBottomSheetOpen(false)}
-        height="fit-content"
-      >
-        <BottomSheetWrapper>
-          <ScrollCarousel
-            gap={20}
-            onSelectIndex={setSelectedIndex}
-            options={{ dragFree: false, containScroll: false }}
-          >
-            {slides.map((slide, idx) => (
-              <div
-                key={slide.id}
-                ref={(el: HTMLDivElement | null) => {
-                  shareRefs.current[idx] = el
-                }}
-              >
-                <ShareImage>{slide.content}</ShareImage>
-              </div>
-            ))}
-          </ScrollCarousel>
-
-          <ButtonBar>
-            <Button onClick={handleSaveImage} size="M" state="secondary">
-              이미지로 저장
-            </Button>
-            <Button onClick={() => copyCdShareUrl(playlistId)} size="M" state="secondary">
-              링크 복사
-            </Button>
-          </ButtonBar>
-        </BottomSheetWrapper>
-      </BottomSheet>
-    </>
-  )
-}
+ShareButton.displayName = 'ShareButton'
 
 export default ShareButton
 
