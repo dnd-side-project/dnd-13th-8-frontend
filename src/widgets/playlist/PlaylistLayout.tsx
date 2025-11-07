@@ -53,7 +53,8 @@ const PlaylistLayout = ({
   const handleOverlayClick = () => {
     onPlayPause()
     setShowPlayButton(true)
-    setTimeout(() => setShowPlayButton(false), 1000)
+    const duration = isPlaying ? 1000 : 2000
+    setTimeout(() => setShowPlayButton(false), duration)
   }
 
   return (
@@ -70,7 +71,9 @@ const PlaylistLayout = ({
       </Container>
       <Wrapper>
         <CdContainer>
-          {showPlayButton && <PlayButton onPlayPause={onPlayPause} show={showPlayButton} />}
+          {showPlayButton && (
+            <PlayButton isPlaying={isPlaying} onPlayPause={onPlayPause} show={showPlayButton} />
+          )}
           <CdSpinner $isPlaying={isPlaying}>
             <Cd
               variant="xxl"

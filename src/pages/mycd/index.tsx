@@ -84,6 +84,7 @@ const MyCdPage = () => {
   /* 좋아요 탭 선택 시 url query param 반영 */
   const handleTabSelect = (tab: MyCdTab) => {
     setSelectedTab(tab)
+    setCenterItem({ playlistId: null, playlistName: '' })
 
     const basePath = centerItem.playlistId ? `/mycd/${centerItem.playlistId}` : '/mycd'
 

@@ -40,7 +40,8 @@ const Overlay = styled.div`
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
+  width: calc(100% + 40px);
+  margin: 0 -20px;
   height: 100dvh;
   background: rgba(15, 16, 20, 0.8);
   z-index: ${({ theme }) => theme.Z_INDEX.coachMark};

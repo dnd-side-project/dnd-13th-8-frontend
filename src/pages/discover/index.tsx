@@ -118,7 +118,7 @@ const DiscoverPage = () => {
         setPlaylist(selectedPlaylist, 0, 0)
       }
 
-      if (index === playlistsData.length - 1 && hasNextPage && !isFetchingNextPage) {
+      if (index === playlistsData.length - 2 && hasNextPage && !isFetchingNextPage) {
         fetchNextPage()
       }
     },

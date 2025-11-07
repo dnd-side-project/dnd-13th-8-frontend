@@ -35,7 +35,6 @@ const PlaylistProvider = ({ children }: PlaylistProviderProps) => {
   const [currentTime, setCurrentTime] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false)
   const [isMuted, setIsMuted] = useState(true)
-  const hasUnmutedOnceRef = useRef(false) // 언뮤트 트리거 여부 저장
 
   const playerRef = useRef<YT.Player | null>(null)
 
@@ -56,25 +55,16 @@ const PlaylistProvider = ({ children }: PlaylistProviderProps) => {
     if (playerRef.current) {
       if (time !== undefined) playerRef.current.seekTo(time, true)
 
-      // 언뮤트 유지
-      if (hasUnmutedOnceRef.current && isMuted) {
-        playerRef.current.unMute()
-        setIsMuted(false)
-      }
-
       if (!isSamePlaylist && autoPlay) {
         playerRef.current.playVideo()
       }
     }
   }
 
-  // 최초 언뮤트 트리거 함수
   const unmuteOnce = useCallback(() => {
     if (!playerRef.current) return
     playerRef.current.unMute()
     playerRef.current.playVideo()
-    hasUnmutedOnceRef.current = true
-    setIsMuted(false)
   }, [])
 
   const play = useCallback(() => {
@@ -93,11 +83,6 @@ const PlaylistProvider = ({ children }: PlaylistProviderProps) => {
       setCurrentTime(0)
       if (playerRef.current) {
         playerRef.current.seekTo(0, true)
-        // 다음 트랙에서도 언뮤트 유지
-        if (hasUnmutedOnceRef.current && isMuted) {
-          playerRef.current.unMute()
-          setIsMuted(false)
-        }
       }
     }
   }, [currentPlaylist, currentTrackIndex, isMuted])
@@ -141,6 +126,8 @@ const PlaylistProvider = ({ children }: PlaylistProviderProps) => {
     playerRef,
     handlePlayerStateChange,
     unmuteOnce,
+    isMuted,
+    setIsMuted,
   }
 
   return <PlaylistContext.Provider value={value}>{children}</PlaylistContext.Provider>

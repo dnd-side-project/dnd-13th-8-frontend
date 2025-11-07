@@ -1,18 +1,19 @@
 import styled, { keyframes, css } from 'styled-components'
 
-import { Start } from '@/assets/icons'
+import { Start, Pause } from '@/assets/icons'
 import { flexColCenter } from '@/shared/styles/mixins'
 import { SvgButton } from '@/shared/ui'
 
 interface PlayButtonProps {
   onPlayPause: () => void
   show: boolean
+  isPlaying: boolean
 }
 
-const PlayButton = ({ onPlayPause, show }: PlayButtonProps) => {
+const PlayButton = ({ onPlayPause, show, isPlaying }: PlayButtonProps) => {
   return (
     <Wrapper $show={show}>
-      <SvgButton icon={Start} width={32} height={32} onClick={onPlayPause} />
+      <SvgButton icon={isPlaying ? Pause : Start} width={32} height={32} onClick={onPlayPause} />
     </Wrapper>
   )
 }
