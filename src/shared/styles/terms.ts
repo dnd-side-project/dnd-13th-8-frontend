@@ -16,4 +16,8 @@ export const TermsItems = styled.ul`
   ${flexColCenter}
   gap: 12px;
   ${({ theme }) => theme.FONT['label']}
+
+  & > li {
+    width: 100%;
+  }
 `
