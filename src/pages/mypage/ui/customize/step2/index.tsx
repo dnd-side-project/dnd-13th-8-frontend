@@ -77,6 +77,11 @@ const CustomizeStep2 = ({
 
   // 헤더 다음 버튼 클릭
   const onHeaderNextClick = () => {
+    const removeTempData = () => {
+      sessionStorage.removeItem('tempBasicInfo')
+      sessionStorage.removeItem('tempTracklist')
+    }
+
     const payload = {
       saveCdRequest: {
         cdItems: stickers.map((s) => ({
@@ -99,6 +104,7 @@ const CustomizeStep2 = ({
           onSuccess: (response) => {
             setCurrentCdId?.(response.playlistId)
             setCurrentStep(3)
+            removeTempData()
           },
           onError: (error) => {
             console.error('CD 저장 실패:', error)
@@ -113,6 +119,7 @@ const CustomizeStep2 = ({
       onSuccess: (response) => {
         setCurrentCdId?.(response.playlistId)
         setCurrentStep(3)
+        removeTempData()
       },
       onError: (error) => {
         console.error('CD 저장 실패:', error)
@@ -202,33 +209,37 @@ const CustomizeStep2 = ({
       { theme: 'USER', file },
       {
         onSuccess: (response) => {
-          const width = 50
-          const height = 50
           const center = getCDCenter()
-
-          const newSticker: StickerInfoType = {
-            id: uuidv4(),
-            propId: response.propId,
-            type: 'custom',
-            src: response.imageUrl,
-            x: center.x - width / 2 + 85,
-            y: center.y - height / 2,
-            z: getNextZIndex(),
-            width,
-            height,
-            scale: 1,
-            rotation: 0,
-          }
 
           const img = new Image()
           img.onload = () => {
             imageCache.current[response.imageUrl] = img
+
+            const width = 50
+            const aspectRatio = img.naturalWidth / img.naturalHeight
+            const height = width / aspectRatio
+
+            const newSticker: StickerInfoType = {
+              id: uuidv4(),
+              propId: response.propId,
+              type: 'custom',
+              src: response.imageUrl,
+              x: center.x - width / 2 + 85,
+              y: center.y - height / 2,
+              z: getNextZIndex(),
+              width,
+              height,
+              scale: 1,
+              rotation: 0,
+            }
+
             setStickers((prev) => {
               const updated = [...prev, newSticker]
               setSelectedSticker(updated.length - 1)
               return updated
             })
           }
+
           img.src = response.imageUrl
 
           // 유저 스티커 리스트 재조회
@@ -341,16 +352,15 @@ const CustomizeStep2 = ({
     // 클릭한 위치가 원형 cd 내부인지 확인
     const canvas = cdContainerRef.current
     if (canvas) {
-      const centerX = canvas.width / 2
-      const centerY = canvas.height / 2
-      const radius = canvas.width / 2 - 5
+      const centerX = canvas.width / 2 / (window.devicePixelRatio || 1)
+      const centerY = canvas.height / 2 / (window.devicePixelRatio || 1)
+      const radius = canvas.width / 2 / (window.devicePixelRatio || 1) - 5
 
       const dx = x - centerX
       const dy = y - centerY
-      if (dx * dx + dy * dy > radius * radius) {
-        // 원 밖이면 무시
-        return
-      }
+
+      // 원 밖이면 무시
+      if (dx * dx + dy * dy > radius * radius) return
     }
 
     // 선택된 스티커의 버튼들 클릭 확인
@@ -924,7 +934,11 @@ const CustomizeStep2 = ({
               ref={cdContainerRef}
               width={280}
               height={280}
-              style={{ touchAction: 'none', WebkitUserSelect: 'none', WebkitTouchCallout: 'none' }}
+              style={{
+                touchAction: 'none',
+                WebkitUserSelect: 'none',
+                WebkitTouchCallout: 'none',
+              }}
               onPointerDown={handlePointerDown}
               onPointerMove={handlePointerMove}
               onPointerUp={handlePointerUp}

@@ -28,7 +28,7 @@ const CustomizeStep1 = ({
 
   const { mutate, isPending } = useCdTempSave()
 
-  const [basicInfoMap, sestBasicInfoMap] = useState({
+  const [basicInfoMap, setBasicInfoMap] = useState({
     name: isEditMode ? (prevTracklist?.playlistName ?? '') : '',
     genre: MUSIC_GENRES.find((genre) => genre.id === prevTracklist?.genre) ?? null,
     isPublic: isEditMode ? (prevTracklist?.isPublic ?? true) : true,
@@ -61,6 +61,8 @@ const CustomizeStep1 = ({
         },
         {
           onSuccess: () => {
+            sessionStorage.setItem('tempBasicInfo', JSON.stringify(basicInfoMap))
+            sessionStorage.setItem('tempTracklist', JSON.stringify(tracklist))
             setCurrentStep(2)
           },
           onError: (error) => {
@@ -92,7 +94,7 @@ const CustomizeStep1 = ({
 
   // 장르 선택
   const onGenreClick = (genre: MusicGenre) => {
-    sestBasicInfoMap((prev) => ({ ...prev, genre }))
+    setBasicInfoMap((prev) => ({ ...prev, genre }))
     setIsBottomSheetOpen(false)
   }
 
@@ -189,8 +191,9 @@ const CustomizeStep1 = ({
     )
   }
 
-  // 페이지 최초 진입 시 editMode일 경우 tracklist 데이터 형식 가공
+  // 페이지 최초 진입 시 데이터 형식 가공
   useEffect(() => {
+    // editMode일 경우 tracklist response 형식 가공
     if (isEditMode && prevTracklist?.songs) {
       setTracklist(
         prevTracklist.songs.map((track) => {
@@ -204,6 +207,15 @@ const CustomizeStep1 = ({
           }
         })
       )
+      return
+    }
+
+    // 생성일 경우 sessionStorage에서 임시 저장 데이터 호출
+    const isTempDataAvailable =
+      sessionStorage.getItem('tempBasicInfo') && sessionStorage.getItem('tempTracklist')
+    if (isTempDataAvailable) {
+      setBasicInfoMap(JSON.parse(sessionStorage.getItem('tempBasicInfo') ?? '{}'))
+      setTracklist(JSON.parse(sessionStorage.getItem('tempTracklist') ?? '[]'))
     }
   }, [])
 
@@ -238,7 +250,7 @@ const CustomizeStep1 = ({
               placeholder="CD명"
               value={basicInfoMap.name}
               maxLength={24}
-              onChange={(e) => sestBasicInfoMap((prev) => ({ ...prev, name: e.target.value }))}
+              onChange={(e) => setBasicInfoMap((prev) => ({ ...prev, name: e.target.value }))}
               required
             />
           </BasicInfoBox>
@@ -249,7 +261,7 @@ const CustomizeStep1 = ({
           <ToggleSwitch
             aria-label="CD 공개 여부"
             isOn={basicInfoMap.isPublic}
-            setIsOn={(isOn) => sestBasicInfoMap((prev) => ({ ...prev, isPublic: isOn }))}
+            setIsOn={(isOn) => setBasicInfoMap((prev) => ({ ...prev, isPublic: isOn }))}
           />
         </PublicControler>
       </BasicInfoEditorWrap>
