@@ -45,7 +45,11 @@ const MyCdPage = () => {
   const likedCdPlaylist = useMyLikedCdList('RECENT')
 
   const playlistQuery = selectedTab === 'MY' ? myCdPlaylist : likedCdPlaylist
-  const playlistData = useMemo(() => playlistQuery.data ?? [], [playlistQuery.data])
+  const playlistData = useMemo(() => {
+    const data = playlistQuery.data ?? []
+    return selectedTab === 'LIKE' ? data.filter((p) => p.isPublic) : data
+  }, [playlistQuery.data, selectedTab])
+
   const isLoading = playlistQuery.isLoading
   const isError = playlistQuery.isError
   const isMyEmpty = !myCdPlaylist.isLoading && (myCdPlaylist.data?.length ?? 0) === 0
