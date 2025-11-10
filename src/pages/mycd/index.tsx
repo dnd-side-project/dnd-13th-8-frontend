@@ -222,48 +222,50 @@ const MyCdPage = () => {
               </Button>
             )}
           </Container>
-          <PlaylistCarousel
-            data={playlistData ?? []}
-            onCenterChange={handleCenterChange}
-            currentPlaylistId={currentPlaylist?.playlistId}
-            isPlaying={isPlaying}
-          />
-          <ActionBar
-            playlistId={centerItem.playlistId ?? 0}
-            creatorId={currentPlaylist.creator.creatorId}
-            stickers={playlistDetail?.cdResponse?.cdItems || []}
-            type="MY"
-            selectedTab={selectedTab}
-          />
-          <Title $isMobile={isMobile}> {centerItem.playlistName}</Title>
-          {selectedTab === 'LIKE' && playlistDetail?.creatorNickname && (
-            <Creator>{playlistDetail.creatorNickname}</Creator>
-          )}
-
-          <BottomWrapper>
-            <ProgressBar
-              trackLengths={currentPlaylist.songs.map((t) => t.youtubeLength) || []}
-              currentIndex={currentTrackIndex}
-              onClick={handleProgressClick}
-            />
-
-            <ControlBar
+          <CenterWrapper>
+            <PlaylistCarousel
+              data={playlistData ?? []}
+              onCenterChange={handleCenterChange}
+              currentPlaylistId={currentPlaylist?.playlistId}
               isPlaying={isPlaying}
-              onTogglePlay={() => {
-                if (isMobile && !isPlaying) {
-                  unmuteOnce()
-                }
-
-                if (isPlaying) {
-                  pause()
-                } else {
-                  play()
-                }
-              }}
-              onNext={nextTrack}
-              onPrev={prevTrack}
             />
-          </BottomWrapper>
+            <ActionBar
+              playlistId={centerItem.playlistId ?? 0}
+              creatorId={currentPlaylist.creator.creatorId}
+              stickers={playlistDetail?.cdResponse?.cdItems || []}
+              type="MY"
+              selectedTab={selectedTab}
+            />
+            <Title $isMobile={isMobile}> {centerItem.playlistName}</Title>
+            {selectedTab === 'LIKE' && playlistDetail?.creatorNickname && (
+              <Creator>{playlistDetail.creatorNickname}</Creator>
+            )}
+
+            <BottomWrapper>
+              <ProgressBar
+                trackLengths={currentPlaylist.songs.map((t) => t.youtubeLength) || []}
+                currentIndex={currentTrackIndex}
+                onClick={handleProgressClick}
+              />
+
+              <ControlBar
+                isPlaying={isPlaying}
+                onTogglePlay={() => {
+                  if (isMobile && !isPlaying) {
+                    unmuteOnce()
+                  }
+
+                  if (isPlaying) {
+                    pause()
+                  } else {
+                    play()
+                  }
+                }}
+                onNext={nextTrack}
+                onPrev={prevTrack}
+              />
+            </BottomWrapper>
+          </CenterWrapper>
         </>
       )}
     </div>
@@ -281,6 +283,10 @@ const Container = styled.div`
 const Title = styled.p<{ $isMobile?: boolean }>`
   ${({ theme }) => theme.FONT.headline1};
   padding-top: ${({ $isMobile }) => ($isMobile ? '24px' : '40px')};
+
+  @media (min-height: 899px) {
+    padding-top: 56px;
+  }
 `
 
 const BottomWrapper = styled.div`
@@ -321,4 +327,14 @@ const CenterContent = styled.div`
   flex: 1;
   ${flexColCenter};
   text-align: center;
+`
+
+const CenterWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-top: 0;
+
+  @media (min-height: 899px) {
+    margin-top: 80px;
+  }
 `

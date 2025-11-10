@@ -149,10 +149,18 @@ const ActionBarContainer = styled.div<{ $isMobile?: boolean }>`
   margin: ${({ $isMobile }) => ($isMobile ? '-105px 0 0 auto' : '-40px 0 0 auto')};
   position: relative;
   z-index: ${({ theme }) => theme.Z_INDEX.topLayer};
+
+  @media (min-height: 899px) {
+    margin: 0 0 0 auto;
+  }
 `
 
 const CdContainer = styled.div`
   position: relative;
+
+  @media (min-height: 899px) {
+    margin-top: 128px;
+  }
 `
 
 const Overlay = styled.div`
