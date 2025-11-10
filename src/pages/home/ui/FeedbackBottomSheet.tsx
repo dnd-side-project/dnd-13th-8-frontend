@@ -42,7 +42,7 @@ const FeedbackBottomSheet = ({ isOpen, onClose }: FeedbackBottomSheetProps) => {
         <img src={FeedbackImg} alt="feedback" width={206} height={206} />
       </Content>
       <ButtonWrapper>
-        <Label>~ 11/20(목)까지</Label>
+        <Label>~ 11/30(일)까지</Label>
         <Button onClick={() => navigate('/feedback')} size="L" state="primary">
           유저테스트 참여하기
         </Button>
