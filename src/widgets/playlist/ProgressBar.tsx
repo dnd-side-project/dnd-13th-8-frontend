@@ -90,24 +90,20 @@ const ProgressBar = ({ trackLengths, currentIndex, onClick }: ProgressBarProps) 
     }
   }, [isDragging, dragTime])
 
-  let prevTotal = 0
+  const grid = trackLengths.map((len) => `${len}fr`).join(' ')
   const accPercent = (accTime / totalTime) * 100
 
   return (
     <Wrapper>
-      <BarContainer ref={barRef} onPointerDown={handlePointerDown}>
+      <BarContainer ref={barRef} onPointerDown={handlePointerDown} $grid={grid}>
         {trackLengths.map((len, idx) => {
-          const start = prevTotal
+          const start = trackLengths.slice(0, idx).reduce((a, b) => a + b, 0)
           const end = start + len
-
-          const width = (len / totalTime) * 100
           const progress =
             accTime >= end ? 100 : accTime > start ? ((accTime - start) / len) * 100 : 0
 
-          prevTotal += len
-
           return (
-            <Track key={idx} $width={width}>
+            <Track key={idx}>
               <Progress $progress={progress} />
             </Track>
           )
@@ -131,15 +127,16 @@ const Wrapper = styled.div`
   gap: 14px;
 `
 
-const BarContainer = styled.div`
+const BarContainer = styled.div<{ $grid: string }>`
   position: relative;
   height: 4px;
   width: 100%;
   cursor: pointer;
-  display: flex;
-  gap: 2px;
+  display: grid;
+  column-gap: 2px;
   border-radius: 1px;
   touch-action: none; // 터치 스크롤 방지
+  grid-template-columns: ${({ $grid }) => $grid};
 `
 
 const Progress = styled.div<{ $progress: number }>`
@@ -155,11 +152,9 @@ const TimeBox = styled.div`
   ${({ theme }) => theme.FONT.caption2};
   color: ${({ theme }) => theme.COLOR['gray-200']};
 `
-
-const Track = styled.div<{ $width: number }>`
+const Track = styled.div`
   position: relative;
-  flex-shrink: 0;
-  width: ${({ $width }) => $width}%;
+  width: 100%;
   background-color: ${({ theme }) => theme.COLOR['gray-500']};
   border-radius: 1px;
 `
