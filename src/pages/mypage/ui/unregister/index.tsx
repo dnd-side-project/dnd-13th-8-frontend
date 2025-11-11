@@ -63,7 +63,7 @@ const Unregister = () => {
   }
 
   return (
-    <>
+    <UnregisterWrap>
       <SubHeader title="탈퇴하기" />
       <TermsContainer>
         <li>
@@ -130,7 +130,7 @@ const Unregister = () => {
         </li>
       </TermsContainer>
       <TermsContainer>
-        <li>
+        <LastTerms>
           <h2>제6조 (기타)</h2>
           <TermsItems>
             <li>
@@ -139,7 +139,7 @@ const Unregister = () => {
             </li>
             <li>본 약관은 2025년 11월 7일부터 시행합니다.</li>
           </TermsItems>
-        </li>
+        </LastTerms>
       </TermsContainer>
 
       <BottomCraWrap>
@@ -159,17 +159,25 @@ const Unregister = () => {
         onConfirm={modal.onConfirm}
         onCancel={modal.onCancel}
       />
-    </>
+    </UnregisterWrap>
   )
 }
 
 export default Unregister
 
+const UnregisterWrap = styled.div`
+  position: relative;
+`
+
+const LastTerms = styled.li`
+  margin-bottom: 30px;
+`
+
 const BottomCraWrap = styled.div`
-  position: absolute;
-  left: 50%;
-  bottom: 34px;
-  transform: translateX(-50%);
+  position: sticky;
+  bottom: 0;
   ${flexRowCenter}
   width: 100%;
+  background-color: ${({ theme }) => theme.COLOR['gray-900']};
+  padding-bottom: 34px;
 `

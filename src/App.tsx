@@ -133,7 +133,7 @@ const App = () => {
                 <BgHeadphone width={60} height={60} />
                 <InnerText>
                   <span>#3. 들락날락, 취향 공유</span>
-                  <span>친구의 뮤직룸에도 늘락, 새로운 취향을 발견해요</span>
+                  <span>친구의 뮤직룸에도 들락, 새로운 취향을 발견해요</span>
                 </InnerText>
               </li>
             </TextListContainer>
