@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Outlet } from 'react-router-dom'
+import { Outlet, useLocation } from 'react-router-dom'
 
 import styled from 'styled-components'
 
@@ -29,6 +29,9 @@ const Content = () => {
 
   const deviceType = useDevice()
   const isMobile = deviceType === 'mobile'
+
+  const location = useLocation()
+  const isTracklistPage = location.pathname.includes('tracklist')
 
   const videoId = currentPlaylist
     ? getVideoId(currentPlaylist.songs[currentTrackIndex]?.youtubeUrl)
@@ -69,7 +72,7 @@ const Content = () => {
         />
       )}
 
-      {isMobile && isMuted && (
+      {isMobile && isMuted && !isTracklistPage && (
         <ButtonWrapper>
           <VolumeButton playerRef={playerRef} isMuted={isMuted} setIsMuted={setIsMuted} />
         </ButtonWrapper>
