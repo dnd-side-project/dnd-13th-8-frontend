@@ -175,12 +175,9 @@ const LastTerms = styled.li`
 
 const BottomCraWrap = styled.div`
   position: sticky;
-  left: 50%;
   bottom: 0;
   ${flexRowCenter}
   width: 100%;
   background-color: ${({ theme }) => theme.COLOR['gray-900']};
-  & > button {
-    margin-bottom: 34px;
-  }
+  padding-bottom: 34px;
 `
