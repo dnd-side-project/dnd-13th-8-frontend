@@ -93,15 +93,16 @@ const ProgressBar = ({ trackLengths, currentIndex, onClick }: ProgressBarProps) 
   const grid = trackLengths.map((len) => `${len}fr`).join(' ')
   const accPercent = (accTime / totalTime) * 100
 
+  let start = 0
   return (
     <Wrapper>
       <BarContainer ref={barRef} onPointerDown={handlePointerDown} $grid={grid}>
         {trackLengths.map((len, idx) => {
-          const start = trackLengths.slice(0, idx).reduce((a, b) => a + b, 0)
           const end = start + len
           const progress =
             accTime >= end ? 100 : accTime > start ? ((accTime - start) / len) * 100 : 0
 
+          start = end
           return (
             <Track key={idx}>
               <Progress $progress={progress} />
