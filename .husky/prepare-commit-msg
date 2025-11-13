@@ -8,11 +8,18 @@ COMMIT_MSG_FILE=$1
 # 커밋 메시지 읽기
 COMMIT_MSG=$(cat "$COMMIT_MSG_FILE")
 
+# deploy로 시작하면 이슈 번호 추가하지 않음
+if echo "$COMMIT_MSG" | grep -iq "^deploy:"; then
+  echo "배포 커밋이므로 이슈 번호를 추가하지 않습니다."
+  exit 0
+fi
+
 # 이미 issue 번호가 있는지 확인
 if echo "$COMMIT_MSG" | grep -q "#[0-9]*"; then
   echo "커밋메세지에 이슈 번호가 포함되어 있습니다."
   exit 0
 fi
+
 
 # issue 번호가 없고 브랜치에서 추출한 번호가 있으면 추가
 if [ -n "$ISSUE_NUMBER" ]; then
