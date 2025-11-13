@@ -18,8 +18,9 @@ const CustomizeStep3 = ({ currentCdId }: { currentCdId: number | null }) => {
 
   const { data, isLoading, isError } = useFinalCdCustom(currentCdId as number)
 
-  const moveToTracklist = () => {
-    queryClient.invalidateQueries({ queryKey: ['playlistDetail', currentCdId] })
+  const moveToTracklist = async () => {
+    await queryClient.refetchQueries({ queryKey: ['playlistDetail', currentCdId] })
+    await queryClient.refetchQueries({ queryKey: ['myCdList', 'RECENT'] })
     navigate(`/mypage/${currentCdId}/tracklist`, {
       state: { isFromMyCdList: true },
     })
