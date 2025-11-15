@@ -32,7 +32,6 @@ const PlaylistCarousel = ({
   const [activeIndex, setActiveIndex] = useState(0)
   const deviceType = useDevice()
   const isMobile = deviceType === 'mobile'
-  console.log(window.innerHeight)
   const isSmall = isMobile && window.innerHeight < 633
 
   // url 기준으로 active index 동기화
