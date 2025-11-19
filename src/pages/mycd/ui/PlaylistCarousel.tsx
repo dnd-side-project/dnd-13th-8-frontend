@@ -99,7 +99,7 @@ export default PlaylistCarousel
 const EmblaSlide = styled.div<{ $isMobile?: boolean }>`
   flex: 0 0 50%;
   ${flexRowCenter}
-  padding: ${({ $isMobile }) => ($isMobile ? '0' : '16px 0')};
+  padding: ${({ $isMobile }) => ($isMobile ? '4px 0 0 0' : '16px 0')};
 `
 
 const Slide = styled.div<{ $active?: boolean; $isMobile?: boolean }>`
