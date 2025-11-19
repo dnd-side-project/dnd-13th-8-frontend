@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 import styled from 'styled-components'
 
@@ -27,6 +27,7 @@ import NavBar, { NAV_HEIGHT } from '@/widgets/layout/NavBar'
 const App = () => {
   const deviceType = useDevice()
   const location = useLocation()
+  const navigate = useNavigate()
   const isMobile = deviceType === 'mobile'
 
   const { isLogin } = useAuthStore()
@@ -84,6 +85,26 @@ const App = () => {
 
   useEffect(() => {
     const { pathname } = location
+
+    // 서버 클로징 시간(한국 기준 3시~7시)일 경우 /downtime으로 랜딩
+    const hourKST = Number(
+      new Date().toLocaleString('en-US', {
+        timeZone: 'Asia/Seoul',
+        hour: '2-digit',
+        hour12: false,
+      })
+    )
+    const isDowntime = hourKST >= 3 && hourKST < 7
+
+    if (isDowntime && pathname !== '/downtime') {
+      navigate('/downtime')
+      return
+    }
+
+    if (!isDowntime && pathname === '/downtime') {
+      navigate('/')
+      return
+    }
 
     // 익명 토큰 발급
     if (['/login', '/login/callback'].includes(pathname)) {
