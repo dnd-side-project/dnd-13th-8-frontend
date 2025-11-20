@@ -21,6 +21,7 @@ import {
 } from '@/assets/images'
 import { useAnonymousLogin } from '@/features/auth/model/useAuth'
 import { useAuthStore } from '@/features/auth/store/authStore'
+import { isDowntimeNow } from '@/shared/lib/isDowntimeNow'
 import { GlobalErrorModal } from '@/shared/ui'
 import NavBar, { NAV_HEIGHT } from '@/widgets/layout/NavBar'
 
@@ -42,7 +43,6 @@ const App = () => {
   const LAYOUT_BOTTOM_GAP = isMobileView ? 16 : 34
 
   // 비회원일 경우 API 호출을 위한 익명 토큰 발급
-  // TODO: 토큰 만료됐을 경우 응답 체크해서 해당 값일 경우 토큰 재발급
   const checkAnonymousLogin = () => {
     const token = sessionStorage.getItem('anonymous_token')
     if (!isLogin && !token) {
@@ -85,23 +85,17 @@ const App = () => {
 
   useEffect(() => {
     const { pathname } = location
+    const isDowntime = isDowntimeNow()
 
-    // 서버 클로징 시간(한국 기준 3시~7시)일 경우 /downtime으로 랜딩
-    const hourKST = Number(
-      new Date().toLocaleString('en-US', {
-        timeZone: 'Asia/Seoul',
-        hour: '2-digit',
-        hour12: false,
-      })
-    )
-    const isDowntime = hourKST >= 3 && hourKST < 7
+    // 네비게이션 미노출 여부 확인
+    setIsNavVisible(!getHideNav(pathname))
 
-    if (isDowntime && pathname !== '/downtime') {
-      navigate('/downtime')
+    if (isDowntime) {
+      if (pathname !== '/downtime') navigate('/downtime')
       return
     }
 
-    if (!isDowntime && pathname === '/downtime') {
+    if (pathname === '/downtime') {
       navigate('/')
       return
     }
@@ -112,9 +106,6 @@ const App = () => {
     } else {
       checkAnonymousLogin()
     }
-
-    // 네비게이션 미노출 여부 확인
-    setIsNavVisible(!getHideNav(pathname))
   }, [location.pathname])
 
   return (
