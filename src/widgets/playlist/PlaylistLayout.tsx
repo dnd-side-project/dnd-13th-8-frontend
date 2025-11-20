@@ -62,7 +62,7 @@ const PlaylistLayout = ({
       <Overlay onClick={handleOverlayClick} />
       <Header center={<span>둘러보기</span>} />
       <Container>
-        <LiveInfo isOnAir={listenersNum > 0} listenerCount={listenersNum} isOwner={false} />
+        <LiveInfo isOnAir={listenersNum > 0} listenerCount={listenersNum} />
         {type === 'My' && (
           <Button size="S" state="primary" onClick={() => navigate('/mypage/customize')}>
             꾸미기

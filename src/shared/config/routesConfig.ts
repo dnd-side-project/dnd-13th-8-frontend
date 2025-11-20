@@ -27,6 +27,7 @@ const MyCdInfoPage = lazy(() => import('@/pages/mycd/tracklist'))
 const NotFoundPage = lazy(() => import('@/pages/notFound'))
 const ErrorPage = lazy(() => import('@/pages/error'))
 const FeedbackPage = lazy(() => import('@/pages/feedback'))
+const DowntimePage = lazy(() => import('@/pages/downtime'))
 
 export interface RouteConfig {
   path: string
@@ -104,6 +105,13 @@ export const routesConfig: RouteConfig[] = [
   {
     path: '/feedback',
     component: FeedbackPage,
+    hideNav: true,
+  },
+
+  // 서버 점검
+  {
+    path: '/downtime',
+    component: DowntimePage,
     hideNav: true,
   },
 

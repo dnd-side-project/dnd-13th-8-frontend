@@ -11,7 +11,7 @@ const FeedbackIcon = () => {
 
   return (
     <IconWrapper>
-      <SvgButton icon={Mail} onClick={() => navigate('/feedback')} />
+      <SvgButton icon={Mail} onClick={() => navigate('/feedback')} fill="none" />
       <Label>의견제안</Label>
     </IconWrapper>
   )

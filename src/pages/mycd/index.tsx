@@ -207,7 +207,7 @@ const MyCdPage = () => {
         <>
           <HeaderTab selectedTab={selectedTab} onSelect={handleTabSelect} />
           <Container>
-            <LiveInfo isOnAir={listenersNum > 0} listenerCount={listenersNum} isOwner={false} />
+            <LiveInfo isOnAir={listenersNum > 0} listenerCount={listenersNum} />
             {selectedTab === 'MY' && (
               <Button
                 size="S"
@@ -278,11 +278,12 @@ const Container = styled.div`
   display: flex;
   justify-content: space-between;
   height: 30px;
+  align-items: center;
 `
 
 const Title = styled.p<{ $isMobile?: boolean }>`
   ${({ theme }) => theme.FONT.headline1};
-  padding-top: ${({ $isMobile }) => ($isMobile ? '24px' : '40px')};
+  padding-top: ${({ $isMobile }) => ($isMobile ? '22px' : '40px')};
 
   @media (min-height: 899px) {
     padding-top: 56px;

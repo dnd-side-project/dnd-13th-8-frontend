@@ -32,6 +32,7 @@ const PlaylistCarousel = ({
   const [activeIndex, setActiveIndex] = useState(0)
   const deviceType = useDevice()
   const isMobile = deviceType === 'mobile'
+  const isSmall = isMobile && window.innerHeight < 633
 
   // url 기준으로 active index 동기화
   useEffect(() => {
@@ -77,10 +78,10 @@ const PlaylistCarousel = ({
 
         return (
           <EmblaSlide key={slide.playlistId} $isMobile={isMobile}>
-            <Slide $active={activeIndex === index}>
+            <Slide $active={activeIndex === index} $isMobile={isMobile}>
               <CdSpinner $isNowPlaying={!!isNowPlaying}>
                 <Cd
-                  variant={isMobile ? 'mycd_mo' : 'mycd'}
+                  variant={isSmall ? 'customize' : isMobile ? 'mycd_mo' : 'mycd'}
                   bgColor="none"
                   stickers={slide.cdResponse.cdItems}
                 />
@@ -98,14 +99,14 @@ export default PlaylistCarousel
 const EmblaSlide = styled.div<{ $isMobile?: boolean }>`
   flex: 0 0 50%;
   ${flexRowCenter}
-  padding: ${({ $isMobile }) => ($isMobile ? '0' : '16px 0')};
+  padding: ${({ $isMobile }) => ($isMobile ? '6px 0 0 0' : '16px 0')};
 `
 
-const Slide = styled.div<{ $active?: boolean }>`
+const Slide = styled.div<{ $active?: boolean; $isMobile?: boolean }>`
   position: relative;
   ${flexRowCenter}
   transition: transform 0.8s ease;
-  margin: 24px;
+  margin: ${({ $isMobile }) => ($isMobile ? '0 24px 16px 24px' : '32px 24px 24px 24px')};
   opacity: ${({ $active }) => ($active ? 1 : 0.5)};
 `
 

@@ -15,6 +15,7 @@ import {
 } from '@/entities/playlist/api/playlist'
 import type { Cursor, PlaylistResponse } from '@/entities/playlist/types/playlist'
 import { useAuthStore } from '@/features/auth/store/authStore'
+import { isDowntimeNow } from '@/shared/lib/isDowntimeNow'
 
 export const useShufflePlaylists = (size: number = 5) => {
   return useInfiniteQuery<
@@ -38,7 +39,9 @@ export const useShufflePlaylists = (size: number = 5) => {
       }
       return undefined
     },
-    enabled: !!useAuthStore.getState().accessToken || !!sessionStorage.getItem('anonymous_token'),
+    enabled:
+      (!!useAuthStore.getState().accessToken || !!sessionStorage.getItem('anonymous_token')) &&
+      !isDowntimeNow(),
   })
 }
 
