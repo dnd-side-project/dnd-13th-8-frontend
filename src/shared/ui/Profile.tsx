@@ -22,7 +22,7 @@ const Profile = ({ size, profileUrl }: ProfileProps) => {
   const [imgSrc, setImgSrc] = useState<ProfileUrl>(profileUrl || DefaultProfile)
 
   useEffect(() => {
-    if (!profileUrl) {
+    if (!profileUrl || profileUrl === 'NULL') {
       setImgSrc(DefaultProfile)
       return
     }
@@ -44,7 +44,7 @@ const Profile = ({ size, profileUrl }: ProfileProps) => {
 
   return (
     <StyledImg
-      src={typeof imgSrc === 'string' ? imgSrc : DefaultProfile}
+      src={typeof imgSrc === 'string' && imgSrc !== 'NULL' ? imgSrc : DefaultProfile}
       alt="프로필 이미지"
       $size={size}
       onError={onError}
