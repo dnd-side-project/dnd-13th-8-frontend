@@ -1,5 +1,6 @@
 import { BrowserRouter } from 'react-router-dom'
 
+import { Analytics } from '@vercel/analytics/react'
 import { createRoot } from 'react-dom/client'
 
 import { QueryProvider, ThemeProvider } from '@app/providers'
@@ -13,6 +14,7 @@ createRoot(document.getElementById('root')!).render(
     <QueryProvider>
       <ThemeProvider>
         <GlobalStyle />
+        <Analytics />
         <App />
       </ThemeProvider>
     </QueryProvider>
