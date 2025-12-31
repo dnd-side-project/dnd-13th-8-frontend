@@ -42,7 +42,6 @@ const FeedbackBottomSheet = ({ isOpen, onClose }: FeedbackBottomSheetProps) => {
         <img src={FeedbackImg} alt="feedback" width={206} height={206} />
       </Content>
       <ButtonWrapper>
-        <Label>~ 12/31(수)까지</Label>
         <Button onClick={() => navigate('/feedback')} size="L" state="primary">
           유저테스트 참여하기
         </Button>
@@ -79,17 +78,17 @@ const ButtonWrapper = styled.div`
   flex-direction: column;
 `
 
-const Label = styled.span`
-  position: absolute;
-  top: -18%;
-  right: 12%;
-  background-color: ${({ theme }) => theme.COLOR['gray-700']};
-  color: ${({ theme }) => theme.COLOR['primary-normal']};
-  ${({ theme }) => theme.FONT.caption1};
-  border-radius: 40px;
-  padding: 4px 12px;
-  border: 1px solid ${({ theme }) => theme.COLOR['primary-normal']};
-`
+// const Label = styled.span`
+//   position: absolute;
+//   top: -18%;
+//   right: 12%;
+//   background-color: ${({ theme }) => theme.COLOR['gray-700']};
+//   color: ${({ theme }) => theme.COLOR['primary-normal']};
+//   ${({ theme }) => theme.FONT.caption1};
+//   border-radius: 40px;
+//   padding: 4px 12px;
+//   border: 1px solid ${({ theme }) => theme.COLOR['primary-normal']};
+// `
 
 const Content = styled.div`
   ${flexColCenter}
