@@ -3,6 +3,8 @@ import { useEffect, useRef, useState, useCallback } from 'react'
 import { Client, type Message } from '@stomp/stompjs'
 import SockJS from 'sockjs-client/dist/sockjs'
 
+import { useAuthStore } from '@/features/auth/store/authStore'
+
 export interface ChatMessage {
   senderId: string
   messageId: string
@@ -19,15 +21,25 @@ export const useChatSocket = (roomId: string) => {
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [participantCount, setParticipantCount] = useState(0)
   const [connected, setConnected] = useState(false)
+  const accessToken = useAuthStore((s) => s.accessToken)
+  const anonymousToken = sessionStorage.getItem('anonymous_token')
+
+  const authToken = accessToken || anonymousToken
 
   useEffect(() => {
-    if (!roomId) return
+    if (!roomId || !authToken) return
     if (clientRef.current?.active) return // 이미 활성화된 연결 방지
 
     const client = new Client({
       webSocketFactory: () => new SockJS('https://api.deulak.com/chat/ws') as unknown as WebSocket,
+      connectHeaders: {
+        Authorization: `Bearer ${authToken}`,
+      },
+
       debug: (str) => console.log('[STOMP]', str),
     })
+
+    console.log(client)
 
     client.onConnect = () => {
       setConnected(true)
@@ -51,22 +63,18 @@ export const useChatSocket = (roomId: string) => {
     return () => {
       client.deactivate()
     }
-  }, [roomId])
+  }, [roomId, authToken])
 
   const sendMessage = useCallback(
-    (senderId: string, username: string | null, content: string) => {
+    (content: string) => {
       if (!clientRef.current || !connected || !content.trim()) return
-
-      const payload: Partial<ChatMessage> = {
-        senderId,
-        username,
-        content,
-        systemMessage: false,
-      }
 
       clientRef.current.publish({
         destination: `/chat/app/rooms/${roomId}`,
-        body: JSON.stringify(payload),
+        body: JSON.stringify({
+          content,
+          systemMessage: false,
+        }),
       })
     },
     [roomId, connected]
