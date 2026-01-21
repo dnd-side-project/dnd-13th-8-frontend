@@ -13,7 +13,7 @@ import {
   postPlaylistConfirm,
   postPlaylistStart,
 } from '@/entities/playlist/api/playlist'
-import type { Cursor, PlaylistResponse } from '@/entities/playlist/types/playlist'
+import type { PlaylistResponse } from '@/entities/playlist/types/playlist'
 import { useAuthStore } from '@/features/auth/store/authStore'
 import { isDowntimeNow } from '@/shared/lib/isDowntimeNow'
 
@@ -21,21 +21,20 @@ export const useShufflePlaylists = (size: number = 5) => {
   return useInfiniteQuery<
     PlaylistResponse, // queryFn 반환 타입
     Error, // 에러 타입
-    InfiniteData<PlaylistResponse, Cursor>, // select 후 데이터 타입
+    InfiniteData<PlaylistResponse, number>, // select 후 데이터 타입
     ['playlists', number], // queryKey 타입
-    Cursor | undefined // pageParam 타입
+    number | undefined // pageParam 타입
   >({
     queryKey: ['playlists', size],
     queryFn: ({ pageParam }) =>
       getShufflePlaylists({
-        cursorPosition: pageParam?.position,
-        cursorCardId: pageParam?.cardId,
+        cursorId: pageParam,
         size,
       }),
     initialPageParam: undefined, // 첫 호출은 커서 없이 시작
     getNextPageParam: (lastPage) => {
-      if (lastPage.hasNext && lastPage.nextCursor) {
-        return lastPage.nextCursor // Cursor 타입
+      if (lastPage.hasNext) {
+        return lastPage.nextCursor
       }
       return undefined
     },

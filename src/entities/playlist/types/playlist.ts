@@ -79,14 +79,13 @@ export interface Cursor {
 }
 
 export interface PlaylistResponse {
-  content: PlaylistInfo[]
-  nextCursor: Cursor | null
+  content: number[] // playlistId 배열
+  nextCursor: number | null
   size: number
   hasNext: boolean
 }
 
 export interface PlaylistParams {
-  cursorPosition?: number
-  cursorCardId?: number
+  cursorId?: number
   size?: number
 }

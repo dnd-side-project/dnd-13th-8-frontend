@@ -33,7 +33,7 @@ export const deleteMyCd = (cdId: number) => {
 
 // 셔플된 플레이리스트 목록 조회
 export const getShufflePlaylists = (params: PlaylistParams) => {
-  return api.get<PlaylistResponse>('/main/playlist/browse', { params })
+  return api.get<PlaylistResponse>('/main/playlist/browse/v2', { params })
 }
 
 // 트랙리스트 상세 조회
