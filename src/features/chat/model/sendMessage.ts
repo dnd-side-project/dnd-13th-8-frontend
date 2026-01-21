@@ -31,15 +31,13 @@ export const useChatSocket = (roomId: string) => {
     if (clientRef.current?.active) return // 이미 활성화된 연결 방지
 
     const client = new Client({
-      webSocketFactory: () => new SockJS('https://api.deulak.com/chat/ws') as unknown as WebSocket,
+      webSocketFactory: () => new SockJS(`${import.meta.env.VITE_API_URL}/chat/ws`),
       connectHeaders: {
         Authorization: `Bearer ${authToken}`,
       },
 
       debug: (str) => console.log('[STOMP]', str),
     })
-
-    console.log(client)
 
     client.onConnect = () => {
       setConnected(true)
