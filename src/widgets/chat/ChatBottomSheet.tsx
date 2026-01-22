@@ -74,7 +74,7 @@ const ChatBottomSheet = ({ isOpen, onClose, roomId, creatorId }: ChatBottomSheet
     }))
 
     try {
-      await sendMessage(userData.userId, userData.username, content)
+      await sendMessage(content)
     } catch (error) {
       console.error(error)
       queryClient.setQueryData(['chat-count', roomId], origin)
