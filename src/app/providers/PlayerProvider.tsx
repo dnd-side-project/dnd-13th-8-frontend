@@ -1,14 +1,14 @@
 import { createContext, useState, useContext, useRef, useCallback, type ReactNode } from 'react'
 
-import type { PlaylistInfo } from '@/entities/playlist'
+import type { PlaylistDetail } from '@/entities/playlist'
 
 type PlaylistContextType = {
-  currentPlaylist: PlaylistInfo | null
+  currentPlaylist: PlaylistDetail | null
   currentTrackIndex: number
   currentTime: number
   isPlaying: boolean
   setPlaylist: (
-    playlist: PlaylistInfo,
+    playlist: PlaylistDetail,
     trackIndex?: number,
     time?: number,
     autoPlay?: boolean
@@ -30,7 +30,7 @@ interface PlaylistProviderProps {
 const PlaylistContext = createContext<PlaylistContextType | undefined>(undefined)
 
 const PlaylistProvider = ({ children }: PlaylistProviderProps) => {
-  const [currentPlaylist, setCurrentPlaylist] = useState<PlaylistInfo | null>(null)
+  const [currentPlaylist, setCurrentPlaylist] = useState<PlaylistDetail | null>(null)
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0)
   const [currentTime, setCurrentTime] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false)
@@ -39,7 +39,7 @@ const PlaylistProvider = ({ children }: PlaylistProviderProps) => {
   const playerRef = useRef<YT.Player | null>(null)
 
   const setPlaylist = (
-    playlist: PlaylistInfo,
+    playlist: PlaylistDetail,
     trackIndex?: number,
     time?: number,
     autoPlay = true

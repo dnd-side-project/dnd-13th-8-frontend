@@ -45,31 +45,14 @@ export interface Creator {
   creatorNickname: string
 }
 
-export interface PlaylistDetail {
+export interface PlaylistDetail extends OnlyCdResponse, Creator {
   playlistId: number
   playlistName: string
-  genre: string
-  songs: Track[]
   isPublic: boolean
-}
+  songs: Track[]
+  genre: string
 
-export interface PlaylistDetailResponse extends PlaylistDetail, OnlyCdResponse {
-  creatorId: string
-  creatorNickname: string
   creatorProfileImageUrl?: string
-}
-
-export interface PlaylistInfo extends PlaylistDetail {
-  cardId?: number
-  position?: number
-  shareUrl?: string
-  totalTime?: string
-  creator: Creator
-
-  cdResponse?: {
-    cdItems: CdCustomData[]
-  }
-  cdItems?: CdCustomData[]
 }
 
 // 커서 정보

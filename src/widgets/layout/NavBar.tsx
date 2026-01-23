@@ -16,7 +16,7 @@ const NavBar = () => {
 
   const { data } = useShufflePlaylists()
 
-  const firstPlaylistId = data?.pages?.[0]?.content?.[0]?.playlistId
+  const firstPlaylistId = data?.pages?.[0]?.content?.[0]
 
   // 컴포넌트 마운트 시 첫 번째 항목의 id로 링크 설정
   useEffect(() => {

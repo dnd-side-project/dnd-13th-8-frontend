@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 
 import { useMyCdActions } from '@/entities/playlist/model/useMyCd'
-import type { PlaylistDetailResponse } from '@/entities/playlist/types/playlist'
+import type { PlaylistDetail } from '@/entities/playlist/types/playlist'
 import type { CUSTOMIZE_STEP } from '@/pages/mypage/types/mypage'
 import CustomizeStep1 from '@/pages/mypage/ui/customize/step1'
 import CustomizeStep2 from '@/pages/mypage/ui/customize/step2'
@@ -17,7 +17,7 @@ export interface CustomizeStepProps {
   setCurrentCdId?: (cdId: number | null) => void
   setModal: (modal: ModalProps) => void
   isEditMode: boolean
-  prevTracklist?: PlaylistDetailResponse
+  prevTracklist?: PlaylistDetail
 }
 
 const Customize = () => {

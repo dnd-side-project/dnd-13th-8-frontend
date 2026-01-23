@@ -4,14 +4,14 @@ import styled from 'styled-components'
 
 import { usePlaylist } from '@/app/providers/PlayerProvider'
 import { Cancel } from '@/assets/icons'
-import type { PlaylistDetailResponse } from '@/entities/playlist'
+import type { PlaylistDetail } from '@/entities/playlist'
 import { getGenreLabel } from '@/shared/lib'
 import { flexColCenter } from '@/shared/styles/mixins'
 import { Error, Header, Link, Loading, SvgButton } from '@/shared/ui'
 import { PlaylistHorizontal } from '@/widgets/playlist'
 
 interface PlaylistInfoProps {
-  playlistData?: PlaylistDetailResponse
+  playlistData?: PlaylistDetail
   isLoading: boolean
   isError: boolean
 }
