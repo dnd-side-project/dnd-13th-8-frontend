@@ -4,11 +4,11 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import useEmblaCarousel from 'embla-carousel-react'
 import styled from 'styled-components'
 
-import type { PlaylistInfo } from '@/entities/playlist'
+import type { PlaylistDetail } from '@/entities/playlist'
 
 interface SwipeCarouselProps {
   children: React.ReactNode
-  data: PlaylistInfo[]
+  data: PlaylistDetail[]
   axis: 'x' | 'y'
   onSelectIndexChange?: (activeIndex: number) => void
   basePath: string
@@ -36,6 +36,7 @@ const SwipeCarousel = ({
     startIndex: initialIndex > 0 ? initialIndex : 0, // 매치 실패 시 0번으로
     containScroll: axis === 'x' && data.length <= 3 ? false : 'trimSnaps',
   })
+
   // 슬라이드 선택 시 URL 업데이트
   const onSelect = useCallback(() => {
     if (!emblaApi || data.length === 0) return

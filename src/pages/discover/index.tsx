@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { useParams } from 'react-router-dom'
 
 import styled from 'styled-components'
@@ -6,16 +6,16 @@ import styled from 'styled-components'
 import { usePlaylist } from '@/app/providers/PlayerProvider'
 import {
   usePlaylistConfirmMutation,
-  usePlaylistDetail,
+  usePlaylistDetails,
   usePlaylistStartMutation,
   usePlaylistViewCounts,
   useShufflePlaylists,
 } from '@/entities/playlist'
 import { SwipeCarousel } from '@/features/swipe'
+import { Loading } from '@/shared/ui'
 import { PlaylistLayout } from '@/widgets/playlist'
 
 const DiscoverPage = () => {
-  const { id: playlistId } = useParams()
   const {
     currentPlaylist,
     currentTrackIndex,
@@ -32,61 +32,35 @@ const DiscoverPage = () => {
   const { mutate: startPlaylist } = usePlaylistStartMutation()
   const { mutate: confirmPlaylist } = usePlaylistConfirmMutation()
   const { refetch: refetchViewCounts } = usePlaylistViewCounts(currentPlaylist?.playlistId || 0)
-  const { data: playlistDetail } = usePlaylistDetail(Number(playlistId))
-  const {
-    data: shuffleData,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-  } = useShufflePlaylists()
+  const { id: urlPlaylistId } = useParams()
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useShufflePlaylists()
+  const shufflePlaylistIds = data?.pages.flatMap((page) => page.content) ?? []
 
-  // shuffleData에서 실제 playlist 배열만 추출
-  const shufflePlaylists = shuffleData?.pages.flatMap((page) => page.content) ?? []
+  const urlIdRef = useRef(Number(urlPlaylistId))
 
-  // PlaylistDetailResponse → PlaylistInfo 변환
-  const playlistAsInfo = useMemo(() => {
-    if (!playlistDetail) return null
-    return {
-      playlistId: playlistDetail.playlistId,
-      playlistName: playlistDetail.playlistName,
-      isPublic: playlistDetail.isPublic,
-      genre: playlistDetail.genre,
-      songs: playlistDetail.songs,
-      creator: {
-        creatorId: playlistDetail.creatorId,
-        creatorNickname: playlistDetail.creatorNickname,
-      },
-      cdResponse: playlistDetail.cdResponse,
-    }
-  }, [playlistDetail])
+  const finalPlaylistIds = useMemo(() => {
+    const startId = urlIdRef.current
 
-  // 최종 배열
-  const playlistsData = useMemo(() => {
-    if (!playlistAsInfo) {
-      return shufflePlaylists
-    }
+    if (!startId) return shufflePlaylistIds
 
-    // URL에서 가져온 플레이리스트를 playlistsData 배열에 추가
-    // 기존에 shufflePlaylists에 있는 경우, 순서를 변경하지 않고 추가
-    const existingPlaylist = shufflePlaylists.find(
-      (p) => p.playlistId === playlistAsInfo.playlistId
-    )
-    if (existingPlaylist) {
-      return shufflePlaylists
-    }
-    return [playlistAsInfo, ...shufflePlaylists]
-  }, [playlistAsInfo, shufflePlaylists])
+    const filtered = shufflePlaylistIds.filter((id) => id !== startId)
+    return [startId, ...filtered]
+  }, [shufflePlaylistIds])
 
-  const isReady = !!playlistAsInfo && shuffleData !== undefined
+  const { data: playlistsData, isLoading: isPlaylistsLoading } =
+    usePlaylistDetails(finalPlaylistIds)
+
+  const isReady = !isPlaylistsLoading
 
   // 최초 playlist 초기화
   useEffect(() => {
-    if (!currentPlaylist && playlistsData.length > 0 && isReady) {
-      const initialPlaylist =
-        playlistsData.find((p) => p.playlistId === Number(playlistId)) || playlistsData[0]
-      setPlaylist(initialPlaylist, 0, 0)
+    if (!currentPlaylist && playlistsData?.length > 0 && isReady) {
+      const firstPlaylist = playlistsData[0]
+      if (firstPlaylist) {
+        setPlaylist(firstPlaylist, 0, 0)
+      }
     }
-  }, [playlistsData, currentPlaylist, playlistId, setPlaylist, isReady])
+  }, [playlistsData, currentPlaylist, setPlaylist, isReady])
 
   // 재생, 확인, 조회수 refetch
   useEffect(() => {
@@ -125,6 +99,10 @@ const DiscoverPage = () => {
     [playlistsData, currentPlaylist, setPlaylist, hasNextPage, isFetchingNextPage, fetchNextPage]
   )
 
+  if (!playlistsData) {
+    return <Loading isLoading height="100%" />
+  }
+
   return (
     <Page>
       <SwipeCarousel
@@ -133,24 +111,28 @@ const DiscoverPage = () => {
         axis="y"
         basePath="/discover"
       >
-        {playlistsData.map((data) => (
-          <Slide key={data.playlistId}>
-            <PlaylistLayout
-              data={data}
-              currentPlaylist={currentPlaylist}
-              currentTrackIndex={currentTrackIndex}
-              currentTime={currentTime}
-              isPlaying={isPlaying}
-              onPlayPause={() => (isPlaying ? pause() : play())}
-              onNext={nextTrack}
-              onPrev={prevTrack}
-              onSelectTrack={(trackIndex, time) => {
-                if (currentPlaylist) setPlaylist(currentPlaylist, trackIndex, time)
-              }}
-              playerRef={playerRef}
-            />
-          </Slide>
-        ))}
+        {playlistsData.map((data) => {
+          const isCurrentActive = currentPlaylist?.playlistId === data.playlistId
+
+          return (
+            <Slide key={data.playlistId}>
+              <PlaylistLayout
+                isActive={isCurrentActive}
+                currentPlaylist={currentPlaylist}
+                currentTrackIndex={currentTrackIndex}
+                currentTime={currentTime}
+                isPlaying={isPlaying}
+                onPlayPause={() => (isPlaying ? pause() : play())}
+                onNext={nextTrack}
+                onPrev={prevTrack}
+                onSelectTrack={(trackIndex, time) => {
+                  if (currentPlaylist) setPlaylist(currentPlaylist, trackIndex, time)
+                }}
+                playerRef={playerRef}
+              />
+            </Slide>
+          )
+        })}
       </SwipeCarousel>
     </Page>
   )

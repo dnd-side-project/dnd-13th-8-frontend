@@ -1,6 +1,7 @@
 import {
   useInfiniteQuery,
   useMutation,
+  useQueries,
   useQuery,
   useQueryClient,
   type InfiniteData,
@@ -13,7 +14,7 @@ import {
   postPlaylistConfirm,
   postPlaylistStart,
 } from '@/entities/playlist/api/playlist'
-import type { PlaylistResponse } from '@/entities/playlist/types/playlist'
+import type { PlaylistDetail, PlaylistResponse } from '@/entities/playlist/types/playlist'
 import { useAuthStore } from '@/features/auth/store/authStore'
 import { isDowntimeNow } from '@/shared/lib/isDowntimeNow'
 
@@ -79,4 +80,23 @@ export const usePlaylistViewCounts = (playlistId: number) => {
     queryKey: ['playlistViewCounts', playlistId],
     queryFn: () => getPlaylistViewCounts(playlistId),
   })
+}
+
+export const usePlaylistDetails = (ids: number[]) => {
+  const results = useQueries({
+    queries: ids.map((id) => ({
+      queryKey: ['playlistDetail', id],
+      queryFn: () => getPlaylistDetail(id),
+      enabled: ids.length > 0,
+    })),
+  })
+
+  const isLoading = results.some((r) => r.isLoading)
+  const isError = results.some((r) => r.isError)
+  const data = results.reduce<PlaylistDetail[]>((acc, q) => {
+    if (q.data) acc.push(q.data)
+    return acc
+  }, [])
+
+  return { data, isLoading, isError }
 }
