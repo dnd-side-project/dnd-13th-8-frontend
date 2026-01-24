@@ -25,6 +25,7 @@ const Content = () => {
     currentTime,
     isPlaying,
     handlePlayerStateChange,
+    handlePlayerError,
   } = usePlaylist()
 
   const deviceType = useDevice()
@@ -69,6 +70,7 @@ const Content = () => {
           }}
           onStateChange={handlePlayerStateChange}
           setIsMuted={setIsMuted}
+          onError={handlePlayerError}
         />
       )}
 

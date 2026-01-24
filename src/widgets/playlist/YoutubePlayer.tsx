@@ -6,10 +6,17 @@ interface YoutubePlayerProps {
   videoId: string | null
   onReady: (event: { target: YT.Player }) => void
   onStateChange: (event: YT.OnStateChangeEvent) => void
+  onError?: (event: YT.OnErrorEvent) => void
   setIsMuted?: (muted: boolean) => void
 }
 
-const YoutubePlayer = ({ videoId, onReady, onStateChange, setIsMuted }: YoutubePlayerProps) => {
+const YoutubePlayer = ({
+  videoId,
+  onReady,
+  onStateChange,
+  onError,
+  setIsMuted,
+}: YoutubePlayerProps) => {
   const playerRef = useRef<YT.Player | null>(null)
   const containerRef = useRef<HTMLDivElement | null>(null)
   const deviceType = useDevice()
@@ -64,6 +71,7 @@ const YoutubePlayer = ({ videoId, onReady, onStateChange, setIsMuted }: YoutubeP
           onReady(e)
         },
         onStateChange,
+        onError,
       },
     })
 

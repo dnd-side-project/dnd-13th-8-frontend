@@ -20,6 +20,7 @@ type PlaylistContextType = {
   updateCurrentTime: (time: number) => void
   playerRef: React.MutableRefObject<YT.Player | null>
   handlePlayerStateChange: (event: YT.OnStateChangeEvent) => void
+  handlePlayerError: (event: YT.OnErrorEvent) => void
   unmuteOnce: () => void
 }
 
@@ -112,6 +113,10 @@ const PlaylistProvider = ({ children }: PlaylistProviderProps) => {
     [nextTrack]
   )
 
+  const handlePlayerError = useCallback(() => {
+    nextTrack()
+  }, [nextTrack])
+
   const value = {
     currentPlaylist,
     currentTrackIndex,
@@ -128,6 +133,7 @@ const PlaylistProvider = ({ children }: PlaylistProviderProps) => {
     unmuteOnce,
     isMuted,
     setIsMuted,
+    handlePlayerError,
   }
 
   return <PlaylistContext.Provider value={value}>{children}</PlaylistContext.Provider>
