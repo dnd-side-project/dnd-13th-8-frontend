@@ -45,6 +45,7 @@ const MyCdPage = () => {
   const likedCdPlaylist = useMyLikedCdList('RECENT')
 
   const playlistQuery = selectedTab === 'MY' ? myCdPlaylist : likedCdPlaylist
+
   const playlistData = useMemo(() => {
     const data = playlistQuery.data ?? []
     return selectedTab === 'LIKE' ? data.filter((p) => p.isPublic) : data
@@ -131,20 +132,7 @@ const MyCdPage = () => {
     if (playlistDetail && userInfo) {
       if (currentPlaylist?.playlistId === playlistDetail.playlistId) return
 
-      const convertedPlaylist = {
-        creator: {
-          creatorId: userInfo.userId,
-          creatorNickname: userInfo.username,
-        },
-        playlistId: playlistDetail.playlistId,
-        playlistName: playlistDetail.playlistName,
-        genre: playlistDetail.genre,
-        songs: playlistDetail.songs,
-        isPublic: playlistDetail.isPublic,
-        cdItems: playlistDetail.cdResponse?.cdItems || [],
-      }
-
-      setPlaylist(convertedPlaylist, 0, 0, !isMobile) // 모바일이면 자동재생 off
+      setPlaylist(playlistDetail, 0, 0, !isMobile) // 모바일이면 자동재생 off
     }
   }, [playlistDetail, userInfo, setPlaylist, currentPlaylist])
 
@@ -231,7 +219,7 @@ const MyCdPage = () => {
             />
             <ActionBar
               playlistId={centerItem.playlistId ?? 0}
-              creatorId={currentPlaylist.creator.creatorId}
+              creatorId={currentPlaylist.creatorId}
               stickers={playlistDetail?.cdResponse?.cdItems || []}
               type="MY"
               selectedTab={selectedTab}
