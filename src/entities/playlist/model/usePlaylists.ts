@@ -8,6 +8,7 @@ import {
 } from '@tanstack/react-query'
 
 import {
+  getMyPlaylistDetail,
   getPlaylistDetail,
   getPlaylistViewCounts,
   getShufflePlaylists,
@@ -49,6 +50,14 @@ export const usePlaylistDetail = (playlistId: number | null, options?: { enabled
   return useQuery({
     queryKey: ['playlistDetail', playlistId],
     queryFn: () => getPlaylistDetail(playlistId as number),
+    enabled: options?.enabled ?? !!playlistId,
+  })
+}
+
+export const useMyPlaylistDetail = (playlistId: number | null, options?: { enabled?: boolean }) => {
+  return useQuery({
+    queryKey: ['playlistDetail', playlistId],
+    queryFn: () => getMyPlaylistDetail(playlistId as number),
     enabled: options?.enabled ?? !!playlistId,
   })
 }

@@ -41,6 +41,11 @@ export const getPlaylistDetail = (cdId: number) => {
   return api.get<PlaylistDetail>(`/main/playlist/${cdId}`)
 }
 
+// 내 트랙리스트 상세 조회
+export const getMyPlaylistDetail = (cdId: number) => {
+  return api.get<PlaylistDetail>(`/main/playlist/mypage/me/${cdId}`)
+}
+
 // 하트비트 시작
 export const postPlaylistStart = (playlistId: number) => {
   return api.post(`/main/playlist/browse/start`, null, { params: { playlistId } })
