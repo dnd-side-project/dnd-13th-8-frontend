@@ -99,7 +99,7 @@ const DiscoverPage = () => {
     [playlistsData, currentPlaylist, setPlaylist, hasNextPage, isFetchingNextPage, fetchNextPage]
   )
 
-  if (!playlistsData) {
+  if (isPlaylistsLoading) {
     return <Loading isLoading height="100%" />
   }
 
