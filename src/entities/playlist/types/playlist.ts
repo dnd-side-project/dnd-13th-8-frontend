@@ -44,6 +44,7 @@ export interface Track {
 export interface Creator {
   creatorId: string
   creatorNickname: string
+  creatorProfileImageUrl?: string
 }
 
 export interface PlaylistDetail extends OnlyCdResponse, Creator {
@@ -52,8 +53,6 @@ export interface PlaylistDetail extends OnlyCdResponse, Creator {
   isPublic: boolean
   songs: Track[]
   genre: string
-
-  creatorProfileImageUrl?: string
 }
 
 // 커서 정보
