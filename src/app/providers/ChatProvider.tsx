@@ -1,10 +1,10 @@
-import { createContext, useContext } from 'react'
+import { createContext, useContext, type ReactNode } from 'react'
 
 import { useChatSocket } from '@/features/chat/model/sendMessage'
 
 interface ChatProviderProps {
   roomId: string
-  children: React.ReactNode
+  children: ReactNode
 }
 
 export const ChatContext = createContext<ReturnType<typeof useChatSocket> | null>(null)
