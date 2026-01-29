@@ -3,10 +3,10 @@ import { useState, useRef, useEffect } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import styled from 'styled-components'
 
+import { useChat } from '@/app/providers/ChatProvider'
 import { Comment } from '@/entities/comment'
 import { useUserInfo } from '@/features/auth/model/useAuth'
-import { parseMessage, type ChatCountResponse } from '@/features/chat'
-import { useChatSocket, type ChatMessage } from '@/features/chat/model/sendMessage'
+import { parseMessage, type ChatCountResponse, type ChatMessage } from '@/features/chat'
 import { useInfiniteChatHistory } from '@/features/chat/model/useChat'
 import { flexColCenter } from '@/shared/styles/mixins'
 import { BottomSheet } from '@/shared/ui'
@@ -26,7 +26,7 @@ const ChatBottomSheet = ({ isOpen, onClose, roomId, creatorId }: ChatBottomSheet
   const scrollRef = useRef<HTMLDivElement>(null)
   const queryClient = useQueryClient()
 
-  const { messages: socketMessages, sendMessage, removeMessage } = useChatSocket(roomId)
+  const { messages: socketMessages, sendMessage, removeMessage } = useChat()
   const {
     data: historyData,
     fetchNextPage,

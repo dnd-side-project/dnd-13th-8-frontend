@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
 import type { PlaylistDetail } from '@/entities/playlist'
-import { useChatSocket } from '@/features/chat/model/sendMessage'
 import { useDevice } from '@/shared/lib/useDevice'
 import { flexColCenter } from '@/shared/styles/mixins'
 import { Button, Cd, Header, LiveInfo } from '@/shared/ui'
@@ -12,7 +11,6 @@ import { ActionBar, PlayButton, ProgressBar } from '@/widgets/playlist'
 
 interface PlaylistSlideProps {
   currentPlaylist: PlaylistDetail | null
-  isActive: boolean
   currentTrackIndex: number
   currentTime: number
   isPlaying: boolean
@@ -28,7 +26,6 @@ interface PlaylistSlideProps {
 
 const PlaylistLayout = ({
   currentPlaylist,
-  isActive,
   currentTrackIndex,
   isPlaying,
   onPlayPause,
@@ -37,10 +34,6 @@ const PlaylistLayout = ({
 }: PlaylistSlideProps) => {
   const [showPlayButton, setShowPlayButton] = useState(false)
   const navigate = useNavigate()
-
-  const { participantCount: listenersNum } = useChatSocket(
-    isActive ? String(currentPlaylist?.playlistId) : ''
-  )
 
   const deviceType = useDevice()
   const isMobile = deviceType === 'mobile'
@@ -64,7 +57,7 @@ const PlaylistLayout = ({
       <Overlay onClick={handleOverlayClick} />
       <Header center={<span>둘러보기</span>} />
       <Container>
-        <LiveInfo isOnAir={listenersNum > 0} listenerCount={listenersNum} />
+        <LiveInfo />
         {type === 'My' && (
           <Button size="S" state="primary" onClick={() => navigate('/mypage/customize')}>
             꾸미기
