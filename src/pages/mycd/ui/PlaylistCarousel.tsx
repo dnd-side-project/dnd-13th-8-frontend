@@ -3,20 +3,14 @@ import { useParams } from 'react-router-dom'
 
 import styled from 'styled-components'
 
-import type { CdCustomData, PlaylistInfo } from '@/entities/playlist'
+import type { CdMetaResponse } from '@/entities/playlist'
 import { SwipeCarousel } from '@/features/swipe'
 import { useDevice } from '@/shared/lib/useDevice'
 import { flexRowCenter } from '@/shared/styles/mixins'
 import { Cd } from '@/shared/ui'
 
-interface CarouselPlaylist {
-  playlistId: number
-  playlistName: string
-  cdResponse: { cdItems: CdCustomData[] }
-}
-
 interface PlaylistCarouselProps {
-  data: CarouselPlaylist[]
+  data: CdMetaResponse
   onCenterChange?: (playlist: { playlistId: number; playlistName: string }) => void
   currentPlaylistId?: number | null
   isPlaying?: boolean
@@ -57,22 +51,8 @@ const PlaylistCarousel = ({
     [data, onCenterChange]
   )
 
-  const playlistInfoData: PlaylistInfo[] = data.map((p) => ({
-    playlistId: p.playlistId,
-    playlistName: p.playlistName,
-    creator: { creatorId: '0', creatorNickname: '' },
-    genre: '',
-    songs: [],
-    isPublic: true,
-  }))
-
   return (
-    <SwipeCarousel
-      data={playlistInfoData}
-      onSelectIndexChange={handleSelectIndex}
-      axis="x"
-      basePath="/mycd"
-    >
+    <SwipeCarousel data={data} onSelectIndexChange={handleSelectIndex} axis="x" basePath="/mycd">
       {data.map((slide, index) => {
         const isNowPlaying = slide.playlistId === currentPlaylistId && isPlaying
 

@@ -5,7 +5,7 @@ import styled from 'styled-components'
 
 import { Logo, RightArrow, Search } from '@/assets/icons'
 import { HomeCharacter } from '@/assets/images'
-import { useShufflePlaylists } from '@/entities/playlist'
+import { usePlaylistDetails, useShufflePlaylists } from '@/entities/playlist'
 import { useMyCdList } from '@/entities/playlist/model/useMyCd'
 import { useAuthStore } from '@/features/auth/store/authStore'
 import { FeedbackIcon } from '@/pages/feedback/ui'
@@ -23,9 +23,9 @@ const FirstSection = () => {
   const handleSearchClick = () => navigate('/search')
 
   const { data } = useShufflePlaylists(4)
+  const playlistIds = useMemo(() => data?.pages.flatMap((page) => page.content) ?? [], [data])
+  const { data: RandomCdData } = usePlaylistDetails(playlistIds)
   const { data: MyCdData } = useMyCdList('RECENT')
-
-  const playlists = useMemo(() => data?.pages.flatMap((page) => page.content) ?? [], [data])
 
   const isEmpty = Boolean(isLogin && MyCdData && MyCdData.length === 0)
 
@@ -62,7 +62,10 @@ const FirstSection = () => {
       ) : (
         <CarouselContainer>
           <Title>{isLogin ? TITLE_TEXT.MEMBER(userInfo.username) : TITLE_TEXT.GUEST}</Title>
-          <HomeCarousel data={isLogin ? (MyCdData ?? playlists) : playlists} isLogin={isLogin} />
+          <HomeCarousel
+            data={isLogin ? (MyCdData ?? RandomCdData) : RandomCdData}
+            isLogin={isLogin}
+          />
         </CarouselContainer>
       )}
     </Container>

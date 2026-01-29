@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 
 import styled from 'styled-components'
 
-import type { PlaylistInfo } from '@/entities/playlist'
+import type { PlaylistDetail } from '@/entities/playlist'
 import { useChatSocket } from '@/features/chat/model/sendMessage'
 import { useDevice } from '@/shared/lib/useDevice'
 import { flexColCenter } from '@/shared/styles/mixins'
@@ -11,8 +11,8 @@ import { Button, Cd, Header, LiveInfo } from '@/shared/ui'
 import { ActionBar, PlayButton, ProgressBar } from '@/widgets/playlist'
 
 interface PlaylistSlideProps {
-  data: PlaylistInfo
-  currentPlaylist: PlaylistInfo | null
+  currentPlaylist: PlaylistDetail | null
+  isActive: boolean
   currentTrackIndex: number
   currentTime: number
   isPlaying: boolean
@@ -27,8 +27,8 @@ interface PlaylistSlideProps {
 }
 
 const PlaylistLayout = ({
-  data,
   currentPlaylist,
+  isActive,
   currentTrackIndex,
   isPlaying,
   onPlayPause,
@@ -37,8 +37,10 @@ const PlaylistLayout = ({
 }: PlaylistSlideProps) => {
   const [showPlayButton, setShowPlayButton] = useState(false)
   const navigate = useNavigate()
-  const isActive = currentPlaylist?.playlistId === data.playlistId
-  const { participantCount: listenersNum } = useChatSocket(isActive ? String(data.playlistId) : '')
+
+  const { participantCount: listenersNum } = useChatSocket(
+    isActive ? String(currentPlaylist?.playlistId) : ''
+  )
 
   const deviceType = useDevice()
   const isMobile = deviceType === 'mobile'
@@ -78,22 +80,22 @@ const PlaylistLayout = ({
             <Cd
               variant="xxl"
               bgColor="none"
-              stickers={data?.cdResponse?.cdItems ?? data?.cdItems ?? []}
+              stickers={currentPlaylist?.cdResponse?.cdItems ?? []}
             />
           </CdSpinner>
         </CdContainer>
         <ActionBarContainer $isMobile={isMobile}>
           <ActionBar
-            playlistId={data.playlistId}
-            creatorId={data.creator.creatorId}
-            stickers={data?.cdResponse?.cdItems ?? data?.cdItems ?? []}
+            playlistId={currentPlaylist?.playlistId ?? 0}
+            creatorId={currentPlaylist?.creatorId ?? ''}
+            stickers={currentPlaylist?.cdResponse?.cdItems ?? []}
             type="DISCOVER"
           />
         </ActionBarContainer>
       </Wrapper>
 
-      <Title>{data.playlistName}</Title>
-      <Creator>{data.creator.creatorNickname}</Creator>
+      <Title>{currentPlaylist?.playlistName ?? ''}</Title>
+      <Creator>{currentPlaylist?.creatorNickname ?? ''}</Creator>
 
       <ProgressBarWrapper>
         <ProgressBar
