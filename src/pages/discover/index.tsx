@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom'
 
 import styled from 'styled-components'
 
+import { ChatProvider } from '@/app/providers/ChatProvider'
 import { usePlaylist } from '@/app/providers/PlayerProvider'
 import {
   usePlaylistConfirmMutation,
@@ -105,35 +106,34 @@ const DiscoverPage = () => {
 
   return (
     <Page>
-      <SwipeCarousel
-        data={playlistsData}
-        onSelectIndexChange={handleSelectPlaylist}
-        axis="y"
-        basePath="/discover"
-      >
-        {playlistsData.map((data) => {
-          const isCurrentActive = currentPlaylist?.playlistId === data.playlistId
-
-          return (
-            <Slide key={data.playlistId}>
-              <PlaylistLayout
-                isActive={isCurrentActive}
-                currentPlaylist={currentPlaylist}
-                currentTrackIndex={currentTrackIndex}
-                currentTime={currentTime}
-                isPlaying={isPlaying}
-                onPlayPause={() => (isPlaying ? pause() : play())}
-                onNext={nextTrack}
-                onPrev={prevTrack}
-                onSelectTrack={(trackIndex, time) => {
-                  if (currentPlaylist) setPlaylist(currentPlaylist, trackIndex, time)
-                }}
-                playerRef={playerRef}
-              />
-            </Slide>
-          )
-        })}
-      </SwipeCarousel>
+      <ChatProvider roomId={currentPlaylist ? String(currentPlaylist.playlistId) : ''}>
+        <SwipeCarousel
+          data={playlistsData}
+          onSelectIndexChange={handleSelectPlaylist}
+          axis="y"
+          basePath="/discover"
+        >
+          {playlistsData.map((data) => {
+            return (
+              <Slide key={data.playlistId}>
+                <PlaylistLayout
+                  currentPlaylist={currentPlaylist}
+                  currentTrackIndex={currentTrackIndex}
+                  currentTime={currentTime}
+                  isPlaying={isPlaying}
+                  onPlayPause={() => (isPlaying ? pause() : play())}
+                  onNext={nextTrack}
+                  onPrev={prevTrack}
+                  onSelectTrack={(trackIndex, time) => {
+                    if (currentPlaylist) setPlaylist(currentPlaylist, trackIndex, time)
+                  }}
+                  playerRef={playerRef}
+                />
+              </Slide>
+            )
+          })}
+        </SwipeCarousel>
+      </ChatProvider>
     </Page>
   )
 }

@@ -4,17 +4,7 @@ import { Client, type Message } from '@stomp/stompjs'
 import SockJS from 'sockjs-client/dist/sockjs'
 
 import { useAuthStore } from '@/features/auth/store/authStore'
-
-export interface ChatMessage {
-  senderId: string
-  messageId: string
-  username: string | null
-  content: string
-  sentAt: string
-  profileImage: string | null
-  systemMessage?: boolean
-  roomId: string
-}
+import { getListenerCount, type ChatMessage } from '@/features/chat'
 
 export const useChatSocket = (roomId: string) => {
   const clientRef = useRef<Client | null>(null)
@@ -25,6 +15,18 @@ export const useChatSocket = (roomId: string) => {
   const anonymousToken = sessionStorage.getItem('anonymous_token')
 
   const authToken = accessToken || anonymousToken
+
+  const fetchInitialCount = useCallback(async () => {
+    if (!roomId) return
+
+    try {
+      const res = await getListenerCount(roomId)
+
+      setParticipantCount(res.count)
+    } catch (e) {
+      console.error('초기 인원 조회 실패 : ', e)
+    }
+  }, [roomId])
 
   useEffect(() => {
     if (!roomId || !authToken) return
@@ -39,7 +41,7 @@ export const useChatSocket = (roomId: string) => {
       debug: (str) => console.log('[STOMP]', str),
     })
 
-    client.onConnect = () => {
+    client.onConnect = async () => {
       setConnected(true)
 
       // 메시지 구독
@@ -51,8 +53,11 @@ export const useChatSocket = (roomId: string) => {
       // 참여자 수
       client.subscribe(`/chat/topic/rooms/${roomId}/count`, (message: Message) => {
         const { count } = JSON.parse(message.body)
+
         setParticipantCount(count)
       })
+
+      await fetchInitialCount()
     }
 
     client.activate()
@@ -61,7 +66,7 @@ export const useChatSocket = (roomId: string) => {
     return () => {
       client.deactivate()
     }
-  }, [roomId, authToken])
+  }, [roomId, authToken, fetchInitialCount])
 
   const sendMessage = useCallback(
     (content: string) => {

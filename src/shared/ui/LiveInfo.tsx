@@ -1,19 +1,17 @@
 import styled from 'styled-components'
 
+import { useChat } from '@/app/providers/ChatProvider'
 import { User } from '@/assets/icons'
 
-interface LiveInfoProps {
-  isOnAir: boolean
-  listenerCount: number
-}
+const LiveInfo = () => {
+  const { participantCount } = useChat()
 
-const LiveInfo = ({ isOnAir, listenerCount }: LiveInfoProps) => {
   return (
     <Wrapper>
-      <OnAirBadge $isOnAir={isOnAir}>ON AIR</OnAirBadge>
+      <OnAirBadge $isOnAir={participantCount > 0}>ON AIR</OnAirBadge>
 
       <ListenerCount>
-        <User /> {listenerCount}
+        <User /> {participantCount}
       </ListenerCount>
     </Wrapper>
   )
