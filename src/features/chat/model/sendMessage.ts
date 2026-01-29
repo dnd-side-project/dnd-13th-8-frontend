@@ -66,7 +66,7 @@ export const useChatSocket = (roomId: string) => {
     return () => {
       client.deactivate()
     }
-  }, [roomId, authToken])
+  }, [roomId, authToken, fetchInitialCount])
 
   const sendMessage = useCallback(
     (content: string) => {
@@ -80,7 +80,7 @@ export const useChatSocket = (roomId: string) => {
         }),
       })
     },
-    [roomId, connected, fetchInitialCount]
+    [roomId, connected]
   )
 
   const removeMessage = useCallback((messageId: string) => {
