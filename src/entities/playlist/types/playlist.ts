@@ -2,6 +2,7 @@ export interface CdBasicInfo {
   playlistId: number
   playlistName: string
   creatorNickname?: string
+  genre: string
   isPublic: boolean
 }
 
@@ -43,33 +44,15 @@ export interface Track {
 export interface Creator {
   creatorId: string
   creatorNickname: string
-}
-
-export interface PlaylistDetail {
-  playlistId: number
-  playlistName: string
-  genre: string
-  songs: Track[]
-  isPublic: boolean
-}
-
-export interface PlaylistDetailResponse extends PlaylistDetail, OnlyCdResponse {
-  creatorId: string
-  creatorNickname: string
   creatorProfileImageUrl?: string
 }
 
-export interface PlaylistInfo extends PlaylistDetail {
-  cardId?: number
-  position?: number
-  shareUrl?: string
-  totalTime?: string
-  creator: Creator
-
-  cdResponse?: {
-    cdItems: CdCustomData[]
-  }
-  cdItems?: CdCustomData[]
+export interface PlaylistDetail extends OnlyCdResponse, Creator {
+  playlistId: number
+  playlistName: string
+  isPublic: boolean
+  songs: Track[]
+  genre: string
 }
 
 // 커서 정보
@@ -79,14 +62,13 @@ export interface Cursor {
 }
 
 export interface PlaylistResponse {
-  content: PlaylistInfo[]
-  nextCursor: Cursor | null
+  content: number[] // playlistId 배열
+  nextCursor: number | null
   size: number
   hasNext: boolean
 }
 
 export interface PlaylistParams {
-  cursorPosition?: number
-  cursorCardId?: number
+  cursorId?: number
   size?: number
 }

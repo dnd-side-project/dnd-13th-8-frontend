@@ -1,6 +1,6 @@
 import type {
   CdMetaResponse,
-  PlaylistDetailResponse,
+  PlaylistDetail,
   PlaylistParams,
   PlaylistResponse,
 } from '@/entities/playlist/types/playlist'
@@ -18,7 +18,7 @@ export const getLikedCdList = (sort: string) => {
 
 // 나의 CD 트랙리스트 조회
 export const getTracklist = (cdId: number) => {
-  return api.get<PlaylistDetailResponse>(`/main/playlist/mypage/me/${cdId}`)
+  return api.get<PlaylistDetail>(`/main/playlist/mypage/me/${cdId}`)
 }
 
 // 나의 CD 공개여부 토글
@@ -33,12 +33,17 @@ export const deleteMyCd = (cdId: number) => {
 
 // 셔플된 플레이리스트 목록 조회
 export const getShufflePlaylists = (params: PlaylistParams) => {
-  return api.get<PlaylistResponse>('/main/playlist/browse', { params })
+  return api.get<PlaylistResponse>('/main/playlist/browse/v2', { params })
 }
 
 // 트랙리스트 상세 조회
 export const getPlaylistDetail = (cdId: number) => {
-  return api.get<PlaylistDetailResponse>(`/main/playlist/${cdId}`)
+  return api.get<PlaylistDetail>(`/main/playlist/${cdId}`)
+}
+
+// 내 트랙리스트 상세 조회
+export const getMyPlaylistDetail = (cdId: number) => {
+  return api.get<PlaylistDetail>(`/main/playlist/mypage/me/${cdId}`)
 }
 
 // 하트비트 시작

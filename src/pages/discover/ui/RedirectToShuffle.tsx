@@ -8,8 +8,8 @@ const RedirectToShuffle = () => {
   const navigate = useNavigate()
 
   useEffect(() => {
-    const firstId = data?.pages?.[0]?.content?.[0]?.playlistId
-    console.log(firstId)
+    const firstId = data?.pages?.[0]?.content?.[0]
+
     if (firstId) {
       navigate(`/discover/${firstId}`, { replace: true })
     }

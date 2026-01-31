@@ -2,6 +2,7 @@ import type {
   ChatCountResponse,
   ChatHistoryParams,
   ChatHistoryResponse,
+  ListenerNumResponse,
 } from '@/features/chat/types/chat'
 import { api } from '@/shared/api/httpClient'
 
@@ -17,4 +18,8 @@ export const deleteChatMessage = async (roomId: string, messageId: string) => {
 
 export const getChatCount = (roomId: string) => {
   return api.get<ChatCountResponse>(`/chat/rooms/${roomId}/count/chat`)
+}
+
+export const getListenerCount = (roomId: string) => {
+  return api.get<ListenerNumResponse>(`/chat/rooms/${roomId}/count/member`)
 }

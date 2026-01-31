@@ -3,22 +3,27 @@ export interface ChatHistoryParams {
   limit?: number
 }
 
-export interface ChatHistoryMessage {
-  roomId: string
-  messageId: string
+export interface ChatMessage {
   senderId: string
+  messageId: string
   username: string | null
   content: string
   sentAt: string
-  systemMessage?: boolean
   profileImage: string | null
+  systemMessage?: boolean
+  roomId: string
 }
 
 export interface ChatHistoryResponse {
-  messages: ChatHistoryMessage[]
+  messages: ChatMessage[]
   nextCursor?: string
 }
 
 export interface ChatCountResponse {
   totalCount: number
+}
+
+export interface ListenerNumResponse {
+  roomId: string
+  count: number
 }

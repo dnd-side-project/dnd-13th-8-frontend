@@ -3,13 +3,13 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
 import styled from 'styled-components'
 
+import { ChatProvider } from '@/app/providers/ChatProvider'
 import { usePlaylist } from '@/app/providers/PlayerProvider'
 import { NoLike } from '@/assets/icons'
 import { MemberCharacter } from '@/assets/images'
 import { usePlaylistDetail } from '@/entities/playlist'
 import { useMyCdActions, useMyCdList, useMyLikedCdList } from '@/entities/playlist/model/useMyCd'
 import { useAuthStore } from '@/features/auth/store/authStore'
-import { useChatSocket } from '@/features/chat/model/sendMessage'
 import { HeaderTab, PlaylistCarousel } from '@/pages/mycd/ui'
 import type { MyCdTab } from '@/pages/mycd/ui/HeaderTab'
 import { useDevice } from '@/shared/lib/useDevice'
@@ -45,6 +45,7 @@ const MyCdPage = () => {
   const likedCdPlaylist = useMyLikedCdList('RECENT')
 
   const playlistQuery = selectedTab === 'MY' ? myCdPlaylist : likedCdPlaylist
+
   const playlistData = useMemo(() => {
     const data = playlistQuery.data ?? []
     return selectedTab === 'LIKE' ? data.filter((p) => p.isPublic) : data
@@ -131,27 +132,9 @@ const MyCdPage = () => {
     if (playlistDetail && userInfo) {
       if (currentPlaylist?.playlistId === playlistDetail.playlistId) return
 
-      const convertedPlaylist = {
-        creator: {
-          creatorId: userInfo.userId,
-          creatorNickname: userInfo.username,
-        },
-        playlistId: playlistDetail.playlistId,
-        playlistName: playlistDetail.playlistName,
-        genre: playlistDetail.genre,
-        songs: playlistDetail.songs,
-        isPublic: playlistDetail.isPublic,
-        cdItems: playlistDetail.cdResponse?.cdItems || [],
-      }
-
-      setPlaylist(convertedPlaylist, 0, 0, !isMobile) // 모바일이면 자동재생 off
+      setPlaylist(playlistDetail, 0, 0, !isMobile) // 모바일이면 자동재생 off
     }
   }, [playlistDetail, userInfo, setPlaylist, currentPlaylist])
-
-  const isActive = currentPlaylist?.playlistId === playlistDetail?.playlistId
-  const { participantCount: listenersNum } = useChatSocket(
-    isActive && centerItem.playlistId ? String(centerItem.playlistId) : ''
-  )
 
   const handleProgressClick = useCallback(
     (trackIndex: number, seconds: number) => {
@@ -202,73 +185,75 @@ const MyCdPage = () => {
   }
 
   return (
-    <div>
-      {currentPlaylist && (
-        <>
-          <HeaderTab selectedTab={selectedTab} onSelect={handleTabSelect} />
-          <Container>
-            <LiveInfo isOnAir={listenersNum > 0} listenerCount={listenersNum} />
-            {selectedTab === 'MY' && (
-              <Button
-                size="S"
-                state="primary"
-                onClick={() =>
-                  navigate(`/mypage/customize`, {
-                    state: { cdId: currentPlaylist?.playlistId },
-                  })
-                }
-              >
-                편집
-              </Button>
-            )}
-          </Container>
-          <CenterWrapper>
-            <PlaylistCarousel
-              data={playlistData ?? []}
-              onCenterChange={handleCenterChange}
-              currentPlaylistId={currentPlaylist?.playlistId}
-              isPlaying={isPlaying}
-            />
-            <ActionBar
-              playlistId={centerItem.playlistId ?? 0}
-              creatorId={currentPlaylist.creator.creatorId}
-              stickers={playlistDetail?.cdResponse?.cdItems || []}
-              type="MY"
-              selectedTab={selectedTab}
-            />
-            <Title $isMobile={isMobile}> {centerItem.playlistName}</Title>
-            {selectedTab === 'LIKE' && playlistDetail?.creatorNickname && (
-              <Creator>{playlistDetail.creatorNickname}</Creator>
-            )}
-
-            <BottomWrapper>
-              <ProgressBar
-                trackLengths={currentPlaylist.songs.map((t) => t.youtubeLength) || []}
-                currentIndex={currentTrackIndex}
-                onClick={handleProgressClick}
-              />
-
-              <ControlBar
+    <ChatProvider roomId={currentPlaylist ? String(currentPlaylist.playlistId) : ''}>
+      <div>
+        {currentPlaylist && (
+          <>
+            <HeaderTab selectedTab={selectedTab} onSelect={handleTabSelect} />
+            <Container>
+              <LiveInfo />
+              {selectedTab === 'MY' && (
+                <Button
+                  size="S"
+                  state="primary"
+                  onClick={() =>
+                    navigate(`/mypage/customize`, {
+                      state: { cdId: currentPlaylist?.playlistId },
+                    })
+                  }
+                >
+                  편집
+                </Button>
+              )}
+            </Container>
+            <CenterWrapper>
+              <PlaylistCarousel
+                data={playlistData ?? []}
+                onCenterChange={handleCenterChange}
+                currentPlaylistId={currentPlaylist?.playlistId}
                 isPlaying={isPlaying}
-                onTogglePlay={() => {
-                  if (isMobile && !isPlaying) {
-                    unmuteOnce()
-                  }
-
-                  if (isPlaying) {
-                    pause()
-                  } else {
-                    play()
-                  }
-                }}
-                onNext={nextTrack}
-                onPrev={prevTrack}
               />
-            </BottomWrapper>
-          </CenterWrapper>
-        </>
-      )}
-    </div>
+              <ActionBar
+                playlistId={centerItem.playlistId ?? 0}
+                creatorId={currentPlaylist.creatorId}
+                stickers={playlistDetail?.cdResponse?.cdItems || []}
+                type="MY"
+                selectedTab={selectedTab}
+              />
+              <Title $isMobile={isMobile}> {centerItem.playlistName}</Title>
+              {selectedTab === 'LIKE' && playlistDetail?.creatorNickname && (
+                <Creator>{playlistDetail.creatorNickname}</Creator>
+              )}
+
+              <BottomWrapper>
+                <ProgressBar
+                  trackLengths={currentPlaylist.songs.map((t) => t.youtubeLength) || []}
+                  currentIndex={currentTrackIndex}
+                  onClick={handleProgressClick}
+                />
+
+                <ControlBar
+                  isPlaying={isPlaying}
+                  onTogglePlay={() => {
+                    if (isMobile && !isPlaying) {
+                      unmuteOnce()
+                    }
+
+                    if (isPlaying) {
+                      pause()
+                    } else {
+                      play()
+                    }
+                  }}
+                  onNext={nextTrack}
+                  onPrev={prevTrack}
+                />
+              </BottomWrapper>
+            </CenterWrapper>
+          </>
+        )}
+      </div>
+    </ChatProvider>
   )
 }
 
