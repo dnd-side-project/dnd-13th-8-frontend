@@ -5,46 +5,67 @@ import styled from 'styled-components'
 import { Filter } from '@/assets/icons'
 import BottomSheet from '@/shared/ui/BottomSheet'
 
-export type SortType = 'POPULAR' | 'RECENT'
+export type SortType = 'POPULAR' | 'RECENT' | 'OLDEST'
+export type CountType = 'NUMBER' | 'PEOPLE'
+
+const SORT_LABEL: Record<SortType, string> = {
+  RECENT: '최신순',
+  POPULAR: '인기순',
+  OLDEST: '오래된순',
+}
+
+const COUNT_LABEL: Record<CountType, string> = {
+  NUMBER: '개',
+  PEOPLE: '명',
+}
+
 interface ContentHeaderProps {
   totalCount: number
   currentSort: SortType
   onSortChange: (sort: SortType) => void
+  options: SortType[]
+  countType?: CountType
 }
 
-const ContentHeader = ({ totalCount, currentSort, onSortChange }: ContentHeaderProps) => {
+const ContentHeader = ({
+  totalCount,
+  currentSort,
+  onSortChange,
+  options,
+  countType = 'NUMBER',
+}: ContentHeaderProps) => {
   const [isOpen, setIsOpen] = useState(false)
 
-  const handleSortChange = (newSort: SortType) => {
-    onSortChange(newSort)
+  const handleSortChange = (sort: SortType) => {
+    onSortChange(sort)
     setIsOpen(false)
   }
 
   return (
     <>
       <HeaderContainer>
-        <span>총 {totalCount ?? 0}개</span>
+        <span>
+          총 {totalCount ?? 0}
+          {COUNT_LABEL[countType]}
+        </span>
+
         <FilterButton type="button" onClick={() => setIsOpen(true)}>
           <Filter width={24} height={24} />
-          <span>{currentSort === 'RECENT' ? '최신순' : '인기순'}</span>
+          <span>{SORT_LABEL[currentSort]}</span>
         </FilterButton>
       </HeaderContainer>
 
       <BottomSheet isOpen={isOpen} onClose={() => setIsOpen(false)} height="200px">
-        <SortButton
-          type="button"
-          $active={currentSort === 'RECENT'}
-          onClick={() => handleSortChange('RECENT')}
-        >
-          최신순
-        </SortButton>
-        <SortButton
-          type="button"
-          $active={currentSort === 'POPULAR'}
-          onClick={() => handleSortChange('POPULAR')}
-        >
-          인기순
-        </SortButton>
+        {options.map((sort) => (
+          <SortButton
+            key={sort}
+            type="button"
+            $active={currentSort === sort}
+            onClick={() => handleSortChange(sort)}
+          >
+            {SORT_LABEL[sort]}
+          </SortButton>
+        ))}
       </BottomSheet>
     </>
   )
@@ -58,6 +79,7 @@ const HeaderContainer = styled.div`
   align-items: center;
   height: 24px;
   color: ${({ theme }) => theme.COLOR['gray-100']};
+  ${({ theme }) => theme.FONT['body2-normal']}
 `
 
 const FilterButton = styled.button`
@@ -65,10 +87,6 @@ const FilterButton = styled.button`
   align-items: center;
   justify-content: flex-end;
   gap: 2px;
-
-  & > span {
-    ${({ theme }) => theme.FONT['body2-normal']}
-  }
 `
 
 const SortButton = styled.button<{ $active: boolean }>`
