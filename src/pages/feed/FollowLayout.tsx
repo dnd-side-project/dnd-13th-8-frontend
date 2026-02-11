@@ -3,7 +3,7 @@ import { Outlet, useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { LeftArrow } from '@/assets/icons'
-import FollowTab from '@/pages/feed/FollowTab'
+import { FollowTab } from '@/pages/feed/ui'
 import { useSingleSelect } from '@/shared/lib/useSingleSelect'
 import { ContentHeader, Header, SvgButton } from '@/shared/ui'
 import type { SortType } from '@/shared/ui/ContentHeader'
