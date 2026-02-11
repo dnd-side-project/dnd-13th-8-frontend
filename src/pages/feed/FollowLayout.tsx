@@ -43,5 +43,5 @@ const HeaderSection = styled.div`
 `
 
 const ContentHeaderWrapper = styled.div`
-  margin-top: 12px;
+  margin-top: 20px;
 `
