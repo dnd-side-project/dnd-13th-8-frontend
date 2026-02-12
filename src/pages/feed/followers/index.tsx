@@ -29,7 +29,6 @@ const Followers = () => {
       {followerList?.map((item) => (
         <ItemWrapper key={item.userId}>
           <SearchResultItem
-            key={item.userId}
             type="USER"
             imageUrl={item.profileUrl}
             searchResult={item.userName}
