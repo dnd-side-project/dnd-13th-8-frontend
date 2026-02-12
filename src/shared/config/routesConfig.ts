@@ -130,13 +130,13 @@ export const routesConfig: RouteConfig[] = [
     isNotSuspense: true,
     children: [
       {
-        path: '/:userId/followers',
+        path: 'followers',
         component: FollowLayout,
         isNotSuspense: true,
         children: [{ path: '', component: Followers }],
       },
       {
-        path: '/:userId/following',
+        path: 'following',
         component: FollowLayout,
         isNotSuspense: true,
         children: [{ path: '', component: Following }],
