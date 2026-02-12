@@ -18,7 +18,7 @@ interface FollowButtonProps {
 
 const FollowButton = ({ isFollowing, variant = 'default' }: FollowButtonProps) => {
   const navigate = useNavigate()
-  const isLogin = useAuthStore()
+  const { isLogin } = useAuthStore()
   const [following, setFollowing] = useState(isFollowing)
   const [isModalOpen, setIsModalOpen] = useState(false)
 
