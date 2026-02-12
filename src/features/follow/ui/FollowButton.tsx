@@ -1,35 +1,30 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
-import { AddUser } from '@/assets/icons'
+import { Add, Tick } from '@/assets/icons'
 import { useAuthStore } from '@/features/auth/store/authStore'
-import { useFollow } from '@/features/follow'
-import { BottomSheet, Button, Modal, SvgButton } from '@/shared/ui'
-import { SearchResultItem } from '@/widgets/search'
+import { flexRowCenter } from '@/shared/styles/mixins'
+import { Modal } from '@/shared/ui'
+
+type Variant = 'default' | 'small' | 'wide'
 
 interface FollowButtonProps {
   isFollowing: boolean
-  playlistId: number
-  userName: string
-  profile?: string
+  userId?: string
+  variant?: Variant
 }
 
-const FollowButton = ({ isFollowing, playlistId, userName, profile }: FollowButtonProps) => {
+const FollowButton = ({ isFollowing, variant = 'default' }: FollowButtonProps) => {
   const navigate = useNavigate()
   const { isLogin } = useAuthStore()
-  const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false)
+  const [following, setFollowing] = useState(isFollowing)
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const { isFollowing: following, toggleFollow } = useFollow(
-    Number(playlistId),
-    isLogin ? isFollowing : false
-  )
 
   const handleFollowClick = () => {
     if (isLogin) {
-      toggleFollow()
-      setIsBottomSheetOpen(false)
+      setFollowing((prev) => !prev)
     } else {
       setIsModalOpen(true)
     }
@@ -37,26 +32,10 @@ const FollowButton = ({ isFollowing, playlistId, userName, profile }: FollowButt
 
   return (
     <>
-      <SvgButton icon={AddUser} width={24} height={24} onClick={() => setIsBottomSheetOpen(true)} />
-
-      {isBottomSheetOpen && (
-        <BottomSheet
-          isOpen={isBottomSheetOpen}
-          onClose={() => setIsBottomSheetOpen(false)}
-          height="fit-content"
-        >
-          <UserInfoRow>
-            <SearchResultItem type="USER" searchResult={userName} imageUrl={profile} />
-            <Button
-              size="S"
-              state={following ? 'secondary' : 'primary'}
-              onClick={handleFollowClick}
-            >
-              {following ? '팔로잉' : '팔로우'}
-            </Button>
-          </UserInfoRow>
-        </BottomSheet>
-      )}
+      <Button $variant={variant} $following={following} onClick={handleFollowClick}>
+        {following ? <Tick /> : <Add />}
+        {following ? '팔로잉' : '팔로우'}
+      </Button>
 
       {isModalOpen && (
         <Modal
@@ -69,7 +48,6 @@ const FollowButton = ({ isFollowing, playlistId, userName, profile }: FollowButt
           }}
           onCancel={() => {
             setIsModalOpen(false)
-            setIsBottomSheetOpen(false)
           }}
           onClose={() => setIsModalOpen(false)}
           confirmText="로그인하기"
@@ -82,8 +60,55 @@ const FollowButton = ({ isFollowing, playlistId, userName, profile }: FollowButt
 
 export default FollowButton
 
-const UserInfoRow = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+const variants = {
+  default: css<{ $following: boolean }>`
+    padding: 5px 12px;
+    max-height: 30px;
+    border-radius: 99px;
+    ${({ theme }) => theme.FONT['body2-normal']};
+    gap: 2px;
+
+    background: ${({ theme, $following }) =>
+      $following ? theme.COLOR['gray-600'] : theme.COLOR['primary-normal']};
+
+    color: ${({ theme, $following }) =>
+      $following ? theme.COLOR['primary-normal'] : theme.COLOR['gray-600']};
+  `,
+
+  small: css`
+    padding: 4px 10px;
+    max-height: 24px;
+    background: ${({ theme }) => theme.COLOR['gray-600']};
+    border-radius: 99px;
+    border: 1px solid ${({ theme }) => theme.COLOR['gray-100']};
+    color: ${({ theme }) => theme.COLOR['gray-100']};
+    ${({ theme }) => theme.FONT.caption1};
+    gap: 2px;
+  `,
+
+  wide: css<{ $following: boolean }>`
+    width: 100%;
+    max-height: 44px;
+    border-radius: 10px;
+    padding: 12px 0;
+    ${({ theme }) => theme.FONT['body2-normal']};
+    gap: 4px;
+
+    background: ${({ theme, $following }) =>
+      $following ? theme.COLOR['gray-600'] : theme.COLOR['primary-normal']};
+
+    color: ${({ theme, $following }) =>
+      $following ? theme.COLOR['primary-normal'] : theme.COLOR['gray-600']};
+  `,
+}
+
+const Button = styled.button<{ $variant: Variant; $following: boolean }>`
+  ${flexRowCenter}
+  ${({ $variant }) => variants[$variant]}
+
+  svg {
+    width: ${({ $variant }) => ($variant === 'small' ? '12px' : '16px')};
+    height: ${({ $variant }) => ($variant === 'small' ? '12px' : '16px')};
+    flex-shrink: 0;
+  }
 `

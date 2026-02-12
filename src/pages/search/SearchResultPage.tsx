@@ -163,7 +163,12 @@ const SearchResultPage = () => {
       <Result ref={listRef} onScroll={handleScroll}>
         {totalCount && totalCount > 0 ? (
           <>
-            <ContentHeader totalCount={totalCount} currentSort={selected} onSortChange={onSelect} />
+            <ContentHeader
+              totalCount={totalCount}
+              currentSort={selected}
+              onSortChange={onSelect}
+              options={['RECENT', 'POPULAR']}
+            />
             <ResultList>
               {type === 'keyword'
                 ? keywordSearchResult?.map((item: Playlist) => (

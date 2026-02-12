@@ -28,6 +28,10 @@ const NotFoundPage = lazy(() => import('@/pages/notFound'))
 const ErrorPage = lazy(() => import('@/pages/error'))
 const FeedbackPage = lazy(() => import('@/pages/feedback'))
 const DowntimePage = lazy(() => import('@/pages/downtime'))
+const FeedLayout = lazy(() => import('@/pages/feed/FeedLayout'))
+const FollowLayout = lazy(() => import('@/pages/feed/FollowLayout'))
+const Followers = lazy(() => import('@/pages/feed/followers'))
+const Following = lazy(() => import('@/pages/feed/following'))
 
 export interface RouteConfig {
   path: string
@@ -118,4 +122,25 @@ export const routesConfig: RouteConfig[] = [
   // 에러 페이지
   { path: '*', component: NotFoundPage, isNotSuspense: true },
   { path: '/error', component: ErrorPage, isNotSuspense: true },
+
+  // 유저 피드
+  {
+    path: '/:userId',
+    component: FeedLayout,
+    isNotSuspense: true,
+    children: [
+      {
+        path: 'followers',
+        component: FollowLayout,
+        isNotSuspense: true,
+        children: [{ path: '', component: Followers }],
+      },
+      {
+        path: 'following',
+        component: FollowLayout,
+        isNotSuspense: true,
+        children: [{ path: '', component: Following }],
+      },
+    ],
+  },
 ]

@@ -69,6 +69,7 @@ const MyLikedCdList = () => {
         totalCount={myLikedCdList?.length ?? 0}
         currentSort={currentSort}
         onSortChange={setCurrentSort}
+        options={['RECENT', 'POPULAR']}
       />
       <CdListWrap>
         {isSuccess && !myLikedCdList?.length ? (
