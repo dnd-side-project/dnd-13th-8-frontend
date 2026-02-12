@@ -1,11 +1,7 @@
 import { Outlet } from 'react-router-dom'
 
-const UserLayout = () => {
-  return (
-    <>
-      <Outlet />
-    </>
-  )
+const FeedLayout = () => {
+  return <Outlet />
 }
 
-export default UserLayout
+export default FeedLayout
