@@ -45,7 +45,7 @@ const { selected, onSelect } = useSingleSelect<SortType>('RECENT')
   currentSort={selected}
   onSortChange={onSelect}
   options={['RECENT', 'POPULAR']}
-  countType="number"
+  countType="NUMBER"
 />
 \`\`\`
         `,
