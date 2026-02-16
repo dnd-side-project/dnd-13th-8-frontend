@@ -48,7 +48,7 @@ export const ToastProvider = ({ children }: { children: ReactNode }) => {
       {children}
       {toastState && (
         <ToastContainer>
-          <Toast message={toastState.message} />
+          <Toast type={toastState.type} />
         </ToastContainer>
       )}
     </ToastContext.Provider>

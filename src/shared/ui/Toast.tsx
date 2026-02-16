@@ -1,15 +1,17 @@
 import styled from 'styled-components'
 
-import { ToastCircle } from '@/assets/icons'
+import { TOAST_MESSAGES, type ToastType } from '@/app/providers/ToastProvider'
+import { ToastCircle, ToastDanger } from '@/assets/icons'
 
 interface ToastProps {
-  message: string
+  type: ToastType
 }
+const Toast = ({ type }: ToastProps) => {
+  const message = TOAST_MESSAGES[type]
 
-const Toast = ({ message }: ToastProps) => {
   return (
     <ToastContainer>
-      <ToastCircle />
+      {type === 'PLAY_NEXT' ? <ToastDanger /> : <ToastCircle />}
       <p>{message}</p>
     </ToastContainer>
   )

@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import styled from 'styled-components'
 
+import { TOAST_MESSAGES } from '@/app/providers/ToastProvider'
 import { Toast } from '@/shared/ui'
 
 const meta: Meta<typeof Toast> = {
@@ -10,39 +11,26 @@ const meta: Meta<typeof Toast> = {
   parameters: {
     layout: 'centered',
   },
+
+  args: {
+    type: 'LINK',
+  },
+
+  argTypes: {
+    type: {
+      control: { type: 'select' },
+      options: Object.keys(TOAST_MESSAGES),
+    },
+  },
 }
 
 export default meta
 type Story = StoryObj<typeof Toast>
 
-export const LinkToast: Story = {
-  render: () => (
+export const Playground: Story = {
+  render: (args) => (
     <Wrapper>
-      <Toast message="링크가 복사됐어요" />
-    </Wrapper>
-  ),
-}
-
-export const ImageToast: Story = {
-  render: () => (
-    <Wrapper>
-      <Toast message="이미지가 저장됐어요" />
-    </Wrapper>
-  ),
-}
-
-export const ReportToast: Story = {
-  render: () => (
-    <Wrapper>
-      <Toast message="신고가 접수됐어요" />
-    </Wrapper>
-  ),
-}
-
-export const CommentToast: Story = {
-  render: () => (
-    <Wrapper>
-      <Toast message="댓글이 삭제됐어요" />
+      <Toast {...args} />
     </Wrapper>
   ),
 }
