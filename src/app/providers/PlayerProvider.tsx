@@ -1,5 +1,6 @@
 import { createContext, useState, useContext, useRef, useCallback, type ReactNode } from 'react'
 
+import { useToast } from '@/app/providers'
 import type { PlaylistDetail } from '@/entities/playlist'
 
 type PlaylistContextType = {
@@ -36,6 +37,7 @@ const PlaylistProvider = ({ children }: PlaylistProviderProps) => {
   const [currentTime, setCurrentTime] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false)
   const [isMuted, setIsMuted] = useState(true)
+  const { toast } = useToast()
 
   const playerRef = useRef<YT.Player | null>(null)
 
@@ -114,8 +116,9 @@ const PlaylistProvider = ({ children }: PlaylistProviderProps) => {
   )
 
   const handlePlayerError = useCallback(() => {
+    toast('PLAY_NEXT')
     nextTrack()
-  }, [nextTrack])
+  }, [nextTrack, toast])
 
   const value = {
     currentPlaylist,
