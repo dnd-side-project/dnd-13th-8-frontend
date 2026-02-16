@@ -27,7 +27,6 @@ const MyCdInfoPage = lazy(() => import('@/pages/mycd/tracklist'))
 const NotFoundPage = lazy(() => import('@/pages/notFound'))
 const ErrorPage = lazy(() => import('@/pages/error'))
 const FeedbackPage = lazy(() => import('@/pages/feedback'))
-const DowntimePage = lazy(() => import('@/pages/downtime'))
 const FeedLayout = lazy(() => import('@/pages/feed/FeedLayout'))
 const FollowLayout = lazy(() => import('@/pages/feed/FollowLayout'))
 const Followers = lazy(() => import('@/pages/feed/followers'))
@@ -109,13 +108,6 @@ export const routesConfig: RouteConfig[] = [
   {
     path: '/feedback',
     component: FeedbackPage,
-    hideNav: true,
-  },
-
-  // 서버 점검
-  {
-    path: '/downtime',
-    component: DowntimePage,
     hideNav: true,
   },
 
