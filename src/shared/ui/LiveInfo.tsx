@@ -1,14 +1,28 @@
+import { useEffect, useState } from 'react'
+
 import styled from 'styled-components'
 
 import { useChat } from '@/app/providers/ChatProvider'
 import { User } from '@/assets/icons'
 
 const LiveInfo = () => {
-  const { participantCount } = useChat()
+  const { participantCount: count } = useChat()
+
+  const [isOnAir, setIsOnAir] = useState(false)
+  const [participantCount, setParticipantCount] = useState(count)
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setParticipantCount(count)
+      setIsOnAir(true)
+    }, 500)
+
+    return () => clearTimeout(timer)
+  }, [count])
 
   return (
     <Wrapper>
-      <OnAirBadge $isOnAir={participantCount > 0}>ON AIR</OnAirBadge>
+      <OnAirBadge $isOnAir={isOnAir}>ON AIR</OnAirBadge>
 
       <ListenerCount>
         <User /> {participantCount}
