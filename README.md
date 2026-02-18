@@ -23,10 +23,10 @@
 ![14](https://pub-cf3b9667253a490495a16433a99bd7ca.r2.dev/hansol/deulak/%E1%84%83%E1%85%B3%E1%86%AF%E1%84%85%E1%85%A1%E1%86%A8_%E1%84%8E%E1%85%AC%E1%84%8C%E1%85%A9%E1%86%BC%E1%84%87%E1%85%A1%E1%86%AF%E1%84%91%E1%85%AD-compressed-images-14.jpg)
 ![15](https://pub-cf3b9667253a490495a16433a99bd7ca.r2.dev/hansol/deulak/%E1%84%83%E1%85%B3%E1%86%AF%E1%84%85%E1%85%A1%E1%86%A8_%E1%84%8E%E1%85%AC%E1%84%8C%E1%85%A9%E1%86%BC%E1%84%87%E1%85%A1%E1%86%AF%E1%84%91%E1%85%AD-compressed-images-15.jpg)
 
-## 4️⃣ 기술 스택
+## 3️⃣ 기술 스택
 
 ![](https://pub-cf3b9667253a490495a16433a99bd7ca.r2.dev/hansol/deulak/%E1%84%83%E1%85%B3%E1%86%AF%E1%84%85%E1%85%A1%E1%86%A8_%E1%84%8E%E1%85%AC%E1%84%8C%E1%85%A9%E1%86%BC%E1%84%87%E1%85%A1%E1%86%AF%E1%84%91%E1%85%AD-compressed-images-17.jpg)
 
-## 5️⃣ QR & 팀원 소개
+## 4️⃣ QR & 팀원 소개
 
 ![18](https://pub-cf3b9667253a490495a16433a99bd7ca.r2.dev/hansol/deulak/%E1%84%83%E1%85%B3%E1%86%AF%E1%84%85%E1%85%A1%E1%86%A8_%E1%84%8E%E1%85%AC%E1%84%8C%E1%85%A9%E1%86%BC%E1%84%87%E1%85%A1%E1%86%AF%E1%84%91%E1%85%AD-compressed-images-18.jpg)
