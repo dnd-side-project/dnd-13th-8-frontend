@@ -9,7 +9,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { Trash, Plus } from '@/assets/icons'
 import overlayUrl from '@/assets/icons/icn_overlay.svg?url'
 import { ExpandBtn, TrashBtn } from '@/assets/images'
-import { useUserSticker, useCdFinalSave } from '@/features/customize/model/useCustomize'
+import { useUserSticker, useCdSave } from '@/features/customize/model/useCustomize'
 import {
   BACKEND_TO_FRONT_THEME,
   getCurrentThemeImages,
@@ -50,8 +50,8 @@ const CustomizeStep2 = ({
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 })
   const [resizeMode, setResizeMode] = useState<'move' | 'resize' | null>(null)
 
-  const { uploadSticker, uploadLoading } = useUserSticker()
-  const { createMutation, updateMutation } = useCdFinalSave()
+  const { uploadSticker, uploadPending } = useUserSticker()
+  const { mutate, isPending: savePending } = useCdSave()
 
   useDragScroll(themeListRef as React.RefObject<HTMLElement>)
 
@@ -82,7 +82,14 @@ const CustomizeStep2 = ({
       sessionStorage.removeItem('tempTracklist')
     }
 
+    const tempBasicInfo = JSON.parse(sessionStorage.getItem('tempBasicInfo') ?? '{}')
     const payload = {
+      savePlaylistRequest: {
+        name: tempBasicInfo?.name ?? '',
+        genre: tempBasicInfo?.genre?.id ?? '',
+        isPublic: tempBasicInfo?.isPublic ?? true,
+        youTubeVideoInfo: JSON.parse(sessionStorage.getItem('tempTracklist') ?? '[]'),
+      },
       saveCdRequest: {
         cdItems: stickers.map((s) => ({
           propId: s.propId ?? 0, // 백엔드 스티커 id
@@ -97,35 +104,24 @@ const CustomizeStep2 = ({
       },
     }
 
-    if (isEditMode) {
-      updateMutation.mutate(
-        { ...payload, playlistId: Number(prevTracklist?.playlistId) },
-        {
-          onSuccess: (response) => {
-            setCurrentCdId?.(response.playlistId)
-            setCurrentStep(3)
-            removeTempData()
-          },
-          onError: (error) => {
-            console.error('CD 저장 실패:', error)
-            onSaveError(error)
-          },
-        }
-      )
-      return
-    }
-
-    createMutation.mutate(payload, {
-      onSuccess: (response) => {
-        setCurrentCdId?.(response.playlistId)
-        setCurrentStep(3)
-        removeTempData()
+    mutate(
+      {
+        payload,
+        isEditMode,
+        playlistId: isEditMode ? Number(prevTracklist?.playlistId) : null,
       },
-      onError: (error) => {
-        console.error('CD 저장 실패:', error)
-        onSaveError(error)
-      },
-    })
+      {
+        onSuccess: (response) => {
+          setCurrentCdId?.(response?.playlistId ?? null)
+          setCurrentStep(3)
+          removeTempData()
+        },
+        onError: (error) => {
+          console.error('CD 저장 실패:', error)
+          onSaveError(error)
+        },
+      }
+    )
   }
 
   // 모달 close
@@ -920,7 +916,7 @@ const CustomizeStep2 = ({
 
   return (
     <>
-      {uploadLoading && <Loading isLoading={uploadLoading} />}
+      <Loading isLoading={uploadPending || savePending} />
       <Step2Wrap>
         <StepHeader
           currentStep={currentStep}

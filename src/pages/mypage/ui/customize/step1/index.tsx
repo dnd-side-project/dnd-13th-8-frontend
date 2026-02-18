@@ -6,7 +6,7 @@ import styled from 'styled-components'
 import { v4 as uuidv4 } from 'uuid'
 
 import { CancelCircle, DownArrow, HelpCircle, Plus, PlusBlack, LinkPrimary } from '@/assets/icons'
-import { useCdTempSave } from '@/features/customize/model/useCustomize'
+import { useTracklistValidate } from '@/features/customize/model/useCustomize'
 import type { YoutubeVideoInfo } from '@/features/customize/types/customize'
 import { Divider, StepHeader, ToggleSwitch } from '@/pages/mypage/ui/components'
 import type { CustomizeStepProps } from '@/pages/mypage/ui/customize'
@@ -26,7 +26,7 @@ const CustomizeStep1 = ({
 }: CustomizeStepProps) => {
   const navigate = useNavigate()
 
-  const { mutate, isPending } = useCdTempSave()
+  const { mutate, isPending } = useTracklistValidate()
 
   const [basicInfoMap, setBasicInfoMap] = useState({
     name: isEditMode ? (prevTracklist?.playlistName ?? '') : '',
@@ -50,19 +50,24 @@ const CustomizeStep1 = ({
   // 헤더 다음 버튼 클릭
   const onHeaderNextClick = () => {
     if (isValidate()) {
+      // 1. 유튜브 api 검증
       mutate(
+        tracklist.map(({ link }) => link),
         {
-          youtubeLinkList: tracklist.map(({ link }) => link),
-          tempSaveMap: {
-            ...basicInfoMap,
-            genre: basicInfoMap.genre!.id,
-            youTubeVideoInfo: tracklist.map(({ id: _id, ...rest }) => rest),
-          },
-        },
-        {
-          onSuccess: () => {
+          onSuccess: (res) => {
+            const isInvalid = res.some((track, idx) => {
+              if (!track.valid) {
+                setTrackErrMsg(`${idx + 1}번째 영상이 비공개 상태예요. 삭제 후 다시 저장해주세요.`)
+                return true
+              }
+              return false
+            })
+            if (isInvalid) return
+
+            // 2. cd 정보 임시 저장
+            const tempTracklist = res.map(({ valid: _valid, ...rest }) => rest)
             sessionStorage.setItem('tempBasicInfo', JSON.stringify(basicInfoMap))
-            sessionStorage.setItem('tempTracklist', JSON.stringify(tracklist))
+            sessionStorage.setItem('tempTracklist', JSON.stringify(tempTracklist))
             setCurrentStep(2)
           },
           onError: (error) => {

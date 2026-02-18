@@ -27,6 +27,7 @@ const MyCdList = () => {
         totalCount={myCdList?.length ?? 0}
         currentSort={currentSort}
         onSortChange={setCurrentSort}
+        options={['RECENT', 'POPULAR']}
       />
       <CdListWrap>
         <CdAddContainer>

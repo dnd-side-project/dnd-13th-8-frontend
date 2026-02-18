@@ -10,16 +10,15 @@ export interface YoutubeVideoInfo {
   orderIndex: number
 }
 
-export type CdTempSavePayload = {
-  name: string
-  genre: MusicGenreId
-  isPublic: boolean
-  youTubeVideoInfo: YoutubeVideoInfo[]
+export type CdSavePayload = {
+  savePlaylistRequest: {
+    name: string
+    genre: MusicGenreId
+    isPublic: boolean
+    youTubeVideoInfo: YoutubeVideoInfo[]
+  }
+  saveCdRequest: CdCoverInfo
 }
-
-export type CdFinalCreatePayload = { saveCdRequest: CdCoverInfo }
-
-export type CdFinalUpdatePayload = CdFinalCreatePayload & { playlistId: number }
 
 export type CdCustomResponse = CdCoverInfo & { playlistId: number }
 

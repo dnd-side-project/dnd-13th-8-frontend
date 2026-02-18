@@ -105,7 +105,7 @@ const PageLayout = styled.div`
   display: flex;
   flex-direction: column;
   background-color: ${({ theme }) => theme.COLOR['gray-800']};
-  margin: 0 -20px;
+  margin: 0 -20px -98px -20px;
 `
 
 const sectionCommonLayout = css`
@@ -132,5 +132,4 @@ const ThirdSection = styled.section`
 const FourthSection = styled.section`
   ${sectionCommonLayout}
   padding: 16px 20px 146px 20px;
-  margin-bottom: -98px;
 `
