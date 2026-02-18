@@ -9,12 +9,7 @@ import {
   getUserStickers,
   postUserSticker,
 } from '@/features/customize/api/customize'
-import type {
-  CdSavePayload,
-  UserStickerPayload,
-  CdFinalCreatePayload,
-  CdFinalUpdatePayload,
-} from '@/features/customize/types/customize'
+import type { CdSavePayload, UserStickerPayload } from '@/features/customize/types/customize'
 
 export const useFinalCdCustom = (cdId: number) => {
   return useQuery({
@@ -40,53 +35,22 @@ export const useCdSave = () => {
     mutationFn: async ({
       payload,
       isEditMode,
+      playlistId,
     }: {
       payload: CdSavePayload
       isEditMode: boolean
+      playlistId?: number | null
     }) => {
       // 1. cd 임시 저장 후 id값 리턴
       const draftId = await postCdTempSave(payload)
 
       // 2. 리턴받은 id값을 이용해 최종 저장
-      if (isEditMode) {
-        // TODO: 수정일 때 api
-        return
+      if (isEditMode && playlistId) {
+        return postCdFinalUpdate(payload, draftId, playlistId)
       }
       return await postCdFinalCreate(payload, draftId)
     },
   })
-}
-
-export const useCdTempSave = () => {
-  return useMutation({
-    mutationKey: ['cdTempSave'],
-    mutationFn: async (payload: CdFinalCreatePayload) => {
-      return postCdTempSave(payload)
-    },
-  })
-}
-
-export const useCdFinalSave = () => {
-  // 생성
-  // const createMutation = useMutation({
-  //   mutationKey: ['cdFinalCreate'],
-  //   mutationFn: async (payload: CdFinalCreatePayload) => {
-  //     return postCdFinalCreate(payload)
-  //   },
-  // })
-
-  // 수정
-  const updateMutation = useMutation({
-    mutationKey: ['cdFinalUpdate'],
-    mutationFn: (payload: CdFinalUpdatePayload) => {
-      return postCdFinalUpdate(payload)
-    },
-  })
-
-  return {
-    // createMutation,
-    updateMutation,
-  }
 }
 
 export const useUserSticker = () => {

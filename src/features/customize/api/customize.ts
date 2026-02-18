@@ -1,8 +1,6 @@
 import type {
   YoutubeVideoInfo,
   CdSavePayload,
-  CdFinalCreatePayload,
-  CdFinalUpdatePayload,
   UserStickerPayload,
   CdFinalSaveResponse,
   CdCustomResponse,
@@ -22,13 +20,16 @@ export const postCdTempSave = (payload: CdSavePayload) => {
 }
 
 // CD 최초 저장
-export const postCdFinalCreate = (payload: CdFinalCreatePayload, draftId: string) => {
+export const postCdFinalCreate = (payload: CdSavePayload, draftId: string) => {
   return api.post<CdFinalSaveResponse>(`/main/playlist/v2/final/${draftId}`, payload)
 }
 
 // CD 수정 저장
-export const postCdFinalUpdate = (payload: CdFinalUpdatePayload) => {
-  return api.patch<CdFinalSaveResponse>('/main/playlist/final', payload)
+export const postCdFinalUpdate = (payload: CdSavePayload, draftId: string, playlistId: number) => {
+  return api.patch<CdFinalSaveResponse>(
+    `/main/playlist/v2/final/playlist/${playlistId}/draft/${draftId}`,
+    payload
+  )
 }
 
 // CD 저장 후 커스텀 데이터 조회

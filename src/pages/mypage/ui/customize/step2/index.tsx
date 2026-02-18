@@ -9,7 +9,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { Trash, Plus } from '@/assets/icons'
 import overlayUrl from '@/assets/icons/icn_overlay.svg?url'
 import { ExpandBtn, TrashBtn } from '@/assets/images'
-import { useUserSticker, useCdFinalSave, useCdSave } from '@/features/customize/model/useCustomize'
+import { useUserSticker, useCdSave } from '@/features/customize/model/useCustomize'
 import {
   BACKEND_TO_FRONT_THEME,
   getCurrentThemeImages,
@@ -51,7 +51,6 @@ const CustomizeStep2 = ({
   const [resizeMode, setResizeMode] = useState<'move' | 'resize' | null>(null)
 
   const { uploadSticker, uploadLoading } = useUserSticker()
-  const { updateMutation } = useCdFinalSave()
   const { mutate } = useCdSave()
 
   useDragScroll(themeListRef as React.RefObject<HTMLElement>)
@@ -105,29 +104,11 @@ const CustomizeStep2 = ({
       },
     }
 
-    // TODO: v2로 수정 필요
-    if (isEditMode) {
-      updateMutation.mutate(
-        { ...payload, playlistId: Number(prevTracklist?.playlistId) },
-        {
-          onSuccess: (response) => {
-            setCurrentCdId?.(response.playlistId)
-            setCurrentStep(3)
-            removeTempData()
-          },
-          onError: (error) => {
-            console.error('CD 저장 실패:', error)
-            onSaveError(error)
-          },
-        }
-      )
-      return
-    }
-
     mutate(
       {
         payload,
         isEditMode,
+        playlistId: isEditMode ? Number(prevTracklist?.playlistId) : null,
       },
       {
         onSuccess: (response) => {

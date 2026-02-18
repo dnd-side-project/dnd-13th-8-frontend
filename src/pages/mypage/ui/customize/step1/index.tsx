@@ -64,7 +64,7 @@ const CustomizeStep1 = ({
             })
 
             // 2. cd 정보 임시 저장
-            const tempTracklist = tracklist.map(({ id: _id, ...rest }) => rest)
+            const tempTracklist = res.map(({ valid: _valid, ...rest }) => rest)
             sessionStorage.setItem('tempBasicInfo', JSON.stringify(basicInfoMap))
             sessionStorage.setItem('tempTracklist', JSON.stringify(tempTracklist))
             setCurrentStep(2)
