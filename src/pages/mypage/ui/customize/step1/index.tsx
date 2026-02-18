@@ -55,13 +55,14 @@ const CustomizeStep1 = ({
         tracklist.map(({ link }) => link),
         {
           onSuccess: (res) => {
-            res.some((track, idx) => {
+            const isInvalid = res.some((track, idx) => {
               if (!track.valid) {
                 setTrackErrMsg(`${idx + 1}번째 영상이 비공개 상태예요. 삭제 후 다시 저장해주세요.`)
                 return true
               }
               return false
             })
+            if (isInvalid) return
 
             // 2. cd 정보 임시 저장
             const tempTracklist = res.map(({ valid: _valid, ...rest }) => rest)
