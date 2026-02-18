@@ -50,8 +50,8 @@ const CustomizeStep2 = ({
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 })
   const [resizeMode, setResizeMode] = useState<'move' | 'resize' | null>(null)
 
-  const { uploadSticker, uploadLoading } = useUserSticker()
-  const { mutate } = useCdSave()
+  const { uploadSticker, uploadPending } = useUserSticker()
+  const { mutate, isPending: savePending } = useCdSave()
 
   useDragScroll(themeListRef as React.RefObject<HTMLElement>)
 
@@ -916,7 +916,7 @@ const CustomizeStep2 = ({
 
   return (
     <>
-      {uploadLoading && <Loading isLoading={uploadLoading} />}
+      <Loading isLoading={uploadPending || savePending} />
       <Step2Wrap>
         <StepHeader
           currentStep={currentStep}

@@ -80,6 +80,6 @@ export const useUserSticker = () => {
   return {
     userStickerList,
     uploadSticker: uploadMutation,
-    uploadLoading: uploadMutation.isPending,
+    uploadPending: uploadMutation.isPending,
   }
 }
