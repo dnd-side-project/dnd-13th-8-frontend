@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 
 import styled from 'styled-components'
 
@@ -21,14 +21,12 @@ import {
 } from '@/assets/images'
 import { useAnonymousLogin } from '@/features/auth/model/useAuth'
 import { useAuthStore } from '@/features/auth/store/authStore'
-import { isDowntimeNow } from '@/shared/lib/isDowntimeNow'
 import { GlobalErrorModal } from '@/shared/ui'
 import NavBar, { NAV_HEIGHT } from '@/widgets/layout/NavBar'
 
 const App = () => {
   const deviceType = useDevice()
   const location = useLocation()
-  const navigate = useNavigate()
   const isMobile = deviceType === 'mobile'
 
   const { isLogin } = useAuthStore()
@@ -85,20 +83,9 @@ const App = () => {
 
   useEffect(() => {
     const { pathname } = location
-    const isDowntime = isDowntimeNow()
 
     // 네비게이션 미노출 여부 확인
     setIsNavVisible(!getHideNav(pathname))
-
-    if (isDowntime) {
-      if (pathname !== '/downtime') navigate('/downtime')
-      return
-    }
-
-    if (pathname === '/downtime') {
-      navigate('/')
-      return
-    }
 
     // 익명 토큰 발급
     if (['/login', '/login/callback'].includes(pathname)) {
@@ -216,7 +203,12 @@ const NavContainer = styled.div<{
   ${flexRowCenter}
   width: ${({ $layoutWidth }) => $layoutWidth};
   padding-bottom: ${({ $layoutBottomGap }) => $layoutBottomGap}px;
-  background: linear-gradient(to bottom, rgba(15, 16, 20, 0), rgba(15, 16, 20, 1), rgb(15, 16, 20));
+  background: linear-gradient(
+    to bottom,
+    rgba(15, 16, 20, 0) 0%,
+    rgba(15, 16, 20, 0.7) 25%,
+    rgb(15, 16, 20) 50%
+  );
 
   @media (max-width: 980px) {
     left: 50%;

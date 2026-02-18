@@ -9,12 +9,7 @@ import {
   getUserStickers,
   postUserSticker,
 } from '@/features/customize/api/customize'
-import type {
-  CdTempSavePayload,
-  UserStickerPayload,
-  CdFinalCreatePayload,
-  CdFinalUpdatePayload,
-} from '@/features/customize/types/customize'
+import type { CdSavePayload, UserStickerPayload } from '@/features/customize/types/customize'
 
 export const useFinalCdCustom = (cdId: number) => {
   return useQuery({
@@ -25,63 +20,37 @@ export const useFinalCdCustom = (cdId: number) => {
   })
 }
 
-export const useCdTempSave = () => {
+export const useTracklistValidate = () => {
   return useMutation({
-    mutationKey: ['cdTempSave'],
-    mutationFn: async ({
-      youtubeLinkList,
-      tempSaveMap,
-    }: {
-      youtubeLinkList: string[]
-      tempSaveMap: CdTempSavePayload
-    }) => {
-      const videoResArr = await postYouTubeVideoInfo(youtubeLinkList)
-      if (!videoResArr?.length) {
-        throw new Error('유튜브 영상 정보를 가져오지 못했습니다.')
-      }
-
-      const newVideoInfoList = tempSaveMap.youTubeVideoInfo.map((e) => {
-        const resMap = videoResArr.find((res) => e.link === res.link)
-        if (!resMap) throw new Error('일치하는 유튜브 영상 정보를 찾지 못했습니다.')
-        const { duration, thumbnailUrl, title } = resMap
-        return {
-          ...e,
-          duration,
-          thumbnailUrl,
-          title,
-        }
-      })
-
-      const tempSavePayload = {
-        ...tempSaveMap,
-        youTubeVideoInfo: newVideoInfoList,
-      }
-      await postCdTempSave(tempSavePayload)
+    mutationKey: ['tracklistValidate'],
+    mutationFn: (youtubeLinkList: string[]) => {
+      return postYouTubeVideoInfo(youtubeLinkList)
     },
   })
 }
 
-export const useCdFinalSave = () => {
-  // 생성
-  const createMutation = useMutation({
-    mutationKey: ['cdFinalCreate'],
-    mutationFn: (payload: CdFinalCreatePayload) => {
-      return postCdFinalCreate(payload)
+export const useCdSave = () => {
+  return useMutation({
+    mutationKey: ['cdSave'],
+    mutationFn: async ({
+      payload,
+      isEditMode,
+      playlistId,
+    }: {
+      payload: CdSavePayload
+      isEditMode: boolean
+      playlistId?: number | null
+    }) => {
+      // 1. cd 임시 저장 후 id값 리턴
+      const draftId = await postCdTempSave(payload)
+
+      // 2. 리턴받은 id값을 이용해 최종 저장
+      if (isEditMode && playlistId) {
+        return postCdFinalUpdate(payload, draftId, playlistId)
+      }
+      return await postCdFinalCreate(payload, draftId)
     },
   })
-
-  // 수정
-  const updateMutation = useMutation({
-    mutationKey: ['cdFinalUpdate'],
-    mutationFn: (payload: CdFinalUpdatePayload) => {
-      return postCdFinalUpdate(payload)
-    },
-  })
-
-  return {
-    createMutation,
-    updateMutation,
-  }
 }
 
 export const useUserSticker = () => {
@@ -111,6 +80,6 @@ export const useUserSticker = () => {
   return {
     userStickerList,
     uploadSticker: uploadMutation,
-    uploadLoading: uploadMutation.isPending,
+    uploadPending: uploadMutation.isPending,
   }
 }
