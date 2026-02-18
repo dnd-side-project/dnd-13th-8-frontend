@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 
-import { TOAST_MESSAGES, type ToastType } from '@/app/providers/ToastProvider'
 import { ToastCircle, ToastDanger } from '@/assets/icons'
+import { TOAST_MESSAGES, type ToastType } from '@/shared/config/toast'
 
 interface ToastProps {
   type: ToastType

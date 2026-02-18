@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import styled from 'styled-components'
 
-import { TOAST_MESSAGES } from '@/app/providers/ToastProvider'
+import { TOAST_MESSAGES } from '@/shared/config/toast'
 import { Toast } from '@/shared/ui'
 
 const meta: Meta<typeof Toast> = {
