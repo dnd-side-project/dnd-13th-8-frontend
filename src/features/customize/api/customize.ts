@@ -1,6 +1,6 @@
 import type {
   YoutubeVideoInfo,
-  CdTempSavePayload,
+  CdSavePayload,
   CdFinalCreatePayload,
   CdFinalUpdatePayload,
   UserStickerPayload,
@@ -17,13 +17,13 @@ export const postYouTubeVideoInfo = (payload: string[]) => {
 }
 
 // CD 임시 저장: CD 최종 생성 전 백엔드 세션에 임시 저장
-export const postCdTempSave = (payload: CdTempSavePayload) => {
-  return api.post<null>('/main/playlist/temp', payload)
+export const postCdTempSave = (payload: CdSavePayload) => {
+  return api.post<string>('/main/playlist/v2/temp', payload)
 }
 
 // CD 최초 저장
-export const postCdFinalCreate = (payload: CdFinalCreatePayload) => {
-  return api.post<CdFinalSaveResponse>('/main/playlist/final', payload)
+export const postCdFinalCreate = (payload: CdFinalCreatePayload, draftId: string) => {
+  return api.post<CdFinalSaveResponse>(`/main/playlist/v2/final/${draftId}`, payload)
 }
 
 // CD 수정 저장

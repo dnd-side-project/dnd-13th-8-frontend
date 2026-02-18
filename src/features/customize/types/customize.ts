@@ -17,9 +17,17 @@ export type CdTempSavePayload = {
   youTubeVideoInfo: YoutubeVideoInfo[]
 }
 
-export type CdFinalCreatePayload = { saveCdRequest: CdCoverInfo }
+export type CdFinalCreatePayload = {
+  savePlaylistRequest: CdTempSavePayload
+  saveCdRequest: CdCoverInfo
+}
 
 export type CdFinalUpdatePayload = CdFinalCreatePayload & { playlistId: number }
+
+export type CdSavePayload = {
+  savePlaylistRequest: CdTempSavePayload
+  saveCdRequest: CdCoverInfo
+}
 
 export type CdCustomResponse = CdCoverInfo & { playlistId: number }
 

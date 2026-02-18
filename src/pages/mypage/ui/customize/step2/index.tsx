@@ -9,7 +9,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { Trash, Plus } from '@/assets/icons'
 import overlayUrl from '@/assets/icons/icn_overlay.svg?url'
 import { ExpandBtn, TrashBtn } from '@/assets/images'
-import { useUserSticker, useCdFinalSave } from '@/features/customize/model/useCustomize'
+import { useUserSticker, useCdFinalSave, useCdSave } from '@/features/customize/model/useCustomize'
 import {
   BACKEND_TO_FRONT_THEME,
   getCurrentThemeImages,
@@ -51,7 +51,8 @@ const CustomizeStep2 = ({
   const [resizeMode, setResizeMode] = useState<'move' | 'resize' | null>(null)
 
   const { uploadSticker, uploadLoading } = useUserSticker()
-  const { createMutation, updateMutation } = useCdFinalSave()
+  const { updateMutation } = useCdFinalSave()
+  const { mutate } = useCdSave()
 
   useDragScroll(themeListRef as React.RefObject<HTMLElement>)
 
@@ -82,7 +83,14 @@ const CustomizeStep2 = ({
       sessionStorage.removeItem('tempTracklist')
     }
 
+    const tempBasicInfo = JSON.parse(sessionStorage.getItem('tempBasicInfo') ?? '{}')
     const payload = {
+      savePlaylistRequest: {
+        name: tempBasicInfo?.name ?? '',
+        genre: tempBasicInfo?.genre?.id ?? '',
+        isPublic: tempBasicInfo?.isPublic ?? true,
+        youTubeVideoInfo: JSON.parse(sessionStorage.getItem('tempTracklist') ?? '[]'),
+      },
       saveCdRequest: {
         cdItems: stickers.map((s) => ({
           propId: s.propId ?? 0, // 백엔드 스티커 id
@@ -97,6 +105,7 @@ const CustomizeStep2 = ({
       },
     }
 
+    // TODO: v2로 수정 필요
     if (isEditMode) {
       updateMutation.mutate(
         { ...payload, playlistId: Number(prevTracklist?.playlistId) },
@@ -115,17 +124,23 @@ const CustomizeStep2 = ({
       return
     }
 
-    createMutation.mutate(payload, {
-      onSuccess: (response) => {
-        setCurrentCdId?.(response.playlistId)
-        setCurrentStep(3)
-        removeTempData()
+    mutate(
+      {
+        payload,
+        isEditMode,
       },
-      onError: (error) => {
-        console.error('CD 저장 실패:', error)
-        onSaveError(error)
-      },
-    })
+      {
+        onSuccess: (response) => {
+          setCurrentCdId?.(response?.playlistId ?? null)
+          setCurrentStep(3)
+          removeTempData()
+        },
+        onError: (error) => {
+          console.error('CD 저장 실패:', error)
+          onSaveError(error)
+        },
+      }
+    )
   }
 
   // 모달 close
