@@ -14,7 +14,7 @@ const LiveInfo = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setParticipantCount(count)
-      setIsOnAir(true)
+      setIsOnAir(count > 0)
     }, 500)
 
     return () => clearTimeout(timer)
