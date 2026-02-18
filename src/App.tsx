@@ -203,7 +203,12 @@ const NavContainer = styled.div<{
   ${flexRowCenter}
   width: ${({ $layoutWidth }) => $layoutWidth};
   padding-bottom: ${({ $layoutBottomGap }) => $layoutBottomGap}px;
-  background: linear-gradient(to bottom, rgba(15, 16, 20, 0), rgba(15, 16, 20, 1), rgb(15, 16, 20));
+  background: linear-gradient(
+    to bottom,
+    rgba(15, 16, 20, 0) 0%,
+    rgba(15, 16, 20, 0.7) 25%,
+    rgb(15, 16, 20) 50%
+  );
 
   @media (max-width: 980px) {
     left: 50%;
