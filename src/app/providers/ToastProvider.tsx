@@ -2,19 +2,8 @@ import { createContext, useCallback, useContext, useState, type ReactNode } from
 
 import styled from 'styled-components'
 
+import { type ToastType, TOAST_MESSAGES } from '@/shared/config/toast'
 import { Toast } from '@/shared/ui'
-
-type ToastType = 'LINK' | 'IMAGE' | 'REPORT' | 'COMMENT' | 'AUTH_EXPIRED' | 'CD_DELETE' | 'SUBMIT'
-
-const TOAST_MESSAGES: Record<ToastType, string> = {
-  LINK: '링크가 복사됐어요',
-  IMAGE: '이미지가 저장됐어요',
-  REPORT: '신고가 접수됐어요',
-  COMMENT: '댓글이 삭제됐어요',
-  AUTH_EXPIRED: '로그인 정보가 만료되었어요',
-  CD_DELETE: 'CD가 삭제됐어요',
-  SUBMIT: '의견이 제출됐어요!',
-}
 
 type ToastContextType = {
   toast: (type: ToastType) => void
@@ -35,7 +24,7 @@ export const ToastProvider = ({ children }: { children: ReactNode }) => {
       {children}
       {toastState && (
         <ToastContainer>
-          <Toast message={toastState.message} />
+          <Toast type={toastState.type} />
         </ToastContainer>
       )}
     </ToastContext.Provider>

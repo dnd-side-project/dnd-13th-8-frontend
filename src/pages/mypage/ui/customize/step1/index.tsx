@@ -254,7 +254,7 @@ const CustomizeStep1 = ({
               type="text"
               placeholder="CD명"
               value={basicInfoMap.name}
-              maxLength={24}
+              maxLength={40}
               onChange={(e) => setBasicInfoMap((prev) => ({ ...prev, name: e.target.value }))}
               required
             />

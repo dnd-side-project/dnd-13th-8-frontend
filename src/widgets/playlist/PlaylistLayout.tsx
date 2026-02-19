@@ -1,12 +1,13 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import styled from 'styled-components'
+import styled, { keyframes, css } from 'styled-components'
 
 import type { PlaylistDetail } from '@/entities/playlist'
+import { FollowButton } from '@/features/follow'
 import { useDevice } from '@/shared/lib/useDevice'
 import { flexColCenter } from '@/shared/styles/mixins'
-import { Button, Cd, Header, LiveInfo } from '@/shared/ui'
+import { Cd, Header, LiveInfo, Profile } from '@/shared/ui'
 import { ActionBar, PlayButton, ProgressBar } from '@/widgets/playlist'
 
 interface PlaylistSlideProps {
@@ -21,7 +22,6 @@ interface PlaylistSlideProps {
   playerRef: React.RefObject<YT.Player | null>
   isMuted?: boolean | null
   setIsMuted?: React.Dispatch<React.SetStateAction<boolean | null>>
-  type?: 'My' | 'Discover'
 }
 
 const PlaylistLayout = ({
@@ -30,13 +30,23 @@ const PlaylistLayout = ({
   isPlaying,
   onPlayPause,
   onSelectTrack,
-  type = 'Discover',
 }: PlaylistSlideProps) => {
   const [showPlayButton, setShowPlayButton] = useState(false)
-  const navigate = useNavigate()
+  const [isOverflow, setIsOverflow] = useState(false)
 
+  const navigate = useNavigate()
   const deviceType = useDevice()
   const isMobile = deviceType === 'mobile'
+
+  const title = currentPlaylist?.playlistName ?? ''
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const el = containerRef.current
+    if (!el) return
+
+    setIsOverflow(el.scrollWidth > el.clientWidth)
+  }, [title])
 
   const handleProgressClick = useCallback(
     (trackIndex: number, seconds: number) => {
@@ -58,11 +68,6 @@ const PlaylistLayout = ({
       <Header center={<span>둘러보기</span>} />
       <Container>
         <LiveInfo />
-        {type === 'My' && (
-          <Button size="S" state="primary" onClick={() => navigate('/mypage/customize')}>
-            꾸미기
-          </Button>
-        )}
       </Container>
       <Wrapper>
         <CdContainer>
@@ -86,9 +91,20 @@ const PlaylistLayout = ({
           />
         </ActionBarContainer>
       </Wrapper>
+      <CreatorInfo>
+        <CreatorButton onClick={() => navigate(`/${currentPlaylist?.creatorId}`)}>
+          <Profile size="S" profileUrl={currentPlaylist?.creatorProfileImageUrl} />
+          <Creator>{currentPlaylist?.creatorNickname ?? ''}</Creator>
+        </CreatorButton>
+        <FollowButton isFollowing={false} variant="small" />
+      </CreatorInfo>
 
-      <Title>{currentPlaylist?.playlistName ?? ''}</Title>
-      <Creator>{currentPlaylist?.creatorNickname ?? ''}</Creator>
+      <TitleContainer ref={containerRef}>
+        <MarqueeTitle $animate={isOverflow}>
+          <Title>{title}</Title>
+          {isOverflow && <Title aria-hidden>{title}</Title>}
+        </MarqueeTitle>
+      </TitleContainer>
 
       <ProgressBarWrapper>
         <ProgressBar
@@ -130,14 +146,44 @@ const CdSpinner = styled.div<{ $isPlaying: boolean }>`
   }
 `
 
-const Title = styled.p`
+const TitleContainer = styled.div`
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  margin-top: 10px;
+  position: relative;
+`
+
+const marqueeAnim = keyframes`
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+`
+
+const MarqueeTitle = styled.div<{
+  $animate: boolean
+}>`
+  display: flex;
+  width: max-content;
+
+  ${({ $animate }) =>
+    $animate &&
+    css`
+      animation: ${marqueeAnim} 20s linear infinite;
+    `}
+`
+
+const Title = styled.span`
   ${({ theme }) => theme.FONT.headline1};
+  color: ${({ theme }) => theme.COLOR['gray-10']};
+  flex-shrink: 0;
+  margin-right: 8px;
 `
 
 const Creator = styled.p`
   ${({ theme }) => theme.FONT['body2-normal']};
-  color: ${({ theme }) => theme.COLOR['gray-300']};
+  color: ${({ theme }) => theme.COLOR['gray-100']};
 `
+
 const ActionBarContainer = styled.div<{ $isMobile?: boolean }>`
   display: flex;
   justify-content: flex-end;
@@ -170,4 +216,18 @@ const ProgressBarWrapper = styled.div`
   position: relative;
   z-index: ${({ theme }) => theme.Z_INDEX.topLayer};
   padding-top: 32px;
+`
+
+const CreatorInfo = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+  z-index: ${({ theme }) => theme.Z_INDEX.topLayer};
+`
+
+const CreatorButton = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 8px;
 `

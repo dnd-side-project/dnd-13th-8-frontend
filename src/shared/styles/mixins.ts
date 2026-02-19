@@ -24,3 +24,10 @@ export const myCdButton = css`
   color: ${({ theme }) => theme.COLOR['gray-100']};
   ${flexRowCenter}
 `
+
+export const ellipsisOneLine = css`
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`

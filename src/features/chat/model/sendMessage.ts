@@ -38,7 +38,7 @@ export const useChatSocket = (roomId: string) => {
         Authorization: `Bearer ${authToken}`,
       },
 
-      debug: (str) => console.log('[STOMP]', str),
+      debug: import.meta.env.DEV ? (str) => console.log('[STOMP]', str) : () => {},
     })
 
     client.onConnect = async () => {
