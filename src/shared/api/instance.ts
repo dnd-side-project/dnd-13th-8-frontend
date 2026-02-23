@@ -38,6 +38,7 @@ axiosInstance.interceptors.response.use(
     const { isLogin, setLogout } = useAuthStore.getState()
     const currentPath = window.location.pathname
 
+    // * QA용 에러 로그 모달, 필요 시 주석 해제하여 사용(↓)
     // const { openModal } = useGlobalModalStore.getState()
     const msg = error.response?.data?.message ?? ''
 
@@ -49,7 +50,7 @@ axiosInstance.interceptors.response.use(
           localStorage.setItem('show_expired_toast', 'true')
           window.location.replace('/login')
         }
-        return
+        return Promise.reject(error)
       }
 
       // 비회원 → 익명 토큰 재발급 (로그인/콜백 페이지는 제외)

@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom'
 
 import { useMyCdActions } from '@/entities/playlist/model/useMyCd'
 import type { PlaylistDetail } from '@/entities/playlist/types/playlist'
+import { useAuthStore } from '@/features/auth/store/authStore'
 import type { CUSTOMIZE_STEP } from '@/features/customize/types/customize'
 import CustomizeStep1 from '@/pages/customize/step1'
 import CustomizeStep2 from '@/pages/customize/step2'
@@ -19,12 +20,14 @@ export interface CustomizeStepProps {
   setModal: (modal: ModalProps) => void
   isEditMode: boolean
   prevTracklist?: PlaylistDetail
+  isLogin: boolean
 }
 
 const Customize = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const { cdId } = location?.state ?? { cdId: null }
+  const { isLogin } = useAuthStore()
 
   const [currentStep, setCurrentStep] = useState<CUSTOMIZE_STEP>(1)
   const [currentCdId, setCurrentCdId] = useState<number | null>(null)
@@ -57,6 +60,14 @@ const Customize = () => {
     checkCoachMarkExpiry()
   }, [])
 
+  useEffect(() => {
+    const tempCustomizeData = sessionStorage.getItem('tempCustomizeData')
+    if (tempCustomizeData && isLogin) {
+      const { currentStep: savedStep } = JSON.parse(tempCustomizeData)
+      if (savedStep) setCurrentStep(savedStep)
+    }
+  }, [isLogin])
+
   const {
     tracklist: prevTracklist,
     isLoading,
@@ -72,17 +83,19 @@ const Customize = () => {
 
   return (
     <>
-      {currentStep === 1 && showCoachmark ? (
-        <CustomizeCoachMark setShowCoachmark={setShowCoachmark} />
-      ) : (
-        <CustomizeStep1
-          currentStep={currentStep}
-          setCurrentStep={setCurrentStep}
-          setModal={setModal}
-          isEditMode={isEditMode}
-          prevTracklist={prevTracklist}
-        />
-      )}
+      {currentStep === 1 &&
+        (showCoachmark ? (
+          <CustomizeCoachMark setShowCoachmark={setShowCoachmark} />
+        ) : (
+          <CustomizeStep1
+            currentStep={currentStep}
+            setCurrentStep={setCurrentStep}
+            setModal={setModal}
+            isEditMode={isEditMode}
+            prevTracklist={prevTracklist}
+            isLogin={isLogin}
+          />
+        ))}
 
       {currentStep === 2 && (
         <CustomizeStep2
@@ -92,6 +105,7 @@ const Customize = () => {
           setModal={setModal}
           isEditMode={isEditMode}
           prevTracklist={prevTracklist}
+          isLogin={isLogin}
         />
       )}
 

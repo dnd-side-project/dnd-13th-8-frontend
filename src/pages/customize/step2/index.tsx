@@ -1,4 +1,5 @@
 import { useState, useMemo, useRef, useEffect } from 'react'
+import { useNavigate, useLocation } from 'react-router-dom'
 
 import { useQueryClient } from '@tanstack/react-query'
 import type { DefaultError } from '@tanstack/react-query'
@@ -9,6 +10,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { Trash, Plus } from '@/assets/icons'
 import overlayUrl from '@/assets/icons/icn_overlay.svg?url'
 import { ExpandBtn, TrashBtn } from '@/assets/images'
+import { startKakaoLogin } from '@/features/auth/lib/kakoaLogin'
 import { THEME_PROP_ID_OFFSET } from '@/features/customize/constants/customize'
 import {
   BACKEND_TO_FRONT_THEME,
@@ -35,8 +37,11 @@ const CustomizeStep2 = ({
   setModal,
   isEditMode,
   prevTracklist,
+  isLogin,
 }: CustomizeStepProps) => {
   const queryClient = useQueryClient()
+  const navigate = useNavigate()
+  const location = useLocation()
 
   const fileInputRef = useRef<HTMLInputElement>(null)
   const cdContainerRef = useRef<HTMLCanvasElement>(null)
@@ -77,6 +82,58 @@ const CustomizeStep2 = ({
 
   // 헤더 다음 버튼 클릭
   const onHeaderNextClick = () => {
+    if (!isLogin) {
+      sessionStorage.setItem(
+        'tempCustomizeData',
+        JSON.stringify({
+          stickers,
+          currentStep,
+        })
+      )
+      setModal({
+        isOpen: true,
+        title: '로그인 후 이용할 수 있어요',
+        description: '지금 만든 CD를 저장하려면 로그인이 필요해요',
+        ctaType: 'double',
+        confirmText: '로그인하기',
+        cancelText: '다음에 하기',
+        onClose: () => null,
+        onCancel: onModalClose,
+        onConfirm: () => {
+          startKakaoLogin(location.pathname, 'SAVE_CD')
+          onModalClose()
+        },
+      })
+      return
+    }
+
+    onSaveCd()
+  }
+
+  // 모달 close
+  const onModalClose = () => {
+    setModal({ isOpen: false } as ModalProps)
+  }
+
+  // step1으로 랜딩
+  const onSessionExpired = () => {
+    const moveToStep1 = () => {
+      setModal({ isOpen: false } as ModalProps)
+      setCurrentStep(1)
+    }
+    setModal({
+      isOpen: true,
+      title: '트랙리스트 임시 저장 시간이 만료되었어요',
+      description: '이전 페이지로 이동할게요',
+      ctaType: 'single',
+      confirmText: '확인',
+      onClose: moveToStep1,
+      onConfirm: moveToStep1,
+    })
+  }
+
+  // CD 저장
+  const onSaveCd = () => {
     const removeTempData = () => {
       sessionStorage.removeItem('tempBasicInfo')
       sessionStorage.removeItem('tempTracklist')
@@ -122,28 +179,6 @@ const CustomizeStep2 = ({
         },
       }
     )
-  }
-
-  // 모달 close
-  const onModalClose = () => {
-    setModal({ isOpen: false } as ModalProps)
-  }
-
-  // step1으로 랜딩
-  const onSessionExpired = () => {
-    const moveToStep1 = () => {
-      setModal({ isOpen: false } as ModalProps)
-      setCurrentStep(1)
-    }
-    setModal({
-      isOpen: true,
-      title: '트랙리스트 임시 저장 시간이 만료되었어요',
-      description: '이전 페이지로 이동할게요',
-      ctaType: 'single',
-      confirmText: '확인',
-      onClose: moveToStep1,
-      onConfirm: moveToStep1,
-    })
   }
 
   // 저장 시 에러 핸들링
@@ -908,6 +943,60 @@ const CustomizeStep2 = ({
       }
     })
   }, [currentThemeId, stickerUrls])
+
+  // 로그인 후 돌아왔을 때 이전 데이터 복구
+  useEffect(() => {
+    const tempCustomizeData = sessionStorage.getItem('tempCustomizeData')
+    if (!tempCustomizeData) return
+
+    const { stickers: savedStickers } = JSON.parse(tempCustomizeData)
+
+    if (savedStickers?.length > 0) {
+      let loadedCount = 0
+
+      // 저장된 모든 스티커의 이미지를 미리 로드
+      savedStickers.forEach((sticker: StickerInfoType) => {
+        // 이미 캐시에 있다면 카운트만 증가
+        if (imageCache.current[sticker.src]) {
+          loadedCount++
+          if (loadedCount === savedStickers.length) {
+            setStickers(savedStickers)
+          }
+          return
+        }
+
+        // 캐시에 없다면 새로 로드
+        const img = new Image()
+        img.onload = () => {
+          imageCache.current[sticker.src] = img
+          loadedCount++
+          // 모든 이미지가 로드되었을 때만 상태 업데이트 → drawStickers 호출됨
+          if (loadedCount === savedStickers.length) {
+            setStickers(savedStickers)
+          }
+        }
+        img.onerror = () => {
+          loadedCount++
+          if (loadedCount === savedStickers.length) {
+            setStickers(savedStickers)
+          }
+        }
+        img.src = sticker.src
+      })
+    }
+
+    sessionStorage.removeItem('tempCustomizeData')
+  }, [isLogin])
+
+  // 비로그인 → 로그인으로 자동 저장 요청 있을 경우 저장 실행
+  useEffect(() => {
+    const state = location.state as { action?: string } | null
+    if (isLogin && state?.action === 'SAVE_CD') {
+      // 중복 실행 방지를 위해 location state 초기화
+      navigate(location.pathname, { replace: true, state: {} })
+      onSaveCd()
+    }
+  }, [isLogin, stickers])
 
   // stickers가 변경될 때마다 다시 그리기
   useEffect(() => {

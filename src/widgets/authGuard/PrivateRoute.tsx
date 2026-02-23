@@ -29,7 +29,7 @@ const PrivateRoute = ({ children }: PrivateRouteProps) => {
     return (
       <Modal
         isOpen={isModalOpen}
-        title="로그인이 필요한 서비스입니다"
+        title="로그인 후 이용할 수 있어요"
         ctaType="double"
         confirmText="로그인하기"
         cancelText="다음에 하기"

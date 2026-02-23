@@ -22,6 +22,7 @@ const CustomizeStep1 = ({
   setModal,
   isEditMode,
   prevTracklist,
+  isLogin,
 }: CustomizeStepProps) => {
   const navigate = useNavigate()
 
@@ -239,7 +240,7 @@ const CustomizeStep1 = ({
       />
 
       <BasicInfoEditorWrap>
-        <BasicInfoContainer>
+        <BasicInfoContainer $isLogin={isLogin}>
           <Cd variant="lg" stickers={prevTracklist?.cdResponse?.cdItems ?? []} />
           <BasicInfoBox>
             <GenreDropdown
@@ -260,14 +261,16 @@ const CustomizeStep1 = ({
           </BasicInfoBox>
         </BasicInfoContainer>
 
-        <PublicControler>
-          <span aria-hidden="true"> {basicInfoMap.isPublic ? '공개' : '비공개'}</span>
-          <ToggleSwitch
-            aria-label="CD 공개 여부"
-            isOn={basicInfoMap.isPublic}
-            setIsOn={(isOn) => setBasicInfoMap((prev) => ({ ...prev, isPublic: isOn }))}
-          />
-        </PublicControler>
+        {isLogin && (
+          <PublicControler>
+            <span aria-hidden="true"> {basicInfoMap.isPublic ? '공개' : '비공개'}</span>
+            <ToggleSwitch
+              aria-label="CD 공개 여부"
+              isOn={basicInfoMap.isPublic}
+              setIsOn={(isOn) => setBasicInfoMap((prev) => ({ ...prev, isPublic: isOn }))}
+            />
+          </PublicControler>
+        )}
       </BasicInfoEditorWrap>
 
       <Divider />
@@ -380,7 +383,8 @@ const BasicInfoEditorWrap = styled.section`
   margin-top: 16px;
 `
 
-const BasicInfoContainer = styled.div`
+const BasicInfoContainer = styled.div<{ $isLogin: boolean }>`
+  margin-bottom: ${({ $isLogin }) => !$isLogin && '40px'};
   display: grid;
   grid-template-columns: auto 1fr;
   grid-template-rows: 1fr;
