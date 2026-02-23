@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 
 import { usePlaylistDetail } from '@/entities/playlist'
 import { useMyLikedCdList } from '@/entities/playlist/model/useMyCd'
-import CdViewerLayout from '@/pages/feed/CdViewerLayout'
+import { CdViewerLayout } from '@/pages/feed/ui'
 import { Loading } from '@/shared/ui'
 
 const Likes = () => {

@@ -2,7 +2,7 @@ import { useEffect, useCallback, useState, useMemo } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
 import { useMyCdActions, useMyCdList } from '@/entities/playlist/model/useMyCd'
-import CdViewerLayout from '@/pages/feed/CdViewerLayout'
+import { CdViewerLayout } from '@/pages/feed/ui'
 import { Loading } from '@/shared/ui'
 
 const Cds = () => {
