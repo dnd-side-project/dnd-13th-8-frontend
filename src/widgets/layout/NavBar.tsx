@@ -61,13 +61,15 @@ export default NavBar
 const NavButtonBox = styled.nav`
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-around;
   gap: 8px;
+  flex: 1;
+  margin: 0 20px;
   padding: 11px 20px;
   background: linear-gradient(to bottom, rgba(36, 44, 50, 0.4) 0%, rgba(36, 44, 50, 1) 100%);
   border: 0.5px solid rgba(204, 255, 250, 0.2);
   border-radius: 999px;
-  width: 335px;
+  max-width: 335px;
   height: ${NAV_HEIGHT}px;
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
@@ -80,7 +82,6 @@ const NavItem = styled.div<{ $active?: boolean }>`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 68px;
   gap: 4px;
   color: ${({ theme, $active }) =>
     $active ? theme.COLOR['primary-normal'] : theme.COLOR['gray-100']};
