@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 
 import { useMyCdActions } from '@/entities/playlist/model/useMyCd'
@@ -7,6 +7,7 @@ import type { CUSTOMIZE_STEP } from '@/features/customize/types/customize'
 import CustomizeStep1 from '@/pages/customize/step1'
 import CustomizeStep2 from '@/pages/customize/step2'
 import CustomizeStep3 from '@/pages/customize/step3'
+import { CustomizeCoachMark } from '@/pages/customize/ui'
 import { Loading, Modal } from '@/shared/ui'
 import type { ModalProps } from '@/shared/ui/Modal'
 
@@ -28,6 +29,7 @@ const Customize = () => {
   const [currentStep, setCurrentStep] = useState<CUSTOMIZE_STEP>(1)
   const [currentCdId, setCurrentCdId] = useState<number | null>(null)
   const [isEditMode] = useState<boolean>(!!cdId && Number(cdId) > 0)
+  const [showCoachmark, setShowCoachmark] = useState(false)
 
   const [modal, setModal] = useState<ModalProps>({
     isOpen: false,
@@ -45,6 +47,16 @@ const Customize = () => {
     },
   })
 
+  useEffect(() => {
+    const checkCoachMarkExpiry = () => {
+      const expiry = localStorage.getItem('customizeCoachMarkExpiry')
+      if (!expiry || Date.now() > Number(expiry)) {
+        setShowCoachmark(true)
+      }
+    }
+    checkCoachMarkExpiry()
+  }, [])
+
   const {
     tracklist: prevTracklist,
     isLoading,
@@ -60,7 +72,9 @@ const Customize = () => {
 
   return (
     <>
-      {currentStep === 1 && (
+      {currentStep === 1 && showCoachmark ? (
+        <CustomizeCoachMark setShowCoachmark={setShowCoachmark} />
+      ) : (
         <CustomizeStep1
           currentStep={currentStep}
           setCurrentStep={setCurrentStep}
