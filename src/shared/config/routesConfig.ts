@@ -4,15 +4,16 @@ import type { ComponentType, LazyExoticComponent } from 'react'
 import RedirectToShuffle from '@/pages/discover/ui/RedirectToShuffle'
 
 const HomePage = lazy(() => import('@/pages/home'))
-const MypageLayout = lazy(() => import('@/pages/mypage/ui/MypageLayout'))
-const Mypage = lazy(() => import('@/pages/mypage/ui/main'))
-const Customize = lazy(() => import('@/pages/mypage/ui/customize'))
-const MypageTracklist = lazy(() => import('@/pages/mypage/ui/tracklist'))
-const Setting = lazy(() => import('@/pages/mypage/ui/setting'))
-const Terms = lazy(() => import('@/pages/mypage/ui/terms'))
-const Privacy = lazy(() => import('@/pages/mypage/ui/privacy'))
-const Unregister = lazy(() => import('@/pages/mypage/ui/unregister'))
-const Notification = lazy(() => import('@/pages/mypage/ui/notification'))
+const MypageLayout = lazy(() => import('@/pages/mypage/MypageLayout'))
+const Mypage = lazy(() => import('@/pages/mypage/main'))
+const CustomizeLayout = lazy(() => import('@/pages/customize/CustomizeLayout'))
+const CustomizePage = lazy(() => import('@/pages/customize'))
+const MypageTracklist = lazy(() => import('@/pages/mypage/tracklist'))
+const Setting = lazy(() => import('@/pages/mypage/setting'))
+const Terms = lazy(() => import('@/pages/mypage/terms'))
+const Privacy = lazy(() => import('@/pages/mypage/privacy'))
+const Unregister = lazy(() => import('@/pages/mypage/unregister'))
+const Notification = lazy(() => import('@/pages/mypage/notification'))
 const SearchPage = lazy(() => import('@/pages/search'))
 const SearchResult = lazy(() => import('@/pages/search/SearchResultPage'))
 const DiscoverLayout = lazy(() => import('@/pages/discover/DiscoverLayout'))
@@ -73,6 +74,16 @@ export const routesConfig: RouteConfig[] = [
     ],
   },
 
+  // CD 커스터마이즈
+  {
+    path: '/customize',
+    component: CustomizeLayout,
+    hideNav: true,
+    isPrivate: false,
+    isNotSuspense: false,
+    children: [{ path: '', component: CustomizePage }],
+  },
+
   // 마이페이지
   {
     path: '/mypage',
@@ -82,7 +93,7 @@ export const routesConfig: RouteConfig[] = [
     isNotSuspense: true,
     children: [
       { path: '', component: Mypage, hideNav: false, isNotSuspense: false },
-      { path: 'customize', component: Customize, isNotSuspense: false },
+      { path: 'customize', component: CustomizePage, isNotSuspense: false },
       { path: ':id/tracklist', component: MypageTracklist, hideNav: false },
       { path: 'setting', component: Setting },
       { path: 'terms', component: Terms },
