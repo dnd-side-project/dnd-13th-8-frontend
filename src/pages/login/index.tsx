@@ -6,7 +6,7 @@ import styled from 'styled-components'
 import { useToast } from '@/app/providers'
 import { Kakao } from '@/assets/icons'
 import { LoginBg as LoginBgImg, LoginContent as LoginContentImg } from '@/assets/images'
-import { startKakaoLogin } from '@/features/auth/lib/kakoaLogin'
+import { startKakaoLogin } from '@/features/auth/lib/kakaoLogin'
 import { useAuthStore } from '@/features/auth/store/authStore'
 import { flexColCenter, flexRowCenter } from '@/shared/styles/mixins'
 
