@@ -5,26 +5,27 @@ import styled, { css } from 'styled-components'
 
 import { Add, Tick } from '@/assets/icons'
 import { useAuthStore } from '@/features/auth/store/authStore'
+import { useFollow } from '@/features/follow'
 import { flexRowCenter } from '@/shared/styles/mixins'
 import { Modal } from '@/shared/ui'
 
 type Variant = 'default' | 'small' | 'wide'
 
 interface FollowButtonProps {
-  isFollowing: boolean
-  userId?: string
+  userId: string
   variant?: Variant
 }
 
-const FollowButton = ({ isFollowing, variant = 'default' }: FollowButtonProps) => {
+const FollowButton = ({ userId, variant = 'default' }: FollowButtonProps) => {
   const navigate = useNavigate()
   const { isLogin } = useAuthStore()
-  const [following, setFollowing] = useState(isFollowing)
   const [isModalOpen, setIsModalOpen] = useState(false)
+
+  const { isFollowing, toggleFollow } = useFollow(userId)
 
   const handleFollowClick = () => {
     if (isLogin) {
-      setFollowing((prev) => !prev)
+      toggleFollow()
     } else {
       setIsModalOpen(true)
     }
@@ -32,9 +33,9 @@ const FollowButton = ({ isFollowing, variant = 'default' }: FollowButtonProps) =
 
   return (
     <>
-      <Button $variant={variant} $following={following} onClick={handleFollowClick}>
-        {following ? <Tick /> : <Add />}
-        {following ? '팔로잉' : '팔로우'}
+      <Button $variant={variant} $isFollowing={isFollowing} onClick={handleFollowClick}>
+        {isFollowing ? <Tick /> : <Add />}
+        {isFollowing ? '팔로잉' : '팔로우'}
       </Button>
 
       {isModalOpen && (
@@ -61,18 +62,18 @@ const FollowButton = ({ isFollowing, variant = 'default' }: FollowButtonProps) =
 export default FollowButton
 
 const variants = {
-  default: css<{ $following: boolean }>`
+  default: css<{ $isFollowing: boolean }>`
     padding: 5px 12px;
     max-height: 30px;
     border-radius: 99px;
     ${({ theme }) => theme.FONT['body2-normal']};
     gap: 2px;
 
-    background: ${({ theme, $following }) =>
-      $following ? theme.COLOR['gray-600'] : theme.COLOR['primary-normal']};
+    background: ${({ theme, $isFollowing }) =>
+      $isFollowing ? theme.COLOR['gray-600'] : theme.COLOR['primary-normal']};
 
-    color: ${({ theme, $following }) =>
-      $following ? theme.COLOR['primary-normal'] : theme.COLOR['gray-600']};
+    color: ${({ theme, $isFollowing }) =>
+      $isFollowing ? theme.COLOR['primary-normal'] : theme.COLOR['gray-600']};
   `,
 
   small: css`
@@ -86,7 +87,7 @@ const variants = {
     gap: 2px;
   `,
 
-  wide: css<{ $following: boolean }>`
+  wide: css<{ $isFollowing: boolean }>`
     width: 100%;
     max-height: 44px;
     border-radius: 10px;
@@ -94,15 +95,15 @@ const variants = {
     ${({ theme }) => theme.FONT['body2-normal']};
     gap: 4px;
 
-    background: ${({ theme, $following }) =>
-      $following ? theme.COLOR['gray-600'] : theme.COLOR['primary-normal']};
+    background: ${({ theme, $isFollowing }) =>
+      $isFollowing ? theme.COLOR['gray-600'] : theme.COLOR['primary-normal']};
 
-    color: ${({ theme, $following }) =>
-      $following ? theme.COLOR['primary-normal'] : theme.COLOR['gray-600']};
+    color: ${({ theme, $isFollowing }) =>
+      $isFollowing ? theme.COLOR['primary-normal'] : theme.COLOR['gray-600']};
   `,
 }
 
-const Button = styled.button<{ $variant: Variant; $following: boolean }>`
+const Button = styled.button<{ $variant: Variant; $isFollowing: boolean }>`
   ${flexRowCenter}
   ${({ $variant }) => variants[$variant]}
 

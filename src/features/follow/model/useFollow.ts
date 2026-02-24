@@ -1,48 +1,48 @@
-import { useState } from 'react'
-
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 
 import { postFollow, deleteFollow, getFollowStatus } from '@/features/follow/api/follow'
 
-const useFollow = (playlistId: number, initialIsFollowing: boolean) => {
+const useFollow = (userId: string) => {
   const queryClient = useQueryClient()
-  const [isFollowing, setIsFollowing] = useState(initialIsFollowing)
+
+  const { data } = useQuery({
+    queryKey: ['followStatus', userId],
+    queryFn: () => getFollowStatus(userId),
+    enabled: !!userId,
+  })
 
   const followMutation = useMutation({
-    mutationFn: (playlistId: number) => postFollow(playlistId),
+    mutationFn: () => postFollow(userId),
     onSuccess: () => {
-      setIsFollowing(true)
-      queryClient.invalidateQueries({ queryKey: ['playlistDetail', playlistId] })
+      queryClient.invalidateQueries({ queryKey: ['followStatus', userId] })
     },
   })
 
   const unfollowMutation = useMutation({
-    mutationFn: (playlistId: number) => deleteFollow(playlistId),
+    mutationFn: () => deleteFollow(userId),
     onSuccess: () => {
-      setIsFollowing(false)
-      queryClient.invalidateQueries({ queryKey: ['playlistDetail', playlistId] })
+      queryClient.invalidateQueries({ queryKey: ['followStatus', userId] })
     },
   })
 
+  const isFollowing = data?.isFollowing ?? false
+
   const toggleFollow = () => {
     if (followMutation.isPending || unfollowMutation.isPending) return
+
     if (isFollowing) {
-      unfollowMutation.mutate(playlistId)
+      unfollowMutation.mutate()
     } else {
-      followMutation.mutate(playlistId)
+      followMutation.mutate()
     }
   }
 
-  return { isFollowing, toggleFollow, followMutation, unfollowMutation }
+  return {
+    isFollowing,
+    toggleFollow,
+    isLoading: followMutation.isPending || unfollowMutation.isPending,
+  }
 }
 
 export default useFollow
-
-export const useFollowStatus = (playlistId: number, options?: { enabled?: boolean }) => {
-  return useQuery({
-    queryKey: ['followStatus', playlistId],
-    queryFn: () => getFollowStatus(playlistId),
-    staleTime: 0,
-    enabled: playlistId !== undefined && (options?.enabled ?? true),
-  })
-}
