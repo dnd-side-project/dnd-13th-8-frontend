@@ -384,7 +384,7 @@ const BasicInfoEditorWrap = styled.section`
 `
 
 const BasicInfoContainer = styled.div<{ $isLogin: boolean }>`
-  margin-bottom: ${({ $isLogin }) => !$isLogin && '40px'};
+  margin-bottom: ${({ $isLogin }) => ($isLogin ? '0' : '40px')};
   display: grid;
   grid-template-columns: auto 1fr;
   grid-template-rows: 1fr;

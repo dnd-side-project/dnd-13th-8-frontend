@@ -39,7 +39,6 @@ const LoginCallbackPage = () => {
           sessionStorage.removeItem('pkce_code_verifier')
           setLogin(response)
 
-          const urlParams = new URLSearchParams(window.location.search)
           const state = urlParams.get('state')
 
           if (state) {

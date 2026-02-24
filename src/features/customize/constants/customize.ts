@@ -12,6 +12,7 @@ export const THEME_PROP_ID_OFFSET = {
   metal: 1800,
 } as const
 
+// 유저가 업로드한 커스텀 스티커는 'user' 테마로 별도 관리
 export const STICKER_THEME_LIST: { id: StickerThemeType; name: string }[] = [
   { id: 'deulak', name: '들락' },
   { id: 'background', name: '배경' },
