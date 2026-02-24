@@ -54,6 +54,7 @@ export const useMyCdActions = (cdId: number, options?: { enabled?: boolean }) =>
     mutationFn: () => patchMyCdPublic(cdId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['getTracklist', cdId] })
+      queryClient.invalidateQueries({ queryKey: ['myCdList'] })
     },
   })
 

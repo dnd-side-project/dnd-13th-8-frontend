@@ -28,9 +28,13 @@ const NotFoundPage = lazy(() => import('@/pages/notFound'))
 const ErrorPage = lazy(() => import('@/pages/error'))
 const FeedbackPage = lazy(() => import('@/pages/feedback'))
 const FeedLayout = lazy(() => import('@/pages/feed/FeedLayout'))
-const FollowLayout = lazy(() => import('@/pages/feed/FollowLayout'))
+const FollowLayout = lazy(() => import('@/pages/feed/ui/layout/FollowLayout'))
 const Followers = lazy(() => import('@/pages/feed/followers'))
 const Following = lazy(() => import('@/pages/feed/following'))
+const Cds = lazy(() => import('@/pages/feed/cds'))
+const Likes = lazy(() => import('@/pages/feed/likes'))
+const TracklistDetail = lazy(() => import('@/pages/feed/tracklist'))
+const CdPlayerLayout = lazy(() => import('@/pages/feed/ui/layout/CdPlayerLayout'))
 
 export interface RouteConfig {
   path: string
@@ -111,10 +115,6 @@ export const routesConfig: RouteConfig[] = [
     hideNav: true,
   },
 
-  // 에러 페이지
-  { path: '*', component: NotFoundPage, isNotSuspense: true },
-  { path: '/error', component: ErrorPage, isNotSuspense: true },
-
   // 유저 피드
   {
     path: '/:userId',
@@ -133,6 +133,30 @@ export const routesConfig: RouteConfig[] = [
         isNotSuspense: true,
         children: [{ path: '', component: Following }],
       },
+      {
+        path: 'cds',
+        component: CdPlayerLayout,
+        isPrivate: true,
+        isNotSuspense: true,
+        children: [
+          { path: ':id?', component: Cds },
+          { path: ':id?/tracklist', component: TracklistDetail },
+        ],
+      },
+      {
+        path: 'likes',
+        component: CdPlayerLayout,
+        isPrivate: true,
+        isNotSuspense: true,
+        children: [
+          { path: ':id?', component: Likes },
+          { path: ':id?/tracklist', component: TracklistDetail },
+        ],
+      },
     ],
   },
+
+  // 에러 페이지
+  { path: '*', component: NotFoundPage, isNotSuspense: true },
+  { path: '/error', component: ErrorPage, isNotSuspense: true },
 ]

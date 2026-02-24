@@ -1,1 +1,5 @@
 export { default as FollowTab } from './FollowTab'
+export { default as CdCarousel } from './CdCarousel'
+export { default as CdPlayerLayout } from './layout/CdPlayerLayout'
+export { default as CdViewerLayout } from './layout/CdViewerLayout'
+export { default as FollowLayout } from './layout/FollowLayout'

@@ -218,7 +218,7 @@ const MyCdPage = () => {
                 creatorId={currentPlaylist.creatorId}
                 stickers={playlistDetail?.cdResponse?.cdItems || []}
                 type="MY"
-                selectedTab={selectedTab}
+                pageType={selectedTab}
               />
               <Title $isMobile={isMobile}> {centerItem.playlistName}</Title>
               {selectedTab === 'LIKE' && playlistDetail?.creatorNickname && (
