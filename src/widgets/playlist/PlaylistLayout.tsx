@@ -62,6 +62,8 @@ const PlaylistLayout = ({
     setTimeout(() => setShowPlayButton(false), duration)
   }
 
+  if (!currentPlaylist) return null
+
   return (
     <>
       <Overlay onClick={handleOverlayClick} />
@@ -75,28 +77,24 @@ const PlaylistLayout = ({
             <PlayButton isPlaying={isPlaying} onPlayPause={onPlayPause} show={showPlayButton} />
           )}
           <CdSpinner $isPlaying={isPlaying}>
-            <Cd
-              variant="xxl"
-              bgColor="none"
-              stickers={currentPlaylist?.cdResponse?.cdItems ?? []}
-            />
+            <Cd variant="xxl" bgColor="none" stickers={currentPlaylist.cdResponse.cdItems} />
           </CdSpinner>
         </CdContainer>
         <ActionBarContainer $isMobile={isMobile}>
           <ActionBar
-            playlistId={currentPlaylist?.playlistId ?? 0}
-            creatorId={currentPlaylist?.creatorId ?? ''}
-            stickers={currentPlaylist?.cdResponse?.cdItems ?? []}
+            playlistId={currentPlaylist.playlistId}
+            creatorId={currentPlaylist.creatorId}
+            stickers={currentPlaylist.cdResponse.cdItems}
             type="DISCOVER"
           />
         </ActionBarContainer>
       </Wrapper>
       <CreatorInfo>
-        <CreatorButton onClick={() => navigate(`/${currentPlaylist?.creatorId}`)}>
-          <Profile size="S" profileUrl={currentPlaylist?.creatorProfileImageUrl} />
-          <Creator>{currentPlaylist?.creatorNickname ?? ''}</Creator>
+        <CreatorButton onClick={() => navigate(`/${currentPlaylist.creatorId}`)}>
+          <Profile size="S" profileUrl={currentPlaylist.creatorProfileImageUrl} />
+          <Creator>{currentPlaylist.creatorNickname}</Creator>
         </CreatorButton>
-        <FollowButton isFollowing={false} variant="small" />
+        <FollowButton variant="small" userId={currentPlaylist.creatorId} />
       </CreatorInfo>
 
       <TitleContainer ref={containerRef}>
@@ -108,7 +106,7 @@ const PlaylistLayout = ({
 
       <ProgressBarWrapper>
         <ProgressBar
-          trackLengths={currentPlaylist?.songs.map((t) => t.youtubeLength) || []}
+          trackLengths={currentPlaylist.songs.map((t) => t.youtubeLength)}
           currentIndex={currentTrackIndex}
           onClick={handleProgressClick}
         />
