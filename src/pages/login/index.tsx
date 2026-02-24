@@ -16,7 +16,8 @@ const LoginPage = () => {
   const { toast } = useToast?.() ?? {}
 
   const onKakaoLoginClick = async () => {
-    const { redirectTo, action } = location.state || {}
+    const { redirectTo, action } =
+      (location.state as { redirectTo?: string; action?: string }) || {}
     await startKakaoLogin(redirectTo, action)
   }
 
