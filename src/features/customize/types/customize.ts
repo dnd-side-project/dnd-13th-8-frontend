@@ -72,10 +72,6 @@ export interface UserEachStickerResponse {
   imageUrl: string
 }
 
-export interface UserStickerListResponse {
-  props: UserEachStickerResponse[]
-}
-
 export interface UserStickerPayload {
   theme: StickerThemeUpperType
   file: File

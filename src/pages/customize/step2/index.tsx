@@ -1,7 +1,6 @@
 import { useState, useMemo, useRef, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 
-import { useQueryClient } from '@tanstack/react-query'
 import type { DefaultError } from '@tanstack/react-query'
 import type { AxiosError } from 'axios'
 import styled from 'styled-components'
@@ -39,7 +38,6 @@ const CustomizeStep2 = ({
   prevTracklist,
   isLogin,
 }: CustomizeStepProps) => {
-  const queryClient = useQueryClient()
   const navigate = useNavigate()
   const location = useLocation()
 
@@ -133,7 +131,9 @@ const CustomizeStep2 = ({
   }
 
   // CD 저장
-  const onSaveCd = () => {
+  const onSaveCd = (targetStickers?: StickerInfoType[]) => {
+    // 인자가 넘어오면 우선 사용, 없으면 현재 상태 사용
+    const finalStickers = targetStickers ?? stickers
     const removeTempData = () => {
       sessionStorage.removeItem('tempBasicInfo')
       sessionStorage.removeItem('tempTracklist')
@@ -148,7 +148,7 @@ const CustomizeStep2 = ({
         youTubeVideoInfo: JSON.parse(sessionStorage.getItem('tempTracklist') ?? '[]'),
       },
       saveCdRequest: {
-        cdItems: stickers.map((s) => ({
+        cdItems: finalStickers.map((s) => ({
           propId: s.propId ?? 0, // 백엔드 스티커 id
           xCoordinate: s.x,
           yCoordinate: s.y,
@@ -272,9 +272,6 @@ const CustomizeStep2 = ({
           }
 
           img.src = response.imageUrl
-
-          // 유저 스티커 리스트 재조회
-          queryClient.invalidateQueries({ queryKey: ['getUserStickers'] })
         },
         onError: (error) => {
           console.error(' 저장 실패:', error)
@@ -945,6 +942,7 @@ const CustomizeStep2 = ({
   }, [currentThemeId, stickerUrls])
 
   // 로그인 후 돌아왔을 때 이전 데이터 복구
+  /*
   useEffect(() => {
     const tempCustomizeData = sessionStorage.getItem('tempCustomizeData')
     if (!tempCustomizeData) return
@@ -997,6 +995,51 @@ const CustomizeStep2 = ({
       onSaveCd()
     }
   }, [isLogin, stickers])
+  */
+
+  // 비회원이 로그인 후 돌아왔을 때 이전 데이터 복구 및 저장 실행
+  useEffect(() => {
+    const state = location.state as { action?: string } | null
+    const tempCustomizeData = sessionStorage.getItem('tempCustomizeData')
+
+    if (isLogin && state?.action === 'SAVE_CD') {
+      // 임시 데이터가 있는지 확인
+      const savedData = tempCustomizeData ? JSON.parse(tempCustomizeData) : null
+      const savedStickers: StickerInfoType[] = savedData?.stickers || []
+
+      // 중복 실행 방지를 위한 정리
+      navigate(location.pathname, { replace: true, state: {} })
+      sessionStorage.removeItem('tempCustomizeData')
+
+      // 복구할 스티커가 없는 경우: 즉시 저장 후 종료
+      if (savedStickers?.length === 0) {
+        onSaveCd([])
+        return
+      }
+
+      // 복구할 스티커가 있는 경우: 이미지 로드 후 저장
+      let loadedCount = 0
+      savedStickers.forEach((sticker) => {
+        const img = new Image()
+        img.onload = () => {
+          imageCache.current[sticker.src] = img
+          loadedCount++
+          if (loadedCount === savedStickers.length) {
+            setStickers(savedStickers)
+            onSaveCd(savedStickers) // 로드 완료된 데이터로 저장
+          }
+        }
+        img.onerror = () => {
+          loadedCount++
+          if (loadedCount === savedStickers.length) {
+            setStickers(savedStickers)
+            onSaveCd(savedStickers)
+          }
+        }
+        img.src = sticker.src
+      })
+    }
+  }, [isLogin])
 
   // stickers가 변경될 때마다 다시 그리기
   useEffect(() => {
