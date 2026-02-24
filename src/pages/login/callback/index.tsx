@@ -38,6 +38,14 @@ const LoginCallbackPage = () => {
         onSuccess: (response) => {
           sessionStorage.removeItem('pkce_code_verifier')
           setLogin(response)
+
+          const state = urlParams.get('state')
+
+          if (state) {
+            const { redirectTo, action } = JSON.parse(decodeURIComponent(state))
+            navigate(redirectTo, { replace: true, state: { action } })
+            return
+          }
           navigate('/', { replace: true })
         },
         onError: (error) => {

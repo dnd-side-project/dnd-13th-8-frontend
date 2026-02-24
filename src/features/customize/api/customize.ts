@@ -5,7 +5,6 @@ import type {
   CdFinalSaveResponse,
   CdCustomResponse,
   UserEachStickerResponse,
-  UserStickerListResponse,
 } from '@/features/customize/types/customize'
 import { api } from '@/shared/api/httpClient'
 
@@ -35,11 +34,6 @@ export const postCdFinalUpdate = (payload: CdSavePayload, draftId: string, playl
 // CD 저장 후 커스텀 데이터 조회
 export const getFinalCdCustom = (cdId: number) => {
   return api.get<CdCustomResponse>(`/main/cd/${cdId}`)
-}
-
-// 유저 커스텀 스티커 리스트 조회
-export const getUserStickers = () => {
-  return api.get<UserStickerListResponse>('/main/prop/list')
 }
 
 // 유저 커스텀 스티커 업로드

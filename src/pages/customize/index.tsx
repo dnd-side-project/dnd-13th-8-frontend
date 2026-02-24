@@ -1,0 +1,129 @@
+import { useState, useEffect } from 'react'
+import { useNavigate, useLocation } from 'react-router-dom'
+
+import { useMyCdActions } from '@/entities/playlist/model/useMyCd'
+import type { PlaylistDetail } from '@/entities/playlist/types/playlist'
+import { useAuthStore } from '@/features/auth/store/authStore'
+import type { CUSTOMIZE_STEP } from '@/features/customize/types/customize'
+import CustomizeStep1 from '@/pages/customize/step1'
+import CustomizeStep2 from '@/pages/customize/step2'
+import CustomizeStep3 from '@/pages/customize/step3'
+import { CustomizeCoachMark } from '@/pages/customize/ui'
+import { Loading, Modal } from '@/shared/ui'
+import type { ModalProps } from '@/shared/ui/Modal'
+
+export interface CustomizeStepProps {
+  currentStep: CUSTOMIZE_STEP
+  setCurrentStep: (step: CUSTOMIZE_STEP) => void
+  currentCdId?: number | null
+  setCurrentCdId?: (cdId: number | null) => void
+  setModal: (modal: ModalProps) => void
+  isEditMode: boolean
+  prevTracklist?: PlaylistDetail
+  isLogin: boolean
+}
+
+const Customize = () => {
+  const navigate = useNavigate()
+  const location = useLocation()
+  const { cdId } = location?.state ?? { cdId: null }
+  const { isLogin } = useAuthStore()
+
+  const [currentStep, setCurrentStep] = useState<CUSTOMIZE_STEP>(1)
+  const [currentCdId, setCurrentCdId] = useState<number | null>(null)
+  const [isEditMode] = useState<boolean>(!!cdId && Number(cdId) > 0)
+  const [showCoachmark, setShowCoachmark] = useState(false)
+
+  const [modal, setModal] = useState<ModalProps>({
+    isOpen: false,
+    title: '',
+    description: '',
+    ctaType: 'single',
+    confirmText: '',
+    cancelText: '',
+    onClose: () => {
+      setModal((prev) => ({ ...prev, isOpen: false }))
+    },
+    onConfirm: () => {},
+    onCancel: () => {
+      setModal((prev) => ({ ...prev, isOpen: false }))
+    },
+  })
+
+  useEffect(() => {
+    const checkCoachMarkExpiry = () => {
+      const expiry = localStorage.getItem('customizeCoachMarkExpiry')
+      if (!expiry || Date.now() > Number(expiry)) {
+        setShowCoachmark(true)
+      }
+    }
+    checkCoachMarkExpiry()
+  }, [])
+
+  useEffect(() => {
+    const tempCustomizeData = sessionStorage.getItem('tempCustomizeData')
+    if (tempCustomizeData && isLogin) {
+      const { currentStep: savedStep } = JSON.parse(tempCustomizeData)
+      if (savedStep) setCurrentStep(savedStep)
+    }
+  }, [isLogin])
+
+  const {
+    tracklist: prevTracklist,
+    isLoading,
+    isFetching,
+    isError,
+  } = useMyCdActions(isEditMode ? Number(cdId) : -1)
+
+  if (isLoading || isFetching) return <Loading isLoading={isLoading || isFetching} />
+  if (isError) {
+    navigate('/error')
+    return null
+  }
+
+  return (
+    <>
+      {currentStep === 1 &&
+        (showCoachmark ? (
+          <CustomizeCoachMark setShowCoachmark={setShowCoachmark} />
+        ) : (
+          <CustomizeStep1
+            currentStep={currentStep}
+            setCurrentStep={setCurrentStep}
+            setModal={setModal}
+            isEditMode={isEditMode}
+            prevTracklist={prevTracklist}
+            isLogin={isLogin}
+          />
+        ))}
+
+      {currentStep === 2 && (
+        <CustomizeStep2
+          currentStep={currentStep}
+          setCurrentStep={setCurrentStep}
+          setCurrentCdId={setCurrentCdId}
+          setModal={setModal}
+          isEditMode={isEditMode}
+          prevTracklist={prevTracklist}
+          isLogin={isLogin}
+        />
+      )}
+
+      {currentStep === 3 && <CustomizeStep3 currentCdId={currentCdId} />}
+
+      <Modal
+        isOpen={modal.isOpen}
+        title={modal.title}
+        description={modal.description}
+        ctaType={modal.ctaType}
+        confirmText={modal.confirmText}
+        cancelText={modal.cancelText}
+        onClose={modal.onClose}
+        onConfirm={modal.onConfirm}
+        onCancel={modal.onCancel}
+      />
+    </>
+  )
+}
+
+export default Customize
