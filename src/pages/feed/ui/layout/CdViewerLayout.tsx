@@ -302,7 +302,7 @@ const TitleWrapper = styled.div`
 `
 const Title = styled.p<{ $isMobile?: boolean }>`
   ${({ theme }) => theme.FONT.headline1};
-  /* padding-top: ${({ $isMobile }) => ($isMobile ? '22px' : '40px')}; */
+
   padding-top: 8px;
 
   @media (min-height: 899px) {

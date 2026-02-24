@@ -33,7 +33,7 @@ const Followers = lazy(() => import('@/pages/feed/followers'))
 const Following = lazy(() => import('@/pages/feed/following'))
 const Cds = lazy(() => import('@/pages/feed/cds'))
 const Likes = lazy(() => import('@/pages/feed/likes'))
-const TracklistDetail = lazy(() => import('@pages/feed/tracklist'))
+const TracklistDetail = lazy(() => import('@/pages/feed/tracklist'))
 const CdPlayerLayout = lazy(() => import('@/pages/feed/ui/layout/CdPlayerLayout'))
 
 export interface RouteConfig {
