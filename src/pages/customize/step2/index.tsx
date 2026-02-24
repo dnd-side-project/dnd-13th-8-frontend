@@ -941,62 +941,6 @@ const CustomizeStep2 = ({
     })
   }, [currentThemeId, stickerUrls])
 
-  // 로그인 후 돌아왔을 때 이전 데이터 복구
-  /*
-  useEffect(() => {
-    const tempCustomizeData = sessionStorage.getItem('tempCustomizeData')
-    if (!tempCustomizeData) return
-
-    const { stickers: savedStickers } = JSON.parse(tempCustomizeData)
-
-    if (savedStickers?.length > 0) {
-      let loadedCount = 0
-
-      // 저장된 모든 스티커의 이미지를 미리 로드
-      savedStickers.forEach((sticker: StickerInfoType) => {
-        // 이미 캐시에 있다면 카운트만 증가
-        if (imageCache.current[sticker.src]) {
-          loadedCount++
-          if (loadedCount === savedStickers.length) {
-            setStickers(savedStickers)
-          }
-          return
-        }
-
-        // 캐시에 없다면 새로 로드
-        const img = new Image()
-        img.onload = () => {
-          imageCache.current[sticker.src] = img
-          loadedCount++
-          // 모든 이미지가 로드되었을 때만 상태 업데이트 → drawStickers 호출됨
-          if (loadedCount === savedStickers.length) {
-            setStickers(savedStickers)
-          }
-        }
-        img.onerror = () => {
-          loadedCount++
-          if (loadedCount === savedStickers.length) {
-            setStickers(savedStickers)
-          }
-        }
-        img.src = sticker.src
-      })
-    }
-
-    sessionStorage.removeItem('tempCustomizeData')
-  }, [isLogin])
-
-  // 비로그인 → 로그인으로 자동 저장 요청 있을 경우 저장 실행
-  useEffect(() => {
-    const state = location.state as { action?: string } | null
-    if (isLogin && state?.action === 'SAVE_CD') {
-      // 중복 실행 방지를 위해 location state 초기화
-      navigate(location.pathname, { replace: true, state: {} })
-      onSaveCd()
-    }
-  }, [isLogin, stickers])
-  */
-
   // 비회원이 로그인 후 돌아왔을 때 이전 데이터 복구 및 저장 실행
   useEffect(() => {
     const state = location.state as { action?: string } | null
