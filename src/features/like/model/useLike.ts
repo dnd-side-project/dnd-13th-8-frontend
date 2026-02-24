@@ -75,6 +75,7 @@ const useLike = (playlistId: number) => {
 
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['likeStatus', playlistId] })
+      queryClient.invalidateQueries({ queryKey: ['myLikeList'] })
     },
   })
 
