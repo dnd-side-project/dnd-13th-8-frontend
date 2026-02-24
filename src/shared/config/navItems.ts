@@ -10,11 +10,7 @@ interface NavItem {
 
 export const NAV_ITEMS: NavItem[] = [
   { icon: Home, title: '홈', paths: ['/', '/search', '/searchResult'] },
-  {
-    icon: Look,
-    title: '둘러보기',
-    paths: ['/discover/:id', '/discover/:id/playlist'],
-  },
+  { icon: Look, title: '둘러보기', paths: ['/discover'] },
   { icon: Music, title: '나의 CD', paths: ['/mycd'] },
   { icon: Music, title: '커스텀', paths: ['/customize'] },
   { icon: Person, title: '마이', paths: ['/mypage'] },
