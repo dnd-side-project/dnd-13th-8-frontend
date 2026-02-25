@@ -16,6 +16,10 @@ export interface LoginResponse extends UserInfo {
   jwtAccessToken: string
 }
 
+export interface ShareCodeOwnerResponse {
+  isOwner: boolean
+}
+
 export interface AuthState {
   userInfo: UserInfo
   accessToken: string

@@ -13,5 +13,5 @@ export const NAV_ITEMS: NavItem[] = [
   { icon: Look, title: '둘러보기', paths: ['/discover'] },
   { icon: Music, title: '나의 CD', paths: ['/mycd'] },
   { icon: Music, title: '커스텀', paths: ['/customize'] },
-  { icon: Person, title: '마이', paths: ['/mypage'] },
+  { icon: Person, title: '피드', paths: ['/:shareCode'] },
 ]

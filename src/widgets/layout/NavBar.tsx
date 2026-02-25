@@ -1,7 +1,10 @@
-import { useLocation, Link, matchPath } from 'react-router-dom'
+import type { MouseEvent as ReactMouseEvent } from 'react'
+import { useLocation, Link, matchPath, useNavigate } from 'react-router-dom'
 
 import styled, { useTheme } from 'styled-components'
 
+import { useCheckShareCodeOwner } from '@/features/auth/model/useAuth'
+import { useAuthStore } from '@/features/auth/store/authStore'
 import { NAV_ITEMS } from '@/shared/config/navItems'
 import SvgButton from '@/shared/ui/SvgButton'
 
@@ -9,11 +12,49 @@ export const NAV_HEIGHT = 64
 
 const NavBar = () => {
   const location = useLocation()
+  const navigate = useNavigate()
   const theme = useTheme()
+
+  const { isLogin, userInfo, setLogout } = useAuthStore()
+  const myShareCode = userInfo?.shareCode || ''
+
+  const { mutate: checkOwner, isPending } = useCheckShareCodeOwner()
+
+  const onVerifyFailed = () => {
+    localStorage.setItem('show_expired_toast', 'true')
+    setLogout()
+    navigate('/login')
+  }
+
+  const onFeedCtaClick = (e: ReactMouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault()
+
+    // 이미 로딩 중일 경우 중복 클릭 방지
+    if (isPending) return
+    // TODO: 비로그인 상태에서 클릭했을 경우 로그인 유도 로직 추가 필요 (기획 문의 요청함)
+    if (!isLogin || !myShareCode) {
+      return
+    }
+
+    checkOwner(myShareCode, {
+      onSuccess: ({ isOwner }) => {
+        if (!isOwner) {
+          onVerifyFailed()
+          return
+        }
+        navigate(`/${myShareCode}`)
+      },
+      onError: (error) => {
+        console.error('shareCode isOwner 검증 에러', error)
+        onVerifyFailed()
+      },
+    })
+  }
 
   return (
     <NavButtonBox>
       {NAV_ITEMS.map(({ icon: Icon, title, paths }) => {
+        const isFeedCta = paths.includes('/:shareCode')
         const isActive = paths.some((path) =>
           path === '/'
             ? location.pathname === '/'
@@ -23,7 +64,7 @@ const NavBar = () => {
         const color = isActive ? theme.COLOR['primary-normal'] : theme.COLOR['gray-100']
 
         return (
-          <NavLink to={paths[0]} key={title}>
+          <NavLink key={title} to={paths[0]} onClick={isFeedCta ? onFeedCtaClick : undefined}>
             <NavItem $active={isActive}>
               <SvgButton width={24} height={24} icon={Icon} fill={color} />
               <span>{title}</span>
