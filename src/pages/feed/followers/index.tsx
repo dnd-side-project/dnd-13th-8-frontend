@@ -11,10 +11,10 @@ import { SearchResultItem } from '@/widgets/search'
 
 const Followers = () => {
   const navigate = useNavigate()
-  const { userId } = useParams()
+  const { shareCode } = useParams()
   const { selected, onSelect } = useSingleSelect<SortType>('RECENT')
 
-  const { data, isLoading, isError } = useFollowerList(String(userId))
+  const { data, isLoading, isError } = useFollowerList(String(shareCode))
 
   if (isLoading) return <Loading isLoading />
 
@@ -44,7 +44,7 @@ const Followers = () => {
               onClick={() => navigate(`/${item.userId}`)}
             />
             <FollowButton
-              userId={item.userId}
+              shareCode={item.shareCode}
               variant="default"
               initialIsFollowing={item.followedByMe}
             />

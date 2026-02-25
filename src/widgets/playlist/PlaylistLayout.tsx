@@ -94,7 +94,7 @@ const PlaylistLayout = ({
           <Profile size="S" profileUrl={currentPlaylist.creatorProfileImageUrl} />
           <Creator>{currentPlaylist.creatorNickname}</Creator>
         </CreatorButton>
-        <FollowButton variant="small" userId={currentPlaylist.creatorId} />
+        <FollowButton variant="small" shareCode={String(currentPlaylist.creatorShareCode)} />
       </CreatorInfo>
 
       <TitleContainer ref={containerRef}>

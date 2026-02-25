@@ -117,7 +117,7 @@ export const routesConfig: RouteConfig[] = [
 
   // 유저 피드
   {
-    path: '/:userId',
+    path: '/:shareCode',
     component: FeedLayout,
     isNotSuspense: true,
     children: [

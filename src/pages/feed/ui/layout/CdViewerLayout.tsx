@@ -59,7 +59,7 @@ const CdViewerLayout = ({
   const navigate = useNavigate()
   const { toast } = useToast()
   const { state } = useLocation()
-  const { userId } = useParams<{ userId: string }>()
+  const { shareCode } = useParams<{ shareCode: string }>()
   const { id: playlistId } = useParams()
   const queryClient = useQueryClient()
   const { toggleLike } = useLike(Number(playlistId))
@@ -221,7 +221,7 @@ const CdViewerLayout = ({
               onCenterChange={onCenterChange}
               currentPlaylistId={currentPlaylist.playlistId}
               isPlaying={isPlaying}
-              basePath={pageType === 'MY' ? `/${userId}/cds` : `/${userId}/likes`}
+              basePath={pageType === 'MY' ? `/${shareCode}/cds` : `/${shareCode}/likes`}
             />
 
             <ActionBar

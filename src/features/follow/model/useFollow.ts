@@ -9,26 +9,26 @@ import {
   getFollowerList,
 } from '@/features/follow/api/follow'
 
-const useFollow = (userId: string, initialIsFollowing?: boolean) => {
+const useFollow = (shareCode: string, initialIsFollowing?: boolean) => {
   const queryClient = useQueryClient()
 
   const { data } = useQuery({
-    queryKey: ['followStatus', userId],
-    queryFn: () => getFollowStatus(userId),
-    enabled: !!userId,
+    queryKey: ['followStatus', shareCode],
+    queryFn: () => getFollowStatus(shareCode),
+    enabled: !!shareCode,
   })
 
   const followMutation = useMutation({
-    mutationFn: () => postFollow(userId),
+    mutationFn: () => postFollow(shareCode),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['followStatus', userId] })
+      queryClient.invalidateQueries({ queryKey: ['followStatus', shareCode] })
     },
   })
 
   const unfollowMutation = useMutation({
-    mutationFn: () => deleteFollow(userId),
+    mutationFn: () => deleteFollow(shareCode),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['followStatus', userId] })
+      queryClient.invalidateQueries({ queryKey: ['followStatus', shareCode] })
     },
   })
 
@@ -53,20 +53,20 @@ const useFollow = (userId: string, initialIsFollowing?: boolean) => {
 
 export default useFollow
 
-export const useFollowerList = (userId: string) => {
+export const useFollowerList = (shareCode: string) => {
   return useQuery({
-    queryKey: ['followerList', userId],
-    queryFn: () => getFollowerList(userId),
-    enabled: !!userId,
+    queryKey: ['followerList', shareCode],
+    queryFn: () => getFollowerList(shareCode),
+    enabled: !!shareCode,
     gcTime: 0,
   })
 }
 
-export const useFollowingList = (userId: string) => {
+export const useFollowingList = (shareCode: string) => {
   return useQuery({
-    queryKey: ['followingList', userId],
-    queryFn: () => getFollowingList(userId),
-    enabled: !!userId,
+    queryKey: ['followingList', shareCode],
+    queryFn: () => getFollowingList(shareCode),
+    enabled: !!shareCode,
     gcTime: 0,
   })
 }

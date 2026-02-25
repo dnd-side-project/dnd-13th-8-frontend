@@ -12,17 +12,21 @@ import { Modal } from '@/shared/ui'
 type Variant = 'default' | 'small' | 'wide'
 
 interface FollowButtonProps {
-  userId: string
+  shareCode: string
   variant?: Variant
   initialIsFollowing?: boolean
 }
 
-const FollowButton = ({ userId, variant = 'default', initialIsFollowing }: FollowButtonProps) => {
+const FollowButton = ({
+  shareCode,
+  variant = 'default',
+  initialIsFollowing,
+}: FollowButtonProps) => {
   const navigate = useNavigate()
   const { isLogin } = useAuthStore()
   const [isModalOpen, setIsModalOpen] = useState(false)
 
-  const { isFollowing, toggleFollow } = useFollow(userId, initialIsFollowing)
+  const { isFollowing, toggleFollow } = useFollow(shareCode, initialIsFollowing)
 
   const handleFollowClick = () => {
     if (isLogin) {
