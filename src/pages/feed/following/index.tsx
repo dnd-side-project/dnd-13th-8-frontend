@@ -2,19 +2,18 @@ import { useNavigate, useParams } from 'react-router-dom'
 
 import styled from 'styled-components'
 
-import { useFollowingList, FollowButton } from '@/features/follow'
+import { useFollowingList, FollowButton, type FollowSortType } from '@/features/follow'
 import { useSingleSelect } from '@/shared/lib/useSingleSelect'
 import { flexRowCenter } from '@/shared/styles/mixins'
 import { Loading, ContentHeader } from '@/shared/ui'
-import type { SortType } from '@/shared/ui/ContentHeader'
 import { SearchResultItem } from '@/widgets/search'
 
 const Following = () => {
   const navigate = useNavigate()
   const { shareCode } = useParams()
-  const { selected, onSelect } = useSingleSelect<SortType>('RECENT')
+  const { selected, onSelect } = useSingleSelect<FollowSortType>('LATEST')
 
-  const { data, isLoading, isError } = useFollowingList(String(shareCode))
+  const { data, isLoading, isError } = useFollowingList(String(shareCode), selected)
 
   if (isLoading) return <Loading isLoading />
 
@@ -30,7 +29,7 @@ const Following = () => {
           totalCount={data.totalCount}
           currentSort={selected}
           onSortChange={onSelect}
-          options={['RECENT', 'OLDEST']}
+          options={['LATEST', 'OLDEST']}
           countType="PEOPLE"
           iconType="ARROW"
         />

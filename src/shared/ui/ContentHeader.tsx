@@ -5,40 +5,42 @@ import styled from 'styled-components'
 import { Filter, UpDownArrow } from '@/assets/icons'
 import BottomSheet from '@/shared/ui/BottomSheet'
 
-export type SortType = 'POPULAR' | 'RECENT' | 'OLDEST'
+export type SortType = 'POPULAR' | 'RECENT' | 'OLDEST' | 'LATEST'
 export type CountType = 'NUMBER' | 'PEOPLE'
 
 const SORT_LABEL: Record<SortType, string> = {
   RECENT: '최신순',
   POPULAR: '인기순',
   OLDEST: '오래된순',
+  LATEST: '최신순',
 }
+type SortLabelKeys = keyof typeof SORT_LABEL
 
 const COUNT_LABEL: Record<CountType, string> = {
   NUMBER: '개',
   PEOPLE: '명',
 }
 
-interface ContentHeaderProps {
+interface ContentHeaderProps<T extends SortLabelKeys> {
   totalCount: number
-  currentSort: SortType
-  onSortChange: (sort: SortType) => void
-  options: SortType[]
+  currentSort: T
+  onSortChange: (sort: T) => void
+  options: T[]
   countType?: CountType
   iconType?: 'FILTER' | 'ARROW'
 }
 
-const ContentHeader = ({
+const ContentHeader = <T extends SortLabelKeys>({
   totalCount,
   currentSort,
   onSortChange,
   options,
   countType = 'NUMBER',
   iconType = 'FILTER',
-}: ContentHeaderProps) => {
+}: ContentHeaderProps<T>) => {
   const [isOpen, setIsOpen] = useState(false)
 
-  const handleSortChange = (sort: SortType) => {
+  const handleSortChange = (sort: T) => {
     onSortChange(sort)
     setIsOpen(false)
   }

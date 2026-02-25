@@ -8,6 +8,7 @@ import {
   getFollowingList,
   getFollowerList,
 } from '@/features/follow/api/follow'
+import type { FollowSortType } from '@/features/follow/types/follow'
 
 const useFollow = (shareCode: string, initialIsFollowing?: boolean) => {
   const queryClient = useQueryClient()
@@ -53,19 +54,19 @@ const useFollow = (shareCode: string, initialIsFollowing?: boolean) => {
 
 export default useFollow
 
-export const useFollowerList = (shareCode: string) => {
+export const useFollowerList = (shareCode: string, sort?: FollowSortType) => {
   return useQuery({
-    queryKey: ['followerList', shareCode],
-    queryFn: () => getFollowerList(shareCode),
+    queryKey: ['followerList', shareCode, sort],
+    queryFn: () => getFollowerList(shareCode, sort),
     enabled: !!shareCode,
     gcTime: 0,
   })
 }
 
-export const useFollowingList = (shareCode: string) => {
+export const useFollowingList = (shareCode: string, sort?: FollowSortType) => {
   return useQuery({
-    queryKey: ['followingList', shareCode],
-    queryFn: () => getFollowingList(shareCode),
+    queryKey: ['followingList', shareCode, sort],
+    queryFn: () => getFollowingList(shareCode, sort),
     enabled: !!shareCode,
     gcTime: 0,
   })

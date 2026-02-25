@@ -18,3 +18,5 @@ export interface FollowListResponse {
   hasNext: boolean
   totalCount: number
 }
+
+export type FollowSortType = 'LATEST' | 'OLDEST'
