@@ -9,3 +9,18 @@ export interface ProfileResponse {
   nickname: string
   profileImageUrl: string | null
 }
+
+export interface FollowCount {
+  followerCount: number
+  followingCount: number
+}
+
+export interface UserProfileResponse {
+  userId: string
+  username: string
+  profileUrl: string | null
+  shareCode: string
+  bio: string | null
+  keywords: string[]
+  followCount: FollowCount
+}
