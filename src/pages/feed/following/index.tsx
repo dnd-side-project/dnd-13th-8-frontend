@@ -1,43 +1,57 @@
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 import styled from 'styled-components'
 
-import { FollowButton } from '@/features/follow'
+import { useFollowingList, FollowButton } from '@/features/follow'
+import { useSingleSelect } from '@/shared/lib/useSingleSelect'
 import { flexRowCenter } from '@/shared/styles/mixins'
+import { Loading, ContentHeader } from '@/shared/ui'
+import type { SortType } from '@/shared/ui/ContentHeader'
 import { SearchResultItem } from '@/widgets/search'
-
-const followerList = [
-  {
-    userId: '1',
-    profileUrl: '',
-    userName: '지구젤리',
-    isFollowing: true,
-  },
-  {
-    userId: '2',
-    profileUrl: '',
-    userName: '김들락',
-    isFollowing: true,
-  },
-]
 
 const Following = () => {
   const navigate = useNavigate()
+  const { userId } = useParams()
+  const { selected, onSelect } = useSingleSelect<SortType>('RECENT')
+
+  const { data, isLoading, isError } = useFollowingList(String(userId))
+
+  if (isLoading) return <Loading isLoading />
+
+  if (!data || isError) {
+    navigate('/error')
+    return null
+  }
 
   return (
-    <ListWrapper>
-      {followerList?.map((item) => (
-        <ItemWrapper key={item.userId}>
-          <SearchResultItem
-            type="USER"
-            imageUrl={item.profileUrl}
-            searchResult={item.userName}
-            onClick={() => navigate(`/${item.userId}`)}
-          />
-          <FollowButton isFollowing={item.isFollowing} variant="default" />
-        </ItemWrapper>
-      ))}
-    </ListWrapper>
+    <>
+      <ContentHeaderWrapper>
+        <ContentHeader
+          totalCount={data.totalCount}
+          currentSort={selected}
+          onSortChange={onSelect}
+          options={['RECENT', 'OLDEST']}
+          countType="PEOPLE"
+        />
+      </ContentHeaderWrapper>
+      <ListWrapper>
+        {data?.content?.map((item) => (
+          <ItemWrapper key={item.userId}>
+            <SearchResultItem
+              type="USER"
+              imageUrl={item.profileUrl}
+              searchResult={item.username}
+              onClick={() => navigate(`/${item.userId}`)}
+            />
+            <FollowButton
+              userId={item.userId}
+              variant="default"
+              initialIsFollowing={item.followedByMe}
+            />
+          </ItemWrapper>
+        ))}
+      </ListWrapper>
+    </>
   )
 }
 
@@ -53,4 +67,8 @@ const ListWrapper = styled.div`
   flex-direction: column;
   gap: 20px;
   padding-top: 16px;
+`
+
+const ContentHeaderWrapper = styled.div`
+  margin-top: 20px;
 `

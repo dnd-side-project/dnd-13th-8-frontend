@@ -14,14 +14,15 @@ type Variant = 'default' | 'small' | 'wide'
 interface FollowButtonProps {
   userId: string
   variant?: Variant
+  initialIsFollowing?: boolean
 }
 
-const FollowButton = ({ userId, variant = 'default' }: FollowButtonProps) => {
+const FollowButton = ({ userId, variant = 'default', initialIsFollowing }: FollowButtonProps) => {
   const navigate = useNavigate()
   const { isLogin } = useAuthStore()
   const [isModalOpen, setIsModalOpen] = useState(false)
 
-  const { isFollowing, toggleFollow } = useFollow(userId)
+  const { isFollowing, toggleFollow } = useFollow(userId, initialIsFollowing)
 
   const handleFollowClick = () => {
     if (isLogin) {

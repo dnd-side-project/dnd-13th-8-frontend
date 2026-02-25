@@ -5,11 +5,11 @@ import {
   postFollow,
   deleteFollow,
   getFollowStatus,
-  getFollowerList,
   getFollowingList,
+  getFollowerList,
 } from '@/features/follow/api/follow'
 
-const useFollow = (userId: string) => {
+const useFollow = (userId: string, initialIsFollowing?: boolean) => {
   const queryClient = useQueryClient()
 
   const { data } = useQuery({
@@ -32,7 +32,7 @@ const useFollow = (userId: string) => {
     },
   })
 
-  const isFollowing = data?.isFollowing ?? false
+  const isFollowing = data?.isFollowing ?? initialIsFollowing ?? false
 
   const toggleFollow = () => {
     if (followMutation.isPending || unfollowMutation.isPending) return
