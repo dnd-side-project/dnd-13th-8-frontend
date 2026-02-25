@@ -17,6 +17,7 @@ const useFollow = (shareCode: string, initialIsFollowing?: boolean) => {
     queryKey: ['followStatus', shareCode],
     queryFn: () => getFollowStatus(shareCode),
     enabled: !!shareCode,
+    initialData: initialIsFollowing !== undefined ? { isFollowing: initialIsFollowing } : undefined,
   })
 
   const followMutation = useMutation({
