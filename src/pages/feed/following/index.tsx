@@ -32,6 +32,7 @@ const Following = () => {
           onSortChange={onSelect}
           options={['RECENT', 'OLDEST']}
           countType="PEOPLE"
+          iconType="ARROW"
         />
       </ContentHeaderWrapper>
       <ListWrapper>

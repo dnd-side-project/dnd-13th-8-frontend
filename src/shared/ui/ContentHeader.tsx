@@ -2,7 +2,7 @@ import { useState } from 'react'
 
 import styled from 'styled-components'
 
-import { Filter } from '@/assets/icons'
+import { Filter, UpDownArrow } from '@/assets/icons'
 import BottomSheet from '@/shared/ui/BottomSheet'
 
 export type SortType = 'POPULAR' | 'RECENT' | 'OLDEST'
@@ -25,6 +25,7 @@ interface ContentHeaderProps {
   onSortChange: (sort: SortType) => void
   options: SortType[]
   countType?: CountType
+  iconType?: 'FILTER' | 'ARROW'
 }
 
 const ContentHeader = ({
@@ -33,6 +34,7 @@ const ContentHeader = ({
   onSortChange,
   options,
   countType = 'NUMBER',
+  iconType = 'FILTER',
 }: ContentHeaderProps) => {
   const [isOpen, setIsOpen] = useState(false)
 
@@ -40,6 +42,8 @@ const ContentHeader = ({
     onSortChange(sort)
     setIsOpen(false)
   }
+
+  const Icon = iconType === 'ARROW' ? UpDownArrow : Filter
 
   return (
     <>
@@ -50,7 +54,7 @@ const ContentHeader = ({
         </span>
 
         <FilterButton type="button" onClick={() => setIsOpen(true)}>
-          <Filter width={24} height={24} />
+          <Icon width={24} height={24} />
           <span>{SORT_LABEL[currentSort]}</span>
         </FilterButton>
       </HeaderContainer>
