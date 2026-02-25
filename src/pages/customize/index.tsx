@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom'
 
 import { useMyCdActions } from '@/entities/playlist/model/useMyCd'
 import type { PlaylistDetail } from '@/entities/playlist/types/playlist'
-import { useAuthStore } from '@/features/auth/store/authStore'
+import { useAuthStore } from '@/features/auth'
 import type { CUSTOMIZE_STEP } from '@/features/customize/types/customize'
 import CustomizeStep1 from '@/pages/customize/step1'
 import CustomizeStep2 from '@/pages/customize/step2'

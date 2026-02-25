@@ -9,7 +9,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { Trash, Plus } from '@/assets/icons'
 import overlayUrl from '@/assets/icons/icn_overlay.svg?url'
 import { ExpandBtn, TrashBtn } from '@/assets/images'
-import { startKakaoLogin } from '@/features/auth/lib/kakaoLogin'
+import { startKakaoLogin } from '@/features/auth'
 import { THEME_PROP_ID_OFFSET } from '@/features/customize/constants/customize'
 import {
   BACKEND_TO_FRONT_THEME,

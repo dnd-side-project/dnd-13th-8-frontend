@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 
 import { Add, Tick } from '@/assets/icons'
-import { useAuthStore } from '@/features/auth/store/authStore'
+import { useAuthStore } from '@/features/auth'
 import { flexRowCenter } from '@/shared/styles/mixins'
 import { Modal } from '@/shared/ui'
 

@@ -1,7 +1,7 @@
 import axios, { AxiosError } from 'axios'
 import type { AxiosResponse, InternalAxiosRequestConfig } from 'axios'
 
-import { useAuthStore } from '@/features/auth/store/authStore'
+import { useAuthStore } from '@/features/auth'
 import { useGlobalModalStore } from '@/shared/store/globalModalStore'
 
 export const axiosInstance = axios.create({

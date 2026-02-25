@@ -19,8 +19,7 @@ import {
   OpacityCharacterPink,
   OpacityMusic,
 } from '@/assets/images'
-import { useAnonymousLogin } from '@/features/auth/model/useAuth'
-import { useAuthStore } from '@/features/auth/store/authStore'
+import { useAnonymousLogin, useAuthStore } from '@/features/auth'
 import { GlobalErrorModal } from '@/shared/ui'
 import NavBar, { NAV_HEIGHT } from '@/widgets/layout/NavBar'
 

@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom'
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
-import { useAuthStore } from '@/features/auth/store/authStore'
+import { useAuthStore } from '@/features/auth'
 import { postLike, deleteLike, getLikeStatus } from '@/features/like/api/like'
 import type { LikeStatusResponse } from '@/features/like/type/like'
 

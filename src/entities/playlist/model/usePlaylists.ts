@@ -18,7 +18,7 @@ import {
   postPlaylistStart,
 } from '@/entities/playlist/api/playlist'
 import type { PlaylistDetail, PlaylistResponse } from '@/entities/playlist/types/playlist'
-import { useAuthStore } from '@/features/auth/store/authStore'
+import { useAuthStore } from '@/features/auth'
 
 export const useShufflePlaylists = (size: number = 5) => {
   const { isLogin, accessToken } = useAuthStore()

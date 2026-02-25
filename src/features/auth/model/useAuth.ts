@@ -5,9 +5,8 @@ import {
   getAnonymousLogin,
   getUserInfo,
   deleteAccount,
-  getShareCodeOwner,
-} from '@/features/auth/api/auth'
-import type { LoginPayload } from '@/features/auth/types/auth'
+  type LoginPayload,
+} from '@/features/auth'
 
 export const useLogin = () => {
   return useMutation({
@@ -34,12 +33,5 @@ export const useDeleteAccount = () => {
   return useMutation({
     mutationKey: ['deleteAccount'],
     mutationFn: deleteAccount,
-  })
-}
-
-export const useCheckShareCodeOwner = () => {
-  return useMutation({
-    mutationKey: ['checkShareCodeOwner'],
-    mutationFn: (shareCode: string) => getShareCodeOwner(shareCode),
   })
 }

@@ -3,8 +3,7 @@ import { useNavigate } from 'react-router-dom'
 
 import styled from 'styled-components'
 
-import { useDeleteAccount } from '@/features/auth/model/useAuth'
-import { useAuthStore } from '@/features/auth/store/authStore'
+import { useDeleteAccount, useAuthStore } from '@/features/auth'
 import { flexRowCenter } from '@/shared/styles/mixins'
 import { TermsContainer, TermsItems } from '@/shared/styles/terms'
 import { Button, Modal, SubHeader } from '@/shared/ui'

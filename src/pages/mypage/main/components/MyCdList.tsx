@@ -4,7 +4,7 @@ import styled from 'styled-components'
 
 import { Plus } from '@/assets/icons'
 import { useMyCdList } from '@/entities/playlist/model/useMyCd'
-import { useAuthStore } from '@/features/auth/store/authStore'
+import { useAuthStore } from '@/features/auth'
 import { CdNameInfo } from '@/pages/mypage/main/components'
 import { useSingleSelect } from '@/shared/lib/useSingleSelect'
 import { Loading, Error, ContentHeader, Cd } from '@/shared/ui'

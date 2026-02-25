@@ -6,7 +6,7 @@ import { Profile, Input, Loading } from '@shared/ui'
 import type { ProfileUrl } from '@shared/ui/Profile'
 
 import { Camera } from '@/assets/icons'
-import { useAuthStore } from '@/features/auth/store/authStore'
+import { useAuthStore } from '@/features/auth'
 import { useProfile } from '@/features/profile/model/useProfile'
 import { flexRowCenter } from '@/shared/styles/mixins'
 
