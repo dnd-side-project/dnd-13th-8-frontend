@@ -1,7 +1,13 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useQuery } from '@tanstack/react-query'
 
-import { postFollow, deleteFollow, getFollowStatus } from '@/features/follow/api/follow'
+import {
+  postFollow,
+  deleteFollow,
+  getFollowStatus,
+  getFollowerList,
+  getFollowingList,
+} from '@/features/follow/api/follow'
 
 const useFollow = (userId: string) => {
   const queryClient = useQueryClient()
@@ -46,3 +52,21 @@ const useFollow = (userId: string) => {
 }
 
 export default useFollow
+
+export const useFollowerList = (userId: string) => {
+  return useQuery({
+    queryKey: ['followerList', userId],
+    queryFn: () => getFollowerList(userId),
+    enabled: !!userId,
+    gcTime: 0,
+  })
+}
+
+export const useFollowingList = (userId: string) => {
+  return useQuery({
+    queryKey: ['followingList', userId],
+    queryFn: () => getFollowingList(userId),
+    enabled: !!userId,
+    gcTime: 0,
+  })
+}
