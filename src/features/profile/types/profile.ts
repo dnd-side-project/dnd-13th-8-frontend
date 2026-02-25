@@ -7,5 +7,6 @@ export interface ProfilePayload {
 export interface ProfileResponse {
   userId: string
   nickname: string
+  shareCode: string
   profileImageUrl: string | null
 }

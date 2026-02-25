@@ -8,6 +8,7 @@ export interface LoginPayload {
 export interface UserInfo {
   userId: string
   username: string
+  shareCode: string
   userProfileImageUrl: string | null
 }
 
