@@ -6,8 +6,8 @@ import { Profile, Input, Loading } from '@shared/ui'
 import type { ProfileUrl } from '@shared/ui/Profile'
 
 import { Camera } from '@/assets/icons'
+import { useProfile } from '@/entities/user'
 import { useAuthStore } from '@/features/auth/store/authStore'
-import { useProfile } from '@/features/profile/model/useProfile'
 import { flexRowCenter } from '@/shared/styles/mixins'
 
 const MAX_FILE_SIZE = 1024 * 1024 * 5 // 5MB

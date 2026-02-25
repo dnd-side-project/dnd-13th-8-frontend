@@ -1,4 +1,4 @@
-import type { ProfilePayload, ProfileResponse } from '@/features/profile/types/profile'
+import type { ProfilePayload, ProfileResponse } from '@/entities/user/types/profile'
 import { api } from '@/shared/api/httpClient'
 
 // 프로필 수정
