@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from 'react-router-dom'
+import { Navigate, useNavigate, useParams } from 'react-router-dom'
 
 import styled from 'styled-components'
 
@@ -18,8 +18,7 @@ const Following = () => {
   if (isLoading) return <Loading isLoading />
 
   if (!data || isError) {
-    navigate('/error')
-    return null
+    return <Navigate to="/error" replace />
   }
 
   return (
