@@ -29,9 +29,8 @@ const NotFoundPage = lazy(() => import('@/pages/notFound'))
 const ErrorPage = lazy(() => import('@/pages/error'))
 const FeedbackPage = lazy(() => import('@/pages/feedback'))
 const FeedLayout = lazy(() => import('@/pages/feed/FeedLayout'))
-const FeedHomeLayout = lazy(() => import('@/pages/feed/ui/layout/FeedHomeLayout'))
 const FollowLayout = lazy(() => import('@/pages/feed/ui/layout/FollowLayout'))
-const FeedHome = lazy(() => import('@/pages/feed'))
+const Feed = lazy(() => import('@/pages/feed'))
 const Followers = lazy(() => import('@/pages/feed/followers'))
 const Following = lazy(() => import('@/pages/feed/following'))
 const Cds = lazy(() => import('@/pages/feed/cds'))
@@ -136,9 +135,8 @@ export const routesConfig: RouteConfig[] = [
     children: [
       {
         path: '',
-        component: FeedHomeLayout,
+        component: Feed,
         isNotSuspense: true,
-        children: [{ path: '', component: FeedHome }],
       },
       {
         path: 'followers',

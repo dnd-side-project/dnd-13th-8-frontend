@@ -4,9 +4,12 @@ export interface ShareCodeOwnerResponse {
   isOwner: boolean
 }
 
-// TODO: api 수정되면 musicKeywords, UserInfo > username 옵셔널 프로퍼티 & nickname 제거
-export interface ProfileInfo extends UserInfo {
-  nickname: string
+// TODO: follow 브랜치 병합되면 해당 type extends
+export interface ProfileResponse extends UserInfo {
   bio: string
-  musicKeywords?: string[]
+  keywords: string[]
+  followCount: {
+    followerCount: number
+    followingCount: number
+  }
 }
