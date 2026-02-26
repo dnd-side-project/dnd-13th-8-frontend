@@ -24,6 +24,14 @@ const useFollow = (shareCode: string, initialIsFollowing?: boolean) => {
     mutationFn: () => postFollow(shareCode),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['followStatus', shareCode] })
+      queryClient.invalidateQueries({
+        queryKey: ['followingList'],
+        refetchType: 'none',
+      })
+      queryClient.invalidateQueries({
+        queryKey: ['followerList'],
+        refetchType: 'none',
+      })
     },
   })
 
@@ -31,6 +39,14 @@ const useFollow = (shareCode: string, initialIsFollowing?: boolean) => {
     mutationFn: () => deleteFollow(shareCode),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['followStatus', shareCode] })
+      queryClient.invalidateQueries({
+        queryKey: ['followingList'],
+        refetchType: 'none',
+      })
+      queryClient.invalidateQueries({
+        queryKey: ['followerList'],
+        refetchType: 'none',
+      })
     },
   })
 
@@ -60,7 +76,6 @@ export const useFollowerList = (shareCode: string, sort?: FollowSortType) => {
     queryKey: ['followerList', shareCode, sort],
     queryFn: () => getFollowerList(shareCode, sort),
     enabled: !!shareCode,
-    gcTime: 0,
   })
 }
 
@@ -69,6 +84,5 @@ export const useFollowingList = (shareCode: string, sort?: FollowSortType) => {
     queryKey: ['followingList', shareCode, sort],
     queryFn: () => getFollowingList(shareCode, sort),
     enabled: !!shareCode,
-    gcTime: 0,
   })
 }
