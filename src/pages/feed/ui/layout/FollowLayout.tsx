@@ -11,7 +11,7 @@ const FollowLayout = () => {
   const { shareCode } = useParams()
   const navigate = useNavigate()
 
-  const { data } = useUserProfile(String(shareCode))
+  const { data } = useUserProfile(shareCode || '')
 
   return (
     <div>

@@ -13,7 +13,7 @@ const Following = () => {
   const { shareCode } = useParams()
   const { selected, onSelect } = useSingleSelect<FollowSortType>('LATEST')
 
-  const { data, isLoading, isError } = useFollowingList(String(shareCode), selected)
+  const { data, isLoading, isError } = useFollowingList(shareCode || '', selected)
 
   if (isLoading) return <Loading isLoading />
 
