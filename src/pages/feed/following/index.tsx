@@ -13,9 +13,9 @@ const Following = () => {
   const { shareCode } = useParams()
   const { selected, onSelect } = useSingleSelect<FollowSortType>('LATEST')
 
-  const { data, isLoading, isError } = useFollowingList(shareCode || '', selected)
+  const { data, isLoading, isFetching, isError } = useFollowingList(shareCode || '', selected)
 
-  if (isLoading) return <Loading isLoading />
+  if (isLoading || isFetching) return <Loading isLoading />
 
   if (!data || isError) {
     return <Navigate to="/error" replace />
