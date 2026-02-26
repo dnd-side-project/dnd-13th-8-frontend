@@ -90,7 +90,11 @@ const PlaylistLayout = ({
         </ActionBarContainer>
       </Wrapper>
       <CreatorInfo>
-        <CreatorButton onClick={() => navigate(`/${currentPlaylist.creatorId}`)}>
+        <CreatorButton
+          onClick={() =>
+            currentPlaylist.creatorShareCode && navigate(`/${currentPlaylist.creatorShareCode}`)
+          }
+        >
           <Profile size="S" profileUrl={currentPlaylist.creatorProfileImageUrl} />
           <Creator>{currentPlaylist.creatorNickname}</Creator>
         </CreatorButton>

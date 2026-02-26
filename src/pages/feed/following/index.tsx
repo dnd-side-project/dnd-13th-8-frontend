@@ -41,7 +41,7 @@ const Following = () => {
               type="USER"
               imageUrl={item.profileUrl}
               searchResult={item.username}
-              onClick={() => navigate(`/${item.userId}`)}
+              onClick={() => navigate(`/${item.shareCode}`)}
             />
             <FollowButton
               shareCode={item.shareCode}
