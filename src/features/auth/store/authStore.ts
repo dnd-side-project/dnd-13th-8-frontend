@@ -7,15 +7,15 @@ import type { ProfileResponse } from '@/features/profile/types/profile'
 export const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({
-      userInfo: { userId: '', username: '', shareCode: '', userProfileImageUrl: null },
+      userInfo: { userId: '', username: '', shareCode: '', profileUrl: null },
       isLogin: false,
       accessToken: '',
 
       setLogin: (response) => {
         sessionStorage.removeItem('anonymous_token')
-        const { userId, username, shareCode, userProfileImageUrl, jwtAccessToken } = response
+        const { userId, username, shareCode, profileUrl, jwtAccessToken } = response
         set({
-          userInfo: { userId, username, shareCode, userProfileImageUrl },
+          userInfo: { userId, username, shareCode, profileUrl },
           accessToken: jwtAccessToken,
           isLogin: true,
         })
@@ -24,25 +24,20 @@ export const useAuthStore = create<AuthState>()(
       setLogout: () => {
         localStorage.removeItem('deulak_auth')
         set({
-          userInfo: { userId: '', username: '', shareCode: '', userProfileImageUrl: null },
+          userInfo: { userId: '', username: '', shareCode: '', profileUrl: null },
           accessToken: '',
           isLogin: false,
         })
       },
 
       updateUserInfo: (payload: ProfileResponse) => {
-        const {
-          userId,
-          nickname: username,
-          shareCode,
-          profileImageUrl: userProfileImageUrl,
-        } = payload
+        const { userId, nickname: username, shareCode, profileImageUrl: profileUrl } = payload
         set({
           userInfo: {
             userId,
             username,
             shareCode,
-            userProfileImageUrl,
+            profileUrl,
           },
         })
       },

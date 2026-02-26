@@ -1,5 +1,7 @@
 import type { ProfileResponse } from '@/features/profile/types/profile'
 
+export type ShareCode = string
+
 export interface LoginPayload {
   code: string
   codeVerifier: string
@@ -8,16 +10,12 @@ export interface LoginPayload {
 export interface UserInfo {
   userId: string
   username: string
-  shareCode: string
-  userProfileImageUrl: string | null
+  shareCode: ShareCode
+  profileUrl: string | null
 }
 
 export interface LoginResponse extends UserInfo {
   jwtAccessToken: string
-}
-
-export interface ShareCodeOwnerResponse {
-  isOwner: boolean
 }
 
 export interface AuthState {
