@@ -55,11 +55,11 @@ const FeedCdList = ({ shareCode, feedView, isMyFeed }: FeedCdListProps) => {
         <li key={item.playlistId}>
           <CdButton
             type="button"
-            onClick={() =>
-              navigate(`/${shareCode}/cds/${item.playlistId}`, {
+            onClick={() => {
+              navigate(`/${shareCode}/${feedView}/${item.playlistId}`, {
                 state: { isFromMyCdList: isMyFeed },
               })
-            }
+            }}
           >
             {isMyFeed && feedView === 'cds' ? (
               <>
