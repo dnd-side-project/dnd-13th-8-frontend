@@ -3,10 +3,12 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 
 import styled, { css } from 'styled-components'
 
+import { useToast } from '@/app/providers'
 import { Gear, Pencil, Add, Share } from '@/assets/icons'
 import { FeedBg } from '@/assets/images'
 import { useOwnerStatus, useUserProfile, getRandomBio } from '@/entities/user'
 import { FeedbackIcon } from '@/pages/feedback/ui'
+import { useCopyShareUrl } from '@/shared/lib'
 import { flexRowCenter } from '@/shared/styles/mixins'
 import { Loading, Header, SubHeader, SvgButton, Profile, Divider, Badge } from '@/shared/ui'
 
@@ -16,6 +18,9 @@ const FeedPage = () => {
   const { shareCode = '' } = useParams()
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
+
+  const { toast } = useToast()
+  const { copyShareUrl } = useCopyShareUrl()
 
   const { data: ownershipData, isLoading: ownerShipDataLoading } = useOwnerStatus(shareCode || '')
   const isMyFeed = ownershipData?.isOwner ?? false
@@ -33,6 +38,30 @@ const FeedPage = () => {
   const bioQuotes = useMemo(() => {
     return userProfile?.bio || getRandomBio()
   }, [userProfile?.bio])
+
+  const onShareButtonClick = async () => {
+    // 브라우저 지원 여부 및 https 체크 (미지원 시 함수로 별도 copy 처리)
+    if (typeof window === 'undefined' || !navigator.share) {
+      copyShareUrl('feed', shareCode ?? '')
+      return
+    }
+
+    // 공유할 데이터 설정
+    const shareData = {
+      title: `[DEULAK] ${userProfile?.username}님의 피드`,
+      url: `${window.location.origin}/${userProfile?.shareCode}`,
+    }
+
+    try {
+      await navigator.share(shareData)
+      toast('LINK')
+    } catch (error) {
+      // 사용자가 공유를 취소한 경우 외의 에러 케이스
+      if ((error as Error).name !== 'AbortError') {
+        console.error('피드 URL 공유 중 에러 발생: ', error)
+      }
+    }
+  }
 
   if ((ownerShipDataLoading && !ownershipData) || isProfileLoading) return <Loading isLoading />
   if (isProfileError) {
@@ -114,7 +143,7 @@ const FeedPage = () => {
             <span>팔로우</span>
           </CtaButton>
         )}
-        <ShareButton type="button">
+        <ShareButton type="button" onClick={onShareButtonClick}>
           <Share />
         </ShareButton>
       </CtaContainer>
