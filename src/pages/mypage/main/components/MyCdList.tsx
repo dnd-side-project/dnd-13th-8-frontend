@@ -49,7 +49,7 @@ const MyCdList = () => {
               <Cd variant="responsive" stickers={item?.cdResponse?.cdItems} />
               {!item?.isPublic && <PrivateBadge>비공개</PrivateBadge>}
             </CdButton>
-            <CdNameInfo title={item?.playlistName || ''} creator={userInfo?.username || ''} />
+            <CdNameInfo title={item?.playlistName || ''} creator={userInfo?.nickname || ''} />
           </li>
         ))}
       </CdListWrap>

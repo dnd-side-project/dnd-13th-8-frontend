@@ -9,9 +9,14 @@ export interface LoginPayload {
 
 export interface UserInfo {
   userId: string
-  username: string
+  nickname: string
   shareCode: ShareCode
   profileUrl: string | null
+}
+
+export interface ChatUserInfo {
+  userId: string
+  username: string
 }
 
 export interface LoginResponse extends UserInfo {

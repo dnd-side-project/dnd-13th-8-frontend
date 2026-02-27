@@ -26,7 +26,7 @@ const UserProfile = () => {
     file: File | null
     profileImage: string | null
   }>({
-    nickname: userInfo.username,
+    nickname: userInfo.nickname,
     profileImage: userInfo?.profileUrl || null,
     file: null,
   })
@@ -65,7 +65,7 @@ const UserProfile = () => {
     setIsEditMode(false)
     setHasErrorMsg('')
     setUpdatedProfile({
-      nickname: userInfo.username,
+      nickname: userInfo.nickname,
       profileImage: userInfo?.profileUrl || null,
       file: null,
     })
@@ -137,7 +137,7 @@ const UserProfile = () => {
         {hasErrorMsg && <FileErrMsg>{hasErrorMsg}</FileErrMsg>}
 
         {!isEditMode ? (
-          <ProfileName>{userInfo.username}</ProfileName>
+          <ProfileName>{userInfo.nickname}</ProfileName>
         ) : (
           <Input
             type="text"

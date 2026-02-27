@@ -30,7 +30,7 @@ const FeedProfile = ({ userProfile, shareCode, isMyFeed }: FeedProfileProps) => 
 
     // 공유할 데이터 설정
     const shareData = {
-      title: `[DEULAK] ${userProfile?.username}님의 피드`,
+      title: `[DEULAK] ${userProfile?.nickname}님의 피드`,
       url: `${window.location.origin}/${userProfile?.shareCode}`,
     }
 
@@ -61,7 +61,7 @@ const FeedProfile = ({ userProfile, shareCode, isMyFeed }: FeedProfileProps) => 
             </KeywordsBox>
           )}
           <NameInfoBox>
-            <Nickname>{userProfile?.username}</Nickname>
+            <Nickname>{userProfile?.nickname}</Nickname>
             <ShareCodeText>{`@${userProfile?.shareCode}`}</ShareCodeText>
           </NameInfoBox>
           <FollowInfoBox>
@@ -74,11 +74,7 @@ const FeedProfile = ({ userProfile, shareCode, isMyFeed }: FeedProfileProps) => 
 
       <CtaContainer>
         {isMyFeed ? (
-          <CtaButton
-            type="button"
-            $ctaType="edit"
-            onClick={() => navigate(`/${userProfile?.shareCode}/edit`)}
-          >
+          <CtaButton type="button" $ctaType="edit" onClick={() => navigate('/profileEdit')}>
             <Pencil width={20} height={20} />
             <span>프로필 편집</span>
           </CtaButton>

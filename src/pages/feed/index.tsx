@@ -39,12 +39,12 @@ const FeedPage = () => {
     () =>
       [
         {
-          label: isMyFeed ? '나의 CD' : `${userProfile?.username || ''}의 CD`,
+          label: isMyFeed ? '나의 CD' : `${userProfile?.nickname || ''}의 CD`,
           value: 'cds' as FEED_CD_LIST_TAB_TYPE,
         },
         { label: '나의 좋아요', value: 'likes' as FEED_CD_LIST_TAB_TYPE },
       ] as const,
-    [isMyFeed, userProfile?.username]
+    [isMyFeed, userProfile?.nickname]
   )
 
   const bioQuotes = useMemo(() => {
@@ -88,7 +88,7 @@ const FeedPage = () => {
             }
           />
         ) : (
-          <SubHeader title={`${userProfile?.username || ''}의 피드`} />
+          <SubHeader title={`${userProfile?.nickname || ''}의 피드`} />
         )}
         <BioBubble $isRandomBio={!userProfile?.bio}>
           <BioText>{bioQuotes}</BioText>

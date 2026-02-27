@@ -61,7 +61,7 @@ const FirstSection = () => {
         </CtaContainer>
       ) : (
         <CarouselContainer>
-          <Title>{isLogin ? TITLE_TEXT.MEMBER(userInfo.username) : TITLE_TEXT.GUEST}</Title>
+          <Title>{isLogin ? TITLE_TEXT.MEMBER(userInfo.nickname) : TITLE_TEXT.GUEST}</Title>
           <HomeCarousel
             data={isLogin ? (MyCdData ?? RandomCdData) : RandomCdData}
             isLogin={isLogin}
