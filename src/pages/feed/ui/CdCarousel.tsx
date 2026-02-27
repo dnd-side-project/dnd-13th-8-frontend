@@ -26,8 +26,7 @@ const CdCarousel = ({
 }: CdCarouselProps) => {
   const { id: playlistId } = useParams()
   const [activeIndex, setActiveIndex] = useState(0)
-  const deviceType = useDevice()
-  const isMobile = deviceType === 'mobile'
+  const { isMobile } = useDevice()
   const isSmall = isMobile && window.innerHeight < 633
 
   // url 기준으로 active index 동기화

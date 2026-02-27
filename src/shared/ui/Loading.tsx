@@ -13,13 +13,10 @@ interface LoadingProps {
 }
 
 const Loading = ({ isLoading, width = '210px', height = 'auto' }: LoadingProps) => {
-  const deviceType = useDevice()
-
-  const maxWidth = deviceType === 'mobile' ? 'clamp(320px, 100dvw, 430px)' : '430px'
-
+  const { layoutWidth } = useDevice()
   return (
     <Overlay isOpen={isLoading} onClose={() => {}} childrenAlign="center">
-      <LoadingContainer $width={width} $maxWidth={maxWidth} $height={height}>
+      <LoadingContainer $width={width} $layoutWidth={layoutWidth} $height={height}>
         <Lottie animationData={LoadingLottie} loop autoplay />
       </LoadingContainer>
     </Overlay>
@@ -30,12 +27,12 @@ export default Loading
 
 const LoadingContainer = styled.div<{
   $width?: string
-  $maxWidth?: string
+  $layoutWidth?: string
   $height?: string
 }>`
   ${flexRowCenter}
   width: ${({ $width }) => $width || '100%'};
-  max-width: ${({ $maxWidth }) => $maxWidth};
+  max-width: ${({ $layoutWidth }) => $layoutWidth};
   height: ${({ $height }) => $height};
   min-height: 100px;
 `

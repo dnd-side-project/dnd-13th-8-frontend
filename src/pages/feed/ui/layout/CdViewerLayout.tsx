@@ -63,8 +63,7 @@ const CdViewerLayout = ({
   const { id: playlistId } = useParams()
   const queryClient = useQueryClient()
   const { toggleLike } = useLike(Number(playlistId))
-  const deviceType = useDevice()
-  const isMobile = deviceType === 'mobile'
+  const { isMobile } = useDevice()
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false)
   const onModalClose = () => setModal((prev) => ({ ...prev, isOpen: false }))
   const [modal, setModal] = useState<ModalProps>({

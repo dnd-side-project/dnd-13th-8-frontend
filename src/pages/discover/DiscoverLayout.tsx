@@ -28,8 +28,7 @@ const Content = () => {
     handlePlayerError,
   } = usePlaylist()
 
-  const deviceType = useDevice()
-  const isMobile = deviceType === 'mobile'
+  const { isMobile } = useDevice()
 
   const location = useLocation()
   const isTracklistPage = location.pathname.includes('tracklist')

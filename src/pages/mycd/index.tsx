@@ -33,8 +33,7 @@ const MyCdPage = () => {
 
   const { userInfo } = useAuthStore()
   const navigate = useNavigate()
-  const deviceType = useDevice()
-  const isMobile = deviceType === 'mobile'
+  const { isMobile } = useDevice()
 
   const { id: routePlaylistId } = useParams<{ id?: string }>()
   const { search } = useLocation()
