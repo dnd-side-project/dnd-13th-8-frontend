@@ -61,7 +61,7 @@ const FeedCdList = ({ shareCode, feedView, isMyFeed }: FeedCdListProps) => {
               })
             }
           >
-            {isMyFeed ? (
+            {isMyFeed && feedView === 'cds' ? (
               <>
                 <Cd variant="responsive" stickers={item?.cdResponse?.cdItems} />
                 {!item?.isPublic && <PrivateBadge>비공개</PrivateBadge>}

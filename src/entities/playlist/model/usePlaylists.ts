@@ -134,7 +134,7 @@ export const useFeedCdList = ({
 }) => {
   return useQuery({
     queryKey: ['feedCdList', shareCode, feedView, params.sort],
-    queryFn: () => (feedView === 'CDS' ? getCdList(params) : getLikedCdList(params)),
+    queryFn: () => (feedView === 'cds' ? getCdList(params) : getLikedCdList(params)),
     enabled: !!shareCode,
   })
 }

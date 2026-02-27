@@ -49,6 +49,7 @@ const useLike = (playlistId: number) => {
     // 성공 실패 관계 없이 무조건 실행
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['likeStatus', playlistId] })
+      queryClient.invalidateQueries({ queryKey: ['feedCdList'], refetchType: 'none' })
     },
   })
 
@@ -76,6 +77,7 @@ const useLike = (playlistId: number) => {
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['likeStatus', playlistId] })
       queryClient.invalidateQueries({ queryKey: ['myLikeList'] })
+      queryClient.invalidateQueries({ queryKey: ['feedCdList'], refetchType: 'none' })
     },
   })
 
