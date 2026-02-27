@@ -26,15 +26,13 @@ const UserProfile = () => {
     file: File | null
     profileImage: string | null
   }>({
-    nickname: userInfo.username,
-    profileImage: userInfo?.userProfileImageUrl || null,
+    nickname: userInfo.nickname,
+    profileImage: userInfo?.profileUrl || null,
     file: null,
   })
 
   // 화면에 보여줄 프리뷰 URL
-  const [previewImage, setPreviewImage] = useState<ProfileUrl>(
-    userInfo?.userProfileImageUrl || null
-  )
+  const [previewImage, setPreviewImage] = useState<ProfileUrl>(userInfo?.profileUrl || null)
 
   // 프로필 편집 버튼 클릭
   const onProfileEditClick = () => {
@@ -67,11 +65,11 @@ const UserProfile = () => {
     setIsEditMode(false)
     setHasErrorMsg('')
     setUpdatedProfile({
-      nickname: userInfo.username,
-      profileImage: userInfo?.userProfileImageUrl || null,
+      nickname: userInfo.nickname,
+      profileImage: userInfo?.profileUrl || null,
       file: null,
     })
-    setPreviewImage(userInfo?.userProfileImageUrl || null)
+    setPreviewImage(userInfo?.profileUrl || null)
   }
 
   // 프로필 이미지 선택
@@ -86,10 +84,10 @@ const UserProfile = () => {
       }
       setUpdatedProfile((prev) => ({
         ...prev,
-        profileImage: userInfo?.userProfileImageUrl || null,
+        profileImage: userInfo?.profileUrl || null,
         file: null,
       }))
-      setPreviewImage(userInfo?.userProfileImageUrl || null)
+      setPreviewImage(userInfo?.profileUrl || null)
       return
     }
 
@@ -139,7 +137,7 @@ const UserProfile = () => {
         {hasErrorMsg && <FileErrMsg>{hasErrorMsg}</FileErrMsg>}
 
         {!isEditMode ? (
-          <ProfileName>{userInfo.username}</ProfileName>
+          <ProfileName>{userInfo.nickname}</ProfileName>
         ) : (
           <Input
             type="text"
