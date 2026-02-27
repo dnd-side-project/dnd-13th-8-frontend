@@ -42,7 +42,7 @@ const FeedCdList = ({ shareCode, feedView, isMyFeed }: FeedCdListProps) => {
       isLoading={isLoading || isFetching}
       isError={isError}
     >
-      {isMyFeed && feedView === 'CDS' && (
+      {isMyFeed && feedView === 'cds' && (
         <CdAddContainer>
           <button type="button" onClick={() => navigate('/customize')}>
             <Plus />

@@ -33,16 +33,16 @@ const FeedPage = () => {
   } = useUserProfile(shareCode)
 
   const isMyFeed = ownershipData?.isOwner ?? false
-  const currentTab = (searchParams.get('tab') || 'CDS') as FEED_CD_LIST_TAB_TYPE
+  const currentTab = (searchParams.get('tab') || 'cds') as FEED_CD_LIST_TAB_TYPE
 
   const TAB_LIST = useMemo(
     () =>
       [
         {
           label: isMyFeed ? '나의 CD' : `${userProfile?.username || ''}의 CD`,
-          value: 'CDS' as FEED_CD_LIST_TAB_TYPE,
+          value: 'cds' as FEED_CD_LIST_TAB_TYPE,
         },
-        { label: '나의 좋아요', value: 'LIKES' as FEED_CD_LIST_TAB_TYPE },
+        { label: '나의 좋아요', value: 'likes' as FEED_CD_LIST_TAB_TYPE },
       ] as const,
     [isMyFeed, userProfile?.username]
   )

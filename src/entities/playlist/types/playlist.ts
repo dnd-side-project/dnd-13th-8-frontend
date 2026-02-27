@@ -1,7 +1,7 @@
 import type { ShareCode } from '@/features/auth'
 import type { SortType } from '@/shared/ui/ContentHeader'
 
-export type FEED_CD_LIST_TAB_TYPE = 'CDS' | 'LIKES'
+export type FEED_CD_LIST_TAB_TYPE = 'cds' | 'likes'
 
 export interface CdBasicInfo {
   playlistId: number
