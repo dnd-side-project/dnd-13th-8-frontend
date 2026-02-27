@@ -1,3 +1,5 @@
+import { useLocation } from 'react-router-dom'
+
 import {
   useInfiniteQuery,
   useMutation,
@@ -19,6 +21,12 @@ import type { PlaylistDetail, PlaylistResponse } from '@/entities/playlist/types
 import { useAuthStore } from '@/features/auth/store/authStore'
 
 export const useShufflePlaylists = (size: number = 5) => {
+  const { isLogin, accessToken } = useAuthStore()
+  const location = useLocation()
+
+  // 로그인 콜백 중인지 확인
+  const isLoggingIn = location.pathname === '/login/callback'
+
   return useInfiniteQuery<
     PlaylistResponse, // queryFn 반환 타입
     Error, // 에러 타입
@@ -39,7 +47,8 @@ export const useShufflePlaylists = (size: number = 5) => {
       }
       return undefined
     },
-    enabled: !!useAuthStore.getState().accessToken || !!sessionStorage.getItem('anonymous_token'),
+    enabled:
+      !isLoggingIn && (isLogin ? !!accessToken : !!sessionStorage.getItem('anonymous_token')),
   })
 }
 

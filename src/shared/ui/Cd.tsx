@@ -5,8 +5,8 @@ import styled from 'styled-components'
 import { EyeSlashWhite } from '@/assets/icons'
 import overlayUrl from '@/assets/icons/icn_overlay.svg?url'
 import type { CdCustomData } from '@/entities/playlist/types/playlist'
-import { THEME_IMAGES_MAP } from '@/pages/mypage/lib/customizeTheme'
-import { THEME_PROP_ID_OFFSET } from '@/pages/mypage/types/mypage'
+import { THEME_PROP_ID_OFFSET } from '@/features/customize/constants/customize'
+import { THEME_IMAGES_MAP } from '@/features/customize/lib/customize'
 import { flexRowCenter, flexColCenter } from '@/shared/styles/mixins'
 
 export interface CdProps {
