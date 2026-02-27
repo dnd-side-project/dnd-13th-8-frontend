@@ -1,4 +1,4 @@
-import type { ProfileResponse } from '@/features/profile/types/profile'
+import type { ProfileResponse } from '@/entities/user'
 
 export interface LoginPayload {
   code: string

@@ -6,15 +6,15 @@ import { Profile, Input, Loading } from '@shared/ui'
 import type { ProfileUrl } from '@shared/ui/Profile'
 
 import { Camera } from '@/assets/icons'
+import { useUpdateUserProfile } from '@/entities/user'
 import { useAuthStore } from '@/features/auth/store/authStore'
-import { useProfile } from '@/features/profile/model/useProfile'
 import { flexRowCenter } from '@/shared/styles/mixins'
 
 const MAX_FILE_SIZE = 1024 * 1024 * 5 // 5MB
 
 const UserProfile = () => {
   const { userInfo, updateUserInfo } = useAuthStore()
-  const { mutate, isPending } = useProfile()
+  const { mutate, isPending } = useUpdateUserProfile()
 
   const fileInputRef = useRef<HTMLInputElement>(null)
 

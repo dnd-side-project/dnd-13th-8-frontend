@@ -1,8 +1,8 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
+import type { ProfileResponse } from '@/entities/user'
 import type { AuthState } from '@/features/auth/types/auth'
-import type { ProfileResponse } from '@/features/profile/types/profile'
 
 export const useAuthStore = create<AuthState>()(
   persist(
