@@ -3,45 +3,49 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 
 import styled, { css } from 'styled-components'
 
-import { useToast } from '@/app/providers'
-import { Gear, Pencil, Add, Share } from '@/assets/icons'
+import { Gear } from '@/assets/icons'
 import { FeedBg } from '@/assets/images'
+import { type FEED_CD_LIST_TAB_TYPE } from '@/entities/playlist'
 import { useUserProfile } from '@/entities/user'
 import { useOwnerStatus } from '@/features/auth'
+import { FeedCdList, FeedProfile } from '@/pages/feed/ui'
 import { FeedbackIcon } from '@/pages/feedback/ui'
-import { useCopyShareUrl } from '@/shared/lib'
 import { flexRowCenter } from '@/shared/styles/mixins'
-import { Loading, Header, SubHeader, SvgButton, Profile, Divider, Badge } from '@/shared/ui'
+import { Loading, Header, SubHeader, SvgButton, Divider } from '@/shared/ui'
 
-type FEED_TAB_TYPE = 'cds' | 'likes'
+const RANDOM_BIO_QUOTES = [
+  '재생 목록에\n어떤 곡이 있나요?',
+  '오늘의 기분에는\n이 트랙이!',
+  '짧은 글로 나의\n음악 취향을 알려줘!',
+  '나를 자유롭게\n소개해줘!',
+] as const
 
 const FeedPage = () => {
   const { shareCode = '' } = useParams()
-  const [searchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams()
   const navigate = useNavigate()
 
-  const { toast } = useToast()
-  const { copyShareUrl } = useCopyShareUrl()
-
   const { data: ownershipData, isLoading: ownerShipDataLoading } = useOwnerStatus(shareCode || '')
-  const isMyFeed = ownershipData?.isOwner ?? false
-
   const {
     userProfile,
     isLoading: isProfileLoading,
     isError: isProfileError,
   } = useUserProfile(shareCode)
 
-  const RANDOM_BIO_QUOTES = [
-    '재생 목록에\n어떤 곡이 있나요?',
-    '오늘의 기분에는\n이 트랙이!',
-    '짧은 글로 나의\n음악 취향을 알려줘!',
-    '나를 자유롭게\n소개해줘!',
-  ] as const
+  const isMyFeed = ownershipData?.isOwner ?? false
+  const currentTab = (searchParams.get('tab') || 'CDS') as FEED_CD_LIST_TAB_TYPE
 
-  const currentTab = searchParams?.get('tab') || ('cds' as FEED_TAB_TYPE)
-  console.log('currentTab', currentTab)
-  console.log('userProfile', userProfile)
+  const TAB_LIST = useMemo(
+    () =>
+      [
+        {
+          label: isMyFeed ? '나의 CD' : `${userProfile?.username || ''}의 CD`,
+          value: 'CDS' as FEED_CD_LIST_TAB_TYPE,
+        },
+        { label: '나의 좋아요', value: 'LIKES' as FEED_CD_LIST_TAB_TYPE },
+      ] as const,
+    [isMyFeed, userProfile?.username]
+  )
 
   const bioQuotes = useMemo(() => {
     if (userProfile?.bio) return userProfile?.bio
@@ -49,28 +53,8 @@ const FeedPage = () => {
     return RANDOM_BIO_QUOTES[randomIndex]
   }, [userProfile?.bio])
 
-  const onShareButtonClick = async () => {
-    // 브라우저 지원 여부 및 https 체크 (미지원 시 함수로 별도 copy 처리)
-    if (typeof window === 'undefined' || !navigator.share) {
-      copyShareUrl('feed', shareCode ?? '')
-      return
-    }
-
-    // 공유할 데이터 설정
-    const shareData = {
-      title: `[DEULAK] ${userProfile?.username}님의 피드`,
-      url: `${window.location.origin}/${userProfile?.shareCode}`,
-    }
-
-    try {
-      await navigator.share(shareData)
-      toast('LINK')
-    } catch (error) {
-      // 사용자가 공유를 취소한 경우 외의 에러 케이스
-      if ((error as Error).name !== 'AbortError') {
-        console.error('피드 URL 공유 중 에러 발생: ', error)
-      }
-    }
+  const onTabChange = (nextTab: FEED_CD_LIST_TAB_TYPE) => {
+    setSearchParams({ tab: nextTab }, { replace: true })
   }
 
   if ((ownerShipDataLoading && !ownershipData) || isProfileLoading) return <Loading isLoading />
@@ -110,55 +94,20 @@ const FeedPage = () => {
           <BioText>{bioQuotes}</BioText>
         </BioBubble>
       </TopVisualBackground>
-
-      <ProfileContainer>
-        <ProfileImage>
-          <Profile size="L" profileUrl={userProfile?.profileUrl} />
-        </ProfileImage>
-        <ProfileInfo>
-          {/* TODO: key값 백엔드 확인 후 회신 오면 response key와 맵핑 */}
-          {(userProfile?.keywords?.length ?? 0) > 0 && (
-            <KeywordsBox>
-              {userProfile?.keywords.map((keyword) => (
-                <Badge key={keyword} size="large" text={keyword} />
-              ))}
-            </KeywordsBox>
-          )}
-          <NameInfoBox>
-            <Nickname>{userProfile?.username}</Nickname>
-            <ShareCodeText>{`@${userProfile?.shareCode}`}</ShareCodeText>
-          </NameInfoBox>
-          <FollowInfoBox>
-            <FollowText>팔로잉 {userProfile?.followCount?.followingCount ?? 0}</FollowText>
-            <VerticalText>|</VerticalText>
-            <FollowText>팔로워 {userProfile?.followCount?.followerCount ?? 0}</FollowText>
-          </FollowInfoBox>
-        </ProfileInfo>
-      </ProfileContainer>
-
-      {/* TODO: #190 개발계 머지 후 팔로우 기능 연동 */}
-      <CtaContainer>
-        {isMyFeed ? (
-          <CtaButton
-            type="button"
-            $ctaType="edit"
-            onClick={() => navigate(`/${userProfile?.shareCode}/edit`)}
-          >
-            <Pencil width={20} height={20} />
-            <span>프로필 편집</span>
-          </CtaButton>
-        ) : (
-          <CtaButton type="button" $ctaType="follow">
-            <Add width={20} height={20} />
-            <span>팔로우</span>
-          </CtaButton>
-        )}
-        <ShareButton type="button" onClick={onShareButtonClick}>
-          <Share />
-        </ShareButton>
-      </CtaContainer>
-
+      <FeedProfile userProfile={userProfile} shareCode={shareCode} isMyFeed={isMyFeed} />
       <Divider />
+      <section>
+        <TabContainer>
+          {TAB_LIST.map((tab) => (
+            <TabItem key={tab.value} $isActive={currentTab === tab.value}>
+              <button type="button" onClick={() => onTabChange(tab.value)}>
+                {tab.label}
+              </button>
+            </TabItem>
+          ))}
+        </TabContainer>
+        <FeedCdList shareCode={shareCode} feedView={currentTab} isMyFeed={isMyFeed} />
+      </section>
     </FeedWrapper>
   )
 }
@@ -240,91 +189,28 @@ const BioText = styled.p`
   word-break: break-all;
 `
 
-const ProfileContainer = styled.section`
-  position: relative;
-  margin: -20px -20px 0 -20px;
+const TabContainer = styled.ul`
+  ${flexRowCenter}
+  margin: 12px -20px 20px -20px;
   padding: 0 20px;
-  border-radius: 24px 24px 0px 0px;
-  background-color: ${({ theme }) => theme.COLOR['gray-900']};
+  border-bottom: 1px solid ${({ theme }) => theme.COLOR['gray-700']};
 `
 
-const ProfileImage = styled.div`
-  display: flex;
-  justify-content: center;
-  margin: -40px 0 24px 0;
-`
-
-const ProfileInfo = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-`
-
-const KeywordsBox = styled.div`
-  display: flex;
-  gap: 4px;
-`
-
-const NameInfoBox = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-`
-
-const Nickname = styled.h2`
-  ${({ theme }) => theme.FONT.heading1}
-  ${({ theme }) => theme.COLOR['gray-10']};
-  font-weight: 600;
-`
-
-const ShareCodeText = styled.span`
-  ${({ theme }) => theme.FONT.caption1}
-  color: ${({ theme }) => theme.COLOR['gray-300']};
-`
-
-const FollowInfoBox = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-`
-
-const FollowText = styled.span`
-  ${({ theme }) => theme.FONT['body2-normal']}
-  color: ${({ theme }) => theme.COLOR['gray-300']};
-`
-
-const VerticalText = styled.span`
-  ${({ theme }) => theme.FONT.caption1}
-  color: ${({ theme }) => theme.COLOR['gray-600']};
-`
-
-const CtaContainer = styled.div`
-  display: flex;
-  gap: 8px;
-  margin-top: 24px;
-  margin-bottom: 32px;
-`
-
-const ShareButton = styled.button`
+const TabItem = styled.li<{ $isActive: boolean }>`
   ${flexRowCenter}
-  width: 44px;
+  width: 100%;
   height: 44px;
-  background-color: ${({ theme }) => theme.COLOR['gray-600']};
-  border-radius: 11px;
-`
+  border-bottom: ${({ theme, $isActive }) =>
+    $isActive ? `2px solid ${theme.COLOR['gray-100']}` : 'transparent'};
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.0145em;
 
-const CtaButton = styled.button<{ $ctaType: 'edit' | 'follow' | 'following' }>`
-  ${flexRowCenter}
-  gap: 4px;
-  flex: 1;
-  color: ${({ theme, $ctaType }) =>
-    $ctaType === 'edit'
-      ? theme.COLOR['gray-200']
-      : $ctaType === 'follow'
-        ? theme.COLOR['gray-700']
-        : theme.COLOR['primary-normal']};
-  background-color: ${({ theme, $ctaType }) =>
-    $ctaType === 'follow' ? theme.COLOR['primary-normal'] : theme.COLOR['gray-600']};
-  border-radius: 11px;
-  ${({ theme }) => theme.FONT['body2-normal']}
+  & > button {
+    width: 100%;
+    height: 100%;
+    ${({ theme }) => theme.FONT['body2-normal']}
+    color: ${({ theme, $isActive }) =>
+      $isActive ? theme.COLOR['gray-10'] : theme.COLOR['gray-400']};
+  }
 `

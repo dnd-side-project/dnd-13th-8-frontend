@@ -1,7 +1,7 @@
 import { useState, useMemo, useRef, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 
-import type { DefaultError } from '@tanstack/react-query'
+import { useQueryClient, type DefaultError } from '@tanstack/react-query'
 import type { AxiosError } from 'axios'
 import styled from 'styled-components'
 import { v4 as uuidv4 } from 'uuid'
@@ -40,6 +40,7 @@ const CustomizeStep2 = ({
 }: CustomizeStepProps) => {
   const navigate = useNavigate()
   const location = useLocation()
+  const queryClient = useQueryClient()
 
   const fileInputRef = useRef<HTMLInputElement>(null)
   const cdContainerRef = useRef<HTMLCanvasElement>(null)
@@ -170,6 +171,7 @@ const CustomizeStep2 = ({
       {
         onSuccess: (response) => {
           setCurrentCdId?.(response?.playlistId ?? null)
+          queryClient.invalidateQueries({ queryKey: ['feedCdList'] })
           setCurrentStep(3)
           removeTempData()
         },

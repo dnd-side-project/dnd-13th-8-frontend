@@ -166,6 +166,7 @@ const CdViewerLayout = ({
               }
 
               queryClient.invalidateQueries({ queryKey: ['myCdList'] })
+              queryClient.invalidateQueries({ queryKey: ['feedCdList'] })
             },
           })
         },

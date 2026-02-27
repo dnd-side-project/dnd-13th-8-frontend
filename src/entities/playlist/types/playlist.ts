@@ -1,9 +1,15 @@
+import type { ShareCode } from '@/features/auth'
+import type { SortType } from '@/shared/ui/ContentHeader'
+
+export type FEED_CD_LIST_TAB_TYPE = 'CDS' | 'LIKES'
+
 export interface CdBasicInfo {
   playlistId: number
   playlistName: string
   creatorNickname?: string
   genre: string
   isPublic: boolean
+  isLiked?: boolean
 }
 
 export interface CdCustomData {
@@ -24,12 +30,27 @@ export interface CdCoverInfo {
   cdItems: CdCustomData[]
 }
 
-export type CdMetaResponse = (CdBasicInfo & OnlyCdResponse)[]
+export interface CdListParams {
+  shareCode: ShareCode
+  sort: SortType
+  cursor: string | null
+  limit: number
+}
 
 export interface OnlyCdResponse {
   cdResponse: {
     cdItems: CdCustomData[]
   }
+}
+
+export type CdMetaResponse = (CdBasicInfo & OnlyCdResponse)[]
+
+export interface CdListResponse {
+  content: (CdBasicInfo & OnlyCdResponse)[]
+  nextCursor: string | null
+  size: number
+  hasNext: boolean
+  totalCount: number
 }
 
 export interface Track {
