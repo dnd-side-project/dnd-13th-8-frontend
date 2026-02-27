@@ -7,8 +7,13 @@ export interface LoginPayload {
 
 export interface UserInfo {
   userId: string
+  nickname: string
+  profileUrl: string | null
+}
+
+export interface ChatUserInfo {
+  userId: string
   username: string
-  userProfileImageUrl: string | null
 }
 
 export interface LoginResponse extends UserInfo {
