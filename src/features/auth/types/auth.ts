@@ -26,3 +26,7 @@ export interface AuthState {
   setLogout: () => void
   updateUserInfo: (data: ProfileResponse) => void
 }
+
+export interface ShareCodeOwnerResponse {
+  isOwner: boolean
+}

@@ -4,8 +4,7 @@ import { useLocation, Link, useNavigate } from 'react-router-dom'
 import { useQueryClient } from '@tanstack/react-query'
 import styled, { useTheme } from 'styled-components'
 
-import { useVerifyOwner } from '@/entities/user'
-import { useAuthStore } from '@/features/auth'
+import { useAuthStore, useVerifyOwner } from '@/features/auth'
 import { NAV_ITEMS } from '@/shared/config/navItems'
 import SvgButton from '@/shared/ui/SvgButton'
 
