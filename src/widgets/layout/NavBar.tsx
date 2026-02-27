@@ -1,4 +1,4 @@
-import { useMemo, type MouseEvent as ReactMouseEvent } from 'react'
+import { useState, useMemo, type MouseEvent as ReactMouseEvent } from 'react'
 import { useLocation, Link, useNavigate } from 'react-router-dom'
 
 import { useQueryClient } from '@tanstack/react-query'
@@ -6,7 +6,7 @@ import styled, { useTheme } from 'styled-components'
 
 import { useAuthStore, useVerifyOwner } from '@/features/auth'
 import { NAV_ITEMS } from '@/shared/config/navItems'
-import SvgButton from '@/shared/ui/SvgButton'
+import { SvgButton, Modal } from '@/shared/ui'
 
 export const NAV_HEIGHT = 64
 
@@ -18,6 +18,8 @@ const NavBar = () => {
 
   const { isLogin, userInfo, setLogout } = useAuthStore()
   const { mutate: checkOwner, isPending } = useVerifyOwner()
+
+  const [isModalOpen, setIsModalOpen] = useState(!isLogin)
 
   const myShareCode = userInfo?.shareCode || ''
   const firstSegment = location.pathname.split('/')[1] || '' // 현재 URL의 첫번째 segment
@@ -51,8 +53,8 @@ const NavBar = () => {
 
     // 이미 로딩 중일 경우 중복 클릭 방지
     if (isPending) return
-    // TODO: 비로그인 상태에서 클릭했을 경우 로그인 유도 로직 추가 필요 (기획 문의 요청함)
     if (!isLogin || !myShareCode) {
+      setIsModalOpen(true)
       return
     }
 
@@ -89,6 +91,21 @@ const NavBar = () => {
           </NavLink>
         )
       })}
+      {isModalOpen && (
+        <Modal
+          isOpen={isModalOpen}
+          title="로그인 후 이용할 수 있어요"
+          ctaType="double"
+          confirmText="로그인하기"
+          cancelText="다음에 하기"
+          onConfirm={() => {
+            setIsModalOpen(false)
+            navigate('/login')
+          }}
+          onCancel={() => setIsModalOpen(false)}
+          onClose={() => setIsModalOpen(false)}
+        />
+      )}
     </NavButtonBox>
   )
 }
