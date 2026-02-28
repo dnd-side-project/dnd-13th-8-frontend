@@ -186,16 +186,20 @@ const ProfileEditPage = () => {
       const apiKey = isImageField ? 'profileImage' : key
 
       if (apiKey === 'keywords' && Array.isArray(value)) {
+        // keyword: 삭제할 경우 빈 문자열 전송
         if (value.length > 0) {
           value.forEach((v) => formData.append('keywords', v))
         } else {
           formData.append(apiKey, '')
         }
-      } else if (['profileImage', 'bio'].includes(apiKey) && value === null) {
-        // TODO: 기존 이미지 제거 시 보낼 value 백엔드 확인 요청
-        // 기존 값 제거: bio면 '', profileImage 문자열 'NULL'
-        formData.append(apiKey, apiKey === 'bio' ? '' : 'NULL')
+      } else if (isImageField && value === null) {
+        // profileImage 삭제
+        formData.append('removeProfileImage', 'true')
+      } else if (apiKey === 'bio' && value === null) {
+        // bio 삭제
+        formData.append(apiKey, '')
       } else {
+        // 그 외 변경 사항(new profile image, nickname 등)
         formData.append(apiKey, value as string | Blob)
       }
     })
