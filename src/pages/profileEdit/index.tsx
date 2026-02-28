@@ -208,7 +208,7 @@ const ProfileEditPage = () => {
           shareCode: response.shareCode,
           profileImageUrl: response.profileUrl,
         })
-        queryClient.invalidateQueries({ queryKey: ['getUserProfile'] })
+        queryClient.invalidateQueries({ queryKey: ['getUserProfile', response.shareCode] })
         toast('PROFILE_EDIT')
         navigate(`/${response.shareCode}`)
       },

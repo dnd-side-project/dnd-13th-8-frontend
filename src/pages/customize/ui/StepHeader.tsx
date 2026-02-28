@@ -23,7 +23,7 @@ const StepHeader = ({
   // current step별 header 뒤로가기 로직
   const onHeaderPrevClick = () => {
     if (currentStep === 1 || !currentStep) {
-      navigate('/')
+      navigate(-1)
       return
     }
     setCurrentStep((currentStep - 1) as CUSTOMIZE_STEP)
