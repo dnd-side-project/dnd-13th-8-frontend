@@ -1,10 +1,11 @@
+import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import styled from 'styled-components'
 
 import { useToast } from '@/app/providers'
 import { Pencil, Add, Share } from '@/assets/icons'
-import type { ProfileResponse } from '@/entities/user'
+import { PROFILE_KEYWORDS_LIST, type ProfileResponse } from '@/entities/user'
 import type { ShareCode } from '@/features/auth'
 import { useCopyShareUrl } from '@/shared/lib'
 import { flexRowCenter } from '@/shared/styles/mixins'
@@ -20,6 +21,16 @@ const FeedProfile = ({ userProfile, shareCode, isMyFeed }: FeedProfileProps) => 
   const navigate = useNavigate()
   const { toast } = useToast()
   const { copyShareUrl } = useCopyShareUrl()
+
+  const keywordLabelMap = useMemo(() => {
+    return PROFILE_KEYWORDS_LIST.reduce(
+      (acc, cur) => {
+        acc[cur.id] = cur.label
+        return acc
+      },
+      {} as Record<string, string>
+    )
+  }, [])
 
   const onShareButtonClick = async () => {
     // 브라우저 지원 여부 및 https 체크 (미지원 시 함수로 별도 copy 처리)
@@ -52,11 +63,10 @@ const FeedProfile = ({ userProfile, shareCode, isMyFeed }: FeedProfileProps) => 
           <Profile size="L" profileUrl={userProfile?.profileUrl} />
         </ProfileImage>
         <ProfileInfo>
-          {/* TODO: key값 백엔드 확인 후 회신 오면 response key와 맵핑 */}
           {(userProfile?.keywords?.length ?? 0) > 0 && (
             <KeywordsBox>
               {userProfile?.keywords.map((keyword) => (
-                <Badge key={keyword} size="large" text={keyword} />
+                <Badge key={keyword} size="large" text={keywordLabelMap[keyword]} />
               ))}
             </KeywordsBox>
           )}

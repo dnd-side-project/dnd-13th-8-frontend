@@ -1,19 +1,23 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { useOutletContext } from 'react-router-dom'
+import { useOutletContext, useNavigate } from 'react-router-dom'
 
+import { useQueryClient } from '@tanstack/react-query'
 import { AnimatePresence, motion } from 'framer-motion'
 import styled from 'styled-components'
 
+import { useToast } from '@/app/providers'
 import { Camera, HelpCircle } from '@/assets/icons'
 import {
+  useUserProfile,
   PROFILE_LIMITS,
   PROFILE_ERROR_MESSAGES,
   PROFILE_KEYWORDS_LIST,
   type ProfileResponse,
 } from '@/entities/user'
+import { useAuthStore } from '@/features/auth'
 import { useDevice } from '@/shared/lib/useDevice'
 import { flexRowCenter, flexColCenter } from '@/shared/styles/mixins'
-import { Divider, Button, Profile, Input } from '@/shared/ui'
+import { Divider, Button, Profile, Input, Loading } from '@/shared/ui'
 import type { ProfileUrl } from '@/shared/ui/Profile'
 
 interface NewProfileType {
@@ -26,9 +30,14 @@ interface NewProfileType {
 }
 
 const ProfileEditPage = () => {
-  // const navigate = useNavigate()
+  const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const { userProfile } = useOutletContext<{ userProfile: ProfileResponse }>()
   const { layoutWidth } = useDevice()
+  const { toast } = useToast()
+
+  const { updateProfile, isPending } = useUserProfile()
+  const { updateUserInfo } = useAuthStore()
 
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -163,10 +172,55 @@ const ProfileEditPage = () => {
     })
   }
 
+  // submit 클릭
+  const onSubmitClick = () => {
+    if (isSubmitDisabled || isPending) return
+
+    const formData = new FormData()
+
+    // 변경된 필드만 FormData에 담음
+    Object.entries(changedFields).forEach(([key, value]) => {
+      if (value === undefined) return
+
+      const isImageField = key === 'imageFile' || key === 'imageUrl'
+      const apiKey = isImageField ? 'profileImage' : key
+
+      if (apiKey === 'keywords' && Array.isArray(value)) {
+        if (value.length > 0) {
+          value.forEach((v) => formData.append('keywords', v))
+        } else {
+          formData.append(apiKey, '')
+        }
+      } else if (['profileImage', 'bio'].includes(apiKey) && value === null) {
+        // TODO: 기존 이미지 제거 시 보낼 value 백엔드 확인 요청
+        // 기존 값 제거: bio면 '', profileImage 문자열 'NULL'
+        formData.append(apiKey, apiKey === 'bio' ? '' : 'NULL')
+      } else {
+        formData.append(apiKey, value as string | Blob)
+      }
+    })
+
+    updateProfile(formData, {
+      onSuccess: (response) => {
+        updateUserInfo({
+          userId: response.userId,
+          nickname: response.nickname,
+          shareCode: response.shareCode,
+          profileImageUrl: response.profileUrl,
+        })
+        queryClient.invalidateQueries({ queryKey: ['getUserProfile'] })
+        toast('PROFILE_EDIT')
+        navigate(`/${response.shareCode}`)
+      },
+    })
+  }
+
   // 메모리 정리
   useEffect(() => {
     return () => cleanupImageBlob()
   }, [imagePreview])
+
+  if (isPending) return <Loading isLoading={isPending} />
 
   return (
     <ProfilEditPageWrapper>
@@ -299,7 +353,7 @@ const ProfileEditPage = () => {
       </InfoContainer>
 
       <CtaContainer $layoutWidth={layoutWidth}>
-        <Button size="L" state={isSubmitDisabled ? 'disabled' : 'primary'}>
+        <Button size="L" state={isSubmitDisabled ? 'disabled' : 'primary'} onClick={onSubmitClick}>
           저장하기
         </Button>
       </CtaContainer>
