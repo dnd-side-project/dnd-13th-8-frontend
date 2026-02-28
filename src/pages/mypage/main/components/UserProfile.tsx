@@ -2,19 +2,17 @@ import { useEffect, useRef, useState } from 'react'
 
 import styled from 'styled-components'
 
-import { Profile, Input, Loading } from '@shared/ui'
+import { Profile, Input } from '@shared/ui'
 import type { ProfileUrl } from '@shared/ui/Profile'
 
 import { Camera } from '@/assets/icons'
 import { useAuthStore } from '@/features/auth'
-import { useProfile } from '@/features/profile/model/useProfile'
 import { flexRowCenter } from '@/shared/styles/mixins'
 
 const MAX_FILE_SIZE = 1024 * 1024 * 5 // 5MB
 
 const UserProfile = () => {
-  const { userInfo, updateUserInfo } = useAuthStore()
-  const { mutate, isPending } = useProfile()
+  const { userInfo } = useAuthStore()
 
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -46,20 +44,7 @@ const UserProfile = () => {
       return
     }
 
-    mutate(updatedProfile, {
-      onSuccess: (response) => {
-        updateUserInfo(response)
-
-        setIsEditMode(false)
-        setHasErrorMsg('')
-        setUpdatedProfile({
-          nickname: response.nickname,
-          profileImage: response.profileImageUrl,
-          file: null,
-        })
-        setPreviewImage(response.profileImageUrl)
-      },
-    })
+    alert('TODO: 마이페이지 제거 예정')
 
     // 초기화
     setIsEditMode(false)
@@ -109,7 +94,6 @@ const UserProfile = () => {
 
   return (
     <>
-      {isPending && <Loading isLoading={isPending} />}
       <ProfileWrapper>
         <ProfileImgContainer>
           <Profile size="L" profileUrl={previewImage} />

@@ -1,13 +1,30 @@
+import type {
+  FollowListResponse,
+  FollowSortType,
+  FollowStatusResponse,
+} from '@/features/follow/types/follow'
 import { api } from '@/shared/api/httpClient'
 
-export const postFollow = (playlistId: number) => {
-  return api.post(`/main/follow/${playlistId}`)
+export const postFollow = (userId: string) => {
+  return api.post(`/main/follow/${userId}`)
 }
 
-export const deleteFollow = (playlistId: number) => {
-  return api.delete(`/main/follow/${playlistId}`)
+export const deleteFollow = (userId: string) => {
+  return api.delete(`/main/follow/${userId}`)
 }
 
-export const getFollowStatus = (playlistId: number) => {
-  return api.get(`/main/follow/${playlistId}`)
+export const getFollowStatus = (userId: string) => {
+  return api.get<FollowStatusResponse>(`/main/follow/${userId}`)
+}
+
+export const getFollowingList = (userId: string, sort?: FollowSortType) => {
+  return api.get<FollowListResponse>(`/main/follow/following/${userId}`, {
+    params: { sort: sort }, // Default: LATEST
+  })
+}
+
+export const getFollowerList = (userId: string, sort?: FollowSortType) => {
+  return api.get<FollowListResponse>(`/main/follow/follower/${userId}`, {
+    params: { sort: sort }, // Default: LATEST
+  })
 }

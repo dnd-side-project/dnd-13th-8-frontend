@@ -5,13 +5,13 @@ import styled from 'styled-components'
 import { flexRowCenter } from '@/shared/styles/mixins'
 
 const FollowTab = () => {
-  const { userId } = useParams()
+  const { shareCode } = useParams()
 
   return (
     <TabContainer>
-      <TabButton to={`/${userId}/following`}>팔로잉</TabButton>
+      <TabButton to={`/${shareCode}/following`}>팔로잉</TabButton>
 
-      <TabButton to={`/${userId}/followers`}>팔로워</TabButton>
+      <TabButton to={`/${shareCode}/followers`}>팔로워</TabButton>
     </TabContainer>
   )
 }

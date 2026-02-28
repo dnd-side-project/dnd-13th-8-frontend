@@ -1,48 +1,88 @@
-import { useState } from 'react'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import {
+  postFollow,
+  deleteFollow,
+  getFollowStatus,
+  getFollowingList,
+  getFollowerList,
+} from '@/features/follow/api/follow'
+import type { FollowSortType } from '@/features/follow/types/follow'
 
-import { postFollow, deleteFollow, getFollowStatus } from '@/features/follow/api/follow'
-
-const useFollow = (playlistId: number, initialIsFollowing: boolean) => {
+const useFollow = (shareCode: string, initialIsFollowing?: boolean) => {
   const queryClient = useQueryClient()
-  const [isFollowing, setIsFollowing] = useState(initialIsFollowing)
+
+  const { data } = useQuery({
+    queryKey: ['followStatus', shareCode],
+    queryFn: () => getFollowStatus(shareCode),
+    enabled: !!shareCode,
+    initialData: initialIsFollowing !== undefined ? { isFollowing: initialIsFollowing } : undefined,
+  })
 
   const followMutation = useMutation({
-    mutationFn: (playlistId: number) => postFollow(playlistId),
+    mutationFn: () => postFollow(shareCode),
     onSuccess: () => {
-      setIsFollowing(true)
-      queryClient.invalidateQueries({ queryKey: ['playlistDetail', playlistId] })
+      queryClient.invalidateQueries({ queryKey: ['followStatus', shareCode] })
+      queryClient.invalidateQueries({
+        queryKey: ['followingList'],
+        refetchType: 'none',
+      })
+      queryClient.invalidateQueries({
+        queryKey: ['followerList'],
+        refetchType: 'none',
+      })
     },
   })
 
   const unfollowMutation = useMutation({
-    mutationFn: (playlistId: number) => deleteFollow(playlistId),
+    mutationFn: () => deleteFollow(shareCode),
     onSuccess: () => {
-      setIsFollowing(false)
-      queryClient.invalidateQueries({ queryKey: ['playlistDetail', playlistId] })
+      queryClient.invalidateQueries({ queryKey: ['followStatus', shareCode] })
+      queryClient.invalidateQueries({
+        queryKey: ['followingList'],
+        refetchType: 'none',
+      })
+      queryClient.invalidateQueries({
+        queryKey: ['followerList'],
+        refetchType: 'none',
+      })
     },
   })
 
+  const isFollowing = data?.isFollowing ?? initialIsFollowing ?? false
+
   const toggleFollow = () => {
     if (followMutation.isPending || unfollowMutation.isPending) return
+
     if (isFollowing) {
-      unfollowMutation.mutate(playlistId)
+      unfollowMutation.mutate()
     } else {
-      followMutation.mutate(playlistId)
+      followMutation.mutate()
     }
   }
 
-  return { isFollowing, toggleFollow, followMutation, unfollowMutation }
+  return {
+    isFollowing,
+    toggleFollow,
+    isLoading: followMutation.isPending || unfollowMutation.isPending,
+  }
 }
 
 export default useFollow
 
-export const useFollowStatus = (playlistId: number, options?: { enabled?: boolean }) => {
+export const useFollowerList = (shareCode: string, sort?: FollowSortType) => {
   return useQuery({
-    queryKey: ['followStatus', playlistId],
-    queryFn: () => getFollowStatus(playlistId),
-    staleTime: 0,
-    enabled: playlistId !== undefined && (options?.enabled ?? true),
+    queryKey: ['followerList', shareCode, sort],
+    queryFn: () => getFollowerList(shareCode, sort),
+    enabled: !!shareCode,
+  })
+}
+
+export const useFollowingList = (shareCode: string, sort?: FollowSortType) => {
+  return useQuery({
+    queryKey: ['followingList', shareCode, sort],
+    queryFn: () => getFollowingList(shareCode, sort),
+    enabled: !!shareCode,
   })
 }

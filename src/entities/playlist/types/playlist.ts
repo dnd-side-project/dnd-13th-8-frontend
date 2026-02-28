@@ -65,6 +65,7 @@ export interface Track {
 export interface Creator {
   creatorId: string
   creatorNickname: string
+  creatorShareCode?: string
   creatorProfileImageUrl?: string
 }
 

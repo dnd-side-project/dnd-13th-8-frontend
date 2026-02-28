@@ -1,3 +1,5 @@
 export { default as useFollow } from './model/useFollow'
 export { default as FollowButton } from './ui/FollowButton'
 export * from './api/follow'
+export * from './model/useFollow'
+export * from './types/follow'

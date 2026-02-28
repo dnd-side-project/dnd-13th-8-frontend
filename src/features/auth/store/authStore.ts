@@ -1,8 +1,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
-import type { AuthState } from '@/features/auth'
-import type { ProfileResponse } from '@/features/profile/types/profile'
+import type { AuthState, UserInfo } from '@/features/auth'
 
 export const useAuthStore = create<AuthState>()(
   persist(
@@ -30,8 +29,8 @@ export const useAuthStore = create<AuthState>()(
         })
       },
 
-      updateUserInfo: (payload: ProfileResponse) => {
-        const { userId, nickname: nickname, shareCode, profileImageUrl: profileUrl } = payload
+      updateUserInfo: (payload: UserInfo) => {
+        const { userId, nickname, shareCode, profileUrl } = payload
         set({
           userInfo: {
             userId,
