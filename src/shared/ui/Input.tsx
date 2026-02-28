@@ -13,6 +13,7 @@ type InputType = 'text' | 'search' | 'url'
 type IconPosition = 'left' | 'right'
 
 interface InputProps {
+  id?: string
   type: InputType
   placeholder?: string
   value?: string
@@ -33,6 +34,7 @@ interface InputProps {
 }
 
 const Input = ({
+  id,
   type,
   placeholder,
   value,
@@ -60,6 +62,7 @@ const Input = ({
           icon && React.createElement(icon)
         )}
         <StyledInput
+          id={id}
           type={type}
           placeholder={placeholder}
           value={value}
