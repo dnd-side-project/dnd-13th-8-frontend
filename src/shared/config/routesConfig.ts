@@ -37,6 +37,8 @@ const Cds = lazy(() => import('@/pages/feed/cds'))
 const Likes = lazy(() => import('@/pages/feed/likes'))
 const TracklistDetail = lazy(() => import('@/pages/feed/tracklist'))
 const CdPlayerLayout = lazy(() => import('@/pages/feed/ui/layout/CdPlayerLayout'))
+const ProfileEditLayout = lazy(() => import('@/pages/profileEdit/ProfileEditLayout'))
+const ProfileEdit = lazy(() => import('@/pages/profileEdit'))
 
 export interface RouteConfig {
   path: string
@@ -84,7 +86,6 @@ export const routesConfig: RouteConfig[] = [
     path: '/customize',
     component: CustomizeLayout,
     hideNav: true,
-    isPrivate: false,
     isNotSuspense: false,
     children: [{ path: '', component: CustomizePage }],
   },
@@ -171,6 +172,15 @@ export const routesConfig: RouteConfig[] = [
         ],
       },
     ],
+  },
+
+  // 프로필 수정
+  {
+    path: '/profileEdit',
+    component: ProfileEditLayout,
+    isPrivate: true,
+    hideNav: true,
+    children: [{ path: '', component: ProfileEdit }],
   },
 
   // 에러 페이지
