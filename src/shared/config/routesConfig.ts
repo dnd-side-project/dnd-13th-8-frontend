@@ -30,12 +30,15 @@ const ErrorPage = lazy(() => import('@/pages/error'))
 const FeedbackPage = lazy(() => import('@/pages/feedback'))
 const FeedLayout = lazy(() => import('@/pages/feed/FeedLayout'))
 const FollowLayout = lazy(() => import('@/pages/feed/ui/layout/FollowLayout'))
+const Feed = lazy(() => import('@/pages/feed'))
 const Followers = lazy(() => import('@/pages/feed/followers'))
 const Following = lazy(() => import('@/pages/feed/following'))
 const Cds = lazy(() => import('@/pages/feed/cds'))
 const Likes = lazy(() => import('@/pages/feed/likes'))
 const TracklistDetail = lazy(() => import('@/pages/feed/tracklist'))
 const CdPlayerLayout = lazy(() => import('@/pages/feed/ui/layout/CdPlayerLayout'))
+const ProfileEditLayout = lazy(() => import('@/pages/profileEdit/ProfileEditLayout'))
+const ProfileEdit = lazy(() => import('@/pages/profileEdit'))
 
 export interface RouteConfig {
   path: string
@@ -83,7 +86,6 @@ export const routesConfig: RouteConfig[] = [
     path: '/customize',
     component: CustomizeLayout,
     hideNav: true,
-    isPrivate: false,
     isNotSuspense: false,
     children: [{ path: '', component: CustomizePage }],
   },
@@ -133,6 +135,11 @@ export const routesConfig: RouteConfig[] = [
     isNotSuspense: true,
     children: [
       {
+        path: '',
+        component: Feed,
+        isNotSuspense: true,
+      },
+      {
         path: 'followers',
         component: FollowLayout,
         isNotSuspense: true,
@@ -165,6 +172,15 @@ export const routesConfig: RouteConfig[] = [
         ],
       },
     ],
+  },
+
+  // 프로필 수정
+  {
+    path: '/profileEdit',
+    component: ProfileEditLayout,
+    isPrivate: true,
+    hideNav: true,
+    children: [{ path: '', component: ProfileEdit }],
   },
 
   // 에러 페이지

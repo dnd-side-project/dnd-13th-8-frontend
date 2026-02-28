@@ -35,8 +35,7 @@ const PlaylistLayout = ({
   const [isOverflow, setIsOverflow] = useState(false)
 
   const navigate = useNavigate()
-  const deviceType = useDevice()
-  const isMobile = deviceType === 'mobile'
+  const { isMobile } = useDevice()
 
   const title = currentPlaylist?.playlistName ?? ''
   const containerRef = useRef<HTMLDivElement>(null)

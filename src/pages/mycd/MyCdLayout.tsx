@@ -27,8 +27,7 @@ const Content = () => {
     handlePlayerError,
   } = usePlaylist()
   const [isMuted, setIsMuted] = useState<boolean | null>(null)
-  const deviceType = useDevice()
-  const isMobile = deviceType === 'mobile'
+  const { isMobile } = useDevice()
 
   const videoId = currentPlaylist
     ? getVideoId(currentPlaylist.songs[currentTrackIndex]?.youtubeUrl)

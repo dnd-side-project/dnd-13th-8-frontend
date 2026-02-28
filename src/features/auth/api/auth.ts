@@ -1,4 +1,10 @@
-import type { LoginPayload, LoginResponse, UserInfo } from '@/features/auth/types/auth'
+import type {
+  LoginPayload,
+  LoginResponse,
+  ChatUserInfo,
+  ShareCode,
+  ShareCodeOwnerResponse,
+} from '@/features/auth'
 import { api } from '@/shared/api/httpClient'
 
 // 회원 로그인 (카카오)
@@ -18,5 +24,10 @@ export const deleteAccount = () => {
 
 // 채팅 내 이름/아이디 확인
 export const getUserInfo = () => {
-  return api.get<UserInfo>('/chat/user')
+  return api.get<ChatUserInfo>('/chat/user')
+}
+
+// shareCode 유효성 및 피드 본인 여부 확인
+export const getShareCodeOwner = (shareCode: ShareCode) => {
+  return api.get<ShareCodeOwnerResponse>(`/main/user/profile/${shareCode}/owner`)
 }

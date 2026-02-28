@@ -1,3 +1,4 @@
-export * from './api/playlist.ts'
-export * from './model/usePlaylists.ts'
-export * from './types/playlist.ts'
+export * from './api/playlist'
+export * from './model/useMyCd'
+export * from './model/usePlaylists'
+export * from './types/playlist'

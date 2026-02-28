@@ -7,7 +7,7 @@ import { Logo, RightArrow, Search } from '@/assets/icons'
 import { HomeCharacter } from '@/assets/images'
 import { usePlaylistDetails, useShufflePlaylists } from '@/entities/playlist'
 import { useMyCdList } from '@/entities/playlist/model/useMyCd'
-import { useAuthStore } from '@/features/auth/store/authStore'
+import { useAuthStore } from '@/features/auth'
 import { FeedbackIcon } from '@/pages/feedback/ui'
 import { BUTTON_TEXT, TITLE_TEXT } from '@/pages/home/config/messages'
 import { HomeCarousel } from '@/pages/home/ui'
@@ -61,7 +61,7 @@ const FirstSection = () => {
         </CtaContainer>
       ) : (
         <CarouselContainer>
-          <Title>{isLogin ? TITLE_TEXT.MEMBER(userInfo.username) : TITLE_TEXT.GUEST}</Title>
+          <Title>{isLogin ? TITLE_TEXT.MEMBER(userInfo.nickname) : TITLE_TEXT.GUEST}</Title>
           <HomeCarousel
             data={isLogin ? (MyCdData ?? RandomCdData) : RandomCdData}
             isLogin={isLogin}

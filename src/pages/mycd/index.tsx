@@ -9,7 +9,7 @@ import { NoLike } from '@/assets/icons'
 import { MemberCharacter } from '@/assets/images'
 import { usePlaylistDetail } from '@/entities/playlist'
 import { useMyCdActions, useMyCdList, useMyLikedCdList } from '@/entities/playlist/model/useMyCd'
-import { useAuthStore } from '@/features/auth/store/authStore'
+import { useAuthStore } from '@/features/auth'
 import { HeaderTab, PlaylistCarousel } from '@/pages/mycd/ui'
 import type { MyCdTab } from '@/pages/mycd/ui/HeaderTab'
 import { useDevice } from '@/shared/lib/useDevice'
@@ -33,8 +33,7 @@ const MyCdPage = () => {
 
   const { userInfo } = useAuthStore()
   const navigate = useNavigate()
-  const deviceType = useDevice()
-  const isMobile = deviceType === 'mobile'
+  const { isMobile } = useDevice()
 
   const { id: routePlaylistId } = useParams<{ id?: string }>()
   const { search } = useLocation()

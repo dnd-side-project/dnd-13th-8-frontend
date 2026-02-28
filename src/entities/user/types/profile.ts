@@ -4,12 +4,6 @@ export interface ProfilePayload {
   profileImage: string | null
 }
 
-export interface ProfileResponse {
-  userId: string
-  nickname: string
-  profileImageUrl: string | null
-}
-
 export interface FollowCount {
   followerCount: number
   followingCount: number

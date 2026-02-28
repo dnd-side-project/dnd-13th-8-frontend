@@ -5,7 +5,7 @@ import styled from 'styled-components'
 import { SvgButton } from '@shared/ui'
 
 import { RightArrow } from '@/assets/icons'
-import { useAuthStore } from '@/features/auth/store/authStore'
+import { useAuthStore } from '@/features/auth'
 import { flexRowCenter } from '@/shared/styles/mixins'
 import { SubHeader } from '@/shared/ui'
 

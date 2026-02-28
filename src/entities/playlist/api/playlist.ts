@@ -1,4 +1,6 @@
 import type {
+  CdListResponse,
+  CdListParams,
   CdMetaResponse,
   PlaylistDetail,
   PlaylistParams,
@@ -6,13 +8,23 @@ import type {
 } from '@/entities/playlist/types/playlist'
 import { api } from '@/shared/api/httpClient'
 
+// 피드 CD 리스트 조회
+export const getCdList = (params: CdListParams) => {
+  return api.get<CdListResponse>(`/main/playlist/feed/${params.shareCode}`, { params })
+}
+
+// 피드 좋아요 한 CD 리스트 조회
+export const getLikedCdList = (params: CdListParams) => {
+  return api.get<CdListResponse>(`/main/playlist/feed/${params.shareCode}/likes`, { params })
+}
+
 // 나의 CD 리스트 조회
 export const getMyCdList = (sort: string) => {
   return api.get<CdMetaResponse>(`/main/playlist/mypage/me?sort=${sort}`)
 }
 
 // 좋아요한 CD 리스트 조회
-export const getLikedCdList = (sort: string) => {
+export const getMyLikedCdList = (sort: string) => {
   return api.get<CdMetaResponse>(`/main/playlist/mypage/me/likes?sort=${sort}`)
 }
 

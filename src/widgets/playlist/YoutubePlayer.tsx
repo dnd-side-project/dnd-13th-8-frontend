@@ -19,8 +19,7 @@ const YoutubePlayer = ({
 }: YoutubePlayerProps) => {
   const playerRef = useRef<YT.Player | null>(null)
   const containerRef = useRef<HTMLDivElement | null>(null)
-  const deviceType = useDevice()
-  const isMobile = deviceType === 'mobile'
+  const { isMobile } = useDevice()
   const [apiReady, setApiReady] = useState<boolean>(!!window.YT?.Player)
   const prevVideoId = useRef<string | null>(null)
 

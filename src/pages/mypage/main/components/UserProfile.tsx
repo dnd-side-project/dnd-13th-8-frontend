@@ -2,19 +2,17 @@ import { useEffect, useRef, useState } from 'react'
 
 import styled from 'styled-components'
 
-import { Profile, Input, Loading } from '@shared/ui'
+import { Profile, Input } from '@shared/ui'
 import type { ProfileUrl } from '@shared/ui/Profile'
 
 import { Camera } from '@/assets/icons'
-import { useUpdateUserProfile } from '@/entities/user'
-import { useAuthStore } from '@/features/auth/store/authStore'
+import { useAuthStore } from '@/features/auth'
 import { flexRowCenter } from '@/shared/styles/mixins'
 
 const MAX_FILE_SIZE = 1024 * 1024 * 5 // 5MB
 
 const UserProfile = () => {
-  const { userInfo, updateUserInfo } = useAuthStore()
-  const { mutate, isPending } = useUpdateUserProfile()
+  const { userInfo } = useAuthStore()
 
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -26,15 +24,13 @@ const UserProfile = () => {
     file: File | null
     profileImage: string | null
   }>({
-    nickname: userInfo.username,
-    profileImage: userInfo?.userProfileImageUrl || null,
+    nickname: userInfo.nickname,
+    profileImage: userInfo?.profileUrl || null,
     file: null,
   })
 
   // 화면에 보여줄 프리뷰 URL
-  const [previewImage, setPreviewImage] = useState<ProfileUrl>(
-    userInfo?.userProfileImageUrl || null
-  )
+  const [previewImage, setPreviewImage] = useState<ProfileUrl>(userInfo?.profileUrl || null)
 
   // 프로필 편집 버튼 클릭
   const onProfileEditClick = () => {
@@ -48,30 +44,17 @@ const UserProfile = () => {
       return
     }
 
-    mutate(updatedProfile, {
-      onSuccess: (response) => {
-        updateUserInfo(response)
-
-        setIsEditMode(false)
-        setHasErrorMsg('')
-        setUpdatedProfile({
-          nickname: response.nickname,
-          profileImage: response.profileImageUrl,
-          file: null,
-        })
-        setPreviewImage(response.profileImageUrl)
-      },
-    })
+    alert('TODO: 마이페이지 제거 예정')
 
     // 초기화
     setIsEditMode(false)
     setHasErrorMsg('')
     setUpdatedProfile({
-      nickname: userInfo.username,
-      profileImage: userInfo?.userProfileImageUrl || null,
+      nickname: userInfo.nickname,
+      profileImage: userInfo?.profileUrl || null,
       file: null,
     })
-    setPreviewImage(userInfo?.userProfileImageUrl || null)
+    setPreviewImage(userInfo?.profileUrl || null)
   }
 
   // 프로필 이미지 선택
@@ -86,10 +69,10 @@ const UserProfile = () => {
       }
       setUpdatedProfile((prev) => ({
         ...prev,
-        profileImage: userInfo?.userProfileImageUrl || null,
+        profileImage: userInfo?.profileUrl || null,
         file: null,
       }))
-      setPreviewImage(userInfo?.userProfileImageUrl || null)
+      setPreviewImage(userInfo?.profileUrl || null)
       return
     }
 
@@ -111,7 +94,6 @@ const UserProfile = () => {
 
   return (
     <>
-      {isPending && <Loading isLoading={isPending} />}
       <ProfileWrapper>
         <ProfileImgContainer>
           <Profile size="L" profileUrl={previewImage} />
@@ -139,7 +121,7 @@ const UserProfile = () => {
         {hasErrorMsg && <FileErrMsg>{hasErrorMsg}</FileErrMsg>}
 
         {!isEditMode ? (
-          <ProfileName>{userInfo.username}</ProfileName>
+          <ProfileName>{userInfo.nickname}</ProfileName>
         ) : (
           <Input
             type="text"

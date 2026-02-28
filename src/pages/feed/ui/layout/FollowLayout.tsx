@@ -11,14 +11,14 @@ const FollowLayout = () => {
   const { shareCode } = useParams()
   const navigate = useNavigate()
 
-  const { data } = useUserProfile(shareCode || '')
+  const { userProfile } = useUserProfile(shareCode || '')
 
   return (
     <div>
       <HeaderSection>
         <Header
           left={<SvgButton icon={LeftArrow} onClick={() => navigate(-1)} />}
-          center={<span>{data?.username}</span>}
+          center={<span>{userProfile?.nickname}</span>}
         />
         <FollowTab />
       </HeaderSection>

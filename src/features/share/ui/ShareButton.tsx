@@ -9,7 +9,7 @@ import GuestCharacter from '@/assets/images/img_character_guest.png'
 import MemberCharacter from '@/assets/images/img_character_member.png'
 import type { CdCustomData } from '@/entities/playlist'
 import ShareImage from '@/features/share/ui/ShareImage'
-import { useCopyCdShareUrl } from '@/shared/lib/useCopyCdShareUrl'
+import { useCopyShareUrl } from '@/shared/lib'
 import { flexRowCenter, myCdButton } from '@/shared/styles/mixins'
 import { BottomSheet, Button, Cd, ScrollCarousel, SvgButton } from '@/shared/ui'
 
@@ -94,13 +94,12 @@ const buildBlobWithRetry = async (element: HTMLElement, maxAttempts: number) => 
   return bestBlob
 }
 
-// const ShareButton = ({ playlistId, stickers, type = 'DISCOVER', ref }: ShareButtonProps) => {
 const ShareButton = forwardRef<{ openShare: () => void }, Omit<ShareButtonProps, 'ref'>>(
   ({ playlistId, stickers, type = 'DISCOVER' }, ref) => {
     const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false)
     const [selectedIndex, setSelectedIndex] = useState(0)
     const { toast } = useToast()
-    const { copyCdShareUrl } = useCopyCdShareUrl()
+    const { copyShareUrl } = useCopyShareUrl()
     const shareRefs = useRef<(HTMLDivElement | null)[]>([])
 
     const slides = [
@@ -199,7 +198,7 @@ const ShareButton = forwardRef<{ openShare: () => void }, Omit<ShareButtonProps,
               <Button onClick={handleSaveImage} size="M" state="secondary">
                 이미지로 저장
               </Button>
-              <Button onClick={() => copyCdShareUrl(playlistId)} size="M" state="secondary">
+              <Button onClick={() => copyShareUrl('cd', playlistId)} size="M" state="secondary">
                 링크 복사
               </Button>
             </ButtonBar>

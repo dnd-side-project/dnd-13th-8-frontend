@@ -3,7 +3,7 @@ import { useEffect, useRef, useState, useCallback } from 'react'
 import { Client, type Message } from '@stomp/stompjs'
 import SockJS from 'sockjs-client/dist/sockjs'
 
-import { useAuthStore } from '@/features/auth/store/authStore'
+import { useAuthStore } from '@/features/auth'
 import { getListenerCount, type ChatMessage } from '@/features/chat'
 
 export const useChatSocket = (roomId: string) => {

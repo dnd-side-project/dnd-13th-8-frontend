@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 
 import { Modal } from '@shared/ui'
 
-import { useAuthStore } from '@/features/auth/store/authStore'
+import { useAuthStore } from '@/features/auth'
 
 interface PrivateRouteProps {
   children: React.ReactNode

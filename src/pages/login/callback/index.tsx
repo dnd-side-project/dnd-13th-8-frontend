@@ -1,8 +1,7 @@
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import { useLogin } from '@/features/auth/model/useAuth'
-import { useAuthStore } from '@/features/auth/store/authStore'
+import { useLogin, useAuthStore } from '@/features/auth'
 import { Loading } from '@/shared/ui'
 
 const LoginCallbackPage = () => {

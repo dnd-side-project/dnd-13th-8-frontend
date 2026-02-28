@@ -26,7 +26,7 @@ const Playlist = ({
 }: PlaylistProps) => {
   const navigate = useNavigate()
 
-  // 마이페이지에서만 아래 옵션을 사용하고 있어 구분하기 위함
+  // 피드 페이지에서만 아래 옵션을 사용하고 있어 구분하기 위함
   const isFromMypage = cdVariant === 'responsive'
 
   const handleClick = () => {

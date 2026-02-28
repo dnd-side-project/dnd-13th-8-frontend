@@ -19,15 +19,13 @@ import {
   OpacityCharacterPink,
   OpacityMusic,
 } from '@/assets/images'
-import { useAnonymousLogin } from '@/features/auth/model/useAuth'
-import { useAuthStore } from '@/features/auth/store/authStore'
+import { useAnonymousLogin, useAuthStore } from '@/features/auth'
 import { GlobalErrorModal } from '@/shared/ui'
 import NavBar, { NAV_HEIGHT } from '@/widgets/layout/NavBar'
 
 const App = () => {
-  const deviceType = useDevice()
+  const { isMobile } = useDevice()
   const location = useLocation()
-  const isMobile = deviceType === 'mobile'
 
   const { isLogin } = useAuthStore()
   const { mutate } = useAnonymousLogin()
@@ -97,7 +95,7 @@ const App = () => {
 
   return (
     <RootWrapper>
-      {deviceType !== 'mobile' && (
+      {!isMobile && (
         <div aria-hidden="true">
           <CommonBgElement src={CommonBg} alt="background" />
           <LogoElement src={Logo} alt="logo" />

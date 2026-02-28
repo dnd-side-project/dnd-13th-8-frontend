@@ -10,6 +10,8 @@ import {
 } from '@tanstack/react-query'
 
 import {
+  getCdList,
+  getLikedCdList,
   getMyPlaylistDetail,
   getPlaylistDetail,
   getPlaylistViewCounts,
@@ -17,8 +19,13 @@ import {
   postPlaylistConfirm,
   postPlaylistStart,
 } from '@/entities/playlist/api/playlist'
-import type { PlaylistDetail, PlaylistResponse } from '@/entities/playlist/types/playlist'
-import { useAuthStore } from '@/features/auth/store/authStore'
+import type {
+  PlaylistDetail,
+  PlaylistResponse,
+  CdListParams,
+  FEED_CD_LIST_TAB_TYPE,
+} from '@/entities/playlist/types/playlist'
+import { useAuthStore, type ShareCode } from '@/features/auth'
 
 export const useShufflePlaylists = (size: number = 5) => {
   const { isLogin, accessToken } = useAuthStore()
@@ -114,4 +121,20 @@ export const usePlaylistDetails = (ids: number[]) => {
   }, [])
 
   return { data, isLoading, isError }
+}
+
+export const useFeedCdList = ({
+  shareCode,
+  feedView,
+  params,
+}: {
+  shareCode: ShareCode
+  feedView: FEED_CD_LIST_TAB_TYPE
+  params: CdListParams
+}) => {
+  return useQuery({
+    queryKey: ['feedCdList', shareCode, feedView, params.sort],
+    queryFn: () => (feedView === 'cds' ? getCdList(params) : getLikedCdList(params)),
+    enabled: !!shareCode,
+  })
 }

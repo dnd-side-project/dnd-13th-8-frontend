@@ -1,18 +1,17 @@
 import styled from 'styled-components'
 
-import { useDevice, type DeviceType } from '@/shared/lib/useDevice'
+import { useDevice } from '@/shared/lib/useDevice'
 
 const Divider = () => {
-  const deviceType = useDevice()
-  return <StyledDivider $deviceType={deviceType} />
+  const { layoutWidth } = useDevice()
+  return <StyledDivider $layoutWidth={layoutWidth} />
 }
 
 export default Divider
 
-const StyledDivider = styled.div<{ $deviceType: DeviceType }>`
+const StyledDivider = styled.div<{ $layoutWidth: string }>`
   margin: 0 -20px;
-  width: ${({ $deviceType }) =>
-    $deviceType === 'mobile' ? 'clamp(320px, 100dvw, 430px)' : '430px'};
+  width: ${({ $layoutWidth }) => $layoutWidth};
   height: 12px;
   background-color: ${({ theme }) => theme.COLOR['gray-800']};
 `

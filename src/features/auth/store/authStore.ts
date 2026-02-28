@@ -1,21 +1,20 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
-import type { ProfileResponse } from '@/entities/user'
-import type { AuthState } from '@/features/auth/types/auth'
+import type { AuthState, UserInfo } from '@/features/auth'
 
 export const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({
-      userInfo: { userId: '', username: '', userProfileImageUrl: null },
+      userInfo: { userId: '', nickname: '', shareCode: '', profileUrl: null },
       isLogin: false,
       accessToken: '',
 
       setLogin: (response) => {
         sessionStorage.removeItem('anonymous_token')
-        const { userId, username, userProfileImageUrl, jwtAccessToken } = response
+        const { userId, nickname, shareCode, profileUrl, jwtAccessToken } = response
         set({
-          userInfo: { userId, username, userProfileImageUrl },
+          userInfo: { userId, nickname, shareCode, profileUrl },
           accessToken: jwtAccessToken,
           isLogin: true,
         })
@@ -24,18 +23,20 @@ export const useAuthStore = create<AuthState>()(
       setLogout: () => {
         localStorage.removeItem('deulak_auth')
         set({
-          userInfo: { userId: '', username: '', userProfileImageUrl: null },
+          userInfo: { userId: '', nickname: '', shareCode: '', profileUrl: null },
           accessToken: '',
           isLogin: false,
         })
       },
 
-      updateUserInfo: (payload: ProfileResponse) => {
+      updateUserInfo: (payload: UserInfo) => {
+        const { userId, nickname, shareCode, profileUrl } = payload
         set({
           userInfo: {
-            userId: payload.userId,
-            username: payload.nickname,
-            userProfileImageUrl: payload.profileImageUrl,
+            userId,
+            nickname,
+            shareCode,
+            profileUrl,
           },
         })
       },

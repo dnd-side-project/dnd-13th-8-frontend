@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import type { PanInfo } from 'framer-motion'
 import styled from 'styled-components'
 
-import { useDevice, type DeviceType } from '@/shared/lib/useDevice'
+import { useDevice } from '@/shared/lib/useDevice'
 import Overlay from '@/shared/ui/Overlay'
 
 const BOTTOM_SHEET_CONSTANTS = {
@@ -43,7 +43,7 @@ const BottomSheet = ({
   showHandle = true,
 }: BottomSheetProps) => {
   const prevOverflowRef = useRef<string | null>(null)
-  const deviceType = useDevice()
+  const { layoutWidth } = useDevice()
 
   const handleEscape = useCallback(
     (event: KeyboardEvent) => {
@@ -123,7 +123,7 @@ const BottomSheet = ({
             initial="hidden"
             animate="visible"
             exit="exit"
-            $deviceType={deviceType}
+            $layoutWidth={layoutWidth}
             $height={height}
           >
             {showHandle && (
@@ -138,10 +138,9 @@ const BottomSheet = ({
   )
 }
 
-const SheetContainer = styled(motion.div)<{ $deviceType: DeviceType; $height: string }>`
+const SheetContainer = styled(motion.div)<{ $layoutWidth: string; $height: string }>`
   position: relative;
-  width: ${({ $deviceType }) =>
-    $deviceType === 'mobile' ? 'clamp(320px, 100dvw, 430px)' : '430px'};
+  width: ${({ $layoutWidth }) => $layoutWidth};
   height: ${({ $height }) => $height};
   border-radius: 20px 20px 0 0;
   overflow: hidden;
