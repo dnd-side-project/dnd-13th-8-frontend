@@ -19,7 +19,7 @@ const NavBar = () => {
   const { isLogin, userInfo, setLogout } = useAuthStore()
   const { mutate: checkOwner, isPending } = useVerifyOwner()
 
-  const [isModalOpen, setIsModalOpen] = useState(!isLogin)
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   const myShareCode = userInfo?.shareCode || ''
   const firstSegment = location.pathname.split('/')[1] || '' // 현재 URL의 첫번째 segment

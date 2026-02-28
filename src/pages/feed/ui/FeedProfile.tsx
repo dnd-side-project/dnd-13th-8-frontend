@@ -35,14 +35,14 @@ const FeedProfile = ({ userProfile, shareCode, isMyFeed }: FeedProfileProps) => 
   const onShareButtonClick = async () => {
     // 브라우저 지원 여부 및 https 체크 (미지원 시 함수로 별도 copy 처리)
     if (typeof window === 'undefined' || !navigator.share) {
-      copyShareUrl('feed', shareCode ?? '')
+      copyShareUrl('feed', userProfile?.shareCode || shareCode)
       return
     }
 
     // 공유할 데이터 설정
     const shareData = {
       title: `[DEULAK] ${userProfile?.nickname}님의 피드`,
-      url: `${window.location.origin}/${userProfile?.shareCode}`,
+      url: `${window.location.origin}/${userProfile?.shareCode || shareCode}`,
     }
 
     try {
@@ -137,7 +137,7 @@ const NameInfoBox = styled.div`
 
 const Nickname = styled.h2`
   ${({ theme }) => theme.FONT.heading1}
-  ${({ theme }) => theme.COLOR['gray-10']};
+  color: ${({ theme }) => theme.COLOR['gray-10']};
   font-weight: 600;
 `
 

@@ -55,7 +55,7 @@ const ProfileEditPage = () => {
     shareCode: '',
     bio: '',
   })
-  const [imagePreview, setImagePeview] = useState<ProfileUrl>(userProfile.profileUrl ?? null)
+  const [imagePreview, setImagePreview] = useState<ProfileUrl>(userProfile.profileUrl ?? null)
   const [isPopoverOpen, setIsPopoverOpen] = useState(false)
 
   // 기존 userProfile과 비교하여 변경된 필드만 추출 (수정된 항목만 api 요청에 포함)
@@ -102,14 +102,14 @@ const ProfileEditPage = () => {
 
     cleanupImageBlob()
     const blobUrl = URL.createObjectURL(file)
-    setImagePeview(blobUrl)
+    setImagePreview(blobUrl)
     setProfileForm((prev) => ({ ...prev, imageFile: file, imageUrl: null }))
     setErrorMessage((prev) => ({ ...prev, image: '' }))
   }
 
   const onImageDelete = () => {
     cleanupImageBlob()
-    setImagePeview(null)
+    setImagePreview(null)
     setProfileForm((prev) => ({ ...prev, imageFile: null, imageUrl: null }))
     setErrorMessage((prev) => ({ ...prev, image: '' }))
   }
