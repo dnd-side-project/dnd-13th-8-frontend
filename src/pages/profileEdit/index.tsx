@@ -206,7 +206,7 @@ const ProfileEditPage = () => {
           userId: response.userId,
           nickname: response.nickname,
           shareCode: response.shareCode,
-          profileImageUrl: response.profileUrl,
+          profileUrl: response.profileUrl,
         })
         queryClient.invalidateQueries({ queryKey: ['getUserProfile', response.shareCode] })
         toast('PROFILE_EDIT')
