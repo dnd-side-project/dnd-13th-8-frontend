@@ -9,8 +9,8 @@ import {
   useCategoryPlaylist,
   type SearchParams,
   type MusicGenreId,
-  type SearchResult,
-  type PlaylistSearchResult,
+  type SearchType,
+  SEARCH_TYPE,
 } from '@/features/search'
 import { MUSIC_GENRES } from '@/shared/config/musicGenres'
 import { useSingleSelect } from '@/shared/lib/useSingleSelect'
@@ -25,7 +25,9 @@ const SearchResultPage = () => {
 
   const queryParams = new URLSearchParams(location.search)
   const keyword = queryParams.get('keyword') ?? ''
-  const type = queryParams.get('keywordType') ?? 'keyword'
+  const rawType = queryParams.get('keywordType')
+  const type: SearchType =
+    rawType === SEARCH_TYPE.CATEGORY ? SEARCH_TYPE.CATEGORY : SEARCH_TYPE.KEYWORD
 
   const [inputValue, setInputValue] = useState(keyword)
   const [searchValue, setSearchValue] = useState(keyword)
@@ -36,19 +38,15 @@ const SearchResultPage = () => {
     sort: selected === 'POPULAR' ? 'POPULAR' : 'RECENT',
   }
 
-  const keywordSearch = useSearch(commonParams, type === 'keyword')
+  const keywordSearch = useSearch(commonParams, type === SEARCH_TYPE.KEYWORD)
   const categorySearch = useCategoryPlaylist(
-    {
-      ...commonParams,
-      genre: searchValue as MusicGenreId,
-    },
-    type === 'category'
+    { ...commonParams, genre: searchValue as MusicGenreId },
+    type === SEARCH_TYPE.CATEGORY
   )
 
-  const current = type === 'keyword' ? keywordSearch : categorySearch
-
-  const results: (SearchResult | PlaylistSearchResult)[] =
-    type === 'keyword'
+  const current = type === SEARCH_TYPE.KEYWORD ? keywordSearch : categorySearch
+  const results =
+    type === SEARCH_TYPE.KEYWORD
       ? (keywordSearch.data?.pages.flatMap((p) => p.content.results) ?? [])
       : (categorySearch.data?.pages.flatMap((p) => p.content) ?? [])
 
@@ -72,7 +70,7 @@ const SearchResultPage = () => {
   if (current.isLoading) return <Loading isLoading />
 
   const genreLabel =
-    type === 'category' ? MUSIC_GENRES.find((g) => g.id === searchValue)?.label : '검색'
+    type === SEARCH_TYPE.CATEGORY ? MUSIC_GENRES.find((g) => g.id === searchValue)?.label : '검색'
 
   return (
     <>
@@ -81,7 +79,7 @@ const SearchResultPage = () => {
           left={<SvgButton icon={LeftArrow} onClick={() => navigate(-1)} />}
           center={<span>{genreLabel}</span>}
         />
-        {type === 'keyword' && (
+        {type === SEARCH_TYPE.KEYWORD && (
           <Input
             type="search"
             value={inputValue}

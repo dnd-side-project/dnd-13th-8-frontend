@@ -71,3 +71,9 @@ export interface PopularKeywordResponse {
   limit: number
   keywords: PopularKeywordItem[]
 }
+export const SEARCH_TYPE = {
+  KEYWORD: 'keyword',
+  CATEGORY: 'category',
+} as const
+
+export type SearchType = (typeof SEARCH_TYPE)[keyof typeof SEARCH_TYPE]
