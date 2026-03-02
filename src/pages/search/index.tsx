@@ -38,7 +38,7 @@ const SearchPage = () => {
       />
       <Input
         type="search"
-        placeholder="듣고 싶은 키워드로 검색"
+        placeholder="듣고 싶은 트랙명 키워드 또는 닉네임 검색"
         value={searchValue}
         onChange={(e) => setSearchValue(e.target.value)}
         icon={Search}
@@ -70,7 +70,7 @@ const SearchPage = () => {
         </Keywords>
       </TrendKeywordsSection>
       <MoodSection>
-        <h1>장르와 테마</h1>
+        <h1>카테고리</h1>
         <Category>
           {MUSIC_GENRES.map((genre) => (
             <CategoryButton

@@ -146,7 +146,7 @@ const SearchResultPage = () => {
         {type === 'keyword' && (
           <Input
             type="search"
-            placeholder="듣고 싶은 키워드로 검색"
+            placeholder="듣고 싶은 트랙명 키워드 또는 닉네임 검색"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             icon={Search}
