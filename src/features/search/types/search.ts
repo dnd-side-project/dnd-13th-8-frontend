@@ -1,4 +1,5 @@
 import type { CdCustomData } from '@/entities/playlist'
+import type { MUSIC_GENRES } from '@/shared/config/musicGenres'
 
 export interface SearchParams {
   query: string
@@ -7,18 +8,9 @@ export interface SearchParams {
   page?: number
 }
 
+export type MusicGenreId = (typeof MUSIC_GENRES)[number]['id']
 export interface CategoryPlaylistParams {
-  genre:
-    | 'STUDY'
-    | 'SLEEP'
-    | 'RELAX'
-    | 'WORKOUT'
-    | 'DRIVE'
-    | 'PARTY'
-    | 'MOOD'
-    | 'ROMANCE'
-    | 'KPOP'
-    | 'SAD'
+  genre: MusicGenreId
   sort?: 'POPULAR' | 'RECENT'
   limit?: number
   cursorId?: number
@@ -48,11 +40,11 @@ export interface PlaylistSearchResult {
   }
 }
 
-export type SearchResultItem = UserSearchResult | PlaylistSearchResult
+export type SearchResult = UserSearchResult | PlaylistSearchResult
 
 export type SearchPlaylistResponse = {
   content: {
-    results: SearchResultItem[]
+    results: SearchResult[]
   }
   page: number
   size: number
