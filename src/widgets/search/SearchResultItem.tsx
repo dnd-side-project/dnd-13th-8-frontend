@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 
 import type { CdCustomData } from '@/entities/playlist'
-import { flexRowCenter } from '@/shared/styles/mixins'
+import { ellipsisOneLine, flexRowCenter } from '@/shared/styles/mixins'
 import { Cd, Profile } from '@/shared/ui'
 
 interface SearchResultItemProps {
@@ -43,7 +43,7 @@ export default SearchResultItem
 const ItemContainer = styled.button`
   display: flex;
   gap: 12px;
-  max-width: 335px;
+  width: 100%;
 `
 
 const Left = styled.div`
@@ -54,6 +54,8 @@ const Left = styled.div`
 
 const Right = styled.div`
   display: flex;
+  flex: 1;
+  min-width: 0;
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
@@ -61,11 +63,9 @@ const Right = styled.div`
 `
 
 const SearchResult = styled.span`
-  display: inline-block;
-  max-width: 267px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  ${ellipsisOneLine};
+  width: 100%;
+  text-align: left;
 
   color: ${({ theme }) => theme.COLOR['gray-50']};
   ${({ theme }) => theme.FONT.headline2};
