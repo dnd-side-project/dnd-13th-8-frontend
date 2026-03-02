@@ -4,12 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { LeftArrow, Search } from '@/assets/icons'
-import {
-  useSearchPlaylist,
-  useCategoryPlaylist,
-  type Playlist,
-  type SearchParams,
-} from '@/features/search'
+import { useSearch, useCategoryPlaylist, type SearchParams } from '@/features/search'
 import { MUSIC_GENRES } from '@/shared/config/musicGenres'
 import { useSingleSelect } from '@/shared/lib/useSingleSelect'
 import { ContentHeader, Error, Header, Input, Loading, NoData, SvgButton } from '@/shared/ui'
@@ -34,7 +29,7 @@ const SearchResultPage = () => {
     sort: selected.toUpperCase() === 'POPULAR' ? 'POPULAR' : 'RECENT',
   }
 
-  const keywordSearchData = useSearchPlaylist(
+  const keywordSearchData = useSearch(
     {
       ...commonParams,
       query: searchValue,
@@ -78,9 +73,9 @@ const SearchResultPage = () => {
     isLoading: isCategoryLoading,
   } = categorySearchData
 
-  const keywordSearchResult: Playlist[] =
+  const keywordSearchResult =
     type === 'keyword' ? (keywordData?.pages.flatMap((page) => page.content.results) ?? []) : []
-  const categorySearchResult: Playlist[] =
+  const categorySearchResult =
     type === 'category' ? (categoryData?.pages.flatMap((page) => page.content) ?? []) : []
 
   const totalCount =
@@ -171,18 +166,31 @@ const SearchResultPage = () => {
             />
             <ResultList>
               {type === 'keyword'
-                ? keywordSearchResult?.map((item: Playlist) => (
-                    <SearchResultItem
-                      key={item.playlistId}
-                      type={item.type}
-                      searchResult={item.type === 'USER' ? item.creatorNickname : item.playlistName}
-                      imageUrl={item.tracks?.[0]?.youtubeThumbnail ?? ''}
-                      userName={item.type === 'PLAYLIST' ? item.creatorNickname : undefined}
-                      onClick={() => handleItemClick(item.playlistId)}
-                      stickers={item.cdResponse?.cdItems}
-                    />
-                  ))
-                : categorySearchResult.map((item: Playlist) => (
+                ? keywordSearchResult.map((item) => {
+                    if (item.type === 'PLAYLIST') {
+                      return (
+                        <SearchResultItem
+                          key={item.playlistId}
+                          type="PLAYLIST"
+                          searchResult={item.playlistName}
+                          userName={item.creatorNickname}
+                          onClick={() => handleItemClick(item.playlistId)}
+                          stickers={item.cdResponse?.cdItems}
+                        />
+                      )
+                    }
+
+                    return (
+                      <SearchResultItem
+                        key={item.userId}
+                        type="USER"
+                        searchResult={item.nickname}
+                        imageUrl={item.profileUrl}
+                        onClick={() => navigate(`/${item.shareCode}`)}
+                      />
+                    )
+                  })
+                : categorySearchResult.map((item) => (
                     <SearchResultItem
                       key={item.playlistId}
                       type="PLAYLIST"

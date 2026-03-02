@@ -1,4 +1,4 @@
-import type { CdCustomData, Track } from '@/entities/playlist'
+import type { CdCustomData } from '@/entities/playlist'
 
 export interface SearchParams {
   query: string
@@ -29,22 +29,30 @@ export interface PopularKeywordParams {
   limit?: number
 }
 
-export interface Playlist {
+export interface UserSearchResult {
+  type: 'USER'
+  userId: string
+  shareCode: string
+  nickname: string
+  profileUrl: string | null
+}
+
+export interface PlaylistSearchResult {
+  type: 'PLAYLIST'
   playlistId: number
   playlistName: string
   creatorId: string
   creatorNickname: string
-  tracks: Track[]
-  type: 'USER' | 'PLAYLIST'
-
   cdResponse?: {
     cdItems: CdCustomData[]
   }
 }
 
+export type SearchResultItem = UserSearchResult | PlaylistSearchResult
+
 export type SearchPlaylistResponse = {
   content: {
-    results: Playlist[]
+    results: SearchResultItem[]
   }
   page: number
   size: number
@@ -53,7 +61,7 @@ export type SearchPlaylistResponse = {
 }
 
 export interface CategoryPlaylistItem {
-  content: Playlist[]
+  content: PlaylistSearchResult[]
   hasNext: boolean
   page: number
   size: number

@@ -12,7 +12,7 @@ import type {
   SearchParams,
 } from '@/features/search/types/search'
 
-export const useSearchPlaylist = (params: SearchParams, enabled = true) => {
+export const useSearch = (params: SearchParams, enabled = true) => {
   return useInfiniteQuery({
     queryKey: ['searchPlaylist', params],
     queryFn: ({ pageParam = 0 }) => getSearchResult({ ...params, page: pageParam }),
