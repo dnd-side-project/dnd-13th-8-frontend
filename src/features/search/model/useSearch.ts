@@ -14,7 +14,7 @@ import type {
 
 export const useSearch = (params: SearchParams, enabled = true) => {
   return useInfiniteQuery({
-    queryKey: ['searchPlaylist', params],
+    queryKey: ['search', params],
     queryFn: ({ pageParam = 0 }) => getSearchResult({ ...params, page: pageParam }),
     initialPageParam: 0,
     getNextPageParam: (lastPage) => {
