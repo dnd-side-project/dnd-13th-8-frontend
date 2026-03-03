@@ -78,11 +78,9 @@ const FeedPage = () => {
                   height={24}
                   /*
                     TODO:
-                    - /mypage/setting → /setting
-                    - /mypage/unregister → /setting/unregister
                     - /mypage/privacy, terms → 노션으로 별도 분리
                   */
-                  onClick={() => navigate('/mypage/setting')}
+                  onClick={() => navigate('/settings')}
                 />
               </>
             }

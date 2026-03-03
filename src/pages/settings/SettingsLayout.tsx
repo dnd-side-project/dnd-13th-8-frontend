@@ -1,7 +1,7 @@
 import { Outlet } from 'react-router-dom'
 
-const MypageLayout = () => {
+const SettingsLayout = () => {
   return <Outlet />
 }
 
-export default MypageLayout
+export default SettingsLayout
