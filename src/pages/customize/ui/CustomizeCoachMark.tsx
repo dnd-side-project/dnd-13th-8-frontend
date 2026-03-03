@@ -27,15 +27,12 @@ const CustomizeCoachMark = ({ setShowCoachmark }: CustomizeCoachMarkProps) => {
       setShowCoachmark(false)
       return
     }
-    setStep((prev) =>
-      direction === 'next'
-        ? prev < 3
-          ? ((prev + 1) as CoachMarkStep)
-          : prev
-        : prev > 1
-          ? ((prev - 1) as CoachMarkStep)
-          : prev
-    )
+    setStep((prev) => {
+      if (direction === 'next') {
+        return prev < 3 ? ((prev + 1) as CoachMarkStep) : prev
+      }
+      return prev > 1 ? ((prev - 1) as CoachMarkStep) : prev
+    })
   }
 
   const hideCoachMarkForAWeek = () => {
