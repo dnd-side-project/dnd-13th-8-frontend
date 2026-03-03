@@ -84,10 +84,14 @@ const SearchResultPage = () => {
             type="search"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
-            onKeyDown={(e) =>
-              e.key === 'Enter' &&
-              navigate(`/searchResult?keyword=${encodeURIComponent(inputValue)}`)
-            }
+            onKeyDown={(e) => {
+              if (e.key !== 'Enter') return
+
+              const keyword = inputValue.trim()
+              if (!keyword) return
+
+              navigate(`/searchResult?keyword=${encodeURIComponent(keyword)}`)
+            }}
             icon={Search}
             iconPosition="left"
             placeholder="듣고 싶은 트랙명 키워드 또는 닉네임 검색"
