@@ -22,12 +22,20 @@ const CustomizeCoachMark = ({ setShowCoachmark }: CustomizeCoachMarkProps) => {
     3: CustomizeSet3,
   }
 
-  const setCoachMarkStep = () => {
-    if (step === 3) {
+  const setCoachMarkStep = (direction?: 'prev' | 'next') => {
+    if (direction === 'next' && step === 3) {
       setShowCoachmark(false)
       return
     }
-    setStep((prev) => (prev < 3 ? ((prev + 1) as CoachMarkStep) : prev))
+    setStep((prev) =>
+      direction === 'next'
+        ? prev < 3
+          ? ((prev + 1) as CoachMarkStep)
+          : prev
+        : prev > 1
+          ? ((prev - 1) as CoachMarkStep)
+          : prev
+    )
   }
 
   const hideCoachMarkForAWeek = () => {
@@ -56,9 +64,22 @@ const CustomizeCoachMark = ({ setShowCoachmark }: CustomizeCoachMarkProps) => {
             </Pagination>
           )}
         </SubButton>
-        <Button size="L" state="secondary" onClick={setCoachMarkStep}>
-          {step === 3 ? '나만의 CD 만들기' : '다음'}
-        </Button>
+        <MainButton>
+          {step === 2 ? (
+            <>
+              <Button size="M" state="secondary" onClick={() => setCoachMarkStep('prev')}>
+                이전
+              </Button>
+              <Button size="M" state="primary" onClick={() => setCoachMarkStep('next')}>
+                다음
+              </Button>
+            </>
+          ) : (
+            <Button size="L" state="primary" onClick={() => setCoachMarkStep('next')}>
+              {step === 3 ? '나만의 CD 만들기' : '다음'}
+            </Button>
+          )}
+        </MainButton>
       </CoachMarkBottom>
     </CoachMarkWrap>
   )
@@ -114,4 +135,16 @@ const PageDot = styled.div<{ $page: CoachMarkStep; $currentStep: CoachMarkStep }
   border-radius: 50%;
   background-color: ${({ theme, $page, $currentStep }) =>
     $page === $currentStep ? theme.COLOR['primary-normal'] : theme.COLOR['gray-200']};
+`
+
+const MainButton = styled.div`
+  ${flexRowCenter}
+  gap: 10px;
+  width: 100%;
+  height: 46px;
+
+  & > button {
+    width: 100%;
+    height: 100%;
+  }
 `
