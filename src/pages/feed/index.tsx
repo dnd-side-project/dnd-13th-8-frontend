@@ -42,7 +42,7 @@ const FeedPage = () => {
           label: isMyFeed ? '나의 CD' : `${userProfile?.nickname || ''}의 CD`,
           value: 'cds' as FEED_CD_LIST_TAB_TYPE,
         },
-        { label: '나의 좋아요', value: 'likes' as FEED_CD_LIST_TAB_TYPE },
+        { label: '좋아요한 CD', value: 'likes' as FEED_CD_LIST_TAB_TYPE },
       ] as const,
     [isMyFeed, userProfile?.nickname]
   )

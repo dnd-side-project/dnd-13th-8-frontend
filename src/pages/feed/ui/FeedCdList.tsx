@@ -1,8 +1,12 @@
+import { useEffect } from 'react'
+import { useInView } from 'react-intersection-observer'
 import { useNavigate } from 'react-router-dom'
 
+import Lottie from 'lottie-react'
 import styled from 'styled-components'
 
 import { Plus, NoLike } from '@/assets/icons'
+import { LoadingLottie } from '@/assets/lottie'
 import { useFeedCdList, type FEED_CD_LIST_TAB_TYPE } from '@/entities/playlist'
 import type { ShareCode } from '@/features/auth'
 import { FeedCdListLayout } from '@/pages/feed/ui'
@@ -28,31 +32,39 @@ const NO_DATA_TEXT = {
 
 const FeedCdList = ({ shareCode, feedView, isMyFeed }: FeedCdListProps) => {
   const navigate = useNavigate()
+  const { ref, inView } = useInView()
 
   const { selected: currentSort, onSelect: setCurrentSort } = useSingleSelect<SortType>('POPULAR')
-  const { data, isLoading, isFetching, isError } = useFeedCdList({
-    shareCode,
-    feedView,
-    // TODO: 무한스크롤 적용
-    params: {
+  const { data, hasNextPage, fetchNextPage, isLoading, isFetchingNextPage, isError } =
+    useFeedCdList({
       shareCode,
-      sort: currentSort,
-      cursor: '',
-      limit: 100,
-    },
-  })
+      feedView,
+      params: {
+        shareCode,
+        sort: currentSort,
+        limit: 9,
+      },
+    })
 
+  const contentList = data?.pages.flatMap((page) => page.content) ?? []
+  const totalCount = data?.pages[0]?.totalCount ?? 0
   const isCdFeedView = feedView === 'cds'
+
+  useEffect(() => {
+    if (inView && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage()
+    }
+  }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage])
 
   return (
     <FeedCdListLayout
-      totalCount={data?.totalCount ?? 0}
+      totalCount={totalCount}
       currentSort={currentSort}
       onSortChange={setCurrentSort}
-      isLoading={isLoading || isFetching}
+      isLoading={isLoading}
       isError={isError}
     >
-      {!data?.content?.length && (
+      {!contentList?.length && (
         <NoDataContainer>
           <NoLike width={100} height={100} />
           <NoDataText>
@@ -75,7 +87,7 @@ const FeedCdList = ({ shareCode, feedView, isMyFeed }: FeedCdListProps) => {
         </NoDataContainer>
       )}
 
-      {!!data?.content?.length && isMyFeed && isCdFeedView && (
+      {!!contentList?.length && isMyFeed && isCdFeedView && (
         <CdAddContainer>
           <button type="button" onClick={() => navigate('/customize')}>
             <Plus />
@@ -83,8 +95,8 @@ const FeedCdList = ({ shareCode, feedView, isMyFeed }: FeedCdListProps) => {
           <span>CD 생성하기</span>
         </CdAddContainer>
       )}
-      {!!data?.content?.length &&
-        data?.content?.map((item) => (
+      {!!contentList?.length &&
+        contentList?.map((item) => (
           <li key={item.playlistId}>
             <CdButton
               type="button"
@@ -116,6 +128,13 @@ const FeedCdList = ({ shareCode, feedView, isMyFeed }: FeedCdListProps) => {
             </CdName>
           </li>
         ))}
+
+      <div ref={ref} style={{ height: '10px' }} />
+      {isFetchingNextPage && (
+        <LoadingContainer>
+          <Lottie animationData={LoadingLottie} loop autoplay />
+        </LoadingContainer>
+      )}
     </FeedCdListLayout>
   )
 }
@@ -193,5 +212,16 @@ const CdName = styled.p`
   & > span:last-child {
     ${({ theme }) => theme.FONT['caption1']}
     color: ${({ theme }) => theme.COLOR['gray-300']};
+  }
+`
+
+const LoadingContainer = styled.div`
+  ${flexColCenter}
+  width: 100%;
+  height: 100px;
+
+  & > div {
+    width: 120px;
+    height: 120px;
   }
 `
