@@ -18,8 +18,6 @@ const FirstSection = () => {
   const { isLogin, userInfo } = useAuthStore()
   const navigate = useNavigate()
 
-  // TODO: 알림 기능 2차 스프린트 시 작업 예정
-  // const handleNotiClick = () => navigate('/mypage/notification')
   const handleSearchClick = () => navigate('/search')
 
   const { data } = useShufflePlaylists(4)
@@ -36,8 +34,6 @@ const FirstSection = () => {
           left={<Logo />}
           right={
             <>
-              {/* TODO: 알림 기능 2차 스프린트 시 작업 예정 */}
-              {/* <SvgButton icon={Notification} onClick={handleNotiClick} /> */}
               <FeedbackIcon />
               <SvgButton
                 icon={Search}

@@ -38,13 +38,6 @@ const Mypage = () => {
         left={<PageHeader>마이페이지</PageHeader>}
         right={
           <>
-            {/* TODO: 알림 기능 2차 스프린트 시 작업 예정 */}
-            {/* <SvgButton
-              icon={Notification}
-              width={24}
-              height={24}
-              onClick={() => navigate('/mypage/notification')}
-            /> */}
             <FeedbackIcon />
             <SvgButton
               icon={Gear}
