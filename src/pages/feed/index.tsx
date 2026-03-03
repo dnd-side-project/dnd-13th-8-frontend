@@ -68,7 +68,7 @@ const FeedPage = () => {
       <TopVisualBackground>
         {isMyFeed ? (
           <Header
-            left={<PageHeader>마이 피드</PageHeader>}
+            left={<PageHeader>MY 피드</PageHeader>}
             right={
               <>
                 <FeedbackIcon />
