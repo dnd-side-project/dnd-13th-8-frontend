@@ -26,7 +26,7 @@ axiosInstance.interceptors.request.use(
   (error) => Promise.reject(error)
 )
 
-// 에러 모달 호출용 임시 코드
+// 에러 모달 호출
 const store = useGlobalModalStore
 
 // 응답 interceptor
@@ -37,10 +37,6 @@ axiosInstance.interceptors.response.use(
     const status = error.response?.status
     const { isLogin, setLogout } = useAuthStore.getState()
     const currentPath = window.location.pathname
-
-    // * QA용 에러 로그 모달, 필요 시 주석 해제하여 사용(↓)
-    // const { openModal } = useGlobalModalStore.getState()
-    const msg = error.response?.data?.message ?? ''
 
     if (code === 'COMMON-401' || status === 401) {
       if (isLogin) {
@@ -80,6 +76,8 @@ axiosInstance.interceptors.response.use(
       }
     }
 
+    // QA용 에러 로그 모달
+    const msg = error.response?.data?.message ?? ''
     if (import.meta.env.VITE_ENVIRONMENT_TYPE !== 'PROD') {
       store.setState({
         isOpen: true,
