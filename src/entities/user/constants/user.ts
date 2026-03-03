@@ -9,7 +9,10 @@ export const PROFILE_LIMITS = {
 export const PROFILE_ERROR_MESSAGES = {
   image: '5MB 이하의 파일만 업로드 가능해요',
   nickname: '10자 이내로 입력 가능해요',
-  shareCode: '5~10자의 영문자, 숫자, 언더바(_)만 입력할 수 있어요',
+  shareCode: {
+    isInvalid: '5~10자의 영문자, 숫자, 언더바(_)만 입력할 수 있어요',
+    isDuplicate: '이미 사용 중인 아이디예요',
+  },
   bio: '25자 이내로 입력 가능해요',
 } as const
 
