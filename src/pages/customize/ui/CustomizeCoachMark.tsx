@@ -141,7 +141,7 @@ const MainButton = styled.div`
   height: 46px;
 
   & > button {
-    width: 100%;
+    flex: 1;
     height: 100%;
   }
 `
