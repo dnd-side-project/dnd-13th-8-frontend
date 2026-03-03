@@ -221,7 +221,8 @@ const ProfileEditPage = () => {
         navigate(`/${response.shareCode}`)
       },
       onError: (error: Error & { response?: { status: number } }) => {
-        console.log('프로필 수정 실패: ', error.response?.status)
+        console.error('프로필 수정 실패: ', error.response?.status)
+        // TODO: 백엔드에 status code 확인 요청
         if (error.response?.status === 500) {
           setErrorMessage((prev) => ({
             ...prev,
