@@ -222,8 +222,7 @@ const ProfileEditPage = () => {
       },
       onError: (error: Error & { response?: { status: number } }) => {
         console.error('프로필 수정 실패: ', error.response?.status)
-        // TODO: 백엔드에 status code 확인 요청
-        if (error.response?.status === 500) {
+        if (error.response?.status === 409) {
           setErrorMessage((prev) => ({
             ...prev,
             shareCode: PROFILE_ERROR_MESSAGES.shareCode.isDuplicate,
