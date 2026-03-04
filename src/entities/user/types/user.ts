@@ -1,4 +1,4 @@
-import type { ShareCode, UserInfo } from '@/features/auth'
+import type { UserInfo } from '@/features/auth'
 
 export interface ProfileResponse extends UserInfo {
   bio: string
@@ -7,14 +7,6 @@ export interface ProfileResponse extends UserInfo {
     followerCount: number
     followingCount: number
   }
-}
-
-export interface ProfileEditPayload {
-  nickname?: string
-  shareCode?: ShareCode
-  profileImage?: string | null
-  bio?: string
-  keywords?: string[]
 }
 
 export interface ProfileEditResponse extends UserInfo {

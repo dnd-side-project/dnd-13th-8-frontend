@@ -1,4 +1,4 @@
-import type { ProfileResponse, ProfileEditPayload, ProfileEditResponse } from '@/entities/user'
+import type { ProfileResponse, ProfileEditResponse } from '@/entities/user'
 import type { ShareCode } from '@/features/auth'
 import { api } from '@/shared/api/httpClient'
 
@@ -8,7 +8,7 @@ export const getUserProfile = (shareCode: ShareCode) => {
 }
 
 // 프로필 수정
-export const patchUserProfile = (payload: ProfileEditPayload) => {
+export const patchUserProfile = (payload: FormData) => {
   return api.patch<ProfileEditResponse>('/main/user/profile', payload, {
     headers: {
       'Content-Type': 'multipart/form-data',
