@@ -275,7 +275,7 @@ const ProfileEditPage = () => {
           <Input
             id="nickname"
             type="text"
-            placeholder="2~10자까지 입력할 수 있어요."
+            placeholder={`2~${PROFILE_LIMITS.NICKNAME}자까지 입력할 수 있어요.`}
             value={profileForm.nickname}
             error={!!errorMap.nickname}
             errorMessage={errorMap.nickname}
@@ -293,7 +293,7 @@ const ProfileEditPage = () => {
           <Input
             id="share-code"
             type="text"
-            placeholder="5~10자의 영문자, 숫자, 언더바(_)만 입력할 수 있어요."
+            placeholder={`${PROFILE_LIMITS.SHARE_CODE.MIN}~${PROFILE_LIMITS.SHARE_CODE.MAX}자의 영문자, 숫자, 언더바(_)만 입력할 수 있어요.`}
             value={profileForm.shareCode}
             error={!!errorMap.shareCode}
             errorMessage={errorMap.shareCode}
@@ -311,7 +311,7 @@ const ProfileEditPage = () => {
           <Input
             id="bio"
             type="text"
-            placeholder="짧은 글로 음악 취향을 소개해보세요. (최대 25자)"
+            placeholder={`짧은 글로 음악 취향을 소개해보세요. (최대 ${PROFILE_LIMITS.BIO}자)`}
             value={profileForm.bio ?? ''}
             error={!!errorMap.bio}
             errorMessage={errorMap.bio}
