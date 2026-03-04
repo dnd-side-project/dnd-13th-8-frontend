@@ -9,7 +9,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { Trash, Plus } from '@/assets/icons'
 import overlayUrl from '@/assets/icons/icn_overlay.svg?url'
 import { ExpandBtn, TrashBtn } from '@/assets/images'
-import { PROFILE_LIMITS } from '@/entities/user'
+import { PROFILE_LIMITS, PROFILE_ERROR_MESSAGES } from '@/entities/user'
 import { startKakaoLogin } from '@/features/auth'
 import { THEME_PROP_ID_OFFSET } from '@/features/customize/constants/customize'
 import {
@@ -221,7 +221,7 @@ const CustomizeStep2 = ({
     if (file.size > PROFILE_LIMITS.MAX_FILE_SIZE) {
       setModal({
         isOpen: true,
-        title: '5MB 이하의 파일만 업로드 가능해요',
+        title: PROFILE_ERROR_MESSAGES.image,
         ctaType: 'single',
         confirmText: '확인',
         onClose: () => onModalClose(),
