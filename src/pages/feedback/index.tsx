@@ -6,15 +6,20 @@ import styled from 'styled-components'
 import { useToast } from '@/app/providers'
 import { Checkbox, Checked, DownArrow, LeftArrow } from '@/assets/icons'
 import { supabase } from '@/shared/api/supabaseClient'
+import { flexColCenter, flexRowCenter } from '@/shared/styles/mixins'
 import { Button, Header, Input, SvgButton } from '@/shared/ui'
 
 const FeedbackPage = () => {
   const navigate = useNavigate()
   const [isExpanded, setIsExpanded] = useState(false)
+  const [rate, setRate] = useState<(typeof rates)[number] | null>(null)
   const [phone, setPhone] = useState('')
   const [feedback, setFeedback] = useState('')
   const [isChecked, setIsChecked] = useState(false)
   const { toast } = useToast()
+
+  const rates = [1, 2, 3, 4, 5] as const
+  const isButtonDisabled = !isChecked || !rate
 
   const handleSubmit = async () => {
     try {
@@ -40,8 +45,6 @@ const FeedbackPage = () => {
     }
   }
 
-  const isButtonDisabled = !phone.trim() || !feedback.trim() || !isChecked
-
   return (
     <Page>
       <Header
@@ -53,8 +56,11 @@ const FeedbackPage = () => {
         <TextBox>
           <h2>들락에 대한 의견을 알려주세요!</h2>
           <p>
-            사용하시다가 개선 사항이나 좋은 생각이 떠오르셨나요? 자유롭게 이야기 해주세요. 소중한
-            의견 고맙습니다. ☺️
+            사용하시다가 개선 사항이나 좋은 생각이 떠오르셨나요?
+            <br />
+            칭찬, 제안, 불편한 점을 자유롭게 이야기 해주세요.
+            <br />
+            주신 의견은 한 글자도 빼놓지 않고 꼼꼼히 읽고 있어요. ☺️
           </p>
         </TextBox>
 
@@ -87,9 +93,9 @@ const FeedbackPage = () => {
                 </li>
               </ul>
               <ol>
-                <li>수집·이용 목적: 경품 지급 대상자 선정 및 경품 지급</li>
-                <li>수집 항목: 전화번호(휴대전화)</li>
-                <li>개인정보 보유 및 이용 기간: 입력일로부터 경품지급 시까지</li>
+                <li>1. 수집·이용 목적: 경품 지급 대상자 선정 및 경품 지급</li>
+                <li>2. 수집 항목: 전화번호(휴대전화)</li>
+                <li>3. 개인정보 보유 및 이용 기간: 입력일로부터 경품지급 시까지</li>
               </ol>
             </Terms>
           )}
@@ -97,23 +103,59 @@ const FeedbackPage = () => {
 
         <QuestionSection>
           <Question>
-            <Title>전화번호</Title>
-            <Input
-              placeholder="전화번호를 입력해주세요"
-              type="text"
-              width="100%"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-            />
+            <Title>1. 서비스 사용에 대한 전반적인 만족도를 알려주세요.</Title>
+            <div>
+              <RateList>
+                {rates.map((num) => (
+                  <RateItem key={num}>
+                    <RateLabel>
+                      <input
+                        type="radio"
+                        name="rate"
+                        value={num}
+                        checked={rate === num}
+                        onChange={() => setRate(num)}
+                      />
+                      <span>{num}</span>
+                    </RateLabel>
+                  </RateItem>
+                ))}
+              </RateList>
+              <RateDescription>
+                <span>매우 아쉬움</span>
+                <span>매우 만족</span>
+              </RateDescription>
+            </div>
           </Question>
 
           <Question>
-            <Title>의견/제안</Title>
-            <FeedbackInput
-              placeholder="의견을 입력해주세요"
-              value={feedback}
-              onChange={(e) => setFeedback(e.target.value)}
-            />
+            <Title>
+              2. 들락에 대해 가지고 있는 의견을 자유롭게 나눠주세요.
+              <span>{` (선택)`}</span>
+            </Title>
+            <TitleDescription>
+              연락처를 남겨주시면 소중한 피드백에 작은 선물을 드려요.
+            </TitleDescription>
+            <OpinionBox>
+              <Label htmlFor="phone">전화번호</Label>
+              <Input
+                id="phone"
+                placeholder="전화번호를 입력해주세요"
+                type="text"
+                width="100%"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+              />
+            </OpinionBox>
+            <OpinionBox>
+              <Label htmlFor="feedback">의견/제안</Label>
+              <FeedbackInput
+                id="feedback"
+                placeholder="의견을 입력해주세요"
+                value={feedback}
+                onChange={(e) => setFeedback(e.target.value)}
+              />
+            </OpinionBox>
           </Question>
         </QuestionSection>
       </Content>
@@ -129,6 +171,17 @@ const FeedbackPage = () => {
 
 export default FeedbackPage
 
+const Page = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+`
+
+const Content = styled.div`
+  flex: 1;
+  overflow-y: auto;
+`
+
 const TextBox = styled.div`
   display: flex;
   flex-direction: column;
@@ -136,50 +189,21 @@ const TextBox = styled.div`
   padding: 16px 0 24px 0;
 
   & h2 {
-    ${({ theme }) => theme.FONT.headline1};
+    ${({ theme }) => theme.FONT.heading1};
     font-weight: 500;
   }
 
   & p {
     ${({ theme }) => theme.FONT.label};
+    color: ${({ theme }) => theme.COLOR['gray-50']};
   }
 `
 
-const Title = styled.h3`
-  ${({ theme }) => theme.FONT.label};
-  color: ${({ theme }) => theme.COLOR['gray-400']};
-`
-
-const Question = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-`
-
-const FeedbackInput = styled.textarea`
-  max-width: 100%;
-  height: 160px;
-  background-color: ${({ theme }) => theme.COLOR['gray-700']};
-  ${({ theme }) => theme.FONT['body2-normal']};
+const Toggle = styled.div`
+  background-color: ${({ theme }) => theme.COLOR['gray-800']};
   border-radius: 10px;
-  padding: 11px 14px;
-
-  white-space: pre-wrap;
-  word-break: break-word;
-
-  &::placeholder {
-    color: ${({ theme }) => theme.COLOR['gray-300']};
-  }
-
-  &:focus {
-    box-shadow: 0 0 0 1px ${({ theme }) => theme.COLOR['primary-normal']};
-  }
-`
-
-const QuestionSection = styled.section`
-  display: flex;
-  flex-direction: column;
-  gap: 32px;
+  overflow: hidden;
+  margin-bottom: 24px;
 `
 
 const ToggleHeader = styled.div`
@@ -200,13 +224,6 @@ const ToggleLeft = styled.div`
   }
 `
 
-const Toggle = styled.div`
-  background-color: ${({ theme }) => theme.COLOR['gray-800']};
-  border-radius: 10px;
-  overflow: hidden;
-  margin-bottom: 24px;
-`
-
 const ToggleArrow = styled(SvgButton)<{ isExpanded: boolean }>`
   transition: transform 0.3s ease;
   transform: ${({ isExpanded }) => (isExpanded ? 'rotate(180deg)' : 'rotate(0deg)')};
@@ -215,39 +232,139 @@ const ToggleArrow = styled(SvgButton)<{ isExpanded: boolean }>`
 const Terms = styled.div`
   ${({ theme }) => theme.FONT.label};
   color: ${({ theme }) => theme.COLOR['gray-100']};
-  padding: 24px 14px 12px 14px;
+  padding: 14px 18px;
   display: flex;
   flex-direction: column;
   gap: 24px;
 
-  ul {
-    list-style-type: disc;
-  }
-
-  ol {
-    list-style-type: decimal;
-  }
-
-  li {
+  ul li {
+    position: relative;
+    padding-left: 14px;
     line-height: 1.4;
-    margin-bottom: 4px;
-    list-style-position: inside;
+    margin-bottom: 8px;
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: 4px;
+      top: 7px;
+      width: 4px;
+      height: 4px;
+      background-color: ${({ theme }) => theme.COLOR['gray-100']};
+      border-radius: 50%;
+    }
+  }
+
+  ol > li {
+    margin-bottom: 2px;
   }
 `
 
-const Page = styled.div`
+const QuestionSection = styled.section`
   display: flex;
   flex-direction: column;
-  height: 100%;
+  gap: 50px;
+  margin-top: 50px;
 `
 
-const Content = styled.div`
+const Question = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`
+
+const Title = styled.h3`
+  margin-bottom: 8px;
+  ${({ theme }) => theme.FONT.headline1};
+  font-weight: 500;
+
+  & > span {
+    color: ${({ theme }) => theme.COLOR['gray-400']};
+  }
+`
+
+const TitleDescription = styled.span`
+  ${({ theme }) => theme.FONT.label};
+  color: ${({ theme }) => theme.COLOR['gray-50']};
+`
+
+const RateList = styled.div`
+  display: flex;
+  gap: 12px;
+  margin-bottom: 8px;
+`
+
+const RateItem = styled.div`
   flex: 1;
-  overflow-y: auto;
-  margin: 0 -20px;
-  padding: 0 20px;
+  height: 64px;
+`
+
+const RateLabel = styled.label`
+  ${flexColCenter}
+  width: 100%;
+  height: 100%;
+  border: 1px solid ${({ theme }) => theme.COLOR['gray-600']};
+  border-radius: 10px;
+  cursor: pointer;
+
+  & > input {
+    display: none;
+  }
+
+  &:has(input:checked) {
+    border: 1px solid ${({ theme }) => theme.COLOR['primary-normal']};
+  }
+
+  & > span {
+    color: ${({ theme }) => theme.COLOR['gray-50']};
+    ${({ theme }) => theme.FONT.headline2};
+  }
+`
+
+const RateDescription = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  & > span {
+    color: ${({ theme }) => theme.COLOR['gray-50']};
+    ${({ theme }) => theme.FONT.label};
+  }
+`
+
+const OpinionBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 20px;
+`
+
+const Label = styled.label`
+  ${({ theme }) => theme.FONT.label};
+  color: ${({ theme }) => theme.COLOR['gray-400']};
+`
+
+const FeedbackInput = styled.textarea`
+  height: 160px;
+  background-color: ${({ theme }) => theme.COLOR['gray-700']};
+  ${({ theme }) => theme.FONT['body2-normal']};
+  border-radius: 10px;
+  padding: 11px 14px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  caret-color: ${({ theme }) => theme.COLOR['primary-normal']};
+
+  &::placeholder {
+    color: ${({ theme }) => theme.COLOR['gray-300']};
+  }
+
+  &:focus {
+    outline: 1px solid ${({ theme }) => theme.COLOR['primary-normal']};
+    outline-offset: -1px;
+  }
 `
 
 const ButtonWrapper = styled.div`
-  padding-bottom: 16px;
+  ${flexRowCenter}
+  padding: 16px 0;
 `
