@@ -21,9 +21,10 @@ const CustomizeCoachMark = ({ setShowCoachmark }: CustomizeCoachMarkProps) => {
     2: CustomizeSet2,
     3: CustomizeSet3,
   }
+  const isStep3 = step === 3
 
   const setCoachMarkStep = (direction?: 'prev' | 'next') => {
-    if (direction === 'next' && step === 3) {
+    if (direction === 'next' && isStep3) {
       setShowCoachmark(false)
       return
     }
@@ -47,9 +48,9 @@ const CustomizeCoachMark = ({ setShowCoachmark }: CustomizeCoachMarkProps) => {
         <img src={COACH_MARK_IMAGES[step]} alt={`customize coach mark step${step}`} />
       </CoachMarkTop>
       <CoachMarkBottom>
-        {step === 3 && <DoubleArrow width={50} height={50} />}
+        {isStep3 && <DoubleArrow width={50} height={50} />}
         <SubButton>
-          {step === 3 ? (
+          {isStep3 ? (
             <SkipButton type="button" onClick={hideCoachMarkForAWeek}>
               일주일 동안 보지 않기
             </SkipButton>
@@ -62,19 +63,19 @@ const CustomizeCoachMark = ({ setShowCoachmark }: CustomizeCoachMarkProps) => {
           )}
         </SubButton>
         <MainButton>
-          {step === 2 ? (
+          {step === 1 ? (
+            <Button size="L" state="primary" onClick={() => setCoachMarkStep('next')}>
+              다음
+            </Button>
+          ) : (
             <>
               <Button size="M" state="secondary" onClick={() => setCoachMarkStep('prev')}>
                 이전
               </Button>
               <Button size="M" state="primary" onClick={() => setCoachMarkStep('next')}>
-                다음
+                {isStep3 ? '완료' : '다음'}
               </Button>
             </>
-          ) : (
-            <Button size="L" state="primary" onClick={() => setCoachMarkStep('next')}>
-              {step === 3 ? '나만의 CD 만들기' : '다음'}
-            </Button>
           )}
         </MainButton>
       </CoachMarkBottom>
