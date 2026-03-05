@@ -114,7 +114,7 @@ export const useFollowingList = (shareCode: string, sort: FollowSortType = 'LATE
     queryFn: ({ pageParam }) =>
       getFollowingList(shareCode, {
         cursor: pageParam,
-        limit: 9,
+        limit: 10,
         sort,
       }),
     initialPageParam: undefined,
