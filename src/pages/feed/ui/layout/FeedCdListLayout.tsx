@@ -41,12 +41,6 @@ const FeedCdListLayout = ({
 export default FeedCdListLayout
 
 const CD_LIST_GAP = 11.5
-export const CdButton = styled.button`
-  position: relative;
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  border-radius: 10px;
-`
 
 const CdListWrap = styled.ul`
   margin: 14px 0;
