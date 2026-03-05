@@ -3,6 +3,7 @@ import { Navigate, useNavigate, useParams } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { useFollowingList, FollowButton, type FollowSortType } from '@/features/follow'
+import { FollowEmpty } from '@/pages/feed/ui'
 import { useSingleSelect } from '@/shared/lib/useSingleSelect'
 import { flexRowCenter } from '@/shared/styles/mixins'
 import { Loading, ContentHeader } from '@/shared/ui'
@@ -33,21 +34,25 @@ const Following = () => {
         />
       </ContentHeaderWrapper>
       <ListWrapper>
-        {data?.content?.map((item) => (
-          <ItemWrapper key={item.userId}>
-            <SearchResultItem
-              type="USER"
-              imageUrl={item.profileUrl}
-              searchResult={item.username}
-              onClick={() => navigate(`/${item.shareCode}`)}
-            />
-            <FollowButton
-              shareCode={item.shareCode}
-              variant="default"
-              initialIsFollowing={item.followedByMe}
-            />
-          </ItemWrapper>
-        ))}
+        {data?.totalCount === 0 ? (
+          <FollowEmpty type="FOLLOWING" />
+        ) : (
+          data?.content?.map((item) => (
+            <ItemWrapper key={item.userId}>
+              <SearchResultItem
+                type="USER"
+                imageUrl={item.profileUrl}
+                searchResult={item.username}
+                onClick={() => navigate(`/${item.shareCode}`)}
+              />
+              <FollowButton
+                shareCode={item.shareCode}
+                variant="default"
+                initialIsFollowing={item.followedByMe}
+              />
+            </ItemWrapper>
+          ))
+        )}
       </ListWrapper>
     </>
   )
@@ -65,6 +70,7 @@ const ListWrapper = styled.div`
   flex-direction: column;
   gap: 20px;
   padding-top: 16px;
+  flex: 1;
 `
 
 const ContentHeaderWrapper = styled.div`
