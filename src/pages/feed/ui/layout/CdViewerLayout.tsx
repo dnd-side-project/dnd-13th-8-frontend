@@ -140,8 +140,7 @@ const CdViewerLayout = ({
     if (type === 'delete') {
       setModal({
         isOpen: true,
-        title: 'CD를 삭제할까요?',
-        description: '삭제 후에는 되돌릴 수 없어요',
+        title: '해당 CD를 삭제할까요?',
         ctaType: 'double',
         confirmText: '삭제하기',
         cancelText: '취소',
