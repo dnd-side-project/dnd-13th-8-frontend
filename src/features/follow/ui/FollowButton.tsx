@@ -113,6 +113,8 @@ const variants = {
 const Button = styled.button<{ $variant: Variant; $isFollowing: boolean }>`
   ${flexRowCenter}
   ${({ $variant }) => variants[$variant]}
+  white-space: nowrap;
+  flex-shrink: 0;
 
   svg {
     width: ${({ $variant }) => ($variant === 'small' ? '12px' : '16px')};
