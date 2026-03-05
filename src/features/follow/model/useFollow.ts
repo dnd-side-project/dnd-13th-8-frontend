@@ -1,4 +1,9 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQueryClient,
+  type InfiniteData,
+} from '@tanstack/react-query'
 import { useQuery } from '@tanstack/react-query'
 
 import {
@@ -8,7 +13,7 @@ import {
   getFollowingList,
   getFollowerList,
 } from '@/features/follow/api/follow'
-import type { FollowSortType } from '@/features/follow/types/follow'
+import type { FollowListResponse, FollowSortType } from '@/features/follow/types/follow'
 
 const useFollow = (shareCode: string, initialIsFollowing?: boolean) => {
   const queryClient = useQueryClient()
@@ -73,18 +78,50 @@ const useFollow = (shareCode: string, initialIsFollowing?: boolean) => {
 
 export default useFollow
 
-export const useFollowerList = (shareCode: string, sort?: FollowSortType) => {
-  return useQuery({
+export const useFollowerList = (shareCode: string, sort: FollowSortType = 'LATEST') => {
+  return useInfiniteQuery<
+    FollowListResponse,
+    Error,
+    InfiniteData<FollowListResponse>,
+    string[],
+    number | undefined
+  >({
     queryKey: ['followerList', shareCode, sort],
-    queryFn: () => getFollowerList(shareCode, sort),
+    queryFn: ({ pageParam }) =>
+      getFollowerList(shareCode, {
+        cursor: pageParam,
+        limit: 9,
+        sort,
+      }),
+    initialPageParam: undefined,
     enabled: !!shareCode,
+    getNextPageParam: (lastPage) => {
+      if (!lastPage.hasNext) return undefined
+      return lastPage.nextCursor
+    },
   })
 }
 
-export const useFollowingList = (shareCode: string, sort?: FollowSortType) => {
-  return useQuery({
+export const useFollowingList = (shareCode: string, sort: FollowSortType = 'LATEST') => {
+  return useInfiniteQuery<
+    FollowListResponse,
+    Error,
+    InfiniteData<FollowListResponse>,
+    string[],
+    number | undefined
+  >({
     queryKey: ['followingList', shareCode, sort],
-    queryFn: () => getFollowingList(shareCode, sort),
+    queryFn: ({ pageParam }) =>
+      getFollowingList(shareCode, {
+        cursor: pageParam,
+        limit: 9,
+        sort,
+      }),
+    initialPageParam: undefined,
     enabled: !!shareCode,
+    getNextPageParam: (lastPage) => {
+      if (!lastPage.hasNext) return undefined
+      return lastPage.nextCursor
+    },
   })
 }

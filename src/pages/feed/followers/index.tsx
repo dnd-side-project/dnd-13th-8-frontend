@@ -1,3 +1,5 @@
+import { useEffect } from 'react'
+import { useInView } from 'react-intersection-observer'
 import { Navigate, useNavigate, useParams } from 'react-router-dom'
 
 import styled from 'styled-components'
@@ -14,7 +16,18 @@ const Followers = () => {
   const { shareCode } = useParams()
   const { selected, onSelect } = useSingleSelect<FollowSortType>('LATEST')
 
-  const { data, isLoading, isFetching, isError } = useFollowerList(shareCode || '', selected)
+  const { ref, inView } = useInView()
+
+  const { data, isLoading, isFetching, isError, fetchNextPage, hasNextPage } = useFollowerList(
+    shareCode || '',
+    selected
+  )
+
+  useEffect(() => {
+    if (inView && hasNextPage) {
+      fetchNextPage()
+    }
+  }, [inView, hasNextPage, fetchNextPage])
 
   if (isLoading || isFetching) return <Loading isLoading />
 
@@ -22,11 +35,13 @@ const Followers = () => {
     return <Navigate to="/error" replace />
   }
 
+  const followerList = data.pages.flatMap((page) => page.content)
+
   return (
     <>
       <ContentHeaderWrapper>
         <ContentHeader
-          totalCount={data.totalCount}
+          totalCount={data.pages[0].totalCount}
           currentSort={selected}
           onSortChange={onSelect}
           options={['LATEST', 'OLDEST']}
@@ -34,24 +49,29 @@ const Followers = () => {
         />
       </ContentHeaderWrapper>
       <ListWrapper>
-        {data?.totalCount === 0 ? (
+        {followerList.length === 0 ? (
           <FollowEmpty type="FOLLOWERS" />
         ) : (
-          data?.content?.map((item) => (
-            <ItemWrapper key={item.userId}>
-              <SearchResultItem
-                type="USER"
-                imageUrl={item.profileUrl}
-                searchResult={item.username}
-                onClick={() => navigate(`/${item.shareCode}`)}
-              />
-              <FollowButton
-                shareCode={item.shareCode}
-                variant="default"
-                initialIsFollowing={item.followedByMe}
-              />
-            </ItemWrapper>
-          ))
+          <>
+            {followerList.map((item) => (
+              <ItemWrapper key={item.userId}>
+                <SearchResultItem
+                  type="USER"
+                  imageUrl={item.profileUrl}
+                  searchResult={item.username}
+                  onClick={() => navigate(`/${item.shareCode}`)}
+                />
+                <FollowButton
+                  shareCode={item.shareCode}
+                  variant="default"
+                  initialIsFollowing={item.followedByMe}
+                />
+              </ItemWrapper>
+            ))}
+
+            <div ref={ref} style={{ height: '10px' }} />
+            {isFetching && <Loading isLoading />}
+          </>
         )}
       </ListWrapper>
     </>
@@ -69,7 +89,7 @@ const ListWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 20px;
-  padding-top: 16px;
+  padding: 16px 0 80px 0;
   flex: 1;
 `
 
