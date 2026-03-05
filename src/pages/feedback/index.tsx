@@ -9,16 +9,17 @@ import { supabase } from '@/shared/api/supabaseClient'
 import { flexColCenter, flexRowCenter } from '@/shared/styles/mixins'
 import { Button, Header, Input, SvgButton } from '@/shared/ui'
 
+const RATES = [1, 2, 3, 4, 5] as const
+
 const FeedbackPage = () => {
   const navigate = useNavigate()
   const [isExpanded, setIsExpanded] = useState(false)
-  const [rate, setRate] = useState<(typeof rates)[number] | null>(null)
+  const [rate, setRate] = useState<(typeof RATES)[number] | null>(null)
   const [phone, setPhone] = useState('')
   const [feedback, setFeedback] = useState('')
   const [isChecked, setIsChecked] = useState(false)
   const { toast } = useToast()
 
-  const rates = [1, 2, 3, 4, 5] as const
   const isButtonDisabled = !isChecked || !rate
 
   const handleSubmit = async () => {
@@ -106,7 +107,7 @@ const FeedbackPage = () => {
             <Title>1. 서비스 사용에 대한 전반적인 만족도를 알려주세요.</Title>
             <div>
               <RateList>
-                {rates.map((num) => (
+                {RATES.map((num) => (
                   <RateItem key={num}>
                     <RateLabel>
                       <input
@@ -308,7 +309,15 @@ const RateLabel = styled.label`
   cursor: pointer;
 
   & > input {
-    display: none;
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+    clip: rect(0 0 0 0);
+    overflow: hidden;
+    white-space: nowrap;
   }
 
   &:has(input:checked) {
