@@ -1,6 +1,6 @@
 export const PROFILE_LIMITS = {
   MAX_FILE_SIZE: 5 * 1024 * 1024, // 5mb
-  NICKNAME: 10,
+  NICKNAME: { MIN: 2, MAX: 10 },
   SHARE_CODE: { MIN: 5, MAX: 12 },
   BIO: 25,
   KEYWORDS: 3,
@@ -8,12 +8,12 @@ export const PROFILE_LIMITS = {
 
 export const PROFILE_ERROR_MESSAGES = {
   image: `${PROFILE_LIMITS.MAX_FILE_SIZE / (1024 * 1024)}MB 이하의 파일만 업로드 가능해요`,
-  nickname: `${PROFILE_LIMITS.NICKNAME}자 이내로 입력 가능해요`,
+  nickname: `${PROFILE_LIMITS.NICKNAME.MIN}-${PROFILE_LIMITS.NICKNAME.MAX}자로 입력해 주세요`,
   shareCode: {
-    isInvalid: `${PROFILE_LIMITS.SHARE_CODE.MIN}~${PROFILE_LIMITS.SHARE_CODE.MAX}자의 영문자, 숫자, 언더바(_)만 입력할 수 있어요`,
+    isInvalid: `${PROFILE_LIMITS.SHARE_CODE.MIN}-${PROFILE_LIMITS.SHARE_CODE.MAX}자의 영문자, 숫자, 언더바(_)만 입력해 주세요`,
     isDuplicate: '이미 사용 중인 아이디예요',
   },
-  bio: `${PROFILE_LIMITS.BIO}자 이내로 입력 가능해요`,
+  bio: `${PROFILE_LIMITS.BIO}자 이내로 입력해 주세요`,
 } as const
 
 export const PROFILE_KEYWORDS_LIST = [

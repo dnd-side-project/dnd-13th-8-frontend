@@ -108,6 +108,7 @@ const ProfileEditPage = () => {
   }
 
   const onImageDelete = () => {
+    if (!imagePreview) return
     cleanupImageBlob()
     setImagePreview(null)
     setProfileForm((prev) => ({ ...prev, imageFile: null, imageUrl: null }))
@@ -118,10 +119,12 @@ const ProfileEditPage = () => {
   const onFieldChange = ({
     key,
     value,
+    min,
     max,
   }: {
     key: keyof typeof errorMap
     value: string
+    min?: number | undefined
     max: number
   }) => {
     let error = ''
@@ -129,7 +132,7 @@ const ProfileEditPage = () => {
     const finalValue = isShareCodeKey ? value.trim() : value
 
     // length 검증
-    if (finalValue.length > max) {
+    if ((!!min && finalValue.length < min) || finalValue.length > max) {
       error = isShareCodeKey
         ? PROFILE_ERROR_MESSAGES.shareCode.isInvalid
         : (PROFILE_ERROR_MESSAGES[key as keyof typeof PROFILE_ERROR_MESSAGES] as string)
@@ -197,7 +200,7 @@ const ProfileEditPage = () => {
           formData.append(apiKey, '')
         }
       } else if (isImageField && value === null) {
-        // profileImage 삭제
+        // profileImage 삭제 시 true
         formData.append('removeProfileImage', 'true')
       } else if (apiKey === 'bio' && value === null) {
         // bio 삭제
@@ -221,13 +224,14 @@ const ProfileEditPage = () => {
         navigate(`/${response.shareCode}`)
       },
       onError: (error: Error & { response?: { status: number } }) => {
-        console.error('프로필 수정 실패: ', error.response?.status)
         if (error.response?.status === 409) {
           setErrorMessage((prev) => ({
             ...prev,
             shareCode: PROFILE_ERROR_MESSAGES.shareCode.isDuplicate,
           }))
+          return
         }
+        console.error('프로필 수정 실패: ', error.response?.status)
       },
     })
   }
@@ -259,11 +263,9 @@ const ProfileEditPage = () => {
             />
           </ImageEditButton>
         </ImageBox>
-        {imagePreview && (
-          <ImageDeleteButton type="button" onClick={onImageDelete}>
-            이미지 삭제
-          </ImageDeleteButton>
-        )}
+        <ImageDeleteButton type="button" onClick={onImageDelete}>
+          이미지 삭제
+        </ImageDeleteButton>
         <ErrorText>{errorMap.image}</ErrorText>
       </ImageContainer>
 
@@ -275,7 +277,7 @@ const ProfileEditPage = () => {
           <Input
             id="nickname"
             type="text"
-            placeholder={`2~${PROFILE_LIMITS.NICKNAME}자까지 입력할 수 있어요.`}
+            placeholder={`닉네임은 ${PROFILE_LIMITS.NICKNAME.MIN}-${PROFILE_LIMITS.NICKNAME.MAX}자로 입력해 주세요.`}
             value={profileForm.nickname}
             error={!!errorMap.nickname}
             errorMessage={errorMap.nickname}
@@ -283,7 +285,8 @@ const ProfileEditPage = () => {
               onFieldChange({
                 key: 'nickname',
                 value: e.target.value,
-                max: PROFILE_LIMITS.NICKNAME,
+                min: PROFILE_LIMITS.NICKNAME.MIN,
+                max: PROFILE_LIMITS.NICKNAME.MAX,
               })
             }
           />
@@ -293,7 +296,7 @@ const ProfileEditPage = () => {
           <Input
             id="share-code"
             type="text"
-            placeholder={`${PROFILE_LIMITS.SHARE_CODE.MIN}~${PROFILE_LIMITS.SHARE_CODE.MAX}자의 영문자, 숫자, 언더바(_)만 입력할 수 있어요.`}
+            placeholder={`아이디는 ${PROFILE_LIMITS.SHARE_CODE.MIN}-${PROFILE_LIMITS.SHARE_CODE.MAX}자로 입력해 주세요.`}
             value={profileForm.shareCode}
             error={!!errorMap.shareCode}
             errorMessage={errorMap.shareCode}
@@ -301,6 +304,7 @@ const ProfileEditPage = () => {
               onFieldChange({
                 key: 'shareCode',
                 value: e.target.value,
+                min: PROFILE_LIMITS.SHARE_CODE.MIN,
                 max: PROFILE_LIMITS.SHARE_CODE.MAX,
               })
             }
@@ -311,7 +315,7 @@ const ProfileEditPage = () => {
           <Input
             id="bio"
             type="text"
-            placeholder={`짧은 글로 음악 취향을 소개해보세요. (최대 ${PROFILE_LIMITS.BIO}자)`}
+            placeholder={`음악 취향을 한 줄로 소개해 보세요. (${PROFILE_LIMITS.BIO}자)`}
             value={profileForm.bio ?? ''}
             error={!!errorMap.bio}
             errorMessage={errorMap.bio}
