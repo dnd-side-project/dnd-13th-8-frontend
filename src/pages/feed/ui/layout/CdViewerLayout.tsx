@@ -228,7 +228,6 @@ const CdViewerLayout = ({
               creatorId={currentPlaylist.creatorId}
               stickers={playlistDetail?.cdResponse?.cdItems || []}
               type="MY"
-              pageType={pageType}
             />
 
             <TitleWrapper>
