@@ -9,9 +9,8 @@ const FollowTab = () => {
 
   return (
     <TabContainer>
-      <TabButton to={`/${shareCode}/following`}>팔로잉</TabButton>
-
       <TabButton to={`/${shareCode}/followers`}>팔로워</TabButton>
+      <TabButton to={`/${shareCode}/following`}>팔로잉</TabButton>
     </TabContainer>
   )
 }

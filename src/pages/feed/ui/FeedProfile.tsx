@@ -91,12 +91,12 @@ const FeedProfile = ({ userProfile, shareCode, isMyFeed }: FeedProfileProps) => 
             <ShareCodeText>{`@${userProfile?.shareCode}`}</ShareCodeText>
           </NameInfoBox>
           <FollowInfoBox>
-            <FollowButton onClick={() => navigate('following')}>
-              팔로잉 {userProfile?.followCount?.followingCount ?? 0}
-            </FollowButton>
-            <VerticalText>|</VerticalText>
             <FollowButton onClick={() => navigate('followers')}>
               팔로워 {userProfile?.followCount?.followerCount ?? 0}
+            </FollowButton>
+            <VerticalText>|</VerticalText>
+            <FollowButton onClick={() => navigate('following')}>
+              팔로잉 {userProfile?.followCount?.followingCount ?? 0}
             </FollowButton>
           </FollowInfoBox>
         </ProfileInfo>
