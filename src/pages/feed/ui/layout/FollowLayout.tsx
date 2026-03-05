@@ -17,7 +17,7 @@ const FollowLayout = () => {
     <LayoutContainer>
       <HeaderSection>
         <Header
-          left={<SvgButton icon={LeftArrow} onClick={() => navigate(-1)} />}
+          left={<SvgButton icon={LeftArrow} onClick={() => navigate(`/${shareCode}`)} />}
           center={<span>{userProfile?.nickname}</span>}
         />
         <FollowTab />
