@@ -1,11 +1,13 @@
 import { useEffect, useCallback, useState, useMemo } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useOutletContext, useParams } from 'react-router-dom'
 
 import { useMyCdActions, useMyCdList } from '@/entities/playlist/model/useMyCd'
+import type { ShareCodeOwnerResponse } from '@/features/auth'
 import { CdViewerLayout } from '@/pages/feed/ui'
 import { Loading } from '@/shared/ui'
 
 const Cds = () => {
+  const { isOwner } = useOutletContext<ShareCodeOwnerResponse>()
   const navigate = useNavigate()
   const { id: routePlaylistId } = useParams<{ id?: string }>()
 
@@ -78,7 +80,7 @@ const Cds = () => {
         centerItem={centerItem}
         onCenterChange={handleCenterChange}
         pageType="MY"
-        isOwner // TODO: 실제 값으로 수정 필요
+        isOwner={isOwner}
       />
     </>
   )
