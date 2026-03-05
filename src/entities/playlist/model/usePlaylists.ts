@@ -130,11 +130,19 @@ export const useFeedCdList = ({
 }: {
   shareCode: ShareCode
   feedView: FEED_CD_LIST_TAB_TYPE
-  params: CdListParams
+  params: Omit<CdListParams, 'cursor'>
 }) => {
-  return useQuery({
+  return useInfiniteQuery({
     queryKey: ['feedCdList', shareCode, feedView, params.sort],
-    queryFn: () => (feedView === 'cds' ? getCdList(params) : getLikedCdList(params)),
+    queryFn: ({ pageParam }) => {
+      const fetchParams = {
+        ...params,
+        cursor: pageParam as string,
+      }
+      return feedView === 'cds' ? getCdList(fetchParams) : getLikedCdList(fetchParams)
+    },
+    initialPageParam: '', // 초기 cursor 값
+    getNextPageParam: (lastPage) => (lastPage.hasNext ? lastPage.nextCursor : undefined),
     enabled: !!shareCode,
   })
 }

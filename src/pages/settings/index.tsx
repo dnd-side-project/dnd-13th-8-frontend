@@ -9,10 +9,17 @@ import { useAuthStore } from '@/features/auth'
 import { flexRowCenter } from '@/shared/styles/mixins'
 import { SubHeader } from '@/shared/ui'
 
+const EXTERNAL_LINKS = {
+  terms: 'https://www.notion.so/DEULAK-3186a152bc5c80a98a12fcb7ccd9eecc?source=copy_link',
+  privacy: 'https://www.notion.so/3186a152bc5c8059b4c4d8ce70173d8e?source=copy_link',
+} as const
+
 const Setting = () => {
   const navigate = useNavigate()
 
   const { setLogout } = useAuthStore()
+
+  const openExternalLink = (url: string) => window.open(url, '_blank', 'noopener,noreferrer')
 
   const onLogoutClick = () => {
     setLogout()
@@ -45,7 +52,7 @@ const Setting = () => {
               width={16}
               height={20}
               stroke="#BDBDBD"
-              onClick={() => navigate('/mypage/terms')}
+              onClick={() => openExternalLink(EXTERNAL_LINKS.terms)}
             />
           </SettingItem>
           <SettingItem>
@@ -55,7 +62,7 @@ const Setting = () => {
               width={16}
               height={20}
               stroke="#BDBDBD"
-              onClick={() => navigate('/mypage/privacy')}
+              onClick={() => openExternalLink(EXTERNAL_LINKS.privacy)}
             />
           </SettingItem>
         </ul>
@@ -65,7 +72,7 @@ const Setting = () => {
         <button type="button" onClick={onLogoutClick}>
           로그아웃
         </button>
-        <button type="button" onClick={() => navigate('/mypage/unregister')}>
+        <button type="button" onClick={() => navigate('unregister')}>
           탈퇴하기
         </button>
       </BottomCraWrap>

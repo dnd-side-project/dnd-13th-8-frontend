@@ -11,7 +11,7 @@ const Toast = ({ type }: ToastProps) => {
 
   return (
     <ToastContainer>
-      {type === 'PLAY_NEXT' ? <ToastDanger /> : <ToastCircle />}
+      {['PLAY_NEXT', 'AUTH_EXPIRED'].includes(type) ? <ToastDanger /> : <ToastCircle />}
       <p>{message}</p>
     </ToastContainer>
   )

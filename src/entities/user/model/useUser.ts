@@ -1,7 +1,6 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
 
 import { getUserProfile, patchUserProfile } from '@/entities/user'
-import type { ProfileEditPayload } from '@/entities/user'
 import type { ShareCode } from '@/features/auth'
 
 export const useUserProfile = (shareCode?: ShareCode) => {
@@ -19,7 +18,7 @@ export const useUserProfile = (shareCode?: ShareCode) => {
   // 프로필 수정
   const { mutate: updateProfile, isPending } = useMutation({
     mutationKey: ['patchUserProfile'],
-    mutationFn: (payload: FormData) => patchUserProfile(payload as unknown as ProfileEditPayload),
+    mutationFn: (payload: FormData) => patchUserProfile(payload),
   })
 
   return {

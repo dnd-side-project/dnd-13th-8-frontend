@@ -53,7 +53,13 @@ const NavBar = () => {
 
     // 이미 로딩 중일 경우 중복 클릭 방지
     if (isPending) return
-    if (!isLogin || !myShareCode) {
+
+    // 로그인 세션은 유효하나 구버전(v1) 로그인 정보로 userInfo에 shareCode가 없는 경우
+    if (isLogin && !myShareCode) {
+      onVerifyFailed()
+      return
+    }
+    if (!isLogin) {
       setIsModalOpen(true)
       return
     }

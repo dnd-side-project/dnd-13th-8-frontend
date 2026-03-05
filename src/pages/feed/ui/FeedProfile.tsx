@@ -1,15 +1,16 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
 import { useToast } from '@/app/providers'
-import { Pencil, Add, Share } from '@/assets/icons'
+import { Pencil, Add, Tick, Share } from '@/assets/icons'
 import { PROFILE_KEYWORDS_LIST, type ProfileResponse } from '@/entities/user'
-import type { ShareCode } from '@/features/auth'
+import { useAuthStore, type ShareCode } from '@/features/auth'
+import { useFollow } from '@/features/follow'
 import { useCopyShareUrl } from '@/shared/lib'
 import { flexRowCenter } from '@/shared/styles/mixins'
-import { Profile, Badge } from '@/shared/ui'
+import { Profile, Badge, Modal } from '@/shared/ui'
 
 interface FeedProfileProps {
   userProfile?: ProfileResponse
@@ -21,6 +22,13 @@ const FeedProfile = ({ userProfile, shareCode, isMyFeed }: FeedProfileProps) => 
   const navigate = useNavigate()
   const { toast } = useToast()
   const { copyShareUrl } = useCopyShareUrl()
+  const { isLogin } = useAuthStore()
+
+  const { isFollowing, toggleFollow } = useFollow(shareCode)
+
+  const [isModalOpen, setIsModalOpen] = useState(false)
+
+  const FollowIcon = isFollowing ? Tick : Add
 
   const keywordLabelMap = useMemo(() => {
     return PROFILE_KEYWORDS_LIST.reduce(
@@ -31,6 +39,14 @@ const FeedProfile = ({ userProfile, shareCode, isMyFeed }: FeedProfileProps) => 
       {} as Record<string, string>
     )
   }, [])
+
+  const onFollowClick = () => {
+    if (!isLogin) {
+      setIsModalOpen(true)
+      return
+    }
+    toggleFollow()
+  }
 
   const onShareButtonClick = async () => {
     // 브라우저 지원 여부 및 https 체크 (미지원 시 함수로 별도 copy 처리)
@@ -75,9 +91,13 @@ const FeedProfile = ({ userProfile, shareCode, isMyFeed }: FeedProfileProps) => 
             <ShareCodeText>{`@${userProfile?.shareCode}`}</ShareCodeText>
           </NameInfoBox>
           <FollowInfoBox>
-            <FollowText>팔로잉 {userProfile?.followCount?.followingCount ?? 0}</FollowText>
+            <FollowButton onClick={() => navigate('following')}>
+              팔로잉 {userProfile?.followCount?.followingCount ?? 0}
+            </FollowButton>
             <VerticalText>|</VerticalText>
-            <FollowText>팔로워 {userProfile?.followCount?.followerCount ?? 0}</FollowText>
+            <FollowButton onClick={() => navigate('followers')}>
+              팔로워 {userProfile?.followCount?.followerCount ?? 0}
+            </FollowButton>
           </FollowInfoBox>
         </ProfileInfo>
       </ProfileContainer>
@@ -89,20 +109,59 @@ const FeedProfile = ({ userProfile, shareCode, isMyFeed }: FeedProfileProps) => 
             <span>프로필 편집</span>
           </CtaButton>
         ) : (
-          <CtaButton type="button" $ctaType="follow">
-            <Add width={20} height={20} />
-            <span>팔로우</span>
+          <CtaButton
+            type="button"
+            $ctaType={isFollowing ? 'following' : 'follow'}
+            onClick={onFollowClick}
+          >
+            <FollowIcon width={20} height={20} />
+            <span>{isFollowing ? '팔로잉' : '팔로우'}</span>
           </CtaButton>
         )}
         <ShareButton type="button" onClick={onShareButtonClick}>
           <Share />
         </ShareButton>
       </CtaContainer>
+
+      {isModalOpen && (
+        <Modal
+          isOpen={isModalOpen}
+          title="로그인 후 이용할 수 있어요"
+          ctaType="double"
+          onConfirm={() => {
+            navigate('/login')
+            setIsModalOpen(false)
+          }}
+          onCancel={() => {
+            setIsModalOpen(false)
+          }}
+          onClose={() => setIsModalOpen(false)}
+          confirmText="로그인하기"
+          cancelText="다음에 하기"
+        />
+      )}
     </>
   )
 }
 
 export default FeedProfile
+
+const ctaVariants = {
+  edit: css`
+    color: ${({ theme }) => theme.COLOR['gray-200']};
+    background-color: ${({ theme }) => theme.COLOR['gray-600']};
+  `,
+
+  follow: css`
+    color: ${({ theme }) => theme.COLOR['gray-700']};
+    background-color: ${({ theme }) => theme.COLOR['primary-normal']};
+  `,
+
+  following: css`
+    color: ${({ theme }) => theme.COLOR['primary-normal']};
+    background-color: ${({ theme }) => theme.COLOR['gray-600']};
+  `,
+}
 
 const ProfileContainer = styled.section`
   position: relative;
@@ -152,7 +211,7 @@ const FollowInfoBox = styled.div`
   gap: 8px;
 `
 
-const FollowText = styled.span`
+const FollowButton = styled.button`
   ${({ theme }) => theme.FONT['body2-normal']}
   color: ${({ theme }) => theme.COLOR['gray-300']};
 `
@@ -181,14 +240,7 @@ const CtaButton = styled.button<{ $ctaType: 'edit' | 'follow' | 'following' }>`
   ${flexRowCenter}
   gap: 4px;
   flex: 1;
-  color: ${({ theme, $ctaType }) =>
-    $ctaType === 'edit'
-      ? theme.COLOR['gray-200']
-      : $ctaType === 'follow'
-        ? theme.COLOR['gray-700']
-        : theme.COLOR['primary-normal']};
-  background-color: ${({ theme, $ctaType }) =>
-    $ctaType === 'follow' ? theme.COLOR['primary-normal'] : theme.COLOR['gray-600']};
   border-radius: 11px;
   ${({ theme }) => theme.FONT['body2-normal']}
+  ${({ $ctaType }) => ctaVariants[$ctaType]}
 `

@@ -317,6 +317,10 @@ const CustomizeStep1 = ({
                 error={!!trackErrMsg}
                 errorMessage={trackErrMsg}
                 onChange={(e) => setCurrentTrackUrl(e.target.value.trim())}
+                onKeyDown={(e) => {
+                  if (e.nativeEvent.isComposing || e.key !== 'Enter' || !currentTrackUrl) return
+                  onTrackAddClick()
+                }}
               />
               <InputCleanButton
                 type="button"

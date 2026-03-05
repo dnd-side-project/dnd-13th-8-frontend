@@ -11,7 +11,7 @@ import { useOwnerStatus } from '@/features/auth'
 import { FeedCdList, FeedProfile } from '@/pages/feed/ui'
 import { FeedbackIcon } from '@/pages/feedback/ui'
 import { flexRowCenter } from '@/shared/styles/mixins'
-import { Loading, Header, SubHeader, SvgButton, Divider } from '@/shared/ui'
+import { Loading, Header, SubHeader, SvgButton, Divider, NotFound } from '@/shared/ui'
 
 const RANDOM_BIO_QUOTES = [
   '재생 목록에\n어떤 곡이 있나요?',
@@ -25,7 +25,7 @@ const FeedPage = () => {
   const [searchParams, setSearchParams] = useSearchParams()
   const navigate = useNavigate()
 
-  const { data: ownershipData, isLoading: ownerShipDataLoading } = useOwnerStatus(shareCode || '')
+  const { data: ownershipData, isLoading: isOwnershipLoading } = useOwnerStatus(shareCode || '')
   const {
     userProfile,
     isLoading: isProfileLoading,
@@ -42,7 +42,7 @@ const FeedPage = () => {
           label: isMyFeed ? '나의 CD' : `${userProfile?.nickname || ''}의 CD`,
           value: 'cds' as FEED_CD_LIST_TAB_TYPE,
         },
-        { label: '나의 좋아요', value: 'likes' as FEED_CD_LIST_TAB_TYPE },
+        { label: '좋아요한 CD', value: 'likes' as FEED_CD_LIST_TAB_TYPE },
       ] as const,
     [isMyFeed, userProfile?.nickname]
   )
@@ -57,18 +57,14 @@ const FeedPage = () => {
     setSearchParams({ tab: nextTab }, { replace: true })
   }
 
-  if ((ownerShipDataLoading && !ownershipData) || isProfileLoading) return <Loading isLoading />
-  if (isProfileError) {
-    navigate('/error')
-    return null
-  }
-
+  if ((isOwnershipLoading && !ownershipData) || isProfileLoading) return <Loading isLoading />
+  if (isProfileError) return <NotFound isFullPage isProfile />
   return (
     <FeedWrapper>
       <TopVisualBackground>
         {isMyFeed ? (
           <Header
-            left={<PageHeader>마이 피드</PageHeader>}
+            left={<PageHeader>MY 피드</PageHeader>}
             right={
               <>
                 <FeedbackIcon />
@@ -76,13 +72,7 @@ const FeedPage = () => {
                   icon={Gear}
                   width={24}
                   height={24}
-                  /*
-                    TODO:
-                    - /mypage/setting → /setting
-                    - /mypage/unregister → /setting/unregister
-                    - /mypage/privacy, terms → 노션으로 별도 분리
-                  */
-                  onClick={() => navigate('/mypage/setting')}
+                  onClick={() => navigate('/settings')}
                 />
               </>
             }

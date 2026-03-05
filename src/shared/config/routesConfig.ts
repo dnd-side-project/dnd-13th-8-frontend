@@ -4,16 +4,8 @@ import type { ComponentType, LazyExoticComponent } from 'react'
 import RedirectToShuffle from '@/pages/discover/ui/RedirectToShuffle'
 
 const HomePage = lazy(() => import('@/pages/home'))
-const MypageLayout = lazy(() => import('@/pages/mypage/MypageLayout'))
-const Mypage = lazy(() => import('@/pages/mypage/main'))
 const CustomizeLayout = lazy(() => import('@/pages/customize/CustomizeLayout'))
 const CustomizePage = lazy(() => import('@/pages/customize'))
-const MypageTracklist = lazy(() => import('@/pages/mypage/tracklist'))
-const Setting = lazy(() => import('@/pages/mypage/setting'))
-const Terms = lazy(() => import('@/pages/mypage/terms'))
-const Privacy = lazy(() => import('@/pages/mypage/privacy'))
-const Unregister = lazy(() => import('@/pages/mypage/unregister'))
-const Notification = lazy(() => import('@/pages/mypage/notification'))
 const SearchPage = lazy(() => import('@/pages/search'))
 const SearchResult = lazy(() => import('@/pages/search/SearchResultPage'))
 const DiscoverLayout = lazy(() => import('@/pages/discover/DiscoverLayout'))
@@ -39,6 +31,10 @@ const TracklistDetail = lazy(() => import('@/pages/feed/tracklist'))
 const CdPlayerLayout = lazy(() => import('@/pages/feed/ui/layout/CdPlayerLayout'))
 const ProfileEditLayout = lazy(() => import('@/pages/profileEdit/ProfileEditLayout'))
 const ProfileEdit = lazy(() => import('@/pages/profileEdit'))
+const SettingsLayout = lazy(() => import('@/pages/settings/SettingsLayout'))
+const Settings = lazy(() => import('@/pages/settings'))
+const Unregister = lazy(() => import('@/pages/settings/unregister'))
+const Notification = lazy(() => import('@/pages/settings/notification'))
 
 export interface RouteConfig {
   path: string
@@ -88,25 +84,6 @@ export const routesConfig: RouteConfig[] = [
     hideNav: true,
     isNotSuspense: false,
     children: [{ path: '', component: CustomizePage }],
-  },
-
-  // 마이페이지
-  {
-    path: '/mypage',
-    component: MypageLayout,
-    hideNav: true,
-    isPrivate: true,
-    isNotSuspense: true,
-    children: [
-      { path: '', component: Mypage, hideNav: false, isNotSuspense: false },
-      { path: 'customize', component: CustomizePage, isNotSuspense: false },
-      { path: ':id/tracklist', component: MypageTracklist, hideNav: false },
-      { path: 'setting', component: Setting },
-      { path: 'terms', component: Terms },
-      { path: 'privacy', component: Privacy },
-      { path: 'unregister', component: Unregister },
-      { path: 'notification', component: Notification },
-    ],
   },
 
   // 로그인
@@ -181,6 +158,20 @@ export const routesConfig: RouteConfig[] = [
     isPrivate: true,
     hideNav: true,
     children: [{ path: '', component: ProfileEdit }],
+  },
+
+  // 설정
+  {
+    path: '/settings',
+    component: SettingsLayout,
+    hideNav: true,
+    isPrivate: true,
+    isNotSuspense: true,
+    children: [
+      { path: '', component: Settings },
+      { path: 'unregister', component: Unregister },
+      { path: 'notification', component: Notification },
+    ],
   },
 
   // 에러 페이지

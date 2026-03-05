@@ -32,6 +32,7 @@ const useFollow = (shareCode: string, initialIsFollowing?: boolean) => {
         queryKey: ['followerList'],
         refetchType: 'none',
       })
+      queryClient.invalidateQueries({ queryKey: ['getUserProfile', shareCode] })
     },
   })
 
@@ -47,6 +48,7 @@ const useFollow = (shareCode: string, initialIsFollowing?: boolean) => {
         queryKey: ['followerList'],
         refetchType: 'none',
       })
+      queryClient.invalidateQueries({ queryKey: ['getUserProfile', shareCode] })
     },
   })
 

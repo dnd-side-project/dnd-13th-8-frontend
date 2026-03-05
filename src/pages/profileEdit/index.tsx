@@ -125,28 +125,32 @@ const ProfileEditPage = () => {
     max: number
   }) => {
     let error = ''
+    const isShareCodeKey = key === 'shareCode'
+    const finalValue = isShareCodeKey ? value.trim() : value
 
     // length 검증
-    if (value.length > max) {
-      error = PROFILE_ERROR_MESSAGES[key as keyof typeof PROFILE_ERROR_MESSAGES]
+    if (finalValue.length > max) {
+      error = isShareCodeKey
+        ? PROFILE_ERROR_MESSAGES.shareCode.isInvalid
+        : (PROFILE_ERROR_MESSAGES[key as keyof typeof PROFILE_ERROR_MESSAGES] as string)
     }
     // shareCode 정규식 검증
-    if (key === 'shareCode' && value.length > 0) {
+    if (isShareCodeKey && finalValue.length > 0) {
       // 1. 영문, 숫자, 언더바만 허용 및 길이 제한
       const basicRegex = /^[a-zA-Z0-9_]*$/
       // 2. 언더바 단독 사용 불가
       const notOnlyUnderscore = /[a-zA-Z0-9]/
 
-      const isInvalidFormat = !basicRegex.test(value)
-      const isTooShort = value.length < PROFILE_LIMITS.SHARE_CODE.MIN
-      const isOnlyUnderscore = value.length > 0 && !notOnlyUnderscore.test(value)
+      const isInvalidFormat = !basicRegex.test(finalValue)
+      const isTooShort = finalValue.length < PROFILE_LIMITS.SHARE_CODE.MIN
+      const isOnlyUnderscore = finalValue.length > 0 && !notOnlyUnderscore.test(finalValue)
 
       if (isInvalidFormat || isTooShort || isOnlyUnderscore) {
-        error = PROFILE_ERROR_MESSAGES.shareCode
+        error = PROFILE_ERROR_MESSAGES.shareCode.isInvalid
       }
     }
     setErrorMessage((prev) => ({ ...prev, [key]: error }))
-    setProfileForm((prev) => ({ ...prev, [key]: value }))
+    setProfileForm((prev) => ({ ...prev, [key]: finalValue }))
   }
 
   // keyword 핸들러
@@ -216,6 +220,15 @@ const ProfileEditPage = () => {
         toast('PROFILE_EDIT')
         navigate(`/${response.shareCode}`)
       },
+      onError: (error: Error & { response?: { status: number } }) => {
+        console.error('프로필 수정 실패: ', error.response?.status)
+        if (error.response?.status === 409) {
+          setErrorMessage((prev) => ({
+            ...prev,
+            shareCode: PROFILE_ERROR_MESSAGES.shareCode.isDuplicate,
+          }))
+        }
+      },
     })
   }
 
@@ -262,10 +275,10 @@ const ProfileEditPage = () => {
           <Input
             id="nickname"
             type="text"
-            placeholder="2~10자까지 입력할 수 있어요."
+            placeholder={`2~${PROFILE_LIMITS.NICKNAME}자까지 입력할 수 있어요.`}
             value={profileForm.nickname}
             error={!!errorMap.nickname}
-            errorMessage={PROFILE_ERROR_MESSAGES.nickname}
+            errorMessage={errorMap.nickname}
             onChange={(e) =>
               onFieldChange({
                 key: 'nickname',
@@ -280,10 +293,10 @@ const ProfileEditPage = () => {
           <Input
             id="share-code"
             type="text"
-            placeholder="5~10자의 영문자, 숫자, 언더바(_)만 입력할 수 있어요."
+            placeholder={`${PROFILE_LIMITS.SHARE_CODE.MIN}~${PROFILE_LIMITS.SHARE_CODE.MAX}자의 영문자, 숫자, 언더바(_)만 입력할 수 있어요.`}
             value={profileForm.shareCode}
             error={!!errorMap.shareCode}
-            errorMessage={PROFILE_ERROR_MESSAGES.shareCode}
+            errorMessage={errorMap.shareCode}
             onChange={(e) =>
               onFieldChange({
                 key: 'shareCode',
@@ -298,10 +311,10 @@ const ProfileEditPage = () => {
           <Input
             id="bio"
             type="text"
-            placeholder="짧은 글로 음악 취향을 소개해보세요. (최대 25자)"
+            placeholder={`짧은 글로 음악 취향을 소개해보세요. (최대 ${PROFILE_LIMITS.BIO}자)`}
             value={profileForm.bio ?? ''}
             error={!!errorMap.bio}
-            errorMessage={PROFILE_ERROR_MESSAGES.bio}
+            errorMessage={errorMap.bio}
             onChange={(e) =>
               onFieldChange({
                 key: 'bio',

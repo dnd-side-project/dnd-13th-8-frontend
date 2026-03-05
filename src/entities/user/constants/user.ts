@@ -7,10 +7,13 @@ export const PROFILE_LIMITS = {
 } as const
 
 export const PROFILE_ERROR_MESSAGES = {
-  image: '5MB 이하의 파일만 업로드 가능해요',
-  nickname: '10자 이내로 입력 가능해요',
-  shareCode: '5~10자의 영문자, 숫자, 언더바(_)만 입력할 수 있어요',
-  bio: '25자 이내로 입력 가능해요',
+  image: `${PROFILE_LIMITS.MAX_FILE_SIZE / (1024 * 1024)}MB 이하의 파일만 업로드 가능해요`,
+  nickname: `${PROFILE_LIMITS.NICKNAME}자 이내로 입력 가능해요`,
+  shareCode: {
+    isInvalid: `${PROFILE_LIMITS.SHARE_CODE.MIN}~${PROFILE_LIMITS.SHARE_CODE.MAX}자의 영문자, 숫자, 언더바(_)만 입력할 수 있어요`,
+    isDuplicate: '이미 사용 중인 아이디예요',
+  },
+  bio: `${PROFILE_LIMITS.BIO}자 이내로 입력 가능해요`,
 } as const
 
 export const PROFILE_KEYWORDS_LIST = [
