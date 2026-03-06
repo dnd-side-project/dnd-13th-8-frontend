@@ -26,9 +26,11 @@ const FollowButton = ({
   const { isLogin, userInfo } = useAuthStore()
   const [isModalOpen, setIsModalOpen] = useState(false)
 
-  const { isFollowing, toggleFollow } = useFollow(shareCode, initialIsFollowing)
+  const isMe = isLogin && shareCode === userInfo?.shareCode
 
-  if (shareCode === userInfo?.shareCode) return null
+  const { isFollowing, toggleFollow } = useFollow(shareCode, initialIsFollowing, !isMe)
+
+  if (isMe) return null
 
   const handleFollowClick = () => {
     if (isLogin) {

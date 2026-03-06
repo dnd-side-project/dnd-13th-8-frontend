@@ -15,13 +15,13 @@ import {
 } from '@/features/follow/api/follow'
 import type { FollowListResponse, FollowSortType } from '@/features/follow/types/follow'
 
-const useFollow = (shareCode: string, initialIsFollowing?: boolean) => {
+const useFollow = (shareCode: string, initialIsFollowing?: boolean, enabled = true) => {
   const queryClient = useQueryClient()
 
   const { data } = useQuery({
     queryKey: ['followStatus', shareCode],
     queryFn: () => getFollowStatus(shareCode),
-    enabled: !!shareCode,
+    enabled: !!shareCode && enabled,
     initialData: initialIsFollowing !== undefined ? { isFollowing: initialIsFollowing } : undefined,
   })
 
