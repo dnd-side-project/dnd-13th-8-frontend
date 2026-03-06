@@ -135,7 +135,7 @@ const FeedbackPage = () => {
               <span>{` (선택)`}</span>
             </Title>
             <TitleDescription>
-              연락처를 남겨주시면 소중한 피드백에 작은 선물을 드려요.
+              연락처를 남겨주시면 추첨을 통해 커피 기프티콘을 드려요.
             </TitleDescription>
             <OpinionBox>
               <Label htmlFor="phone">전화번호</Label>
