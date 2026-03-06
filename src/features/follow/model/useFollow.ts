@@ -78,31 +78,15 @@ const useFollow = (shareCode: string, initialIsFollowing?: boolean) => {
 
 export default useFollow
 
-export const useFollowerList = (shareCode: string, sort: FollowSortType = 'LATEST') => {
-  return useInfiniteQuery<
-    FollowListResponse,
-    Error,
-    InfiniteData<FollowListResponse>,
-    string[],
-    number | undefined
-  >({
-    queryKey: ['followerList', shareCode, sort],
-    queryFn: ({ pageParam }) =>
-      getFollowerList(shareCode, {
-        cursor: pageParam,
-        limit: 9,
-        sort,
-      }),
-    initialPageParam: undefined,
-    enabled: !!shareCode,
-    getNextPageParam: (lastPage) => {
-      if (!lastPage.hasNext) return undefined
-      return lastPage.nextCursor
-    },
-  })
-}
+export const useFollowList = (
+  type: 'FOLLOWERS' | 'FOLLOWING',
+  shareCode: string,
+  sort: FollowSortType = 'LATEST'
+) => {
+  const isFollower = type === 'FOLLOWERS'
+  const queryKey = isFollower ? 'followerList' : 'followingList'
+  const fetchFn = isFollower ? getFollowerList : getFollowingList
 
-export const useFollowingList = (shareCode: string, sort: FollowSortType = 'LATEST') => {
   return useInfiniteQuery<
     FollowListResponse,
     Error,
@@ -110,9 +94,9 @@ export const useFollowingList = (shareCode: string, sort: FollowSortType = 'LATE
     string[],
     number | undefined
   >({
-    queryKey: ['followingList', shareCode, sort],
+    queryKey: [queryKey, shareCode, sort],
     queryFn: ({ pageParam }) =>
-      getFollowingList(shareCode, {
+      fetchFn(shareCode, {
         cursor: pageParam,
         limit: 10,
         sort,
