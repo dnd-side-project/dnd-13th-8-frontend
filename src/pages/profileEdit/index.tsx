@@ -15,7 +15,7 @@ import {
   type ProfileResponse,
 } from '@/entities/user'
 import { useAuthStore } from '@/features/auth'
-import { useDevice } from '@/shared/lib/useDevice'
+import { useDevice } from '@/shared/lib'
 import { flexRowCenter, flexColCenter } from '@/shared/styles/mixins'
 import { Divider, Button, Profile, Input, Loading } from '@/shared/ui'
 import type { ProfileUrl } from '@/shared/ui/Profile'

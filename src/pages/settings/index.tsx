@@ -6,20 +6,14 @@ import { SvgButton } from '@shared/ui'
 
 import { RightArrow } from '@/assets/icons'
 import { useAuthStore } from '@/features/auth'
+import { openPolicyLink } from '@/shared/lib'
 import { flexRowCenter } from '@/shared/styles/mixins'
 import { SubHeader } from '@/shared/ui'
-
-const EXTERNAL_LINKS = {
-  terms: 'https://www.notion.so/DEULAK-3186a152bc5c80a98a12fcb7ccd9eecc?source=copy_link',
-  privacy: 'https://www.notion.so/3186a152bc5c8059b4c4d8ce70173d8e?source=copy_link',
-} as const
 
 const Setting = () => {
   const navigate = useNavigate()
 
   const { setLogout } = useAuthStore()
-
-  const openExternalLink = (url: string) => window.open(url, '_blank', 'noopener,noreferrer')
 
   const onLogoutClick = () => {
     setLogout()
@@ -52,7 +46,7 @@ const Setting = () => {
               width={16}
               height={20}
               stroke="#BDBDBD"
-              onClick={() => openExternalLink(EXTERNAL_LINKS.terms)}
+              onClick={() => openPolicyLink('terms')}
             />
           </SettingItem>
           <SettingItem>
@@ -62,7 +56,7 @@ const Setting = () => {
               width={16}
               height={20}
               stroke="#BDBDBD"
-              onClick={() => openExternalLink(EXTERNAL_LINKS.privacy)}
+              onClick={() => openPolicyLink('privacy')}
             />
           </SettingItem>
         </ul>
