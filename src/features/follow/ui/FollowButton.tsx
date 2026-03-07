@@ -23,10 +23,14 @@ const FollowButton = ({
   initialIsFollowing,
 }: FollowButtonProps) => {
   const navigate = useNavigate()
-  const { isLogin } = useAuthStore()
+  const { isLogin, userInfo } = useAuthStore()
   const [isModalOpen, setIsModalOpen] = useState(false)
 
-  const { isFollowing, toggleFollow } = useFollow(shareCode, initialIsFollowing)
+  const isMe = isLogin && shareCode === userInfo?.shareCode
+
+  const { isFollowing, toggleFollow } = useFollow(shareCode, initialIsFollowing, !isMe)
+
+  if (isMe) return null
 
   const handleFollowClick = () => {
     if (isLogin) {
@@ -111,6 +115,8 @@ const variants = {
 const Button = styled.button<{ $variant: Variant; $isFollowing: boolean }>`
   ${flexRowCenter}
   ${({ $variant }) => variants[$variant]}
+  white-space: nowrap;
+  flex-shrink: 0;
 
   svg {
     width: ${({ $variant }) => ($variant === 'small' ? '12px' : '16px')};
