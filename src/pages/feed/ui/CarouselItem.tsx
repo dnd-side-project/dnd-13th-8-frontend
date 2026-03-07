@@ -1,5 +1,5 @@
 import { useEffect, useCallback, useState } from 'react'
-import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 import { useQueryClient } from '@tanstack/react-query'
 import styled from 'styled-components'
@@ -11,15 +11,16 @@ import { Dots, LeftArrow } from '@/assets/icons'
 import type { CdMetaResponse, PlaylistDetail } from '@/entities/playlist'
 import { useMyCdActions } from '@/entities/playlist/model/useMyCd'
 import { useLike } from '@/features/like'
-import { CdCarousel } from '@/pages/feed/ui'
+import { SwipeCarousel } from '@/features/swipe'
 import { useDevice } from '@/shared/lib/useDevice'
-import { BottomSheet, Header, LiveInfo, Modal, SvgButton } from '@/shared/ui'
+import { flexRowCenter } from '@/shared/styles/mixins'
+import { BottomSheet, Header, LiveInfo, Modal, SvgButton, Cd } from '@/shared/ui'
 import type { ModalProps } from '@/shared/ui/Modal'
 import { ActionBar, ControlBar, ProgressBar } from '@/widgets/playlist'
 
 type Props = {
   playlistData: CdMetaResponse
-  playlistDetail?: PlaylistDetail
+  playlistDetail: PlaylistDetail
   centerItem: { playlistId: number | null; playlistName: string }
   pageType: 'MY' | 'LIKE'
   isOwner: boolean
@@ -40,15 +41,11 @@ const COMMENT_OPTIONS = (isPublic: boolean, selectedTab: 'MY' | 'LIKE'): OptionI
 
   return [
     { text: 'CD 편집하기', type: 'edit' },
-    {
-      text: isPublic ? '비공개로 전환' : '공개로 전환',
-      type: 'toggleVisibility',
-    },
+    { text: isPublic ? '비공개로 전환' : '공개로 전환', type: 'toggleVisibility' },
     { text: '삭제하기', type: 'delete' },
   ]
 }
-
-const CdViewerLayout = ({
+const CarouselItem = ({
   playlistData,
   playlistDetail,
   centerItem,
@@ -58,12 +55,12 @@ const CdViewerLayout = ({
 }: Props) => {
   const navigate = useNavigate()
   const { toast } = useToast()
-  const { state } = useLocation()
-  const { shareCode } = useParams<{ shareCode: string }>()
-  const { id: playlistId } = useParams()
   const queryClient = useQueryClient()
-  const { toggleLike } = useLike(Number(playlistId))
+  const { shareCode, id: playlistId } = useParams()
+
   const { isMobile } = useDevice()
+  const isSmall = isMobile && window.innerHeight < 633
+  const [activeIndex, setActiveIndex] = useState(0)
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false)
   const onModalClose = () => setModal((prev) => ({ ...prev, isOpen: false }))
   const [modal, setModal] = useState<ModalProps>({
@@ -78,6 +75,7 @@ const CdViewerLayout = ({
     onCancel: onModalClose,
   })
 
+  const { toggleLike } = useLike(Number(playlistId))
   const {
     setPlaylist,
     isPlaying,
@@ -91,28 +89,41 @@ const CdViewerLayout = ({
     unmuteOnce,
   } = usePlaylist()
 
-  const isFromMyCdList = state?.isFromMyCdList === true
   const { deleteMutation, togglePublicMutation } = useMyCdActions(Number(playlistId), {
-    enabled: isFromMyCdList,
+    enabled: false,
   })
+
+  useEffect(() => {
+    if (!playlistId || !playlistData) return
+    const index = playlistData.findIndex((p) => p.playlistId === Number(playlistId))
+    if (index >= 0) setActiveIndex(index)
+  }, [playlistId, playlistData])
+
+  const handleSelectIndex = useCallback(
+    (index: number) => {
+      setActiveIndex(index)
+      const center = playlistData[index]
+      if (center && onCenterChange) {
+        onCenterChange({
+          playlistId: center.playlistId,
+          playlistName: center.playlistName,
+        })
+      }
+    },
+    [playlistData, onCenterChange]
+  )
 
   useEffect(() => {
     if (!playlistDetail) return
     if (currentPlaylist?.playlistId === playlistDetail.playlistId) return
-
     setPlaylist(playlistDetail, 0, 0, !isMobile)
   }, [playlistDetail, currentPlaylist, isMobile, setPlaylist])
 
   const handleProgressClick = useCallback(
     (trackIndex: number, seconds: number) => {
       if (!currentPlaylist) return
-
       setPlaylist(currentPlaylist, trackIndex, seconds)
-
-      if (seconds !== undefined) {
-        playerRef.current?.seekTo(seconds, true)
-      }
-
+      if (seconds !== undefined) playerRef.current?.seekTo(seconds, true)
       if (!isPlaying) play()
     },
     [currentPlaylist, setPlaylist, playerRef, isPlaying, play]
@@ -130,39 +141,27 @@ const CdViewerLayout = ({
     }
   }
 
-  const isPublic = playlistDetail?.isPublic ?? false
+  const isPublic = playlistDetail.isPublic
   const handleOptionClick = (type: OptionType) => {
-    if (type === 'edit') {
-      navigate(`/mypage/customize`, {
-        state: { playlistId: currentPlaylist?.playlistId },
-      })
-    }
+    if (type === 'edit')
+      navigate(`/mypage/customize`, { state: { playlistId: currentPlaylist?.playlistId } })
     if (type === 'delete') {
       setModal({
         isOpen: true,
         title: '해당 CD를 삭제할까요?',
         ctaType: 'double',
         confirmText: '삭제하기',
-        cancelText: '취소',
         onConfirm: () => {
           deleteMutation.mutate(undefined, {
             onSuccess: async () => {
               onModalClose()
               pause()
               await toast('CD_DELETE')
-
               const currentIndex = playlistData.findIndex(
                 (p) => p.playlistId === currentPlaylist?.playlistId
               )
-
               const nextPlaylist = playlistData[currentIndex + 1] ?? playlistData[currentIndex - 1]
-
-              if (nextPlaylist) {
-                navigate(`../${nextPlaylist.playlistId}`, { replace: true })
-              } else {
-                navigate('../', { replace: true })
-              }
-
+              navigate(nextPlaylist ? `../${nextPlaylist.playlistId}` : '../', { replace: true })
               queryClient.invalidateQueries({ queryKey: ['myCdList'] })
               queryClient.invalidateQueries({ queryKey: ['feedCdList'] })
             },
@@ -172,9 +171,7 @@ const CdViewerLayout = ({
         onClose: onModalClose,
       })
     }
-    if (type === 'toggleVisibility') {
-      if (!currentPlaylist) return
-
+    if (type === 'toggleVisibility' && currentPlaylist) {
       togglePublicMutation.mutate(undefined, {
         onSuccess: () => {
           toast(isPublic ? 'PRIVATE' : 'PUBLIC')
@@ -192,10 +189,7 @@ const CdViewerLayout = ({
         },
       })
     }
-    if (type === 'like_delete') {
-      toggleLike()
-    }
-
+    if (type === 'like_delete') toggleLike()
     setIsBottomSheetOpen(false)
   }
 
@@ -207,7 +201,15 @@ const CdViewerLayout = ({
         <div>
           <Header
             left={<SvgButton icon={LeftArrow} onClick={() => navigate(-1)} />}
-            center={<span>{pageType === 'MY' ? '나의 CD' : '좋아요한 CD'}</span>}
+            center={
+              <span>
+                {pageType === 'MY'
+                  ? isOwner
+                    ? '나의 CD'
+                    : `${playlistDetail.creatorNickname}의 CD`
+                  : '좋아요한 CD'}
+              </span>
+            }
             right={isOwner && <SvgButton icon={Dots} onClick={() => setIsBottomSheetOpen(true)} />}
           />
           <Container>
@@ -215,18 +217,33 @@ const CdViewerLayout = ({
           </Container>
 
           <CenterWrapper>
-            <CdCarousel
+            <SwipeCarousel
               data={playlistData ?? []}
-              onCenterChange={onCenterChange}
-              currentPlaylistId={currentPlaylist.playlistId}
-              isPlaying={isPlaying}
+              onSelectIndexChange={handleSelectIndex}
+              axis="x"
               basePath={pageType === 'MY' ? `/${shareCode}/cds` : `/${shareCode}/likes`}
-            />
+            >
+              {playlistData.map((slide, index) => (
+                <EmblaSlide key={slide.playlistId} $isMobile={isMobile}>
+                  <Slide $active={activeIndex === index} $isMobile={isMobile}>
+                    <CdSpinner
+                      $isNowPlaying={slide.playlistId === currentPlaylist.playlistId && isPlaying}
+                    >
+                      <Cd
+                        variant={isSmall ? 'customize' : isMobile ? 'mycd_mo' : 'mycd'}
+                        bgColor="none"
+                        stickers={slide.cdResponse.cdItems}
+                      />
+                    </CdSpinner>
+                  </Slide>
+                </EmblaSlide>
+              ))}
+            </SwipeCarousel>
 
             <ActionBar
               playlistId={centerItem.playlistId ?? 0}
               creatorId={currentPlaylist.creatorId}
-              stickers={playlistDetail?.cdResponse?.cdItems || []}
+              stickers={playlistDetail.cdResponse.cdItems}
               type="MY"
             />
 
@@ -235,7 +252,7 @@ const CdViewerLayout = ({
               <Title $isMobile={isMobile}>{centerItem.playlistName}</Title>
             </TitleWrapper>
 
-            {pageType === 'LIKE' && playlistDetail?.creatorNickname && (
+            {pageType === 'LIKE' && playlistDetail.creatorNickname && (
               <Creator>{playlistDetail.creatorNickname}</Creator>
             )}
 
@@ -245,7 +262,6 @@ const CdViewerLayout = ({
                 currentIndex={currentTrackIndex}
                 onClick={handleProgressClick}
               />
-
               <ControlBar
                 isPlaying={isPlaying}
                 onTogglePlay={handleTogglePlay}
@@ -271,22 +287,12 @@ const CdViewerLayout = ({
         </BottomSheet>
       )}
 
-      <Modal
-        isOpen={modal.isOpen}
-        title={modal.title}
-        description={modal.description}
-        ctaType={modal.ctaType}
-        confirmText={modal.confirmText}
-        cancelText={modal.cancelText}
-        onClose={modal.onClose}
-        onConfirm={modal.onConfirm}
-        onCancel={modal.onCancel}
-      />
+      <Modal {...modal} />
     </>
   )
 }
 
-export default CdViewerLayout
+export default CarouselItem
 
 const Container = styled.div`
   display: flex;
@@ -295,14 +301,41 @@ const Container = styled.div`
   align-items: center;
 `
 
+const EmblaSlide = styled.div<{ $isMobile?: boolean }>`
+  flex: 0 0 50%;
+  ${flexRowCenter}
+  padding: ${({ $isMobile }) => ($isMobile ? '6px 0 0 0' : '16px 0')};
+`
+
+const Slide = styled.div<{ $active?: boolean; $isMobile?: boolean }>`
+  position: relative;
+  ${flexRowCenter}
+  transition: transform 0.8s ease;
+  margin: ${({ $isMobile }) => ($isMobile ? '0 24px 16px 24px' : '32px 24px 24px 24px')};
+  opacity: ${({ $active }) => ($active ? 1 : 0.5)};
+`
+
+const CdSpinner = styled.div<{ $isNowPlaying: boolean }>`
+  position: relative;
+  animation: spin 40s linear infinite;
+  animation-play-state: ${(props) => (props.$isNowPlaying ? 'running' : 'paused')};
+  transform-origin: center;
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+`
+
 const TitleWrapper = styled.div`
   padding-top: 60px;
 `
 const Title = styled.p<{ $isMobile?: boolean }>`
   ${({ theme }) => theme.FONT.headline1};
-
   padding-top: 8px;
-
   @media (min-height: 899px) {
     padding-top: 56px;
   }
@@ -318,13 +351,13 @@ const BottomWrapper = styled.div`
 const Creator = styled.p`
   ${({ theme }) => theme.FONT['body2-normal']};
   color: ${({ theme }) => theme.COLOR['gray-300']};
+  margin-top: 2px;
 `
 
 const CenterWrapper = styled.div`
   display: flex;
   flex-direction: column;
   margin-top: 0;
-
   @media (min-height: 899px) {
     margin-top: 80px;
   }
@@ -336,7 +369,6 @@ const OptionButton = styled.button`
   margin-bottom: 8px;
   ${({ theme }) => theme.FONT.headline2};
   color: ${({ theme }) => theme.COLOR['gray-100']};
-
   &:hover {
     color: ${({ theme }) => theme.COLOR['primary-normal']};
   }
@@ -348,5 +380,4 @@ const PrivateLabel = styled.span`
   color: ${({ theme }) => theme.COLOR['gray-300']};
   background-color: ${({ theme }) => theme.COLOR['gray-700']};
   border-radius: 99px;
-  max-width: 48px;
 `
