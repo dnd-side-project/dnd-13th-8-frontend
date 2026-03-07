@@ -102,7 +102,7 @@ const FeedCdList = ({ shareCode, feedView, isMyFeed }: FeedCdListProps) => {
               type="button"
               onClick={() => {
                 navigate(`/${shareCode}/${feedView}/${item.playlistId}`, {
-                  state: { isFromMyCdList: isMyFeed },
+                  state: { isFromMyCdList: isMyFeed, currentSort },
                 })
               }}
             >
