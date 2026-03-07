@@ -10,7 +10,9 @@ import {
 } from '@tanstack/react-query'
 
 import {
+  getCdCarousel,
   getCdList,
+  getLikedCdCarousel,
   getLikedCdList,
   getMyPlaylistDetail,
   getPlaylistDetail,
@@ -24,6 +26,8 @@ import type {
   PlaylistResponse,
   CdListParams,
   FEED_CD_LIST_TAB_TYPE,
+  CarouselParams,
+  CarouselDirection,
 } from '@/entities/playlist/types/playlist'
 import { useAuthStore, type ShareCode } from '@/features/auth'
 
@@ -143,6 +147,42 @@ export const useFeedCdList = ({
     },
     initialPageParam: '', // 초기 cursor 값
     getNextPageParam: (lastPage) => (lastPage.hasNext ? lastPage.nextCursor : undefined),
+    enabled: !!shareCode,
+  })
+}
+
+type PageParam = { cursor: number; direction: CarouselDirection } | undefined
+
+export const useCarouselCdList = (
+  type: FEED_CD_LIST_TAB_TYPE, // cds or likes
+  shareCode: string,
+  params: CarouselParams
+) => {
+  return useInfiniteQuery({
+    queryKey: ['feedCdList', type, shareCode, params.sort, params.anchorId],
+
+    queryFn: ({ pageParam }: { pageParam: PageParam }) => {
+      const fetchFn = type === 'cds' ? getCdCarousel : getLikedCdCarousel
+
+      return fetchFn(shareCode, {
+        ...params,
+        cursor: pageParam?.cursor,
+        direction: pageParam?.direction,
+      })
+    },
+
+    initialPageParam: undefined as PageParam,
+
+    getNextPageParam: (lastPage): PageParam => {
+      if (!lastPage.hasNext || lastPage.nextCursor === null) return undefined
+      return { cursor: lastPage.nextCursor, direction: 'NEXT' }
+    },
+
+    getPreviousPageParam: (firstPage): PageParam => {
+      if (!firstPage.hasPrev || firstPage.prevCursor === null) return undefined
+      return { cursor: firstPage.prevCursor, direction: 'PREV' }
+    },
+
     enabled: !!shareCode,
   })
 }

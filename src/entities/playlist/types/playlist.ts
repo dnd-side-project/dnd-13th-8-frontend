@@ -94,3 +94,24 @@ export interface PlaylistParams {
   cursorId?: number
   size?: number
 }
+
+export type CarouselDirection = 'NEXT' | 'PREV'
+export type CarouselSort = 'POPULAR' | 'RECENT'
+
+export interface CarouselParams {
+  anchorId?: number
+  direction?: CarouselDirection
+  cursor?: number
+  sort?: CarouselSort
+  limit?: number
+}
+
+export interface CarouselCdListResponse {
+  content: (CdBasicInfo & OnlyCdResponse)[]
+  prevCursor: number | null
+  nextCursor: number | null
+  size: number
+  hasPrev: boolean
+  hasNext: boolean
+  totalCount: number
+}

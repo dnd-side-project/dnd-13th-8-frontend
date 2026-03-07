@@ -5,6 +5,8 @@ import type {
   PlaylistDetail,
   PlaylistParams,
   PlaylistResponse,
+  CarouselParams,
+  CarouselCdListResponse,
 } from '@/entities/playlist/types/playlist'
 import { api } from '@/shared/api/httpClient'
 
@@ -71,4 +73,18 @@ export const postPlaylistConfirm = (playlistId: number) => {
 // 플리 조회수 단건 조회
 export const getPlaylistViewCounts = (playlistId: number) => {
   return api.get(`/main/playlist/browse/view-counts/${playlistId}`)
+}
+
+// 피드 플레이리스트 캐러셀 조회
+export const getCdCarousel = (shareCode: string, params: CarouselParams) => {
+  return api.get<CarouselCdListResponse>(`/main/playlist/feed/${shareCode}/carousel`, {
+    params,
+  })
+}
+
+// 피드 좋아요한 플레이리스트 캐러셀 조회
+export const getLikedCdCarousel = (shareCode: string, params: CarouselParams) => {
+  return api.get<CarouselCdListResponse>(`/main/playlist/feed/${shareCode}/likes/carousel`, {
+    params,
+  })
 }
