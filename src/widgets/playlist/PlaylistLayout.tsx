@@ -6,7 +6,7 @@ import styled, { keyframes, css } from 'styled-components'
 import type { PlaylistDetail } from '@/entities/playlist'
 import { FollowButton } from '@/features/follow'
 import { useDevice } from '@/shared/lib/useDevice'
-import { flexColCenter } from '@/shared/styles/mixins'
+import { cdSpinner, flexColCenter } from '@/shared/styles/mixins'
 import { Cd, Header, LiveInfo, Profile } from '@/shared/ui'
 import { ActionBar, PlayButton, ProgressBar } from '@/widgets/playlist'
 
@@ -133,18 +133,7 @@ const Container = styled.div`
 
 const CdSpinner = styled.div<{ $isPlaying: boolean }>`
   position: relative;
-  animation: spin 40s linear infinite;
-  animation-play-state: ${(props) => (props.$isPlaying ? 'running' : 'paused')};
-  transform-origin: center;
-
-  @keyframes spin {
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(360deg);
-    }
-  }
+  ${cdSpinner}
 `
 
 const TitleContainer = styled.div`

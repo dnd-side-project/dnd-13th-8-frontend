@@ -13,7 +13,7 @@ import { useMyCdActions } from '@/entities/playlist/model/useMyCd'
 import { useLike } from '@/features/like'
 import { SwipeCarousel } from '@/features/swipe'
 import { useDevice } from '@/shared/lib/useDevice'
-import { flexRowCenter } from '@/shared/styles/mixins'
+import { cdSpinner, flexRowCenter } from '@/shared/styles/mixins'
 import { BottomSheet, Header, LiveInfo, Modal, SvgButton, Cd } from '@/shared/ui'
 import type { ModalProps } from '@/shared/ui/Modal'
 import { ActionBar, ControlBar, ProgressBar } from '@/widgets/playlist'
@@ -227,7 +227,7 @@ const CarouselItem = ({
                 <EmblaSlide key={slide.playlistId} $isMobile={isMobile}>
                   <Slide $active={activeIndex === index} $isMobile={isMobile}>
                     <CdSpinner
-                      $isNowPlaying={slide.playlistId === currentPlaylist.playlistId && isPlaying}
+                      $isPlaying={slide.playlistId === currentPlaylist.playlistId && isPlaying}
                     >
                       <Cd
                         variant={isSmall ? 'customize' : isMobile ? 'mycd_mo' : 'mycd'}
@@ -315,19 +315,9 @@ const Slide = styled.div<{ $active?: boolean; $isMobile?: boolean }>`
   opacity: ${({ $active }) => ($active ? 1 : 0.5)};
 `
 
-const CdSpinner = styled.div<{ $isNowPlaying: boolean }>`
+const CdSpinner = styled.div<{ $isPlaying: boolean }>`
   position: relative;
-  animation: spin 40s linear infinite;
-  animation-play-state: ${(props) => (props.$isNowPlaying ? 'running' : 'paused')};
-  transform-origin: center;
-  @keyframes spin {
-    from {
-      transform: rotate(0deg);
-    }
-    to {
-      transform: rotate(360deg);
-    }
-  }
+  ${cdSpinner}
 `
 
 const TitleWrapper = styled.div`

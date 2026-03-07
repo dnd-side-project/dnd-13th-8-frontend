@@ -1,4 +1,4 @@
-import { css } from 'styled-components'
+import { css, keyframes } from 'styled-components'
 
 export const flexRowCenter = css`
   display: flex;
@@ -30,4 +30,19 @@ export const ellipsisOneLine = css`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+`
+
+export const spin = keyframes`
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+`
+
+export const cdSpinner = css<{ $isPlaying: boolean }>`
+  animation: ${spin} 40s linear infinite;
+  animation-play-state: ${({ $isPlaying }) => ($isPlaying ? 'running' : 'paused')};
+  transform-origin: center;
 `
