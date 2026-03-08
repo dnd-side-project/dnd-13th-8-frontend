@@ -1,5 +1,4 @@
-import { ChatProvider } from '@/app/providers/ChatProvider'
-
+import { ChatProvider } from './ChatProvider'
 import { default as PlayerProvider } from './PlayerProvider'
 import QueryProvider from './QueryProvider'
 import ThemeProvider from './ThemeProvider'

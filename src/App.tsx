@@ -3,7 +3,6 @@ import { useLocation } from 'react-router-dom'
 
 import styled from 'styled-components'
 
-import { ToastProvider } from '@app/providers'
 import { AppRoutes } from '@app/routes/routes'
 
 import { routesConfig, type RouteConfig } from '@shared/config/routesConfig'
@@ -143,15 +142,13 @@ const App = () => {
         $layoutWidth={LAYOUT_WIDTH}
         $layoutBottomGap={LAYOUT_BOTTOM_GAP}
       >
-        <ToastProvider>
-          <AppRoutes />
-          {isNavVisible && (
-            <NavContainer $layoutWidth={LAYOUT_WIDTH} $layoutBottomGap={LAYOUT_BOTTOM_GAP}>
-              <NavBar />
-            </NavContainer>
-          )}
-          <GlobalErrorModal />
-        </ToastProvider>
+        <AppRoutes />
+        {isNavVisible && (
+          <NavContainer $layoutWidth={LAYOUT_WIDTH} $layoutBottomGap={LAYOUT_BOTTOM_GAP}>
+            <NavBar />
+          </NavContainer>
+        )}
+        <GlobalErrorModal />
       </MainLayout>
     </RootWrapper>
   )

@@ -117,6 +117,7 @@ const StyledInput = styled.input`
   padding: 0;
   width: 100%;
   color: ${({ theme }) => theme.COLOR['gray-10']};
+  caret-color: ${({ theme }) => theme.COLOR['primary-normal']};
   ${({ theme }) => theme.FONT['body2-normal']};
 
   &::placeholder {
