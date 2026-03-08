@@ -8,17 +8,19 @@ import styled from 'styled-components'
 import { Plus, NoLike, EyeSlashWhite } from '@/assets/icons'
 import { LoadingLottie } from '@/assets/lottie'
 import { useFeedCdList, type FEED_CD_LIST_TAB_TYPE } from '@/entities/playlist'
-import type { ShareCode } from '@/features/auth'
+import { useAuthStore, type ShareCode } from '@/features/auth'
 import { FeedCdListLayout } from '@/pages/feed/ui'
 import { useSingleSelect } from '@/shared/lib'
 import { flexColCenter } from '@/shared/styles/mixins'
 import type { SortType } from '@/shared/ui/ContentHeader'
+import type { ModalProps } from '@/shared/ui/Modal'
 import { Playlist } from '@/widgets/playlist'
 
 interface FeedCdListProps {
   shareCode: ShareCode
   feedView: FEED_CD_LIST_TAB_TYPE
   isMyFeed: boolean
+  setModal: (modal: ModalProps) => void
 }
 
 const NO_DATA_TEXT = {
@@ -28,9 +30,10 @@ const NO_DATA_TEXT = {
   NO_OTHERS_LIKES: '아직 좋아요한 CD가 없어요.',
 } as const
 
-const FeedCdList = ({ shareCode, feedView, isMyFeed }: FeedCdListProps) => {
+const FeedCdList = ({ shareCode, feedView, isMyFeed, setModal }: FeedCdListProps) => {
   const navigate = useNavigate()
   const { ref, inView } = useInView()
+  const { userInfo } = useAuthStore()
 
   const { selected: currentSort, onSelect: setCurrentSort } = useSingleSelect<SortType>('POPULAR')
   const { data, hasNextPage, fetchNextPage, isLoading, isFetchingNextPage, isError } =
@@ -47,6 +50,25 @@ const FeedCdList = ({ shareCode, feedView, isMyFeed }: FeedCdListProps) => {
   const contentList = data?.pages.flatMap((page) => page.content) ?? []
   const totalCount = data?.pages[0]?.totalCount ?? 0
   const isCdFeedView = feedView === 'cds'
+
+  // TODO: 비공개 CD 기획 확정 또는 QA 진행 시 onCdClick() 로직 재확인
+  const onCdClick = ({ creatorShareCode, cdId }: { creatorShareCode: string; cdId: number }) => {
+    const myShareCode = userInfo?.shareCode ?? ''
+    if (creatorShareCode !== myShareCode) {
+      setModal({
+        isOpen: true,
+        title: '비공개된 CD는 재생할 수 없어요',
+        ctaType: 'single',
+        confirmText: '확인',
+        onClose: () => setModal({ isOpen: false } as ModalProps),
+        onConfirm: () => setModal({ isOpen: false } as ModalProps),
+      })
+      return
+    }
+    navigate(`/${shareCode}/${feedView}/${cdId}`, {
+      state: { isFromMyCdList: isMyFeed },
+    })
+  }
 
   useEffect(() => {
     if (inView && hasNextPage && !isFetchingNextPage) {
@@ -98,12 +120,14 @@ const FeedCdList = ({ shareCode, feedView, isMyFeed }: FeedCdListProps) => {
           <li key={item.playlistId}>
             <CdButton
               type="button"
-              onClick={() => {
-                navigate(`/${shareCode}/${feedView}/${item.playlistId}`, {
-                  state: { isFromMyCdList: isMyFeed },
+              onClick={() =>
+                onCdClick({
+                  creatorShareCode: item?.creatorShareCode ?? '',
+                  cdId: item.playlistId,
                 })
-              }}
+              }
             >
+              {/* TODO: 비공개 기획 및 UI 분기 조건 확인 요청 */}
               {!item?.isPublic &&
                 (isCdFeedView ? (
                   <PrivateBadge>비공개</PrivateBadge>

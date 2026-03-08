@@ -7,6 +7,7 @@ export interface CdBasicInfo {
   playlistId: number
   playlistName: string
   creatorNickname?: string
+  creatorShareCode?: string
   genre: string
   isPublic: boolean
   isLiked?: boolean
