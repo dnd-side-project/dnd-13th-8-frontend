@@ -5,9 +5,9 @@ import styled, { css } from 'styled-components'
 
 import { CARD_IMAGES_LARGE } from '@/assets/card'
 import {
-  useRecommendationsByRecent,
-  useRecommendationsByFollow,
   useRecommendedGenres,
+  useAdminRecommendation,
+  useWeeklyRecommendation,
 } from '@/features/recommend'
 import { FeedbackBottomSheet, FirstSection } from '@/pages/home/ui'
 import { CategoryButton, ScrollCarousel } from '@/shared/ui'
@@ -29,8 +29,8 @@ const HomePage = () => {
     setIsBottomSheetOpen(false)
   }
 
-  const { data: RecentData } = useRecommendationsByRecent()
-  const { data: FollowData } = useRecommendationsByFollow()
+  const { data: AdminRecommendData } = useAdminRecommendation(10)
+  const { data: WeeklyRecommendData } = useWeeklyRecommendation(3)
   const { data: GenreData } = useRecommendedGenres()
 
   const handleKeywordSearch = (genreCode: string) => {
@@ -42,14 +42,15 @@ const HomePage = () => {
       })}`,
     })
   }
+
   return (
     <PageLayout>
       <FirstSection />
 
       <SecondSection>
-        <h1>퇴근길, 귀에 붙는 노래</h1>
+        <h1>들락 PICK! 트랙리스트</h1>
         <ScrollCarousel gap={14}>
-          {RecentData?.map((item) => (
+          {AdminRecommendData?.map((item) => (
             <Playlist
               id={item.playlistId}
               key={item.playlistId}
@@ -62,23 +63,23 @@ const HomePage = () => {
       </SecondSection>
 
       <ThirdSection>
-        <h1>친구가 추천한 그 곡</h1>
+        <h1>이번주 HOT 트랙리스트</h1>
         <ScrollCarousel gap={16}>
-          {FollowData?.map((playlist) => (
+          {WeeklyRecommendData?.map((item) => (
             <PlaylistWithSong
-              key={playlist.playlistId}
-              id={playlist.playlistId}
-              title={playlist.playlistName}
-              username={playlist.creatorNickname}
-              songs={playlist.songs}
-              stickers={playlist.cdResponse?.cdItems}
+              key={item.playlistId}
+              id={item.playlistId}
+              title={item.playlistName}
+              username={item.creatorNickname}
+              songs={item.songs}
+              stickers={item.cdResponse?.cdItems}
             />
           ))}
         </ScrollCarousel>
       </ThirdSection>
 
       <FourthSection>
-        <h1>오늘은 이런 기분</h1>
+        <h1>장르 컬렉션</h1>
         <ScrollCarousel gap={12}>
           {GenreData?.map((item) => (
             <CategoryButton
@@ -112,10 +113,10 @@ const sectionCommonLayout = css`
   display: flex;
   flex-direction: column;
   gap: 12px;
-  ${({ theme }) => theme.FONT.headline1};
 
   h1 {
     font-weight: 600;
+    ${({ theme }) => theme.FONT.headline1};
   }
 `
 

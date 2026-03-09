@@ -15,3 +15,15 @@ export const getRecommendationsByFollow = () => {
 export const getRecommendedGenres = () => {
   return api.get<RecommendedGenresResponse>('/main/recommendation/genres')
 }
+
+export const getAdminRecommendList = (limit: number) => {
+  return api.get<RecommendationsResponse>('/main/recommendation/admin', {
+    params: { limit },
+  })
+}
+
+export const getWeeklyRecommendList = (limit: number) => {
+  return api.get<RecommendationsResponse>('/main/recommendation/weekly', {
+    params: { limit },
+  })
+}
