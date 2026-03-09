@@ -27,7 +27,7 @@ const SearchResultItem = ({
         {type === 'PLAYLIST' ? (
           <Cd variant="xs" stickers={stickers} />
         ) : (
-          <Profile size="M" profileUrl={imageUrl} />
+          <Profile size={56} profileUrl={imageUrl} />
         )}
       </Left>
       <Right>

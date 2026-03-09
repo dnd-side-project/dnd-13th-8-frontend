@@ -242,7 +242,7 @@ const ProfileEditPage = () => {
     <ProfilEditPageWrapper>
       <ImageContainer>
         <ImageBox>
-          <Profile size="L" profileUrl={imagePreview} />
+          <Profile size={80} profileUrl={imagePreview} />
           <ImageEditButton
             type="button"
             aria-label="프로필 이미지 수정"

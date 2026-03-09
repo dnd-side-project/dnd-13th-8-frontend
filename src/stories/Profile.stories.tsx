@@ -11,8 +11,7 @@ const meta: Meta<typeof Profile> = {
   tags: ['autodocs'],
   argTypes: {
     size: {
-      control: { type: 'select' },
-      options: ['L', 'M', 'S'],
+      control: { type: 'number' },
     },
     profileUrl: {
       control: { type: 'text' },
@@ -25,13 +24,13 @@ type Story = StoryObj<typeof Profile>
 
 export const Default: Story = {
   args: {
-    size: 'L',
+    size: 56,
   },
 }
 
 export const CustomImage: Story = {
   args: {
-    size: 'L',
+    size: 56,
     profileUrl: 'https://avatars.githubusercontent.com/u/71167956?s=200&v=4',
   },
 }
