@@ -10,8 +10,37 @@ import {
   useWeeklyRecommendation,
 } from '@/features/recommend'
 import { FeedbackBottomSheet, FirstSection } from '@/pages/home/ui'
-import { CategoryButton, ScrollCarousel } from '@/shared/ui'
+import { ellipsisOneLine } from '@/shared/styles/mixins'
+import { CategoryButton, Profile, ScrollCarousel } from '@/shared/ui'
 import { Playlist, PlaylistWithSong } from '@/widgets/playlist'
+
+export const PopularUserData = [
+  {
+    shareCode: 1,
+    creatorNickname: '쇼팽피아노학원',
+    profileUrl: '',
+  },
+  {
+    shareCode: 2,
+    creatorNickname: '쇼팽피아노학원선생님',
+    profileUrl: '',
+  },
+  {
+    shareCode: 3,
+    creatorNickname: '쇼팽피아노학원2',
+    profileUrl: '',
+  },
+  {
+    shareCode: 4,
+    creatorNickname: '쇼팽피아노학원23',
+    profileUrl: '',
+  },
+  {
+    shareCode: 5,
+    creatorNickname: '쇼팽피아노학원4',
+    profileUrl: '',
+  },
+]
 
 const HomePage = () => {
   const navigate = useNavigate()
@@ -79,6 +108,18 @@ const HomePage = () => {
       </ThirdSection>
 
       <FourthSection>
+        <h1>인기있는 DJ 들락러</h1>
+        <ScrollCarousel gap={16}>
+          {PopularUserData?.map((item) => (
+            <ProfileButton key={item.shareCode} onClick={() => navigate(`/${item.shareCode}`)}>
+              <Profile size={80} profileUrl="" />
+              <p>{item.creatorNickname}</p>
+            </ProfileButton>
+          ))}
+        </ScrollCarousel>
+      </FourthSection>
+
+      <FifthSection>
         <h1>장르 컬렉션</h1>
         <ScrollCarousel gap={12}>
           {GenreData?.map((item) => (
@@ -91,7 +132,7 @@ const HomePage = () => {
             />
           ))}
         </ScrollCarousel>
-      </FourthSection>
+      </FifthSection>
 
       {isBottomSheetOpen && (
         <FeedbackBottomSheet isOpen={isBottomSheetOpen} onClose={handleFeedbackClose} />
@@ -132,5 +173,23 @@ const ThirdSection = styled.section`
 
 const FourthSection = styled.section`
   ${sectionCommonLayout}
+  padding: 16px 20px 40px 20px;
+`
+
+const FifthSection = styled.section`
+  ${sectionCommonLayout}
   padding: 16px 20px 146px 20px;
+`
+
+const ProfileButton = styled.button`
+  color: ${({ theme }) => theme.COLOR['gray-300']};
+  ${({ theme }) => theme.FONT.caption1};
+  width: 80px;
+
+  > p {
+    width: 100%;
+    text-align: center;
+    ${ellipsisOneLine}
+    margin-top: 8px;
+  }
 `
