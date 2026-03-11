@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { createSearchParams, useNavigate } from 'react-router-dom'
 
-import styled, { css } from 'styled-components'
+import styled from 'styled-components'
 
 import { CARD_IMAGES_LARGE } from '@/assets/card'
 import {
@@ -9,7 +9,7 @@ import {
   useAdminRecommendation,
   useWeeklyRecommendation,
 } from '@/features/recommend'
-import { FeedbackBottomSheet, FirstSection } from '@/pages/home/ui'
+import { FeedbackBottomSheet, FirstSection, SplitCard } from '@/pages/home/ui'
 import { ellipsisOneLine } from '@/shared/styles/mixins'
 import { CategoryButton, Profile, ScrollCarousel } from '@/shared/ui'
 import { Playlist, PlaylistWithSong } from '@/widgets/playlist'
@@ -40,6 +40,12 @@ export const PopularUserData = [
     creatorNickname: '쇼팽피아노학원4',
     profileUrl: '',
   },
+]
+
+const curationData = [
+  { id: 1, title: '큐레이션 1', stickers: [] },
+  { id: 2, title: '큐레이션 2', stickers: [] },
+  { id: 3, title: '큐레이션 3', stickers: [] },
 ]
 
 const HomePage = () => {
@@ -76,7 +82,7 @@ const HomePage = () => {
     <PageLayout>
       <FirstSection />
 
-      <SecondSection>
+      <Section $top={32} $bottom={40}>
         <h1>들락 PICK! 트랙리스트</h1>
         <ScrollCarousel gap={14}>
           {AdminRecommendData?.map((item) => (
@@ -89,9 +95,18 @@ const HomePage = () => {
             />
           ))}
         </ScrollCarousel>
-      </SecondSection>
+      </Section>
 
-      <ThirdSection>
+      <Section $top={16} $bottom={40}>
+        <h1>지금 이 시간, 이런 음악</h1>
+        <ScrollCarousel gap={14}>
+          {curationData.map((item) => (
+            <SplitCard key={item.id} title={item.title} stickers={item.stickers} />
+          ))}
+        </ScrollCarousel>
+      </Section>
+
+      <Section $top={16} $bottom={40}>
         <h1>이번주 HOT 트랙리스트</h1>
         <ScrollCarousel gap={16}>
           {WeeklyRecommendData?.map((item) => (
@@ -105,21 +120,21 @@ const HomePage = () => {
             />
           ))}
         </ScrollCarousel>
-      </ThirdSection>
+      </Section>
 
-      <FourthSection>
+      <Section $top={16} $bottom={40}>
         <h1>인기있는 DJ 들락러</h1>
         <ScrollCarousel gap={16}>
-          {PopularUserData?.map((item) => (
+          {PopularUserData.map((item) => (
             <ProfileButton key={item.shareCode} onClick={() => navigate(`/${item.shareCode}`)}>
               <Profile size={80} profileUrl="" />
               <p>{item.creatorNickname}</p>
             </ProfileButton>
           ))}
         </ScrollCarousel>
-      </FourthSection>
+      </Section>
 
-      <FifthSection>
+      <Section $top={16} $bottom={146}>
         <h1>장르 컬렉션</h1>
         <ScrollCarousel gap={12}>
           {GenreData?.map((item) => (
@@ -132,7 +147,7 @@ const HomePage = () => {
             />
           ))}
         </ScrollCarousel>
-      </FifthSection>
+      </Section>
 
       {isBottomSheetOpen && (
         <FeedbackBottomSheet isOpen={isBottomSheetOpen} onClose={handleFeedbackClose} />
@@ -150,7 +165,7 @@ const PageLayout = styled.div`
   margin: 0 -20px -98px -20px;
 `
 
-const sectionCommonLayout = css`
+const Section = styled.section<{ $top?: number; $bottom?: number }>`
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -159,26 +174,8 @@ const sectionCommonLayout = css`
     font-weight: 600;
     ${({ theme }) => theme.FONT.headline1};
   }
-`
 
-const SecondSection = styled.section`
-  ${sectionCommonLayout}
-  padding: 32px 20px 40px 20px;
-`
-
-const ThirdSection = styled.section`
-  ${sectionCommonLayout}
-  padding: 16px 20px 40px 20px;
-`
-
-const FourthSection = styled.section`
-  ${sectionCommonLayout}
-  padding: 16px 20px 40px 20px;
-`
-
-const FifthSection = styled.section`
-  ${sectionCommonLayout}
-  padding: 16px 20px 146px 20px;
+  padding: ${({ $top = 16, $bottom = 40 }) => `${$top}px 20px ${$bottom}px 20px`};
 `
 
 const ProfileButton = styled.button`
