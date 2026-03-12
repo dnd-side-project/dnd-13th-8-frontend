@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { useNavigate, useOutletContext, useParams, useSearchParams } from 'react-router-dom'
 
 import styled, { css } from 'styled-components'
@@ -11,7 +11,8 @@ import { type ShareCodeOwnerResponse } from '@/features/auth'
 import { FeedCdList, FeedProfile } from '@/pages/feed/ui'
 import { FeedbackIcon } from '@/pages/feedback/ui'
 import { flexRowCenter } from '@/shared/styles/mixins'
-import { Header, SubHeader, SvgButton, Divider, Loading, NotFound } from '@/shared/ui'
+import { Loading, Header, SubHeader, SvgButton, Divider, NotFound, Modal } from '@/shared/ui'
+import type { ModalProps } from '@/shared/ui/Modal'
 
 const RANDOM_BIO_QUOTES = [
   '재생 목록에\n어떤 곡이 있나요?',
@@ -31,6 +32,22 @@ const FeedPage = () => {
     isLoading: isProfileLoading,
     isError: isProfileError,
   } = useUserProfile(shareCode)
+
+  const [modal, setModal] = useState<ModalProps>({
+    isOpen: false,
+    title: '',
+    description: '',
+    ctaType: 'single',
+    confirmText: '',
+    cancelText: '',
+    onClose: () => {
+      setModal((prev) => ({ ...prev, isOpen: false }))
+    },
+    onConfirm: () => {},
+    onCancel: () => {
+      setModal((prev) => ({ ...prev, isOpen: false }))
+    },
+  })
 
   const currentTab = (searchParams.get('tab') || 'cds') as FEED_CD_LIST_TAB_TYPE
 
@@ -84,7 +101,12 @@ const FeedPage = () => {
           <BioText>{bioQuotes}</BioText>
         </BioBubble>
       </TopVisualBackground>
-      <FeedProfile userProfile={userProfile} shareCode={shareCode} isMyFeed={isMyFeed} />
+      <FeedProfile
+        userProfile={userProfile}
+        shareCode={shareCode}
+        isMyFeed={isMyFeed}
+        setModal={setModal}
+      />
       <Divider />
       <section>
         <TabContainer>
@@ -96,8 +118,24 @@ const FeedPage = () => {
             </TabItem>
           ))}
         </TabContainer>
-        <FeedCdList shareCode={shareCode} feedView={currentTab} isMyFeed={isMyFeed} />
+        <FeedCdList
+          shareCode={shareCode}
+          feedView={currentTab}
+          isMyFeed={isMyFeed}
+          setModal={setModal}
+        />
       </section>
+      <Modal
+        isOpen={modal.isOpen}
+        title={modal.title}
+        description={modal.description}
+        ctaType={modal.ctaType}
+        confirmText={modal.confirmText}
+        cancelText={modal.cancelText}
+        onClose={modal.onClose}
+        onConfirm={modal.onConfirm}
+        onCancel={modal.onCancel}
+      />
     </FeedWrapper>
   )
 }

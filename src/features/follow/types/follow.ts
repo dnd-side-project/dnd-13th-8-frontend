@@ -20,3 +20,9 @@ export interface FollowListResponse {
 }
 
 export type FollowSortType = 'LATEST' | 'OLDEST'
+
+export interface FollowParams {
+  cursor?: number
+  limit?: number
+  sort?: FollowSortType
+}

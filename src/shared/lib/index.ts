@@ -1,5 +1,7 @@
 export { getVideoId } from './getVideoId'
 export { getGenreLabel } from './getGenreLabel'
 export { getAccTime } from './getAccTime'
+export { openPolicyLink } from './openPolicyLink'
 export { useCopyShareUrl } from './useCopyShareUrl'
 export { useSingleSelect } from './useSingleSelect'
+export { useDevice } from './useDevice'

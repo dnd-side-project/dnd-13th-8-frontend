@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import styled, { css } from 'styled-components'
@@ -10,23 +10,23 @@ import { useAuthStore, type ShareCode } from '@/features/auth'
 import { useFollow } from '@/features/follow'
 import { useCopyShareUrl } from '@/shared/lib'
 import { flexRowCenter } from '@/shared/styles/mixins'
-import { Profile, Badge, Modal } from '@/shared/ui'
+import { Profile, Badge } from '@/shared/ui'
+import type { ModalProps } from '@/shared/ui/Modal'
 
 interface FeedProfileProps {
   userProfile?: ProfileResponse
   shareCode: ShareCode
   isMyFeed: boolean
+  setModal: (modal: ModalProps) => void
 }
 
-const FeedProfile = ({ userProfile, shareCode, isMyFeed }: FeedProfileProps) => {
+const FeedProfile = ({ userProfile, shareCode, isMyFeed, setModal }: FeedProfileProps) => {
   const navigate = useNavigate()
   const { toast } = useToast()
   const { copyShareUrl } = useCopyShareUrl()
   const { isLogin } = useAuthStore()
 
   const { isFollowing, toggleFollow } = useFollow(shareCode)
-
-  const [isModalOpen, setIsModalOpen] = useState(false)
 
   const FollowIcon = isFollowing ? Tick : Add
 
@@ -42,7 +42,19 @@ const FeedProfile = ({ userProfile, shareCode, isMyFeed }: FeedProfileProps) => 
 
   const onFollowClick = () => {
     if (!isLogin) {
-      setIsModalOpen(true)
+      setModal({
+        isOpen: true,
+        title: '로그인 후 이용할 수 있어요',
+        ctaType: 'double',
+        onConfirm: () => {
+          navigate('/login')
+          setModal({ isOpen: false } as ModalProps)
+        },
+        onClose: () => setModal({ isOpen: false } as ModalProps),
+        onCancel: () => setModal({ isOpen: false } as ModalProps),
+        confirmText: '로그인하기',
+        cancelText: '다음에 하기',
+      })
       return
     }
     toggleFollow()
@@ -91,12 +103,12 @@ const FeedProfile = ({ userProfile, shareCode, isMyFeed }: FeedProfileProps) => 
             <ShareCodeText>{`@${userProfile?.shareCode}`}</ShareCodeText>
           </NameInfoBox>
           <FollowInfoBox>
-            <FollowButton onClick={() => navigate('following')}>
-              팔로잉 {userProfile?.followCount?.followingCount ?? 0}
-            </FollowButton>
-            <VerticalText>|</VerticalText>
             <FollowButton onClick={() => navigate('followers')}>
               팔로워 {userProfile?.followCount?.followerCount ?? 0}
+            </FollowButton>
+            <VerticalText>|</VerticalText>
+            <FollowButton onClick={() => navigate('following')}>
+              팔로잉 {userProfile?.followCount?.followingCount ?? 0}
             </FollowButton>
           </FollowInfoBox>
         </ProfileInfo>
@@ -122,24 +134,6 @@ const FeedProfile = ({ userProfile, shareCode, isMyFeed }: FeedProfileProps) => 
           <Share />
         </ShareButton>
       </CtaContainer>
-
-      {isModalOpen && (
-        <Modal
-          isOpen={isModalOpen}
-          title="로그인 후 이용할 수 있어요"
-          ctaType="double"
-          onConfirm={() => {
-            navigate('/login')
-            setIsModalOpen(false)
-          }}
-          onCancel={() => {
-            setIsModalOpen(false)
-          }}
-          onClose={() => setIsModalOpen(false)}
-          confirmText="로그인하기"
-          cancelText="다음에 하기"
-        />
-      )}
     </>
   )
 }

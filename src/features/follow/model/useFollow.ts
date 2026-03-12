@@ -1,4 +1,9 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQueryClient,
+  type InfiniteData,
+} from '@tanstack/react-query'
 import { useQuery } from '@tanstack/react-query'
 
 import {
@@ -8,15 +13,15 @@ import {
   getFollowingList,
   getFollowerList,
 } from '@/features/follow/api/follow'
-import type { FollowSortType } from '@/features/follow/types/follow'
+import type { FollowListResponse, FollowSortType } from '@/features/follow/types/follow'
 
-const useFollow = (shareCode: string, initialIsFollowing?: boolean) => {
+const useFollow = (shareCode: string, initialIsFollowing?: boolean, enabled = true) => {
   const queryClient = useQueryClient()
 
   const { data } = useQuery({
     queryKey: ['followStatus', shareCode],
     queryFn: () => getFollowStatus(shareCode),
-    enabled: !!shareCode,
+    enabled: !!shareCode && enabled,
     initialData: initialIsFollowing !== undefined ? { isFollowing: initialIsFollowing } : undefined,
   })
 
@@ -73,18 +78,34 @@ const useFollow = (shareCode: string, initialIsFollowing?: boolean) => {
 
 export default useFollow
 
-export const useFollowerList = (shareCode: string, sort?: FollowSortType) => {
-  return useQuery({
-    queryKey: ['followerList', shareCode, sort],
-    queryFn: () => getFollowerList(shareCode, sort),
-    enabled: !!shareCode,
-  })
-}
+export const useFollowList = (
+  type: 'FOLLOWERS' | 'FOLLOWING',
+  shareCode: string,
+  sort: FollowSortType = 'LATEST'
+) => {
+  const isFollower = type === 'FOLLOWERS'
+  const queryKey = isFollower ? 'followerList' : 'followingList'
+  const fetchFn = isFollower ? getFollowerList : getFollowingList
 
-export const useFollowingList = (shareCode: string, sort?: FollowSortType) => {
-  return useQuery({
-    queryKey: ['followingList', shareCode, sort],
-    queryFn: () => getFollowingList(shareCode, sort),
+  return useInfiniteQuery<
+    FollowListResponse,
+    Error,
+    InfiniteData<FollowListResponse>,
+    string[],
+    number | undefined
+  >({
+    queryKey: [queryKey, shareCode, sort],
+    queryFn: ({ pageParam }) =>
+      fetchFn(shareCode, {
+        cursor: pageParam,
+        limit: 10,
+        sort,
+      }),
+    initialPageParam: undefined,
     enabled: !!shareCode,
+    getNextPageParam: (lastPage) => {
+      if (!lastPage.hasNext) return undefined
+      return lastPage.nextCursor
+    },
   })
 }

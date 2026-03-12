@@ -1,30 +1,30 @@
 import type {
   FollowListResponse,
-  FollowSortType,
+  FollowParams,
   FollowStatusResponse,
 } from '@/features/follow/types/follow'
 import { api } from '@/shared/api/httpClient'
 
-export const postFollow = (userId: string) => {
-  return api.post(`/main/follow/${userId}`)
+export const postFollow = (shareCode: string) => {
+  return api.post(`/main/follow/${shareCode}`)
 }
 
-export const deleteFollow = (userId: string) => {
-  return api.delete(`/main/follow/${userId}`)
+export const deleteFollow = (shareCode: string) => {
+  return api.delete(`/main/follow/${shareCode}`)
 }
 
-export const getFollowStatus = (userId: string) => {
-  return api.get<FollowStatusResponse>(`/main/follow/${userId}`)
+export const getFollowStatus = (shareCode: string) => {
+  return api.get<FollowStatusResponse>(`/main/follow/${shareCode}`)
 }
 
-export const getFollowingList = (userId: string, sort?: FollowSortType) => {
-  return api.get<FollowListResponse>(`/main/follow/following/${userId}`, {
-    params: { sort: sort }, // Default: LATEST
+export const getFollowingList = (shareCode: string, params?: FollowParams) => {
+  return api.get<FollowListResponse>(`/main/follow/following/${shareCode}`, {
+    params,
   })
 }
 
-export const getFollowerList = (userId: string, sort?: FollowSortType) => {
-  return api.get<FollowListResponse>(`/main/follow/follower/${userId}`, {
-    params: { sort: sort }, // Default: LATEST
+export const getFollowerList = (shareCode: string, params?: FollowParams) => {
+  return api.get<FollowListResponse>(`/main/follow/follower/${shareCode}`, {
+    params,
   })
 }

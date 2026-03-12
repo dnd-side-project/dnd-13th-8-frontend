@@ -14,20 +14,26 @@ const FollowLayout = () => {
   const { userProfile } = useUserProfile(shareCode || '')
 
   return (
-    <div>
+    <LayoutContainer>
       <HeaderSection>
         <Header
-          left={<SvgButton icon={LeftArrow} onClick={() => navigate(-1)} />}
+          left={<SvgButton icon={LeftArrow} onClick={() => navigate(`/${shareCode}`)} />}
           center={<span>{userProfile?.nickname}</span>}
         />
         <FollowTab />
       </HeaderSection>
       <Outlet />
-    </div>
+    </LayoutContainer>
   )
 }
 
 export default FollowLayout
+
+const LayoutContainer = styled.section`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+`
 
 const HeaderSection = styled.div`
   display: flex;

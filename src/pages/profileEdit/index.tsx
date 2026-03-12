@@ -15,7 +15,7 @@ import {
   type ProfileResponse,
 } from '@/entities/user'
 import { useAuthStore } from '@/features/auth'
-import { useDevice } from '@/shared/lib/useDevice'
+import { useDevice } from '@/shared/lib'
 import { flexRowCenter, flexColCenter } from '@/shared/styles/mixins'
 import { Divider, Button, Profile, Input, Loading } from '@/shared/ui'
 import type { ProfileUrl } from '@/shared/ui/Profile'
@@ -108,6 +108,7 @@ const ProfileEditPage = () => {
   }
 
   const onImageDelete = () => {
+    if (!imagePreview) return
     cleanupImageBlob()
     setImagePreview(null)
     setProfileForm((prev) => ({ ...prev, imageFile: null, imageUrl: null }))
@@ -118,35 +119,32 @@ const ProfileEditPage = () => {
   const onFieldChange = ({
     key,
     value,
+    min,
     max,
   }: {
     key: keyof typeof errorMap
     value: string
+    min?: number | undefined
     max: number
   }) => {
-    let error = ''
     const isShareCodeKey = key === 'shareCode'
     const finalValue = isShareCodeKey ? value.trim() : value
+    let error = ''
 
     // length 검증
-    if (finalValue.length > max) {
+    if ((!!min && finalValue.length < min) || finalValue.length > max) {
       error = isShareCodeKey
-        ? PROFILE_ERROR_MESSAGES.shareCode.isInvalid
+        ? PROFILE_ERROR_MESSAGES.shareCode.isTooShort
         : (PROFILE_ERROR_MESSAGES[key as keyof typeof PROFILE_ERROR_MESSAGES] as string)
     }
     // shareCode 정규식 검증
     if (isShareCodeKey && finalValue.length > 0) {
-      // 1. 영문, 숫자, 언더바만 허용 및 길이 제한
-      const basicRegex = /^[a-zA-Z0-9_]*$/
-      // 2. 언더바 단독 사용 불가
-      const notOnlyUnderscore = /[a-zA-Z0-9]/
-
-      const isInvalidFormat = !basicRegex.test(finalValue)
-      const isTooShort = finalValue.length < PROFILE_LIMITS.SHARE_CODE.MIN
-      const isOnlyUnderscore = finalValue.length > 0 && !notOnlyUnderscore.test(finalValue)
-
-      if (isInvalidFormat || isTooShort || isOnlyUnderscore) {
+      if (finalValue.length < PROFILE_LIMITS.SHARE_CODE.MIN) {
+        error = PROFILE_ERROR_MESSAGES.shareCode.isTooShort
+      } else if (!/^[a-zA-Z0-9_]*$/.test(finalValue)) {
         error = PROFILE_ERROR_MESSAGES.shareCode.isInvalid
+      } else if (!/[a-zA-Z0-9]/.test(finalValue)) {
+        error = PROFILE_ERROR_MESSAGES.shareCode.isOnlyUnderscore
       }
     }
     setErrorMessage((prev) => ({ ...prev, [key]: error }))
@@ -197,7 +195,7 @@ const ProfileEditPage = () => {
           formData.append(apiKey, '')
         }
       } else if (isImageField && value === null) {
-        // profileImage 삭제
+        // profileImage 삭제 시 true
         formData.append('removeProfileImage', 'true')
       } else if (apiKey === 'bio' && value === null) {
         // bio 삭제
@@ -221,13 +219,14 @@ const ProfileEditPage = () => {
         navigate(`/${response.shareCode}`)
       },
       onError: (error: Error & { response?: { status: number } }) => {
-        console.error('프로필 수정 실패: ', error.response?.status)
         if (error.response?.status === 409) {
           setErrorMessage((prev) => ({
             ...prev,
             shareCode: PROFILE_ERROR_MESSAGES.shareCode.isDuplicate,
           }))
+          return
         }
+        console.error('프로필 수정 실패: ', error.response?.status)
       },
     })
   }
@@ -259,11 +258,9 @@ const ProfileEditPage = () => {
             />
           </ImageEditButton>
         </ImageBox>
-        {imagePreview && (
-          <ImageDeleteButton type="button" onClick={onImageDelete}>
-            이미지 삭제
-          </ImageDeleteButton>
-        )}
+        <ImageDeleteButton type="button" onClick={onImageDelete}>
+          이미지 삭제
+        </ImageDeleteButton>
         <ErrorText>{errorMap.image}</ErrorText>
       </ImageContainer>
 
@@ -275,15 +272,17 @@ const ProfileEditPage = () => {
           <Input
             id="nickname"
             type="text"
-            placeholder={`2~${PROFILE_LIMITS.NICKNAME}자까지 입력할 수 있어요.`}
+            placeholder={`닉네임은 ${PROFILE_LIMITS.NICKNAME.MIN}-${PROFILE_LIMITS.NICKNAME.MAX}자로 입력해 주세요.`}
             value={profileForm.nickname}
+            maxLength={PROFILE_LIMITS.NICKNAME.MAX}
             error={!!errorMap.nickname}
             errorMessage={errorMap.nickname}
             onChange={(e) =>
               onFieldChange({
                 key: 'nickname',
                 value: e.target.value,
-                max: PROFILE_LIMITS.NICKNAME,
+                min: PROFILE_LIMITS.NICKNAME.MIN,
+                max: PROFILE_LIMITS.NICKNAME.MAX,
               })
             }
           />
@@ -293,14 +292,16 @@ const ProfileEditPage = () => {
           <Input
             id="share-code"
             type="text"
-            placeholder={`${PROFILE_LIMITS.SHARE_CODE.MIN}~${PROFILE_LIMITS.SHARE_CODE.MAX}자의 영문자, 숫자, 언더바(_)만 입력할 수 있어요.`}
+            placeholder={`아이디는 ${PROFILE_LIMITS.SHARE_CODE.MIN}-${PROFILE_LIMITS.SHARE_CODE.MAX}자로 입력해 주세요.`}
             value={profileForm.shareCode}
+            maxLength={PROFILE_LIMITS.SHARE_CODE.MAX}
             error={!!errorMap.shareCode}
             errorMessage={errorMap.shareCode}
             onChange={(e) =>
               onFieldChange({
                 key: 'shareCode',
                 value: e.target.value,
+                min: PROFILE_LIMITS.SHARE_CODE.MIN,
                 max: PROFILE_LIMITS.SHARE_CODE.MAX,
               })
             }
@@ -311,8 +312,9 @@ const ProfileEditPage = () => {
           <Input
             id="bio"
             type="text"
-            placeholder={`짧은 글로 음악 취향을 소개해보세요. (최대 ${PROFILE_LIMITS.BIO}자)`}
+            placeholder={`음악 취향을 한 줄로 소개해 보세요. (${PROFILE_LIMITS.BIO}자)`}
             value={profileForm.bio ?? ''}
+            maxLength={PROFILE_LIMITS.BIO}
             error={!!errorMap.bio}
             errorMessage={errorMap.bio}
             onChange={(e) =>
