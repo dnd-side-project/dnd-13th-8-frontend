@@ -11,7 +11,7 @@ import { type ShareCodeOwnerResponse } from '@/features/auth'
 import { FeedCdList, FeedProfile } from '@/pages/feed/ui'
 import { FeedbackIcon } from '@/pages/feedback/ui'
 import { flexRowCenter } from '@/shared/styles/mixins'
-import { Header, SubHeader, SvgButton, Divider, Loading } from '@/shared/ui'
+import { Header, SubHeader, SvgButton, Divider, Loading, NotFound } from '@/shared/ui'
 
 const RANDOM_BIO_QUOTES = [
   '재생 목록에\n어떤 곡이 있나요?',
@@ -55,11 +55,9 @@ const FeedPage = () => {
   const onTabChange = (nextTab: FEED_CD_LIST_TAB_TYPE) => {
     setSearchParams({ tab: nextTab }, { replace: true })
   }
+
   if (isProfileLoading) return <Loading isLoading />
-  if (isProfileError) {
-    navigate('/error')
-    return null
-  }
+  if (isProfileError) return <NotFound isFullPage isProfile />
 
   return (
     <FeedWrapper>
