@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Outlet } from 'react-router-dom'
+import { Outlet, useOutletContext } from 'react-router-dom'
 
 import styled from 'styled-components'
 
@@ -28,6 +28,7 @@ const Content = () => {
   } = usePlaylist()
   const [isMuted, setIsMuted] = useState<boolean | null>(null)
   const { isMobile } = useDevice()
+  const isOwner = useOutletContext()
 
   const videoId = currentPlaylist
     ? getVideoId(currentPlaylist.songs[currentTrackIndex]?.youtubeUrl)
@@ -35,7 +36,7 @@ const Content = () => {
 
   return (
     <>
-      <Outlet />
+      <Outlet context={isOwner} />
 
       {videoId && (
         <YoutubePlayer

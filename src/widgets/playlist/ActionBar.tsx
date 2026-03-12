@@ -15,16 +15,9 @@ interface ActionBarProps {
   creatorId: string
   stickers?: CdCustomData[]
   type?: 'MY' | 'DISCOVER'
-  pageType?: 'MY' | 'LIKE'
 }
 
-const ActionBar = ({
-  playlistId,
-  creatorId,
-  stickers,
-  type = 'DISCOVER',
-  pageType = 'MY',
-}: ActionBarProps) => {
+const ActionBar = ({ playlistId, creatorId, stickers, type = 'DISCOVER' }: ActionBarProps) => {
   const navigate = useNavigate()
 
   const handleMovePlaylist = () => {
@@ -33,7 +26,7 @@ const ActionBar = ({
 
   return (
     <Wrapper $type={type}>
-      {!(type === 'MY' && pageType === 'MY') && <LikeButton playlistId={playlistId} type={type} />}
+      <LikeButton playlistId={playlistId} type={type} />
       <ChatButton roomId={playlistId} creatorId={creatorId} type={type} />
       <ShareButton playlistId={playlistId} stickers={stickers} type={type} />
       <DetailButton $isMy={type === 'MY'} onClick={handleMovePlaylist}>

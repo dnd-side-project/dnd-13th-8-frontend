@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
+import { useNavigate, useOutletContext, useParams, useSearchParams } from 'react-router-dom'
 
 import styled, { css } from 'styled-components'
 
@@ -7,7 +7,7 @@ import { Gear } from '@/assets/icons'
 import { FeedBg } from '@/assets/images'
 import { type FEED_CD_LIST_TAB_TYPE } from '@/entities/playlist'
 import { useUserProfile } from '@/entities/user'
-import { useOwnerStatus } from '@/features/auth'
+import { type ShareCodeOwnerResponse } from '@/features/auth'
 import { FeedCdList, FeedProfile } from '@/pages/feed/ui'
 import { FeedbackIcon } from '@/pages/feedback/ui'
 import { flexRowCenter } from '@/shared/styles/mixins'
@@ -26,7 +26,7 @@ const FeedPage = () => {
   const [searchParams, setSearchParams] = useSearchParams()
   const navigate = useNavigate()
 
-  const { data: ownershipData, isLoading: isOwnershipLoading } = useOwnerStatus(shareCode || '')
+  const { isOwner: isMyFeed } = useOutletContext<ShareCodeOwnerResponse>()
   const {
     userProfile,
     isLoading: isProfileLoading,
@@ -49,7 +49,6 @@ const FeedPage = () => {
     },
   })
 
-  const isMyFeed = ownershipData?.isOwner ?? false
   const currentTab = (searchParams.get('tab') || 'cds') as FEED_CD_LIST_TAB_TYPE
 
   const TAB_LIST = useMemo(
@@ -74,8 +73,9 @@ const FeedPage = () => {
     setSearchParams({ tab: nextTab }, { replace: true })
   }
 
-  if ((isOwnershipLoading && !ownershipData) || isProfileLoading) return <Loading isLoading />
+  if (isProfileLoading) return <Loading isLoading />
   if (isProfileError) return <NotFound isFullPage isProfile />
+
   return (
     <FeedWrapper>
       <TopVisualBackground>

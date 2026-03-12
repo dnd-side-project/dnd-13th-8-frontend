@@ -66,7 +66,7 @@ const FeedCdList = ({ shareCode, feedView, isMyFeed, setModal }: FeedCdListProps
       return
     }
     navigate(`/${shareCode}/${feedView}/${cdId}`, {
-      state: { isFromMyCdList: isMyFeed },
+      state: { isFromMyCdList: isMyFeed, currentSort },
     })
   }
 
