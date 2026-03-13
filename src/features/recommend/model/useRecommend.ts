@@ -6,6 +6,7 @@ import {
   getRecommendationsByFollow,
   getAdminRecommendList,
   getWeeklyRecommendList,
+  getPopularUserList,
 } from '@/features/recommend/api/recommend'
 
 export const useRecommendationsByRecent = () => {
@@ -40,5 +41,12 @@ export const useWeeklyRecommendation = (limit: number) => {
   return useQuery({
     queryKey: ['recommendations', 'weekly', limit],
     queryFn: () => getWeeklyRecommendList(limit),
+  })
+}
+
+export const useUserRecommendation = (limit: number) => {
+  return useQuery({
+    queryKey: ['recommendations', 'user', limit],
+    queryFn: () => getPopularUserList(limit),
   })
 }

@@ -1,4 +1,5 @@
 import type { CdCustomData, Track } from '@/entities/playlist'
+import type { ProfileResponse } from '@/entities/user'
 
 export interface Playlist {
   playlistId: number
@@ -19,3 +20,5 @@ export interface GenreInfo {
 }
 
 export type RecommendedGenresResponse = GenreInfo[]
+
+export type RecommendUserResponse = ProfileResponse[]

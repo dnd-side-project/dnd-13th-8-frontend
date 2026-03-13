@@ -8,39 +8,12 @@ import {
   useRecommendedGenres,
   useAdminRecommendation,
   useWeeklyRecommendation,
+  useUserRecommendation,
 } from '@/features/recommend'
 import { FeedbackBottomSheet, FirstSection, SplitCard } from '@/pages/home/ui'
 import { ellipsisOneLine } from '@/shared/styles/mixins'
 import { CategoryButton, Profile, ScrollCarousel } from '@/shared/ui'
 import { Playlist, PlaylistWithSong } from '@/widgets/playlist'
-
-export const PopularUserData = [
-  {
-    shareCode: 1,
-    creatorNickname: '쇼팽피아노학원',
-    profileUrl: '',
-  },
-  {
-    shareCode: 2,
-    creatorNickname: '쇼팽피아노학원선생님',
-    profileUrl: '',
-  },
-  {
-    shareCode: 3,
-    creatorNickname: '쇼팽피아노학원2',
-    profileUrl: '',
-  },
-  {
-    shareCode: 4,
-    creatorNickname: '쇼팽피아노학원23',
-    profileUrl: '',
-  },
-  {
-    shareCode: 5,
-    creatorNickname: '쇼팽피아노학원4',
-    profileUrl: '',
-  },
-]
 
 const curationData = [
   { id: 1, title: '큐레이션 1', stickers: [] },
@@ -67,6 +40,7 @@ const HomePage = () => {
   const { data: AdminRecommendData } = useAdminRecommendation(10)
   const { data: WeeklyRecommendData } = useWeeklyRecommendation(3)
   const { data: GenreData } = useRecommendedGenres()
+  const { data: UserRecommendData } = useUserRecommendation(5)
 
   const handleKeywordSearch = (genreCode: string) => {
     navigate({
@@ -125,10 +99,10 @@ const HomePage = () => {
       <Section $top={16} $bottom={40}>
         <h1>인기있는 DJ 들락러</h1>
         <ScrollCarousel gap={16}>
-          {PopularUserData.map((item) => (
+          {UserRecommendData?.map((item) => (
             <ProfileButton key={item.shareCode} onClick={() => navigate(`/${item.shareCode}`)}>
-              <Profile size={80} profileUrl="" />
-              <p>{item.creatorNickname}</p>
+              <Profile size={80} profileUrl={item.profileUrl} />
+              <p>{item.nickname}</p>
             </ProfileButton>
           ))}
         </ScrollCarousel>

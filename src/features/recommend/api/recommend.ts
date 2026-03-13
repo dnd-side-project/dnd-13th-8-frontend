@@ -1,6 +1,7 @@
 import {
   type RecommendedGenresResponse,
   type RecommendationsResponse,
+  type RecommendUserResponse,
 } from '@/features/recommend/types/recommend'
 import { api } from '@/shared/api/httpClient'
 
@@ -24,6 +25,12 @@ export const getAdminRecommendList = (limit: number) => {
 
 export const getWeeklyRecommendList = (limit: number) => {
   return api.get<RecommendationsResponse>('/main/recommendation/weekly', {
+    params: { limit },
+  })
+}
+
+export const getPopularUserList = (limit: number) => {
+  return api.get<RecommendUserResponse>('/main/recommendation/users', {
     params: { limit },
   })
 }
