@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
@@ -15,10 +15,16 @@ export const useLikeStatus = (playlistId: number, options?: { enabled?: boolean 
   })
 }
 
-const useLike = (playlistId: number) => {
+interface UseLikeOptions {
+  shouldNavigate?: boolean
+  getNextId?: () => number | undefined
+}
+
+const useLike = (playlistId: number, options?: UseLikeOptions) => {
   const queryClient = useQueryClient()
   const { isLogin } = useAuthStore()
   const navigate = useNavigate()
+  const location = useLocation()
 
   const { data: statusData, isLoading } = useLikeStatus(playlistId, { enabled: isLogin })
   const isLiked = statusData?.isLiked ?? false
@@ -62,7 +68,7 @@ const useLike = (playlistId: number) => {
 
       queryClient.setQueryData<LikeStatusResponse>(['likeStatus', playlistId], (old) => ({
         ...(old ?? { isLiked: false }),
-        isLiked: true,
+        isLiked: false,
       }))
 
       return { previous }
@@ -87,8 +93,26 @@ const useLike = (playlistId: number) => {
       return
     }
 
-    if (isLiked) unlikeMutation.mutate()
-    else likeMutation.mutate()
+    if (isLiked) {
+      unlikeMutation.mutate(undefined, {
+        onSuccess: () => {
+          if (options?.shouldNavigate) {
+            const nextId = options.getNextId?.()
+
+            navigate(location.pathname, {
+              replace: true,
+              state: {
+                ...location.state,
+                nextId: nextId,
+              },
+            })
+            console.log(nextId)
+          }
+        },
+      })
+    } else {
+      likeMutation.mutate()
+    }
   }
 
   return { liked: isLiked, toggleLike, isLoading }

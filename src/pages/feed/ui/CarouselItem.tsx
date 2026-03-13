@@ -75,7 +75,13 @@ const CarouselItem = ({
     onCancel: onModalClose,
   })
 
-  const { toggleLike } = useLike(Number(playlistId))
+  const { toggleLike } = useLike(Number(playlistId), {
+    shouldNavigate: true,
+    getNextId: () => {
+      return playlistData[activeIndex + 1 >= playlistData.length ? 0 : activeIndex + 1]?.playlistId
+    },
+  })
+
   const {
     setPlaylist,
     isPlaying,
@@ -241,6 +247,8 @@ const CarouselItem = ({
             </SwipeCarousel>
 
             <ActionBar
+              playlistData={playlistData}
+              activeIndex={activeIndex}
               playlistId={centerItem.playlistId ?? 0}
               creatorId={currentPlaylist.creatorId}
               stickers={playlistDetail.cdResponse.cdItems}
