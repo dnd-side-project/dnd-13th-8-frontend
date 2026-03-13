@@ -18,7 +18,7 @@ import { BottomSheet, Header, LiveInfo, Modal, SvgButton, Cd } from '@/shared/ui
 import type { ModalProps } from '@/shared/ui/Modal'
 import { ActionBar, ControlBar, ProgressBar } from '@/widgets/playlist'
 
-type Props = {
+interface CarouselItemProps {
   playlistData: CdMetaResponse
   playlistDetail: PlaylistDetail
   centerItem: { playlistId: number | null; playlistName: string }
@@ -45,6 +45,15 @@ const COMMENT_OPTIONS = (isPublic: boolean, selectedTab: 'MY' | 'LIKE'): OptionI
     { text: '삭제하기', type: 'delete' },
   ]
 }
+
+const getNextId = (currentIndex: number, data: CdMetaResponse) => {
+  if (data.length <= 1) return undefined
+
+  // 마지막이면 0번 인덱스로, 아니면 다음 인덱스로
+  const nextIndex = (currentIndex + 1) % data.length
+  return data[nextIndex]?.playlistId
+}
+
 const CarouselItem = ({
   playlistData,
   playlistDetail,
@@ -52,7 +61,7 @@ const CarouselItem = ({
   pageType,
   isOwner,
   onCenterChange,
-}: Props) => {
+}: CarouselItemProps) => {
   const navigate = useNavigate()
   const { toast } = useToast()
   const queryClient = useQueryClient()
@@ -77,9 +86,7 @@ const CarouselItem = ({
 
   const { toggleLike } = useLike(Number(playlistId), {
     shouldNavigate: true,
-    getNextId: () => {
-      return playlistData[activeIndex + 1 >= playlistData.length ? 0 : activeIndex + 1]?.playlistId
-    },
+    getNextId: () => getNextId(activeIndex, playlistData),
   })
 
   const {
@@ -163,11 +170,9 @@ const CarouselItem = ({
               onModalClose()
               pause()
               await toast('CD_DELETE')
-              const currentIndex = playlistData.findIndex(
-                (p) => p.playlistId === currentPlaylist?.playlistId
-              )
-              const nextPlaylist = playlistData[currentIndex + 1] ?? playlistData[currentIndex - 1]
-              navigate(nextPlaylist ? `../${nextPlaylist.playlistId}` : '../../', { replace: true })
+              const nextId = getNextId(activeIndex, playlistData)
+
+              navigate(nextId ? `../${nextId}` : '../../', { replace: true })
               queryClient.invalidateQueries({ queryKey: ['myCdList'] })
               queryClient.invalidateQueries({ queryKey: ['feedCdList'] })
             },

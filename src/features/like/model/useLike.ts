@@ -106,7 +106,6 @@ const useLike = (playlistId: number, options?: UseLikeOptions) => {
                 nextId: nextId,
               },
             })
-            console.log(nextId)
           }
         },
       })
