@@ -22,3 +22,14 @@ export interface GenreInfo {
 export type RecommendedGenresResponse = GenreInfo[]
 
 export type RecommendUserResponse = ProfileResponse[]
+
+export type TimeSlot = 'DAWN' | 'MORNING' | 'AFTERNOON' | 'EVENING'
+
+export interface TimeRecommendationBundle {
+  bundleId: number
+  title: string
+  timeSlot: TimeSlot
+  playlists: Playlist[]
+}
+
+export type TimeRecommendationResponse = TimeRecommendationBundle[]

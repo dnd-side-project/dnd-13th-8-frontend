@@ -2,6 +2,8 @@ import {
   type RecommendedGenresResponse,
   type RecommendationsResponse,
   type RecommendUserResponse,
+  type TimeSlot,
+  type TimeRecommendationResponse,
 } from '@/features/recommend/types/recommend'
 import { api } from '@/shared/api/httpClient'
 
@@ -32,5 +34,11 @@ export const getWeeklyRecommendList = (limit: number) => {
 export const getPopularUserList = (limit: number) => {
   return api.get<RecommendUserResponse>('/main/recommendation/users', {
     params: { limit },
+  })
+}
+
+export const getPlaylistByTime = (timeSlot: TimeSlot) => {
+  return api.get<TimeRecommendationResponse>('/main/recommendation/time', {
+    params: { timeSlot },
   })
 }

@@ -9,20 +9,26 @@ import {
   useAdminRecommendation,
   useWeeklyRecommendation,
   useUserRecommendation,
+  useTimeRecommendation,
+  type TimeSlot,
 } from '@/features/recommend'
 import { FeedbackBottomSheet, FirstSection, SplitCard } from '@/pages/home/ui'
 import { ellipsisOneLine } from '@/shared/styles/mixins'
 import { CategoryButton, Profile, ScrollCarousel } from '@/shared/ui'
 import { Playlist, PlaylistWithSong } from '@/widgets/playlist'
 
-const curationData = [
-  { id: 1, title: '큐레이션 1', stickers: [] },
-  { id: 2, title: '큐레이션 2', stickers: [] },
-  { id: 3, title: '큐레이션 3', stickers: [] },
-]
+const getCurrentTimeSlot = (): TimeSlot => {
+  const hour = new Date().getHours()
+
+  if (hour < 6) return 'DAWN'
+  if (hour < 12) return 'MORNING'
+  if (hour < 18) return 'AFTERNOON'
+  return 'EVENING'
+}
 
 const HomePage = () => {
   const navigate = useNavigate()
+  const timeSlot = getCurrentTimeSlot()
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false)
 
   useEffect(() => {
@@ -41,6 +47,7 @@ const HomePage = () => {
   const { data: WeeklyRecommendData } = useWeeklyRecommendation(3)
   const { data: GenreData } = useRecommendedGenres()
   const { data: UserRecommendData } = useUserRecommendation(5)
+  const { data: TimeRecommendData } = useTimeRecommendation(timeSlot)
 
   const handleKeywordSearch = (genreCode: string) => {
     navigate({
@@ -74,8 +81,8 @@ const HomePage = () => {
       <Section $top={16} $bottom={40}>
         <h1>지금 이 시간, 이런 음악</h1>
         <ScrollCarousel gap={14}>
-          {curationData.map((item) => (
-            <SplitCard key={item.id} title={item.title} stickers={item.stickers} />
+          {TimeRecommendData?.map((item) => (
+            <SplitCard key={item.bundleId} title={item.title} playlists={item.playlists} />
           ))}
         </ScrollCarousel>
       </Section>

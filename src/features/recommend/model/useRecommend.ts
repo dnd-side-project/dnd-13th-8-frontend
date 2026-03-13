@@ -7,7 +7,9 @@ import {
   getAdminRecommendList,
   getWeeklyRecommendList,
   getPopularUserList,
+  getPlaylistByTime,
 } from '@/features/recommend/api/recommend'
+import type { TimeSlot } from '@/features/recommend/types/recommend'
 
 export const useRecommendationsByRecent = () => {
   return useQuery({
@@ -48,5 +50,13 @@ export const useUserRecommendation = (limit: number) => {
   return useQuery({
     queryKey: ['recommendations', 'user', limit],
     queryFn: () => getPopularUserList(limit),
+  })
+}
+
+export const useTimeRecommendation = (timeSlot: TimeSlot) => {
+  return useQuery({
+    queryKey: ['recommendations', 'time', timeSlot],
+    queryFn: () => getPlaylistByTime(timeSlot),
+    enabled: !!timeSlot,
   })
 }

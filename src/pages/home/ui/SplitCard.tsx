@@ -1,21 +1,25 @@
-
 import { useNavigate } from 'react-router-dom'
 
 import styled, { useTheme } from 'styled-components'
 
 import { Play } from '@/assets/icons'
 import type { CdCustomData } from '@/entities/playlist'
+import type { Playlist } from '@/features/recommend'
 import { flexColCenter, flexRowCenter } from '@/shared/styles/mixins'
 import { Cd, SvgButton } from '@/shared/ui'
 
 interface SplitCardProps {
   title: string
-  stickers?: CdCustomData[]
+  playlists: Playlist[]
 }
 
-const SplitCard = ({ title, stickers }: SplitCardProps) => {
+const SplitCard = ({ title, playlists }: SplitCardProps) => {
   const navigate = useNavigate()
   const theme = useTheme()
+
+  const stickersList: CdCustomData[][] = playlists.map(
+    (playlist) => playlist.cdResponse?.cdItems ?? []
+  )
 
   const handlePlayClick = () => {
     navigate('/curation') // TODO: 경로 수정
@@ -24,10 +28,11 @@ const SplitCard = ({ title, stickers }: SplitCardProps) => {
     <CardWrapper>
       <CdContainer>
         <Main>
-          <Cd variant="splitCard_lg" bgColor="dark" stickers={stickers} />
+          <Cd variant="splitCard_lg" bgColor="dark" stickers={stickersList[0]} />
         </Main>
-        <Cd variant="splitCard_sm" bgColor="dark" stickers={stickers} />
-        <Cd variant="splitCard_sm" bgColor="dark" stickers={stickers} />
+
+        <Cd variant="splitCard_sm" bgColor="dark" stickers={stickersList[1]} />
+        <Cd variant="splitCard_sm" bgColor="dark" stickers={stickersList[2]} />
       </CdContainer>
       <Content>
         <Title>{title}</Title>
