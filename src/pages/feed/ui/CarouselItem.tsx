@@ -167,7 +167,7 @@ const CarouselItem = ({
                 (p) => p.playlistId === currentPlaylist?.playlistId
               )
               const nextPlaylist = playlistData[currentIndex + 1] ?? playlistData[currentIndex - 1]
-              navigate(nextPlaylist ? `../${nextPlaylist.playlistId}` : '../', { replace: true })
+              navigate(nextPlaylist ? `../${nextPlaylist.playlistId}` : '../../', { replace: true })
               queryClient.invalidateQueries({ queryKey: ['myCdList'] })
               queryClient.invalidateQueries({ queryKey: ['feedCdList'] })
             },
