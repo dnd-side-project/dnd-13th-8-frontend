@@ -8,6 +8,7 @@ import {
   useQueryClient,
   type InfiniteData,
 } from '@tanstack/react-query'
+import axios from 'axios'
 
 import {
   getCdCarousel,
@@ -169,6 +170,15 @@ export const useCarouselCdList = (
         cursor: pageParam?.cursor,
         direction: pageParam?.direction,
       })
+    },
+
+    retry: (_, error) => {
+      // 404면 재시도 X
+      if (axios.isAxiosError(error) && error.response?.status === 404) {
+        return false
+      }
+
+      return true // 아니면 디폴트 값인 3번까지 재시도
     },
 
     initialPageParam: undefined as PageParam,

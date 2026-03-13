@@ -12,13 +12,14 @@ import type { CdMetaResponse, PlaylistDetail } from '@/entities/playlist'
 import { useMyCdActions } from '@/entities/playlist/model/useMyCd'
 import { useLike } from '@/features/like'
 import { SwipeCarousel } from '@/features/swipe'
+import { getNextId } from '@/shared/lib'
 import { useDevice } from '@/shared/lib/useDevice'
 import { cdSpinner, flexRowCenter } from '@/shared/styles/mixins'
 import { BottomSheet, Header, LiveInfo, Modal, SvgButton, Cd } from '@/shared/ui'
 import type { ModalProps } from '@/shared/ui/Modal'
 import { ActionBar, ControlBar, ProgressBar } from '@/widgets/playlist'
 
-type Props = {
+interface CarouselItemProps {
   playlistData: CdMetaResponse
   playlistDetail: PlaylistDetail
   centerItem: { playlistId: number | null; playlistName: string }
@@ -45,6 +46,7 @@ const COMMENT_OPTIONS = (isPublic: boolean, selectedTab: 'MY' | 'LIKE'): OptionI
     { text: '삭제하기', type: 'delete' },
   ]
 }
+
 const CarouselItem = ({
   playlistData,
   playlistDetail,
@@ -52,7 +54,7 @@ const CarouselItem = ({
   pageType,
   isOwner,
   onCenterChange,
-}: Props) => {
+}: CarouselItemProps) => {
   const navigate = useNavigate()
   const { toast } = useToast()
   const queryClient = useQueryClient()
@@ -75,7 +77,11 @@ const CarouselItem = ({
     onCancel: onModalClose,
   })
 
-  const { toggleLike } = useLike(Number(playlistId))
+  const { toggleLike } = useLike(Number(playlistId), {
+    shouldNavigate: true,
+    getNextId: () => getNextId(activeIndex, playlistData),
+  })
+
   const {
     setPlaylist,
     isPlaying,
@@ -157,11 +163,9 @@ const CarouselItem = ({
               onModalClose()
               pause()
               await toast('CD_DELETE')
-              const currentIndex = playlistData.findIndex(
-                (p) => p.playlistId === currentPlaylist?.playlistId
-              )
-              const nextPlaylist = playlistData[currentIndex + 1] ?? playlistData[currentIndex - 1]
-              navigate(nextPlaylist ? `../${nextPlaylist.playlistId}` : '../', { replace: true })
+              const nextId = getNextId(activeIndex, playlistData)
+
+              navigate(nextId ? `../${nextId}` : '../../', { replace: true })
               queryClient.invalidateQueries({ queryKey: ['myCdList'] })
               queryClient.invalidateQueries({ queryKey: ['feedCdList'] })
             },
@@ -241,6 +245,8 @@ const CarouselItem = ({
             </SwipeCarousel>
 
             <ActionBar
+              playlistData={playlistData}
+              activeIndex={activeIndex}
               playlistId={centerItem.playlistId ?? 0}
               creatorId={currentPlaylist.creatorId}
               stickers={playlistDetail.cdResponse.cdItems}
