@@ -12,6 +12,7 @@ import type { CdMetaResponse, PlaylistDetail } from '@/entities/playlist'
 import { useMyCdActions } from '@/entities/playlist/model/useMyCd'
 import { useLike } from '@/features/like'
 import { SwipeCarousel } from '@/features/swipe'
+import { getNextId } from '@/shared/lib'
 import { useDevice } from '@/shared/lib/useDevice'
 import { cdSpinner, flexRowCenter } from '@/shared/styles/mixins'
 import { BottomSheet, Header, LiveInfo, Modal, SvgButton, Cd } from '@/shared/ui'
@@ -44,14 +45,6 @@ const COMMENT_OPTIONS = (isPublic: boolean, selectedTab: 'MY' | 'LIKE'): OptionI
     { text: isPublic ? '비공개로 전환' : '공개로 전환', type: 'toggleVisibility' },
     { text: '삭제하기', type: 'delete' },
   ]
-}
-
-const getNextId = (currentIndex: number, data: CdMetaResponse) => {
-  if (data.length <= 1) return undefined
-
-  // 마지막이면 0번 인덱스로, 아니면 다음 인덱스로
-  const nextIndex = (currentIndex + 1) % data.length
-  return data[nextIndex]?.playlistId
 }
 
 const CarouselItem = ({

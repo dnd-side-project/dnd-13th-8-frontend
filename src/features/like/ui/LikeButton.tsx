@@ -5,6 +5,7 @@ import styled, { useTheme } from 'styled-components'
 import { Like, LikeStroke } from '@/assets/icons'
 import type { CdMetaResponse } from '@/entities/playlist'
 import { useLike } from '@/features/like'
+import { getNextId } from '@/shared/lib'
 import { myCdButton } from '@/shared/styles/mixins'
 import SvgButton from '@/shared/ui/SvgButton'
 
@@ -27,9 +28,7 @@ const LikeButton = ({ playlistId, type = 'HOME', playlistData, activeIndex }: Li
     shouldNavigate: type === 'MY',
     getNextId: () => {
       if (!playlistData || activeIndex === undefined) return undefined
-
-      const nextIndex = activeIndex + 1 >= playlistData.length ? 0 : activeIndex + 1
-      return playlistData[nextIndex]?.playlistId
+      return getNextId(activeIndex, playlistData)
     },
   })
 
