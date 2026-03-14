@@ -32,7 +32,7 @@ const HomeCarousel = ({ data, isLogin }: HomeCarouselProps) => {
 
   const navigate = useNavigate()
 
-  const { selectedIndex, scrollSnaps, onDotButtonClick } = useDotButton(emblaApi)
+  const { dotActiveIndex, scrollSnaps, onDotButtonClick } = useDotButton(emblaApi)
 
   return (
     <Embla>
@@ -89,7 +89,7 @@ const HomeCarousel = ({ data, isLogin }: HomeCarouselProps) => {
           <DotButton
             key={index}
             onClick={() => onDotButtonClick(index)}
-            selected={index === selectedIndex}
+            selected={index === dotActiveIndex}
           />
         ))}
       </EmblaControls>

@@ -16,12 +16,31 @@ export const useDotButton = (emblaApi: EmblaCarouselType | undefined) => {
   const [selectedIndex, setSelectedIndex] = useState(0)
   const [scrollSnaps, setScrollSnaps] = useState<number[]>([])
 
-  const onDotButtonClick = useCallback(
-    (index: number) => {
-      if (!emblaApi) return
-      emblaApi.scrollTo(index)
+  const totalItems = scrollSnaps.length
+  const dotCount = Math.min(totalItems, 5) // dot는 최대 5개
+  const offset = totalItems <= 2 ? 0 : totalItems < 5 ? 1 : 2
+
+  const getActiveIndex = useCallback(
+    (sIndex: number) => {
+      if (dotCount === 0) return 0
+      return (((sIndex + offset) % dotCount) + dotCount) % dotCount
     },
-    [emblaApi]
+    [dotCount, offset]
+  )
+
+  const onDotButtonClick = useCallback(
+    (targetIndex: number) => {
+      if (!emblaApi || dotCount === 0) return
+
+      const currentIndex = getActiveIndex(selectedIndex)
+      let diff = targetIndex - currentIndex
+
+      if (diff > dotCount / 2) diff -= dotCount
+      if (diff < -dotCount / 2) diff += dotCount
+
+      emblaApi.scrollTo(selectedIndex + diff)
+    },
+    [emblaApi, selectedIndex, dotCount, getActiveIndex]
   )
 
   const onInit = useCallback((emblaApi: EmblaCarouselType) => {
@@ -43,8 +62,9 @@ export const useDotButton = (emblaApi: EmblaCarouselType | undefined) => {
 
   return {
     selectedIndex,
-    scrollSnaps,
+    scrollSnaps: Array.from({ length: dotCount }),
     onDotButtonClick,
+    dotActiveIndex: getActiveIndex(selectedIndex),
   }
 }
 

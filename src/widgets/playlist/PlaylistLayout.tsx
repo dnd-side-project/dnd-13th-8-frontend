@@ -94,7 +94,7 @@ const PlaylistLayout = ({
             currentPlaylist.creatorShareCode && navigate(`/${currentPlaylist.creatorShareCode}`)
           }
         >
-          <Profile size="S" profileUrl={currentPlaylist.creatorProfileImageUrl} />
+          <Profile size={32} profileUrl={currentPlaylist.creatorProfileImageUrl} />
           <Creator>{currentPlaylist.creatorNickname}</Creator>
         </CreatorButton>
         <FollowButton variant="small" shareCode={String(currentPlaylist.creatorShareCode)} />

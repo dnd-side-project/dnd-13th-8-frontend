@@ -56,7 +56,7 @@ const Comment = ({
   return (
     <>
       <CommentWrapper>
-        <Profile size="S" profileUrl={profileUrl} />
+        <Profile size={32} profileUrl={profileUrl} />
         <TextBox>
           <Name>{name}</Name>
           <Text>

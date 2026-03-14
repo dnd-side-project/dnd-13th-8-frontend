@@ -1,20 +1,34 @@
 import { useState, useEffect } from 'react'
 import { createSearchParams, useNavigate } from 'react-router-dom'
 
-import styled, { css } from 'styled-components'
+import styled from 'styled-components'
 
 import { CARD_IMAGES_LARGE } from '@/assets/card'
 import {
-  useRecommendationsByRecent,
-  useRecommendationsByFollow,
   useRecommendedGenres,
+  useAdminRecommendation,
+  useWeeklyRecommendation,
+  useUserRecommendation,
+  useTimeRecommendation,
+  type TimeSlot,
 } from '@/features/recommend'
-import { FeedbackBottomSheet, FirstSection } from '@/pages/home/ui'
-import { CategoryButton, ScrollCarousel } from '@/shared/ui'
+import { FeedbackBottomSheet, FirstSection, SplitCard } from '@/pages/home/ui'
+import { ellipsisOneLine } from '@/shared/styles/mixins'
+import { CategoryButton, Profile, ScrollCarousel } from '@/shared/ui'
 import { Playlist, PlaylistWithSong } from '@/widgets/playlist'
+
+const getCurrentTimeSlot = (): TimeSlot => {
+  const hour = new Date().getHours()
+
+  if (hour < 6) return 'DAWN'
+  if (hour < 12) return 'MORNING'
+  if (hour < 18) return 'AFTERNOON'
+  return 'EVENING'
+}
 
 const HomePage = () => {
   const navigate = useNavigate()
+  const timeSlot = getCurrentTimeSlot()
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false)
 
   useEffect(() => {
@@ -29,9 +43,11 @@ const HomePage = () => {
     setIsBottomSheetOpen(false)
   }
 
-  const { data: RecentData } = useRecommendationsByRecent()
-  const { data: FollowData } = useRecommendationsByFollow()
+  const { data: AdminRecommendData } = useAdminRecommendation(10)
+  const { data: WeeklyRecommendData } = useWeeklyRecommendation(3)
   const { data: GenreData } = useRecommendedGenres()
+  const { data: UserRecommendData } = useUserRecommendation(5)
+  const { data: TimeRecommendData } = useTimeRecommendation(timeSlot)
 
   const handleKeywordSearch = (genreCode: string) => {
     navigate({
@@ -42,14 +58,15 @@ const HomePage = () => {
       })}`,
     })
   }
+
   return (
     <PageLayout>
       <FirstSection />
 
-      <SecondSection>
-        <h1>퇴근길, 귀에 붙는 노래</h1>
+      <Section $top={32} $bottom={40}>
+        <h1>들락 PICK! 트랙리스트</h1>
         <ScrollCarousel gap={14}>
-          {RecentData?.map((item) => (
+          {AdminRecommendData?.map((item) => (
             <Playlist
               id={item.playlistId}
               key={item.playlistId}
@@ -59,26 +76,47 @@ const HomePage = () => {
             />
           ))}
         </ScrollCarousel>
-      </SecondSection>
+      </Section>
 
-      <ThirdSection>
-        <h1>친구가 추천한 그 곡</h1>
+      <Section $top={16} $bottom={40}>
+        <h1>지금 이 시간, 이런 음악</h1>
+        <ScrollCarousel gap={14}>
+          {TimeRecommendData?.map((item) => (
+            <SplitCard key={item.bundleId} title={item.title} playlists={item.playlists} />
+          ))}
+        </ScrollCarousel>
+      </Section>
+
+      <Section $top={16} $bottom={40}>
+        <h1>이번주 HOT 트랙리스트</h1>
         <ScrollCarousel gap={16}>
-          {FollowData?.map((playlist) => (
+          {WeeklyRecommendData?.map((item) => (
             <PlaylistWithSong
-              key={playlist.playlistId}
-              id={playlist.playlistId}
-              title={playlist.playlistName}
-              username={playlist.creatorNickname}
-              songs={playlist.songs}
-              stickers={playlist.cdResponse?.cdItems}
+              key={item.playlistId}
+              id={item.playlistId}
+              title={item.playlistName}
+              username={item.creatorNickname}
+              songs={item.songs}
+              stickers={item.cdResponse?.cdItems}
             />
           ))}
         </ScrollCarousel>
-      </ThirdSection>
+      </Section>
 
-      <FourthSection>
-        <h1>오늘은 이런 기분</h1>
+      <Section $top={16} $bottom={40}>
+        <h1>인기있는 DJ 들락러</h1>
+        <ScrollCarousel gap={16}>
+          {UserRecommendData?.map((item) => (
+            <ProfileButton key={item.shareCode} onClick={() => navigate(`/${item.shareCode}`)}>
+              <Profile size={80} profileUrl={item.profileUrl} />
+              <p>{item.nickname}</p>
+            </ProfileButton>
+          ))}
+        </ScrollCarousel>
+      </Section>
+
+      <Section $top={16} $bottom={146}>
+        <h1>장르 컬렉션</h1>
         <ScrollCarousel gap={12}>
           {GenreData?.map((item) => (
             <CategoryButton
@@ -90,7 +128,7 @@ const HomePage = () => {
             />
           ))}
         </ScrollCarousel>
-      </FourthSection>
+      </Section>
 
       {isBottomSheetOpen && (
         <FeedbackBottomSheet isOpen={isBottomSheetOpen} onClose={handleFeedbackClose} />
@@ -108,28 +146,28 @@ const PageLayout = styled.div`
   margin: 0 -20px -98px -20px;
 `
 
-const sectionCommonLayout = css`
+const Section = styled.section<{ $top?: number; $bottom?: number }>`
   display: flex;
   flex-direction: column;
   gap: 12px;
-  ${({ theme }) => theme.FONT.headline1};
 
   h1 {
     font-weight: 600;
+    ${({ theme }) => theme.FONT.headline1};
   }
+
+  padding: ${({ $top = 16, $bottom = 40 }) => `${$top}px 20px ${$bottom}px 20px`};
 `
 
-const SecondSection = styled.section`
-  ${sectionCommonLayout}
-  padding: 32px 20px 40px 20px;
-`
+const ProfileButton = styled.button`
+  color: ${({ theme }) => theme.COLOR['gray-300']};
+  ${({ theme }) => theme.FONT.caption1};
+  width: 80px;
 
-const ThirdSection = styled.section`
-  ${sectionCommonLayout}
-  padding: 16px 20px 40px 20px;
-`
-
-const FourthSection = styled.section`
-  ${sectionCommonLayout}
-  padding: 16px 20px 146px 20px;
+  > p {
+    width: 100%;
+    text-align: center;
+    ${ellipsisOneLine}
+    margin-top: 8px;
+  }
 `

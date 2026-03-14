@@ -88,7 +88,7 @@ const FeedProfile = ({ userProfile, shareCode, isMyFeed, setModal }: FeedProfile
     <>
       <ProfileContainer>
         <ProfileImage>
-          <Profile size="L" profileUrl={userProfile?.profileUrl} />
+          <Profile size={80} profileUrl={userProfile?.profileUrl} />
         </ProfileImage>
         <ProfileInfo>
           {(userProfile?.keywords?.length ?? 0) > 0 && (
