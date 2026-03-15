@@ -69,7 +69,7 @@ const FeedCarousel = ({ type, pageType }: FeedCarouselProps) => {
         navigate(`/${shareCode}/?tab=${type}`, { replace: true })
       }
     }
-  }, [error, isLoading, state, playlistData, navigate, shareCode, type])
+  }, [error, isLoading, state, navigate, shareCode, type])
 
   useEffect(() => {
     if (isLoading) return
