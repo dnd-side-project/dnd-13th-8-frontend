@@ -8,6 +8,7 @@ import {
   useQueryClient,
   type InfiniteData,
 } from '@tanstack/react-query'
+import axios from 'axios'
 
 import {
   getCdCarousel,
@@ -159,16 +160,27 @@ export const useCarouselCdList = (
   params: CarouselParams
 ) => {
   return useInfiniteQuery({
-    queryKey: ['feedCdList', type, shareCode, params.sort, params.anchorId],
+    queryKey: ['feedCdList', type, shareCode, params.sort],
 
     queryFn: ({ pageParam }: { pageParam: PageParam }) => {
       const fetchFn = type === 'cds' ? getCdCarousel : getLikedCdCarousel
 
       return fetchFn(shareCode, {
         ...params,
+        // pageParam이 존재하면 anchorId를 undefined로 덮어씌워서 없앰
+        anchorId: pageParam ? undefined : params.anchorId,
         cursor: pageParam?.cursor,
         direction: pageParam?.direction,
       })
+    },
+
+    retry: (_, error) => {
+      // 404면 재시도 X
+      if (axios.isAxiosError(error) && error.response?.status === 404) {
+        return false
+      }
+
+      return true // 아니면 디폴트 값인 3번까지 재시도
     },
 
     initialPageParam: undefined as PageParam,

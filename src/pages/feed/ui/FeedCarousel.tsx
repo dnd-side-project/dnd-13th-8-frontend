@@ -1,6 +1,8 @@
 import { useEffect, useCallback, useState, useMemo } from 'react'
 import { Navigate, useLocation, useNavigate, useOutletContext, useParams } from 'react-router-dom'
 
+import axios from 'axios'
+
 import { useCarouselCdList, usePlaylistDetail } from '@/entities/playlist'
 import type { ShareCodeOwnerResponse } from '@/features/auth'
 import { CarouselItem } from '@/pages/feed/ui'
@@ -27,6 +29,7 @@ const FeedCarousel = ({ type, pageType }: FeedCarouselProps) => {
     data,
     isLoading,
     isError,
+    error,
     fetchNextPage,
     fetchPreviousPage,
     hasNextPage,
@@ -48,8 +51,28 @@ const FeedCarousel = ({ type, pageType }: FeedCarouselProps) => {
     playlistName: string
   }>({ playlistId: null, playlistName: '' })
 
+  // 좋아요 해제 후 새로고침 시
   useEffect(() => {
-    if (isLoading || !playlistData.length) return
+    if (isLoading) return
+
+    const isInvalid = axios.isAxiosError(error) && error.response?.status === 404
+
+    if (isInvalid) {
+      const targetId = state?.nextId
+
+      if (targetId) {
+        navigate(`../${targetId}`, {
+          replace: true,
+          state: { ...state, nextId: undefined },
+        })
+      } else {
+        navigate(`/${shareCode}/?tab=${type}`, { replace: true })
+      }
+    }
+  }, [error, isLoading, state, navigate, shareCode, type])
+
+  useEffect(() => {
+    if (isLoading) return
 
     const currentIndex = playlistData.findIndex((p) => p.playlistId === anchorId)
 
@@ -106,12 +129,16 @@ const FeedCarousel = ({ type, pageType }: FeedCarouselProps) => {
     { enabled: !!centerItem.playlistId }
   )
 
-  if (isLoading || isDetailLoading || !centerItem.playlistId) {
+  if (isLoading || isDetailLoading) {
     return <Loading isLoading />
   }
 
-  if (!data || !playlistDetail || isError) {
+  if (isError) {
     return <Navigate to="/error" replace />
+  }
+
+  if (!playlistData.length || !playlistDetail) {
+    return null
   }
 
   return (
