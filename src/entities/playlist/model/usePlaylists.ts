@@ -160,13 +160,15 @@ export const useCarouselCdList = (
   params: CarouselParams
 ) => {
   return useInfiniteQuery({
-    queryKey: ['feedCdList', type, shareCode, params.sort, params.anchorId],
+    queryKey: ['feedCdList', type, shareCode, params.sort],
 
     queryFn: ({ pageParam }: { pageParam: PageParam }) => {
       const fetchFn = type === 'cds' ? getCdCarousel : getLikedCdCarousel
 
       return fetchFn(shareCode, {
         ...params,
+        // pageParam이 존재하면 anchorId를 undefined로 덮어씌워서 없앰
+        anchorId: pageParam ? undefined : params.anchorId,
         cursor: pageParam?.cursor,
         direction: pageParam?.direction,
       })
