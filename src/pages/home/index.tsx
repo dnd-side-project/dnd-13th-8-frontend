@@ -82,7 +82,12 @@ const HomePage = () => {
         <h1>지금 이 시간, 이런 음악</h1>
         <ScrollCarousel gap={14}>
           {TimeRecommendData?.map((item) => (
-            <SplitCard key={item.bundleId} title={item.title} playlists={item.playlists} />
+            <SplitCard
+              key={item.bundleId}
+              id={item.bundleId}
+              title={item.title}
+              playlists={item.playlists}
+            />
           ))}
         </ScrollCarousel>
       </Section>

@@ -1,54 +1,46 @@
 import { useNavigate } from 'react-router-dom'
 
-import styled, { useTheme } from 'styled-components'
+import styled from 'styled-components'
 
-import { Play } from '@/assets/icons'
 import type { CdCustomData } from '@/entities/playlist'
 import type { Playlist } from '@/features/recommend'
-import { flexColCenter, flexRowCenter } from '@/shared/styles/mixins'
-import { Cd, SvgButton } from '@/shared/ui'
+import { flexColCenter } from '@/shared/styles/mixins'
+import { Cd } from '@/shared/ui'
 
 interface SplitCardProps {
+  id: number
   title: string
   playlists: Playlist[]
 }
 
-const SplitCard = ({ title, playlists }: SplitCardProps) => {
+const SplitCard = ({ id, title, playlists }: SplitCardProps) => {
   const navigate = useNavigate()
-  const theme = useTheme()
 
   const stickersList: CdCustomData[][] = playlists.map(
     (playlist) => playlist.cdResponse?.cdItems ?? []
   )
 
-  const handlePlayClick = () => {
-    navigate('/curation') // TODO: 경로 수정
-  }
   return (
-    <CardWrapper>
+    <CardButton onClick={() => navigate(`curation/${id}`)}>
       <CdContainer>
         <Main>
           <Cd variant="splitCard_lg" bgColor="dark" stickers={stickersList[0]} />
         </Main>
-
         <Cd variant="splitCard_sm" bgColor="dark" stickers={stickersList[1]} />
         <Cd variant="splitCard_sm" bgColor="dark" stickers={stickersList[2]} />
       </CdContainer>
       <Content>
         <Title>{title}</Title>
-        <PlayButton onClick={handlePlayClick}>
-          <SvgButton width={24} height={24} icon={Play} fill={theme.COLOR['gray-900']} />
-        </PlayButton>
       </Content>
-    </CardWrapper>
+    </CardButton>
   )
 }
 
 export default SplitCard
 
-const CardWrapper = styled.div`
+const CardButton = styled.button`
   width: 240px;
-  max-height: 232px;
+  height: 232px;
   padding: 16px;
   background: linear-gradient(144.41deg, #2a2f39 1.79%, #181920 100.08%);
   border-radius: 14px;
@@ -70,16 +62,14 @@ const Main = styled.div`
 
 const Content = styled.div`
   width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  padding-right: 12px;
 `
 
 const Title = styled.h2`
   ${({ theme }) => theme.FONT.headline2};
   width: 136px;
+  min-height: 48px;
+  font-weight: 600;
+  text-align: left;
 
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -87,14 +77,4 @@ const Title = styled.h2`
   overflow: hidden;
   text-overflow: ellipsis;
   word-break: break-all;
-  max-height: 2.8em;
-`
-
-const PlayButton = styled.button`
-  width: 42px;
-  height: 32px;
-  ${flexRowCenter}
-  background-color: ${({ theme }) => theme.COLOR['primary-normal']};
-  border-radius: 80px;
-  flex-shrink: 0;
 `

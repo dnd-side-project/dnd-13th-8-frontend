@@ -35,6 +35,8 @@ const SettingsLayout = lazy(() => import('@/pages/settings/SettingsLayout'))
 const Settings = lazy(() => import('@/pages/settings'))
 const Unregister = lazy(() => import('@/pages/settings/unregister'))
 const Notification = lazy(() => import('@/pages/settings/notification'))
+const CurationLayout = lazy(() => import('@/pages/curation/CurationLayout'))
+const Curation = lazy(() => import('@/pages/curation'))
 
 export interface RouteConfig {
   path: string
@@ -48,6 +50,13 @@ export interface RouteConfig {
 export const routesConfig: RouteConfig[] = [
   // 홈
   { path: '/', component: HomePage },
+
+  // 큐레이션
+  {
+    path: '/curation',
+    component: CurationLayout,
+    children: [{ path: ':id', component: Curation }],
+  },
 
   // 검색
   { path: '/search', component: SearchPage },
