@@ -2,8 +2,7 @@ import { useNavigate } from 'react-router-dom'
 
 import styled from 'styled-components'
 
-import type { CdCustomData } from '@/entities/playlist'
-import type { Playlist } from '@/features/recommend'
+import type { CdCustomData, Playlist } from '@/entities/playlist'
 import { flexColCenter } from '@/shared/styles/mixins'
 import { Cd } from '@/shared/ui'
 

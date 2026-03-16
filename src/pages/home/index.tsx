@@ -10,10 +10,10 @@ import {
   useWeeklyRecommendation,
   useUserRecommendation,
   useTimeRecommendation,
-  type TimeSlot,
 } from '@/features/recommend'
 import { FeedbackBottomSheet, FirstSection, SplitCard } from '@/pages/home/ui'
 import { ellipsisOneLine } from '@/shared/styles/mixins'
+import type { TimeSlot } from '@/shared/types'
 import { CategoryButton, Profile, ScrollCarousel } from '@/shared/ui'
 import { Playlist, PlaylistWithSong } from '@/widgets/playlist'
 
