@@ -37,6 +37,8 @@ const Unregister = lazy(() => import('@/pages/settings/unregister'))
 const Notification = lazy(() => import('@/pages/settings/notification'))
 const CurationLayout = lazy(() => import('@/pages/curation/CurationLayout'))
 const Curation = lazy(() => import('@/pages/curation'))
+const CurationPlayer = lazy(() => import('@/pages/curation/play'))
+const PlayerLayout = lazy(() => import('@/pages/curation/play/PlayerLayout'))
 
 export interface RouteConfig {
   path: string
@@ -55,7 +57,16 @@ export const routesConfig: RouteConfig[] = [
   {
     path: '/curation',
     component: CurationLayout,
-    children: [{ path: ':id', component: Curation }],
+    children: [
+      { path: ':bundleId', component: Curation },
+
+      {
+        path: ':bundleId/play',
+        component: PlayerLayout,
+        children: [{ path: ':id?', component: CurationPlayer }],
+      },
+    ],
+    hideNav: true,
   },
 
   // 검색
