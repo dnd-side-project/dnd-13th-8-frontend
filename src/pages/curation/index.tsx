@@ -110,8 +110,9 @@ const Title = styled.h1`
 
 const PlayButton = styled.button`
   ${flexRowCenter}
-  gap: 6px;
-  padding: 8px 40px;
+  gap: 4px;
+  width: 140px;
+  padding: 8px 30px;
   border-radius: 60px;
   background: ${({ theme }) => theme.COLOR['gray-10']};
   color: ${({ theme }) => theme.COLOR['gray-600']};
