@@ -23,15 +23,13 @@ import { GlobalErrorModal } from '@/shared/ui'
 import NavBar, { NAV_HEIGHT } from '@/widgets/layout/NavBar'
 
 const App = () => {
-  const { isMobile } = useDevice()
+  const { isMobile, layoutWidth } = useDevice()
   const location = useLocation()
 
   const { isLogin } = useAuthStore()
   const { mutate } = useAnonymousLogin()
 
   const [isNavVisible, setIsNavVisible] = useState(true)
-
-  const LAYOUT_WIDTH = isMobile ? 'clamp(320px, 100dvw, 430px)' : '430px'
 
   const isMobileView =
     isMobile && (location.pathname.startsWith('/mycd') || location.pathname.startsWith('/discover'))
@@ -139,12 +137,12 @@ const App = () => {
 
       <MainLayout
         $isNavVisible={isNavVisible}
-        $layoutWidth={LAYOUT_WIDTH}
+        $layoutWidth={layoutWidth}
         $layoutBottomGap={LAYOUT_BOTTOM_GAP}
       >
         <AppRoutes />
         {isNavVisible && (
-          <NavContainer $layoutWidth={LAYOUT_WIDTH} $layoutBottomGap={LAYOUT_BOTTOM_GAP}>
+          <NavContainer $layoutWidth={layoutWidth} $layoutBottomGap={LAYOUT_BOTTOM_GAP}>
             <NavBar />
           </NavContainer>
         )}
