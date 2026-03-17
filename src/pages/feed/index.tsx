@@ -209,7 +209,7 @@ const BioText = styled.p`
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
-  overflow: hidden; /* 여기에만 hidden을 줍니다 */
+  overflow: hidden;
   text-overflow: ellipsis;
   ${({ theme }) => theme.FONT['body2-normal']}
   text-align: center;

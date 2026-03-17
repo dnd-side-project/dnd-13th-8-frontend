@@ -35,6 +35,8 @@ const SettingsLayout = lazy(() => import('@/pages/settings/SettingsLayout'))
 const Settings = lazy(() => import('@/pages/settings'))
 const Unregister = lazy(() => import('@/pages/settings/unregister'))
 const Notification = lazy(() => import('@/pages/settings/notification'))
+const AdminLayout = lazy(() => import('@/pages/admin/AdminLayout'))
+const Admin = lazy(() => import('@/pages/admin'))
 
 export interface RouteConfig {
   path: string
@@ -171,6 +173,22 @@ export const routesConfig: RouteConfig[] = [
       { path: '', component: Settings },
       { path: 'unregister', component: Unregister },
       { path: 'notification', component: Notification },
+    ],
+  },
+
+  // 어드민
+  {
+    path: '/admin',
+    component: AdminLayout,
+    hideNav: true,
+    isPrivate: true,
+    isNotSuspense: true,
+    children: [
+      {
+        path: '',
+        component: Admin,
+        isNotSuspense: true,
+      },
     ],
   },
 

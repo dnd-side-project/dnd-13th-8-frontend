@@ -6,6 +6,7 @@ import {
   getUserInfo,
   deleteAccount,
   getShareCodeOwner,
+  getIsAdmin,
   type LoginPayload,
   type ShareCode,
 } from '@/features/auth'
@@ -51,5 +52,12 @@ export const useOwnerStatus = (shareCode: ShareCode) => {
     queryFn: () => getShareCodeOwner(shareCode),
     enabled: !!shareCode,
     staleTime: 1000 * 60 * 5, // 5분
+  })
+}
+
+export const useAdminStatus = () => {
+  return useQuery({
+    queryKey: ['adminStatus'],
+    queryFn: () => getIsAdmin(),
   })
 }

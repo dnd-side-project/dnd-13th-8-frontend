@@ -4,6 +4,7 @@ import type {
   ChatUserInfo,
   ShareCode,
   ShareCodeOwnerResponse,
+  IsAdminResponse,
 } from '@/features/auth'
 import { api } from '@/shared/api/httpClient'
 
@@ -30,4 +31,9 @@ export const getUserInfo = () => {
 // shareCode 유효성 및 피드 본인 여부 확인
 export const getShareCodeOwner = (shareCode: ShareCode) => {
   return api.get<ShareCodeOwnerResponse>(`/main/user/profile/${shareCode}/owner`)
+}
+
+// admin 계정 여부 확인
+export const getIsAdmin = () => {
+  return api.get<IsAdminResponse>(`main/user/admin`)
 }

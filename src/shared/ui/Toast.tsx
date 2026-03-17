@@ -11,7 +11,11 @@ const Toast = ({ type }: ToastProps) => {
 
   return (
     <ToastContainer>
-      {['PLAY_NEXT', 'AUTH_EXPIRED'].includes(type) ? <ToastDanger /> : <ToastCircle />}
+      {['PLAY_NEXT', 'AUTH_EXPIRED', 'ADMIN_ACCESS_DENIED'].includes(type) ? (
+        <ToastDanger />
+      ) : (
+        <ToastCircle />
+      )}
       <p>{message}</p>
     </ToastContainer>
   )
