@@ -10,9 +10,10 @@ interface SplitCardProps {
   id: number
   title: string
   playlists: Playlist[]
+  sectionTitle: string
 }
 
-const SplitCard = ({ id, title, playlists }: SplitCardProps) => {
+const SplitCard = ({ id, title, playlists, sectionTitle }: SplitCardProps) => {
   const navigate = useNavigate()
 
   const stickersList: CdCustomData[][] = playlists.map(
@@ -20,7 +21,9 @@ const SplitCard = ({ id, title, playlists }: SplitCardProps) => {
   )
 
   return (
-    <CardButton onClick={() => navigate(`curation/${id}`)}>
+    <CardButton
+      onClick={() => navigate(`/curation/${id}`, { state: { sectionTitle: sectionTitle } })}
+    >
       <CdContainer>
         <Main>
           <Cd variant="splitCard_lg" bgColor="dark" stickers={stickersList[0]} />
