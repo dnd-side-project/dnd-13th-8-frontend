@@ -2,7 +2,7 @@ import { useCallback } from 'react'
 
 import { useToast } from '@/app/providers'
 
-type CopyType = 'cd' | 'feed'
+type CopyType = 'cd' | 'feed' | 'curation'
 
 export const useCopyShareUrl = () => {
   const { toast } = useToast()
@@ -11,7 +11,14 @@ export const useCopyShareUrl = () => {
     async (type: CopyType, id: number | string) => {
       // 조건에 따라 텍스트 설정
       const baseUrl = window.location.origin
-      const text = type === 'cd' ? `${baseUrl}/discover/${id}` : `${baseUrl}/${id}`
+
+      const pathMap: Record<CopyType, string> = {
+        cd: `/discover/${id}`,
+        curation: `/curation/${id}`,
+        feed: `/${id}`,
+      }
+
+      const text = `${baseUrl}${pathMap[type]}`
 
       if (navigator.clipboard?.writeText) {
         try {

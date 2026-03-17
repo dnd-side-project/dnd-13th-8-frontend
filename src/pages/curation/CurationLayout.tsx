@@ -25,7 +25,7 @@ const CurationLayout = () => {
             onClick={() => navigate(playlistId ? `/curation/${bundleId}` : '/')}
           />
         }
-        center={<span>지금 이 시간, 이런 음악</span>}
+        center={<span>{playlistId ? data?.title : '지금 이 시간, 이런 음악'}</span>}
       />
 
       <Outlet context={data} />
