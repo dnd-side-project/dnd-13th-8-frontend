@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
-import { postCreateBundle, getAllBundles } from '@/features/bundle'
-import type { CreateBundlePayload } from '@/features/bundle'
+import { postCreateBundle, getAllBundles } from '@/entities/bundle'
+import type { CreateBundlePayload } from '@/entities/bundle'
 
 export const useBundle = () => {
   const queryClient = useQueryClient()

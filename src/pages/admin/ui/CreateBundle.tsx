@@ -3,8 +3,8 @@ import { useState } from 'react'
 import styled from 'styled-components'
 
 import { useToast } from '@/app/providers'
-import { TIME_SLOTS, useBundle } from '@/features/bundle'
-import type { TimeSlot } from '@/features/bundle'
+import { TIME_SLOTS, useBundle } from '@/entities/bundle'
+import type { TimeSlot } from '@/entities/bundle'
 import { flexColCenter, flexRowCenter } from '@/shared/styles/mixins'
 import { Input } from '@/shared/ui'
 

@@ -1,4 +1,4 @@
-import { TIME_SLOTS } from '@/features/bundle'
+import { TIME_SLOTS } from '@/entities/bundle'
 
 export type TimeSlot = (typeof TIME_SLOTS)[number]
 

@@ -2,7 +2,7 @@ import type {
   CreateBundlePayload,
   CreateBundleResponse,
   AllBundleResponse,
-} from '@/features/bundle'
+} from '@/entities/bundle'
 import { api } from '@/shared/api/httpClient'
 
 // 모음집 생성

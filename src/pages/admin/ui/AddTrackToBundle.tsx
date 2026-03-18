@@ -2,8 +2,8 @@ import { useState } from 'react'
 
 import styled from 'styled-components'
 
-import { TIME_SLOTS, useBundle } from '@/features/bundle'
-import type { TimeSlot, CdInBundle } from '@/features/bundle'
+import { TIME_SLOTS, useBundle } from '@/entities/bundle'
+import type { TimeSlot, CdInBundle } from '@/entities/bundle'
 import { flexRowCenter } from '@/shared/styles/mixins'
 
 const AddTrackToBundle = () => {
