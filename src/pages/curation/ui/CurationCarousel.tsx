@@ -28,8 +28,10 @@ const CurationCarousel = ({
   const { isMobile } = useDevice()
   const isSmall = isMobile && window.innerHeight < 633
 
-  const initialIndex =
-    playlistData?.findIndex((p) => p.playlistId === playlistDetail.playlistId) ?? 0
+  const initialIndex = Math.max(
+    0,
+    playlistData.findIndex((p) => p.playlistId === playlistDetail.playlistId)
+  )
 
   const [activeIndex, setActiveIndex] = useState(initialIndex)
 
@@ -133,7 +135,7 @@ const CurationCarousel = ({
             <ActionBar
               playlistData={playlistData}
               activeIndex={activeIndex}
-              playlistId={playlistDetail.playlistId ?? 0}
+              playlistId={playlistDetail.playlistId}
               creatorId={currentPlaylist.creatorId}
               stickers={playlistDetail.cdResponse.cdItems}
               type="MY"
