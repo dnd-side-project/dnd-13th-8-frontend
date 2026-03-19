@@ -9,7 +9,7 @@ import {
   getPopularUserList,
   getPlaylistByTime,
 } from '@/features/recommend/api/recommend'
-import type { TimeSlot } from '@/features/recommend/types/recommend'
+import type { TimeSlot } from '@/shared/types'
 
 export const useRecommendationsByRecent = () => {
   return useQuery({
