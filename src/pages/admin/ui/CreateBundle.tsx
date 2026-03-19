@@ -4,8 +4,8 @@ import styled from 'styled-components'
 
 import { useToast } from '@/app/providers'
 import { TIME_SLOTS, useBundle } from '@/entities/bundle'
-import type { TimeSlot } from '@/entities/bundle'
 import { flexColCenter, flexRowCenter } from '@/shared/styles/mixins'
+import type { TimeSlot } from '@/shared/types/common'
 import { Input } from '@/shared/ui'
 
 const CreateBundle = () => {

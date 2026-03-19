@@ -4,6 +4,7 @@ import type {
   CreateBundleResponse,
   AllCdsResponse,
   AddCdsToBundlePayload,
+  BundleInfo,
 } from '@/entities/bundle'
 import { api } from '@/shared/api/httpClient'
 
@@ -31,4 +32,9 @@ export const getAllCds = () => {
 export const postAddCdsToBundle = (payload: AddCdsToBundlePayload) => {
   const { bundleId, playlists } = payload
   return api.post(`/main/bundle/${bundleId}`, { playlists })
+}
+
+// 큐레이션 조회
+export const getBundlePlaylist = (bundleId: number) => {
+  return api.get<BundleInfo>(`/main/bundle/${bundleId}`)
 }

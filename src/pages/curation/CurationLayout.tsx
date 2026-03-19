@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { Outlet, useLocation, useNavigate, useParams } from 'react-router-dom'
 
 import { LeftArrow } from '@/assets/icons'
-import { useBundlePlaylist } from '@/entities/playlist'
+import { useBundlePlaylist } from '@/entities/bundle'
 import { HOME_SECTION_TITLES } from '@/shared/config/homeTitles'
 import { getRandomItem } from '@/shared/lib'
 import { Header, Loading, SvgButton } from '@/shared/ui'

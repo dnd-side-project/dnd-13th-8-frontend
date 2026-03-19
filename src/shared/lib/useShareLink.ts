@@ -6,7 +6,7 @@ import type { CopyType } from '@/shared/lib/useCopyLink'
 
 type ShareLinkParams = {
   copyType: CopyType
-  copyValue: string
+  copyValue: string | number
   title: string
   url: string
 }

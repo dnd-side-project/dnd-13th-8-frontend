@@ -6,6 +6,7 @@ import {
   deleteBundle,
   postAddCdsToBundle,
   getAllCds,
+  getBundlePlaylist,
 } from '@/entities/bundle'
 import type { CreateBundlePayload, AddCdsToBundlePayload } from '@/entities/bundle'
 
@@ -57,5 +58,13 @@ export const useBundleCds = () => {
   return useQuery({
     queryKey: ['getAllCds'],
     queryFn: () => getAllCds(),
+  })
+}
+
+export const useBundlePlaylist = (bundleId: number, options?: { enabled?: boolean }) => {
+  return useQuery({
+    queryKey: ['bundle', bundleId],
+    queryFn: () => getBundlePlaylist(bundleId),
+    enabled: options?.enabled ?? !!bundleId,
   })
 }

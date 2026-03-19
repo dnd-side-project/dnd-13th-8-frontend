@@ -1,4 +1,5 @@
-import type { BundleInfo, Playlist } from '@/entities/playlist'
+import type { BundleInfo } from '@/entities/bundle'
+import type { Playlist } from '@/entities/playlist'
 import type { ProfileResponse } from '@/entities/user'
 
 export type RecommendationsResponse = Playlist[]

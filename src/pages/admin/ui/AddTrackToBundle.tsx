@@ -4,8 +4,9 @@ import styled from 'styled-components'
 
 import { Trash } from '@/assets/icons'
 import { TIME_SLOTS, useBundle, useBundleCds } from '@/entities/bundle'
-import type { TimeSlot, CdInBundle } from '@/entities/bundle'
+import type { CdInBundle } from '@/entities/bundle'
 import { flexRowCenter } from '@/shared/styles/mixins'
+import type { TimeSlot } from '@/shared/types/common'
 import { Badge, SvgButton } from '@/shared/ui'
 
 const AddTrackToBundle = () => {

@@ -1,7 +1,6 @@
-import { TIME_SLOTS } from '@/entities/bundle'
+import type { Playlist } from '@/entities/playlist'
 import type { MusicGenreId } from '@/shared/config/musicGenres'
-
-export type TimeSlot = (typeof TIME_SLOTS)[number]
+import type { TimeSlot } from '@/shared/types/common'
 
 export interface CdInBundle {
   playlistId: number
@@ -11,6 +10,13 @@ export interface CdInBundle {
 
 export interface AllCdsResponse {
   playlists: CdInBundle[]
+}
+
+export interface BundleInfo {
+  bundleId: number
+  title: string
+  timeSlot: TimeSlot
+  playlists: Playlist[]
 }
 
 export type AllBundleResponse = (AllCdsResponse & {
