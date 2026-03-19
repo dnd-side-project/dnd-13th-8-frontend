@@ -14,7 +14,7 @@ const CurationLayout = () => {
 
   const sectionTitle = useMemo(() => {
     return location.state?.sectionTitle || getRandomItem(HOME_SECTION_TITLES.TIME)
-  }, [location.state?.title])
+  }, [location.state?.sectionTitle])
 
   const { data, isLoading, isError } = useBundlePlaylist(Number(bundleId))
 
