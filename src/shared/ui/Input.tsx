@@ -9,7 +9,7 @@ import styled from 'styled-components'
 
 import SvgButton from '@/shared/ui/SvgButton'
 
-type InputType = 'text' | 'search' | 'url'
+type InputType = 'text' | 'search' | 'url' | 'tel'
 type IconPosition = 'left' | 'right'
 
 interface InputProps {

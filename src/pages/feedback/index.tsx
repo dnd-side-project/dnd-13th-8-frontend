@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
+import { useMutation } from '@tanstack/react-query'
 import styled from 'styled-components'
 
 import { useToast } from '@/app/providers'
 import { Checkbox, Checked, DownArrow, LeftArrow } from '@/assets/icons'
-import { supabase } from '@/shared/api/supabaseClient'
+import { postFeedback } from '@/entities/feedback'
 import { flexColCenter, flexRowCenter } from '@/shared/styles/mixins'
 import { Button, Header, Input, SvgButton } from '@/shared/ui'
 
@@ -14,36 +15,53 @@ const RATES = [1, 2, 3, 4, 5] as const
 const FeedbackPage = () => {
   const navigate = useNavigate()
   const [isExpanded, setIsExpanded] = useState(false)
-  const [rate, setRate] = useState<(typeof RATES)[number] | null>(null)
-  const [phone, setPhone] = useState('')
-  const [feedback, setFeedback] = useState('')
-  const [isChecked, setIsChecked] = useState(false)
+  const [privacyConsent, setPrivacyConsent] = useState(false)
+  const [satisfaction, setSatisfaction] = useState<(typeof RATES)[number] | null>(null)
+  const [phoneNumber, setPhoneNumber] = useState('')
+  const [opinion, setOpinion] = useState('')
   const { toast } = useToast()
 
-  const isButtonDisabled = !isChecked || !rate
+  const feedbackMutation = useMutation({
+    mutationFn: postFeedback,
+  })
+
+  const isNotFormValid = !privacyConsent || !satisfaction
+
+  const formatPhoneNumber = (value: string) => {
+    const digits = value.replace(/\D/g, '')
+
+    if (digits.length <= 3) {
+      setPhoneNumber(digits)
+    } else if (digits.length <= 7) {
+      setPhoneNumber(`${digits.slice(0, 3)}-${digits.slice(3)}`)
+    } else {
+      setPhoneNumber(`${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7, 11)}`)
+    }
+  }
 
   const handleSubmit = async () => {
-    try {
-      const { error } = await supabase.from('Feedback').insert([
-        {
-          phone_number: phone,
-          comment: feedback,
-        },
-      ])
+    if (isNotFormValid) return
 
-      if (error) throw error
-
-      toast('SUBMIT')
-      const today = new Date().toISOString().split('T')[0]
-      localStorage.setItem('hideDate', today)
-
-      setPhone('')
-      setFeedback('')
-      setIsChecked(false)
-      navigate(-1)
-    } catch (err) {
-      console.error(err)
+    const payload = {
+      privacyConsent,
+      satisfaction,
+      phoneNumber,
+      opinion,
     }
+
+    feedbackMutation.mutate(payload, {
+      onSuccess: () => {
+        setPrivacyConsent(false)
+        setSatisfaction(null)
+        setPhoneNumber('')
+        setOpinion('')
+        toast('SUBMIT')
+        navigate(-1)
+      },
+      onError: (error) => {
+        console.error('피드백 제출 실패 :', error)
+      },
+    })
   }
 
   return (
@@ -69,11 +87,11 @@ const FeedbackPage = () => {
           <ToggleHeader onClick={() => setIsExpanded((prev) => !prev)}>
             <ToggleLeft>
               <SvgButton
-                icon={isChecked ? Checked : Checkbox}
-                fill={isChecked ? '#40EAE2' : 'none'}
+                icon={privacyConsent ? Checked : Checkbox}
+                fill={privacyConsent ? '#40EAE2' : 'none'}
                 onClick={(e) => {
                   e.stopPropagation()
-                  setIsChecked((prev) => !prev)
+                  setPrivacyConsent((prev) => !prev)
                 }}
               />
               <h3>개인정보 수집 및 이용 동의 (필수)</h3>
@@ -112,10 +130,10 @@ const FeedbackPage = () => {
                     <RateLabel>
                       <input
                         type="radio"
-                        name="rate"
+                        name="satisfaction"
                         value={num}
-                        checked={rate === num}
-                        onChange={() => setRate(num)}
+                        checked={satisfaction === num}
+                        onChange={() => setSatisfaction(num)}
                       />
                       <span>{num}</span>
                     </RateLabel>
@@ -138,23 +156,24 @@ const FeedbackPage = () => {
               연락처를 남겨주시면 추첨을 통해 커피 기프티콘을 드려요.
             </TitleDescription>
             <OpinionBox>
-              <Label htmlFor="phone">전화번호</Label>
+              <Label htmlFor="phoneNumber">전화번호</Label>
               <Input
-                id="phone"
+                id="phoneNumber"
                 placeholder="전화번호를 입력해주세요"
-                type="text"
+                type="tel"
                 width="100%"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
+                value={phoneNumber}
+                maxLength={13}
+                onChange={(e) => formatPhoneNumber(e.target.value)}
               />
             </OpinionBox>
             <OpinionBox>
-              <Label htmlFor="feedback">의견/제안</Label>
+              <Label htmlFor="opinion">의견/제안</Label>
               <FeedbackInput
-                id="feedback"
+                id="opinion"
                 placeholder="의견을 입력해주세요"
-                value={feedback}
-                onChange={(e) => setFeedback(e.target.value)}
+                value={opinion}
+                onChange={(e) => setOpinion(e.target.value)}
               />
             </OpinionBox>
           </Question>
@@ -162,7 +181,7 @@ const FeedbackPage = () => {
       </Content>
 
       <ButtonWrapper>
-        <Button onClick={handleSubmit} size="L" state={isButtonDisabled ? 'disabled' : 'primary'}>
+        <Button onClick={handleSubmit} size="L" state={isNotFormValid ? 'disabled' : 'primary'}>
           제출하기
         </Button>
       </ButtonWrapper>

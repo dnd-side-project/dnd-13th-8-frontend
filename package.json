@@ -32,7 +32,6 @@
   },
   "dependencies": {
     "@stomp/stompjs": "^7.1.1",
-    "@supabase/supabase-js": "^2.79.0",
     "@tanstack/react-query": "^5.84.2",
     "@vercel/analytics": "^1.6.1",
     "axios": "^1.11.0",
