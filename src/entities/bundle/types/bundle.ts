@@ -1,32 +1,35 @@
 import { TIME_SLOTS } from '@/entities/bundle'
+import type { MusicGenreId } from '@/shared/config/musicGenres'
 
 export type TimeSlot = (typeof TIME_SLOTS)[number]
+
+export interface CdInBundle {
+  playlistId: number
+  playlistName: string
+  playlistGenre?: MusicGenreId
+}
+
+export interface AllCdsResponse {
+  playlists: CdInBundle[]
+}
+
+export type AllBundleResponse = (AllCdsResponse & {
+  bundleId: number
+  timeSlot: TimeSlot
+  title: string
+})[]
 
 export interface CreateBundlePayload {
   timeSlot: TimeSlot
   title: string
 }
 
-export interface CreateBundleResponse {
-  id: number
-  timeSlot: TimeSlot
-  title: string
-}
+export type CreateBundleResponse = { id: number } & CreateBundlePayload
 
-export interface CdInBundle {
-  playlistId: number
-  playlistTitle: string
-  orderIndex: number
-}
-
-export interface BundlePlaylists {
-  playlists: CdInBundle[]
-}
-
-export interface Bundle extends BundlePlaylists {
+export interface AddCdsToBundlePayload {
   bundleId: number
-  timeSlot: TimeSlot
-  title: string
+  playlists: {
+    playlistId: number
+    orderIndex?: number
+  }[]
 }
-
-export type AllBundleResponse = Bundle[]

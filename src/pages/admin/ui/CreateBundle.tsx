@@ -12,22 +12,19 @@ const CreateBundle = () => {
   const { toast } = useToast()
 
   const [timeSlot, setTimeSlot] = useState<TimeSlot | null>(null)
-  const [bundleTitle, setBundleTitle] = useState('')
+  const [title, setTitle] = useState('')
 
   const { createBundle } = useBundle()
 
   const onCreateBundleClick = () => {
-    if (!timeSlot || !bundleTitle) return
+    if (!timeSlot || !title) return
     createBundle.mutate(
-      {
-        timeSlot,
-        title: bundleTitle,
-      },
+      { timeSlot, title },
       {
         onSuccess: () => {
           toast('ADMIN_SUCCESS')
           setTimeSlot(null)
-          setBundleTitle('')
+          setTitle('')
         },
         onError: (error) => {
           console.error('모음집 생성 실패: ', error)
@@ -44,7 +41,7 @@ const CreateBundle = () => {
           <TimeLabel key={time}>
             <input
               type="radio"
-              name="rate"
+              name="timeslot"
               value={time}
               checked={timeSlot === time}
               onChange={() => setTimeSlot(time)}
@@ -57,10 +54,10 @@ const CreateBundle = () => {
         <Input
           type="text"
           placeholder="모음집 제목을 입력해주세요"
-          value={bundleTitle}
-          onChange={(e) => setBundleTitle(e.target.value)}
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
         />
-        <SubmitButton disabled={!(timeSlot && bundleTitle)} onClick={onCreateBundleClick}>
+        <SubmitButton disabled={!(timeSlot && title)} onClick={onCreateBundleClick}>
           타이틀 저장
         </SubmitButton>
       </TitleCtaBox>

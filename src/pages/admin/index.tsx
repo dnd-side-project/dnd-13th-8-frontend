@@ -14,6 +14,9 @@ const AdminPage = () => {
 
       <Section>
         <SectionName>모음집에 곡 추가하기</SectionName>
+        <SectionDescription>
+          모음집에 포함된 곡을 수정하려면 기존 모음집을 삭제한 후 다시 생성해 주세요
+        </SectionDescription>
         <AddTrackToBundle />
       </Section>
     </>
@@ -30,10 +33,15 @@ const Section = styled.section`
 `
 
 const SectionName = styled.h1`
-  margin-bottom: 24px;
   ${({ theme }) => theme.FONT.title};
   font-weight: 600;
   color: ${({ theme }) => theme.COLOR['gray-50']};
+`
+
+const SectionDescription = styled.span`
+  margin-bottom: 24px;
+  ${({ theme }) => theme.FONT.label};
+  color: ${({ theme }) => theme.COLOR['gray-300']};
 `
 
 const Hr = styled.hr`
