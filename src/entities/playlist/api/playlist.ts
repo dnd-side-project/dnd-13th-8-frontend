@@ -7,7 +7,6 @@ import {
   type PlaylistResponse,
   type CarouselParams,
   type CarouselCdListResponse,
-  type BundleInfo,
 } from '@/entities/playlist/types/playlist'
 import { api } from '@/shared/api/httpClient'
 
@@ -88,9 +87,4 @@ export const getLikedCdCarousel = (shareCode: string, params: CarouselParams) =>
   return api.get<CarouselCdListResponse>(`/main/playlist/feed/${shareCode}/likes/carousel`, {
     params,
   })
-}
-
-// 큐레이션 조회
-export const getBundlePlaylist = (bundleId: number) => {
-  return api.get<BundleInfo>(`/main/bundle/${bundleId}`)
 }

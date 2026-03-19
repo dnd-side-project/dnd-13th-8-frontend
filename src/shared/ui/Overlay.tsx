@@ -138,7 +138,7 @@ const StyledOverlay = styled(motion.div)<{
   height: 100dvh;
   background-color: ${({ theme }) => theme.OPACITY.scrim};
 
-  @media (max-width: 980px) {
+  @media (max-width: 979px) {
     top: 0;
     left: 50%;
     right: 0;

@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useMemo } from 'react'
 import { useNavigate, useOutletContext, useParams } from 'react-router-dom'
 
-import { usePlaylistDetail, usePlaylistDetails, type BundleInfo } from '@/entities/playlist'
+import type { BundleInfo } from '@/entities/bundle'
+import { usePlaylistDetail, usePlaylistDetails } from '@/entities/playlist'
 import { CurationCarousel } from '@/pages/curation/ui'
 
 const CurationPlayer = () => {

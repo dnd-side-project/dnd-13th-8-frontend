@@ -2,48 +2,30 @@ import { useNavigate, useOutletContext } from 'react-router-dom'
 
 import styled from 'styled-components'
 
-import { useToast } from '@/app/providers'
 import { Share, StartBlack } from '@/assets/icons'
-import { usePlaylistDetails, type BundleInfo } from '@/entities/playlist'
-import { useCopyShareUrl, useSingleSelect } from '@/shared/lib'
+import type { BundleInfo } from '@/entities/bundle'
+import { usePlaylistDetails } from '@/entities/playlist'
+import { useShareLink } from '@/shared/lib'
 import { flexRowCenter } from '@/shared/styles/mixins'
-import { Cd, ContentHeader, Divider } from '@/shared/ui'
-import type { SortType } from '@/shared/ui/ContentHeader'
+import { Cd, Divider } from '@/shared/ui'
 import { SearchResultItem } from '@/widgets/search'
 
 const Curation = () => {
   const bundle = useOutletContext<BundleInfo>()
   const navigate = useNavigate()
-  const { toast } = useToast()
-  const { copyShareUrl } = useCopyShareUrl()
-  const { selected, onSelect } = useSingleSelect<SortType>('POPULAR')
+  const { shareLink } = useShareLink()
 
   const ids = bundle.playlists.map((p) => p.playlistId)
 
   const { data } = usePlaylistDetails(ids)
 
-  const handleShare = async () => {
-    // 브라우저 지원 여부 및 https 체크 (미지원 시 함수로 별도 copy 처리)
-    if (typeof window === 'undefined' || !navigator.share) {
-      copyShareUrl('curation', bundle.bundleId)
-      return
-    }
-
-    // 공유할 데이터 설정
-    const shareData = {
+  const handleShare = () => {
+    shareLink({
+      copyType: 'curation',
+      copyValue: bundle.bundleId,
       title: `[DEULAK] ${bundle.title}`,
       url: `${window.location.origin}/curation/${bundle.bundleId}`,
-    }
-
-    try {
-      await navigator.share(shareData)
-      toast('LINK')
-    } catch (error) {
-      // 사용자가 공유를 취소한 경우 외의 에러 케이스
-      if ((error as Error).name !== 'AbortError') {
-        console.error('URL 공유 중 에러 발생: ', error)
-      }
-    }
+    })
   }
 
   return (
@@ -74,13 +56,7 @@ const Curation = () => {
       <Divider />
 
       <ContentSection>
-        <ContentHeader
-          totalCount={bundle.playlists.length}
-          currentSort={selected}
-          onSortChange={onSelect}
-          options={['POPULAR', 'RECENT']}
-          countType="NUMBER"
-        />
+        <TotalCount>총 {bundle?.playlists?.length ?? 0}개</TotalCount>
         <PlaylistItems>
           {data.map((item) => (
             <SearchResultItem
@@ -145,6 +121,10 @@ const CdGrid = styled.div`
   background-color: ${({ theme }) => theme.COLOR['gray-600']};
   padding: 8px;
   border-radius: 8px;
+`
+
+const TotalCount = styled.p`
+  ${({ theme }) => theme.FONT['body2-normal']}
 `
 
 const ContentSection = styled.section`

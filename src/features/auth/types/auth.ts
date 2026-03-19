@@ -33,3 +33,7 @@ export interface AuthState {
 export interface ShareCodeOwnerResponse {
   isOwner: boolean
 }
+
+export interface IsAdminResponse {
+  isAdmin: boolean
+}

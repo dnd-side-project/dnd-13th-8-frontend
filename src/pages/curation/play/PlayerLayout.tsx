@@ -4,7 +4,7 @@ import { Outlet, useOutletContext } from 'react-router-dom'
 import styled from 'styled-components'
 
 import PlaylistProvider, { usePlaylist } from '@/app/providers/PlayerProvider'
-import type { BundleInfo } from '@/entities/playlist'
+import type { BundleInfo } from '@/entities/bundle'
 import { getVideoId } from '@/shared/lib'
 import { useDevice } from '@/shared/lib/useDevice'
 import { VolumeButton, YoutubePlayer } from '@/widgets/playlist'

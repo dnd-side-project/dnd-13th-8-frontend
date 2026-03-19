@@ -10,6 +10,9 @@ export type ToastType =
   | 'PUBLIC'
   | 'PRIVATE'
   | 'PROFILE_EDIT'
+  | 'ADMIN_ACCESS_DENIED'
+  | 'ADMIN_SUCCESS'
+  | 'ADMIN_FAIL'
 
 export const TOAST_MESSAGES: Record<ToastType, string> = {
   LINK: '링크가 복사됐어요',
@@ -23,4 +26,7 @@ export const TOAST_MESSAGES: Record<ToastType, string> = {
   PUBLIC: '공개로 전환됐어요',
   PRIVATE: '비공개로 전환됐어요',
   PROFILE_EDIT: '프로필이 수정됐어요',
+  ADMIN_ACCESS_DENIED: '관리자만 접근 가능한 페이지예요',
+  ADMIN_SUCCESS: '요청을 성공했어요',
+  ADMIN_FAIL: '요청을 실패했어요',
 }

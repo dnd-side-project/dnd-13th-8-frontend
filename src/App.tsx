@@ -23,15 +23,13 @@ import { GlobalErrorModal } from '@/shared/ui'
 import NavBar, { NAV_HEIGHT } from '@/widgets/layout/NavBar'
 
 const App = () => {
-  const { isMobile } = useDevice()
+  const { isMobile, layoutWidth } = useDevice()
   const location = useLocation()
 
   const { isLogin } = useAuthStore()
   const { mutate } = useAnonymousLogin()
 
   const [isNavVisible, setIsNavVisible] = useState(true)
-
-  const LAYOUT_WIDTH = isMobile ? 'clamp(320px, 100dvw, 430px)' : '430px'
 
   const isMobileView =
     isMobile && (location.pathname.startsWith('/mycd') || location.pathname.startsWith('/discover'))
@@ -139,12 +137,12 @@ const App = () => {
 
       <MainLayout
         $isNavVisible={isNavVisible}
-        $layoutWidth={LAYOUT_WIDTH}
+        $layoutWidth={layoutWidth}
         $layoutBottomGap={LAYOUT_BOTTOM_GAP}
       >
         <AppRoutes />
         {isNavVisible && (
-          <NavContainer $layoutWidth={LAYOUT_WIDTH} $layoutBottomGap={LAYOUT_BOTTOM_GAP}>
+          <NavContainer $layoutWidth={layoutWidth} $layoutBottomGap={LAYOUT_BOTTOM_GAP}>
             <NavBar />
           </NavContainer>
         )}
@@ -175,7 +173,7 @@ const MainLayout = styled.main<{
     -10px 0 30px -5px rgba(0, 0, 0, 0.3),
     10px 0 30px -5px rgba(0, 0, 0, 0.3);
 
-  @media (max-width: 980px) {
+  @media (max-width: 979px) {
     position: relative;
     margin: 0 auto;
     left: 0;
@@ -205,7 +203,7 @@ const NavContainer = styled.div<{
     rgb(15, 16, 20) 50%
   );
 
-  @media (max-width: 980px) {
+  @media (max-width: 979px) {
     left: 50%;
     transform: translateX(-50%);
   }

@@ -3,6 +3,7 @@ import { createContext, useCallback, useContext, useState, type ReactNode } from
 import styled from 'styled-components'
 
 import { type ToastType, TOAST_MESSAGES } from '@/shared/config/toast'
+import { useDevice } from '@/shared/lib/useDevice'
 import { Toast } from '@/shared/ui'
 
 type ToastContextType = {
@@ -12,6 +13,8 @@ type ToastContextType = {
 const ToastContext = createContext<ToastContextType | undefined>(undefined)
 
 export const ToastProvider = ({ children }: { children: ReactNode }) => {
+  const { layoutWidth } = useDevice()
+
   const [toastState, setToastState] = useState<{ message: string; type: ToastType } | null>(null)
 
   const toast = useCallback((type: ToastType) => {
@@ -23,7 +26,7 @@ export const ToastProvider = ({ children }: { children: ReactNode }) => {
     <ToastContext.Provider value={{ toast }}>
       {children}
       {toastState && (
-        <ToastContainer>
+        <ToastContainer $layoutWidth={layoutWidth}>
           <Toast type={toastState.type} />
         </ToastContainer>
       )}
@@ -37,11 +40,20 @@ export const useToast = () => {
   return context
 }
 
-const ToastContainer = styled.div`
+const ToastContainer = styled.div<{ $layoutWidth: string }>`
   position: absolute;
   top: 16px;
-  left: 0;
-  right: 0;
   padding: 0 20px;
+  width: ${({ $layoutWidth }) => $layoutWidth};
   z-index: ${({ theme }) => theme.Z_INDEX.topLayer};
+
+  @media (max-width: 979px) {
+    margin: 0 auto;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  @media (min-width: 980px) {
+    left: 55%;
+  }
 `

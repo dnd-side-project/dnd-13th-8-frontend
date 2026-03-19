@@ -11,7 +11,6 @@ import {
 import axios from 'axios'
 
 import {
-  getBundlePlaylist,
   getCdCarousel,
   getCdList,
   getLikedCdCarousel,
@@ -197,13 +196,5 @@ export const useCarouselCdList = (
     },
 
     enabled: !!shareCode,
-  })
-}
-
-export const useBundlePlaylist = (bundleId: number, options?: { enabled?: boolean }) => {
-  return useQuery({
-    queryKey: ['bundle', bundleId],
-    queryFn: () => getBundlePlaylist(bundleId),
-    enabled: options?.enabled ?? !!bundleId,
   })
 }

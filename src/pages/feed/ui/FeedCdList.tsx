@@ -51,10 +51,17 @@ const FeedCdList = ({ shareCode, feedView, isMyFeed, setModal }: FeedCdListProps
   const totalCount = data?.pages[0]?.totalCount ?? 0
   const isCdFeedView = feedView === 'cds'
 
-  // TODO: 비공개 CD 기획 확정 또는 QA 진행 시 onCdClick() 로직 재확인
-  const onCdClick = ({ creatorShareCode, cdId }: { creatorShareCode: string; cdId: number }) => {
+  const onCdClick = ({
+    creatorShareCode,
+    cdId,
+    isPublic,
+  }: {
+    creatorShareCode: string
+    cdId: number
+    isPublic: boolean
+  }) => {
     const myShareCode = userInfo?.shareCode ?? ''
-    if (creatorShareCode !== myShareCode) {
+    if (!isPublic && creatorShareCode !== myShareCode) {
       setModal({
         isOpen: true,
         title: '비공개된 CD는 재생할 수 없어요',
@@ -124,10 +131,10 @@ const FeedCdList = ({ shareCode, feedView, isMyFeed, setModal }: FeedCdListProps
                 onCdClick({
                   creatorShareCode: item?.creatorShareCode ?? '',
                   cdId: item.playlistId,
+                  isPublic: item.isPublic,
                 })
               }
             >
-              {/* TODO: 비공개 기획 및 UI 분기 조건 확인 요청 */}
               {!item?.isPublic &&
                 (isCdFeedView ? (
                   <PrivateBadge>비공개</PrivateBadge>
