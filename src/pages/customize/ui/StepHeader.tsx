@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { LeftArrow } from '@/assets/icons'
-import type { CUSTOMIZE_STEP } from '@/features/customize/types/customize'
+import type { CUSTOMIZE_STEP } from '@/features/customize'
 import { flexRowCenter } from '@/shared/styles/mixins'
 import { Button, Header, SvgButton } from '@/shared/ui'
 

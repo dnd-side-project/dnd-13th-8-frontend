@@ -1,4 +1,4 @@
-import type { StickerThemeType, StickerThemeUpperType } from '@/features/customize/types/customize'
+import type { StickerThemeType, StickerThemeUpperType } from '@/features/customize'
 
 export const THEME_PROP_ID_OFFSET = {
   deulak: 1000,

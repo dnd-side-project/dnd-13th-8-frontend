@@ -1,5 +1,8 @@
-import { BACKEND_TO_FRONT_THEME } from '@/features/customize/constants/customize'
-import type { StickerThemeType, StickerThemeUpperType } from '@/features/customize/types/customize'
+import {
+  BACKEND_TO_FRONT_THEME,
+  type StickerThemeType,
+  type StickerThemeUpperType,
+} from '@/features/customize'
 
 export const THEME_IMAGES_MAP = {
   deulak: import.meta.glob('@/assets/customize/deulak/*.png', { eager: true }),

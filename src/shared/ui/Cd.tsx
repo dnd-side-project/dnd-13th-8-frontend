@@ -4,8 +4,7 @@ import styled from 'styled-components'
 
 import overlayUrl from '@/assets/icons/icn_overlay.svg?url'
 import type { CdCustomData } from '@/entities/playlist/types/playlist'
-import { THEME_PROP_ID_OFFSET } from '@/features/customize/constants/customize'
-import { THEME_IMAGES_MAP } from '@/features/customize/lib/customize'
+import { THEME_PROP_ID_OFFSET, THEME_IMAGES_MAP } from '@/features/customize'
 import { flexRowCenter } from '@/shared/styles/mixins'
 
 export interface CdProps {

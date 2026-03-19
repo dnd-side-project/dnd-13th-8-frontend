@@ -11,18 +11,17 @@ import overlayUrl from '@/assets/icons/icn_overlay.svg?url'
 import { ExpandBtn, TrashBtn } from '@/assets/images'
 import { PROFILE_LIMITS, PROFILE_ERROR_MESSAGES } from '@/entities/user'
 import { startKakaoLogin } from '@/features/auth'
-import { THEME_PROP_ID_OFFSET } from '@/features/customize/constants/customize'
 import {
+  THEME_PROP_ID_OFFSET,
   BACKEND_TO_FRONT_THEME,
   STICKER_THEME_LIST,
-} from '@/features/customize/constants/customize'
-import { getCurrentThemeImages } from '@/features/customize/lib/customize'
-import { useUserSticker, useCdSave } from '@/features/customize/model/useCustomize'
-import type {
-  StickerThemeType,
-  StickerInfoType,
-  StickerThemeUpperType,
-} from '@/features/customize/types/customize'
+  getCurrentThemeImages,
+  useUserSticker,
+  useCdSave,
+  type StickerThemeType,
+  type StickerInfoType,
+  type StickerThemeUpperType,
+} from '@/features/customize'
 import type { CustomizeStepProps } from '@/pages/customize'
 import { StepHeader } from '@/pages/customize/ui'
 import { useDragScroll } from '@/shared/lib/useDragScroll'
