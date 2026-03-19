@@ -2,10 +2,10 @@ import {
   type RecommendedGenresResponse,
   type RecommendationsResponse,
   type RecommendUserResponse,
-  type TimeSlot,
   type TimeRecommendationResponse,
 } from '@/features/recommend/types/recommend'
 import { api } from '@/shared/api/httpClient'
+import type { TimeSlot } from '@/shared/types'
 
 export const getRecommendationsByRecent = () => {
   return api.get<RecommendationsResponse>('/main/recommendation/playlist')

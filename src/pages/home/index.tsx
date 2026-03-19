@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { createSearchParams, useNavigate } from 'react-router-dom'
 
 import styled from 'styled-components'
@@ -10,10 +10,12 @@ import {
   useWeeklyRecommendation,
   useUserRecommendation,
   useTimeRecommendation,
-  type TimeSlot,
 } from '@/features/recommend'
 import { FeedbackBottomSheet, FirstSection, SplitCard } from '@/pages/home/ui'
+import { HOME_SECTION_TITLES } from '@/shared/config/homeTitles'
+import { getRandomItem } from '@/shared/lib'
 import { ellipsisOneLine } from '@/shared/styles/mixins'
+import type { TimeSlot } from '@/shared/types'
 import { CategoryButton, Profile, ScrollCarousel } from '@/shared/ui'
 import { Playlist, PlaylistWithSong } from '@/widgets/playlist'
 
@@ -30,6 +32,15 @@ const HomePage = () => {
   const navigate = useNavigate()
   const timeSlot = getCurrentTimeSlot()
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false)
+
+  const titles = useMemo(() => {
+    return {
+      admin: getRandomItem(HOME_SECTION_TITLES.ADMIN),
+      time: getRandomItem(HOME_SECTION_TITLES.TIME),
+      weekly: getRandomItem(HOME_SECTION_TITLES.WEEKLY),
+      dj: getRandomItem(HOME_SECTION_TITLES.DJ),
+    }
+  }, [])
 
   useEffect(() => {
     const hideDate = localStorage.getItem('hideDate')
@@ -64,7 +75,7 @@ const HomePage = () => {
       <FirstSection />
 
       <Section $top={32} $bottom={40}>
-        <h1>들락 PICK! 트랙리스트</h1>
+        <h1>{titles.admin}</h1>
         <ScrollCarousel gap={14}>
           {AdminRecommendData?.map((item) => (
             <Playlist
@@ -79,16 +90,22 @@ const HomePage = () => {
       </Section>
 
       <Section $top={16} $bottom={40}>
-        <h1>지금 이 시간, 이런 음악</h1>
+        <h1>{titles.time}</h1>
         <ScrollCarousel gap={14}>
           {TimeRecommendData?.map((item) => (
-            <SplitCard key={item.bundleId} title={item.title} playlists={item.playlists} />
+            <SplitCard
+              key={item.bundleId}
+              id={item.bundleId}
+              title={item.title}
+              playlists={item.playlists}
+              sectionTitle={titles.time}
+            />
           ))}
         </ScrollCarousel>
       </Section>
 
       <Section $top={16} $bottom={40}>
-        <h1>이번주 HOT 트랙리스트</h1>
+        <h1>{titles.weekly}</h1>
         <ScrollCarousel gap={16}>
           {WeeklyRecommendData?.map((item) => (
             <PlaylistWithSong
@@ -104,7 +121,7 @@ const HomePage = () => {
       </Section>
 
       <Section $top={16} $bottom={40}>
-        <h1>인기있는 DJ 들락러</h1>
+        <h1>{titles.dj}</h1>
         <ScrollCarousel gap={16}>
           {UserRecommendData?.map((item) => (
             <ProfileButton key={item.shareCode} onClick={() => navigate(`/${item.shareCode}`)}>

@@ -1,4 +1,5 @@
 import type { ShareCode } from '@/features/auth'
+import type { TimeSlot } from '@/shared/types'
 import type { SortType } from '@/shared/ui/ContentHeader'
 
 export type FEED_CD_LIST_TAB_TYPE = 'cds' | 'likes'
@@ -115,4 +116,23 @@ export interface CarouselCdListResponse {
   hasPrev: boolean
   hasNext: boolean
   totalCount: number
+}
+
+// main/recommendation response
+export interface Playlist {
+  playlistId: number
+  playlistName: string
+  creatorId: string
+  creatorNickname: string
+  songs: Track[]
+  cdResponse?: {
+    cdItems: CdCustomData[]
+  }
+}
+
+export interface BundleInfo {
+  bundleId: number
+  title: string
+  timeSlot: TimeSlot
+  playlists: Playlist[]
 }
