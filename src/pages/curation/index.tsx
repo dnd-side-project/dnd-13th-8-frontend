@@ -5,17 +5,15 @@ import styled from 'styled-components'
 import { Share, StartBlack } from '@/assets/icons'
 import type { BundleInfo } from '@/entities/bundle'
 import { usePlaylistDetails } from '@/entities/playlist'
-import { useShareLink, useSingleSelect } from '@/shared/lib'
+import { useShareLink } from '@/shared/lib'
 import { flexRowCenter } from '@/shared/styles/mixins'
-import { Cd, ContentHeader, Divider } from '@/shared/ui'
-import type { SortType } from '@/shared/ui/ContentHeader'
+import { Cd, Divider } from '@/shared/ui'
 import { SearchResultItem } from '@/widgets/search'
 
 const Curation = () => {
   const bundle = useOutletContext<BundleInfo>()
   const navigate = useNavigate()
   const { shareLink } = useShareLink()
-  const { selected, onSelect } = useSingleSelect<SortType>('POPULAR')
 
   const ids = bundle.playlists.map((p) => p.playlistId)
 
@@ -58,13 +56,7 @@ const Curation = () => {
       <Divider />
 
       <ContentSection>
-        <ContentHeader
-          totalCount={bundle.playlists.length}
-          currentSort={selected}
-          onSortChange={onSelect}
-          options={['POPULAR', 'RECENT']}
-          countType="NUMBER"
-        />
+        <TotalCount>총 {bundle?.playlists?.length ?? 0}개</TotalCount>
         <PlaylistItems>
           {data.map((item) => (
             <SearchResultItem
@@ -129,6 +121,10 @@ const CdGrid = styled.div`
   background-color: ${({ theme }) => theme.COLOR['gray-600']};
   padding: 8px;
   border-radius: 8px;
+`
+
+const TotalCount = styled.p`
+  ${({ theme }) => theme.FONT['body2-normal']}
 `
 
 const ContentSection = styled.section`

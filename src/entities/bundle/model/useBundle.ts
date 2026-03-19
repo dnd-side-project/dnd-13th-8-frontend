@@ -34,6 +34,7 @@ export const useBundle = () => {
     mutationFn: (bundleId: number) => deleteBundle(bundleId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['getAllBundles'] })
+      queryClient.invalidateQueries({ queryKey: ['bundle'] })
     },
   })
 
@@ -43,6 +44,7 @@ export const useBundle = () => {
     mutationFn: (payload: AddCdsToBundlePayload) => postAddCdsToBundle(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['getAllBundles'] })
+      queryClient.invalidateQueries({ queryKey: ['bundle'] })
     },
   })
 
