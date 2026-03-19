@@ -9,7 +9,7 @@ import GuestCharacter from '@/assets/images/img_character_guest.png'
 import MemberCharacter from '@/assets/images/img_character_member.png'
 import type { CdCustomData } from '@/entities/playlist'
 import ShareImage from '@/features/share/ui/ShareImage'
-import { useCopyShareUrl } from '@/shared/lib'
+import { useCopyLink } from '@/shared/lib'
 import { flexRowCenter, myCdButton } from '@/shared/styles/mixins'
 import { BottomSheet, Button, Cd, ScrollCarousel, SvgButton } from '@/shared/ui'
 
@@ -99,7 +99,7 @@ const ShareButton = forwardRef<{ openShare: () => void }, Omit<ShareButtonProps,
     const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false)
     const [selectedIndex, setSelectedIndex] = useState(0)
     const { toast } = useToast()
-    const { copyShareUrl } = useCopyShareUrl()
+    const { copyLink } = useCopyLink()
     const shareRefs = useRef<(HTMLDivElement | null)[]>([])
 
     const slides = [
@@ -198,7 +198,7 @@ const ShareButton = forwardRef<{ openShare: () => void }, Omit<ShareButtonProps,
               <Button onClick={handleSaveImage} size="M" state="secondary">
                 이미지로 저장
               </Button>
-              <Button onClick={() => copyShareUrl('cd', playlistId)} size="M" state="secondary">
+              <Button onClick={() => copyLink('cd', playlistId)} size="M" state="secondary">
                 링크 복사
               </Button>
             </ButtonBar>

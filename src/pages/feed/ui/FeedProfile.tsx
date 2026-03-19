@@ -3,12 +3,11 @@ import { useNavigate } from 'react-router-dom'
 
 import styled, { css } from 'styled-components'
 
-import { useToast } from '@/app/providers'
 import { Pencil, Add, Tick, Share } from '@/assets/icons'
 import { PROFILE_KEYWORDS_LIST, type ProfileResponse } from '@/entities/user'
 import { useAuthStore, type ShareCode } from '@/features/auth'
 import { useFollow } from '@/features/follow'
-import { useCopyShareUrl } from '@/shared/lib'
+import { useShareLink } from '@/shared/lib'
 import { flexRowCenter } from '@/shared/styles/mixins'
 import { Profile, Badge } from '@/shared/ui'
 import type { ModalProps } from '@/shared/ui/Modal'
@@ -22,9 +21,8 @@ interface FeedProfileProps {
 
 const FeedProfile = ({ userProfile, shareCode, isMyFeed, setModal }: FeedProfileProps) => {
   const navigate = useNavigate()
-  const { toast } = useToast()
-  const { copyShareUrl } = useCopyShareUrl()
   const { isLogin } = useAuthStore()
+  const { shareLink } = useShareLink()
 
   const { isFollowing, toggleFollow } = useFollow(shareCode)
 
@@ -61,27 +59,12 @@ const FeedProfile = ({ userProfile, shareCode, isMyFeed, setModal }: FeedProfile
   }
 
   const onShareButtonClick = async () => {
-    // 브라우저 지원 여부 및 https 체크 (미지원 시 함수로 별도 copy 처리)
-    if (typeof window === 'undefined' || !navigator.share) {
-      copyShareUrl('feed', userProfile?.shareCode || shareCode)
-      return
-    }
-
-    // 공유할 데이터 설정
-    const shareData = {
+    shareLink({
+      copyType: 'feed',
+      copyValue: userProfile?.shareCode || shareCode,
       title: `[DEULAK] ${userProfile?.nickname}님의 피드`,
       url: `${window.location.origin}/${userProfile?.shareCode || shareCode}`,
-    }
-
-    try {
-      await navigator.share(shareData)
-      toast('LINK')
-    } catch (error) {
-      // 사용자가 공유를 취소한 경우 외의 에러 케이스
-      if ((error as Error).name !== 'AbortError') {
-        console.error('피드 URL 공유 중 에러 발생: ', error)
-      }
-    }
+    })
   }
 
   return (
