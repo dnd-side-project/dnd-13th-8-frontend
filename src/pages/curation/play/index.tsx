@@ -4,8 +4,6 @@ import { useNavigate, useOutletContext, useParams } from 'react-router-dom'
 import { usePlaylistDetail, usePlaylistDetails, type BundleInfo } from '@/entities/playlist'
 import { CurationCarousel } from '@/pages/curation/ui'
 
-
-
 const CurationPlayer = () => {
   const bundle = useOutletContext<BundleInfo>()
   const navigate = useNavigate()
