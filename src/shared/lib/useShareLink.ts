@@ -1,8 +1,9 @@
 import { useCallback } from 'react'
 
 import { useToast } from '@/app/providers'
-import { useDevice, useCopyLink } from '@/shared/lib'
-import type { CopyType } from '@/shared/lib/useCopyLink'
+
+import { useCopyLink, type CopyType } from './useCopyLink'
+import { useDevice } from './useDevice'
 
 type ShareLinkParams = {
   copyType: CopyType

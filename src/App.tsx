@@ -173,7 +173,7 @@ const MainLayout = styled.main<{
     -10px 0 30px -5px rgba(0, 0, 0, 0.3),
     10px 0 30px -5px rgba(0, 0, 0, 0.3);
 
-  @media (max-width: 980px) {
+  @media (max-width: 979px) {
     position: relative;
     margin: 0 auto;
     left: 0;
@@ -203,7 +203,7 @@ const NavContainer = styled.div<{
     rgb(15, 16, 20) 50%
   );
 
-  @media (max-width: 980px) {
+  @media (max-width: 979px) {
     left: 50%;
     transform: translateX(-50%);
   }

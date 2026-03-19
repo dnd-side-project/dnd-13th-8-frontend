@@ -17,7 +17,7 @@ const CreateBundle = () => {
   const { createBundle } = useBundle()
 
   const onCreateBundleClick = () => {
-    if (!timeSlot || !title) return
+    if (!timeSlot || !title || !title.trim().length) return
     createBundle.mutate(
       { timeSlot, title },
       {
@@ -57,7 +57,7 @@ const CreateBundle = () => {
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
-        <SubmitButton disabled={!(timeSlot && title)} onClick={onCreateBundleClick}>
+        <SubmitButton disabled={!(timeSlot && title.trim().length)} onClick={onCreateBundleClick}>
           타이틀 저장
         </SubmitButton>
       </TitleCtaBox>

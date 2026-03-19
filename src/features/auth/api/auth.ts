@@ -35,5 +35,5 @@ export const getShareCodeOwner = (shareCode: ShareCode) => {
 
 // admin 계정 여부 확인
 export const getIsAdmin = () => {
-  return api.get<IsAdminResponse>(`main/user/admin`)
+  return api.get<IsAdminResponse>(`/main/user/admin`)
 }

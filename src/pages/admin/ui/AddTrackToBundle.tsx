@@ -31,6 +31,10 @@ const AddTrackToBundle = () => {
 
     removeBundle.mutate(bundleId, {
       onSuccess: () => {
+        if (currentBundleId === bundleId) {
+          setCurrentBundleId(null)
+          setSelectedCdList([])
+        }
         window.alert('모음집이 삭제됐어요')
       },
       onError: (error) => {
@@ -104,7 +108,7 @@ const AddTrackToBundle = () => {
           </TitleList>
         </TitleContent>
         <CdList>
-          {allCdsList?.playlists.map((cd) => {
+          {allCdsList?.playlists?.map((cd) => {
             const isChecked = selectedCdList.some((item) => item.playlistId === cd.playlistId)
 
             return (
@@ -193,7 +197,8 @@ const CdList = styled.ul`
   flex-direction: column;
   gap: 6px;
   padding: 20px;
-  width: calc(900px - 20px - 360px); // ContentWrap gap, TitleContent width
+  width: 520px;
+  flex: 1;
   height: 400px;
   border: 1px solid ${({ theme }) => theme.COLOR['gray-600']};
   border-radius: 10px;
@@ -201,7 +206,7 @@ const CdList = styled.ul`
 
   & > li {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 6px;
   }
 
@@ -213,6 +218,7 @@ const CdList = styled.ul`
   & [type='checkbox'] {
     width: 20px;
     height: 20px;
+    flex-shrink: 0;
     accent-color: ${({ theme }) => theme.COLOR['primary-normal']};
   }
 `

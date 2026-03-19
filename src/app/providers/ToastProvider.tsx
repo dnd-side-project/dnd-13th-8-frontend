@@ -43,12 +43,11 @@ export const useToast = () => {
 const ToastContainer = styled.div<{ $layoutWidth: string }>`
   position: absolute;
   top: 16px;
-  left: 0;
   padding: 0 20px;
   width: ${({ $layoutWidth }) => $layoutWidth};
   z-index: ${({ theme }) => theme.Z_INDEX.topLayer};
 
-  @media (max-width: 980px) {
+  @media (max-width: 979px) {
     margin: 0 auto;
     left: 50%;
     transform: translateX(-50%);
