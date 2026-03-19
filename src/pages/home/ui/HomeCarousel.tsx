@@ -18,6 +18,7 @@ interface Slide {
   playlistName: string
   genre?: string
   cdItems?: CdCustomData[]
+  creatorShareCode?: string
   cdResponse?: { cdItems?: CdCustomData[] }
 }
 
@@ -52,7 +53,7 @@ const HomeCarousel = ({ data, isLogin }: HomeCarouselProps) => {
               <Button
                 size="S"
                 state="primary"
-                onClick={() => (isLogin ? navigate('/mypage/customize') : navigate('/login'))}
+                onClick={() => (isLogin ? navigate('/customize') : navigate('/login'))}
               >
                 {isLogin ? BUTTON_TEXT.MEMBER : BUTTON_TEXT.GUEST}
               </Button>
@@ -66,7 +67,7 @@ const HomeCarousel = ({ data, isLogin }: HomeCarouselProps) => {
               $active={activeIndex === index + 1}
               onClick={() =>
                 isLogin
-                  ? navigate(`/mycd/${slide.playlistId}`)
+                  ? navigate(`/${slide.creatorShareCode}/cds/${slide.playlistId}`)
                   : navigate(`/discover/${slide.playlistId}`)
               }
             >
