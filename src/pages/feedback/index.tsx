@@ -51,6 +51,10 @@ const FeedbackPage = () => {
 
     feedbackMutation.mutate(payload, {
       onSuccess: () => {
+        setPrivacyConsent(false)
+        setSatisfaction(null)
+        setPhoneNumber('')
+        setOpinion('')
         toast('SUBMIT')
         navigate(-1)
       },
