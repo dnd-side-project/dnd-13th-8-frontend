@@ -89,6 +89,7 @@ const FilterButton = styled.button`
   align-items: center;
   justify-content: flex-end;
   gap: 2px;
+  ${({ theme }) => theme.FONT['body2-normal']}
 `
 
 const SortButton = styled.button<{ $active: boolean }>`
