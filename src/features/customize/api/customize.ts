@@ -5,7 +5,7 @@ import type {
   CdFinalSaveResponse,
   CdCustomResponse,
   UserEachStickerResponse,
-} from '@/features/customize'
+} from '@/features/customize/types/customize'
 import { api } from '@/shared/api/httpClient'
 
 // 유튜브 영상 정보 조회

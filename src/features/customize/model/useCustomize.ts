@@ -7,9 +7,8 @@ import {
   postCdFinalCreate,
   postCdFinalUpdate,
   postUserSticker,
-  type CdSavePayload,
-  type UserStickerPayload,
-} from '@/features/customize'
+} from '@/features/customize/api/customize'
+import type { CdSavePayload, UserStickerPayload } from '@/features/customize/types/customize'
 
 export const useFinalCdCustom = (cdId: number) => {
   return useQuery({
