@@ -9,14 +9,11 @@ const CustomizePage = lazy(() => import('@/pages/customize'))
 const SearchPage = lazy(() => import('@/pages/search'))
 const SearchResult = lazy(() => import('@/pages/search/SearchResultPage'))
 const DiscoverLayout = lazy(() => import('@/pages/discover/DiscoverLayout'))
-const MyCdLayout = lazy(() => import('@/pages/mycd/MyCdLayout'))
 const DiscoverCarousel = lazy(() => import('@/pages/discover'))
 const PlaylistInfoPage = lazy(() => import('@/pages/discover/tracklist'))
 const LoginLayout = lazy(() => import('@/pages/login/LoginLayout'))
 const LoginPage = lazy(() => import('@/pages/login'))
 const LoginCallbackPage = lazy(() => import('@/pages/login/callback'))
-const MyCdPage = lazy(() => import('@/pages/mycd'))
-const MyCdInfoPage = lazy(() => import('@/pages/mycd/tracklist'))
 const NotFoundPage = lazy(() => import('@/pages/notFound'))
 const ErrorPage = lazy(() => import('@/pages/error'))
 const FeedbackPage = lazy(() => import('@/pages/feedback'))
@@ -84,18 +81,6 @@ export const routesConfig: RouteConfig[] = [
       { path: '', component: RedirectToShuffle }, // /discover → 셔플 리다이렉트
       { path: ':id', component: DiscoverCarousel },
       { path: ':id/tracklist', component: PlaylistInfoPage },
-    ],
-  },
-
-  // 나의 CD
-  {
-    path: '/mycd',
-    component: MyCdLayout,
-    isPrivate: true,
-    isNotSuspense: true,
-    children: [
-      { path: ':id?', component: MyCdPage },
-      { path: ':id?/tracklist', component: MyCdInfoPage },
     ],
   },
 
