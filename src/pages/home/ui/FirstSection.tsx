@@ -49,7 +49,7 @@ const FirstSection = () => {
         <CtaContainer>
           <Title>{TITLE_TEXT.MEMBER_NO_CD}</Title>
 
-          <CtaButton onClick={() => (isLogin ? navigate('/mypage/customize') : navigate('/login'))}>
+          <CtaButton onClick={() => (isLogin ? navigate('/customize') : navigate('/login'))}>
             {BUTTON_TEXT.MEMBER_NO_CD} <RightArrow stroke="#000000" />
           </CtaButton>
 

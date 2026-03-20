@@ -2,7 +2,7 @@ import { motion, Reorder, useDragControls } from 'framer-motion'
 import styled from 'styled-components'
 
 import { CancelCircle, Drag } from '@/assets/icons'
-import type { YoutubeVideoInfo } from '@/features/customize/types/customize'
+import type { YoutubeVideoInfo } from '@/features/customize'
 import { flexRowCenter } from '@/shared/styles/mixins'
 import { Input } from '@/shared/ui'
 

@@ -149,8 +149,7 @@ const CarouselItem = ({
 
   const isPublic = playlistDetail.isPublic
   const handleOptionClick = (type: OptionType) => {
-    if (type === 'edit')
-      navigate(`/mypage/customize`, { state: { playlistId: currentPlaylist?.playlistId } })
+    if (type === 'edit') navigate(`/customize`, { state: { cdId: currentPlaylist?.playlistId } })
     if (type === 'delete') {
       setModal({
         isOpen: true,

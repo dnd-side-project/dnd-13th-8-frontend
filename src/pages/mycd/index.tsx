@@ -160,9 +160,7 @@ const MyCdPage = () => {
         <HeaderTab selectedTab={selectedTab} onSelect={handleTabSelect} />
         <CenterContent>
           <img src={MemberCharacter} alt="Guest Character" width={160} height={160} />
-          <NavigateBtn onClick={() => navigate('/mypage/customize')}>
-            새로운 CD에 취향 담기
-          </NavigateBtn>
+          <NavigateBtn onClick={() => navigate('/customize')}>새로운 CD에 취향 담기</NavigateBtn>
         </CenterContent>
       </EmptyPage>
     )
@@ -196,7 +194,7 @@ const MyCdPage = () => {
                   size="S"
                   state="primary"
                   onClick={() =>
-                    navigate(`/mypage/customize`, {
+                    navigate(`/customize`, {
                       state: { cdId: currentPlaylist?.playlistId },
                     })
                   }

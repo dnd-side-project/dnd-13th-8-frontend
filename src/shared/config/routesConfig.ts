@@ -198,7 +198,7 @@ export const routesConfig: RouteConfig[] = [
 
   // 어드민
   {
-    path: '/admin',
+    path: '/administrator',
     component: AdminLayout,
     hideNav: true,
     isPrivate: true,

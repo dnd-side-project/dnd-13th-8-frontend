@@ -7,13 +7,15 @@ import {
   CustomizeBg as CustomizeBgImg,
   CustomizeThumbnail as CustomizeThumbnailImg,
 } from '@/assets/images'
-import { useFinalCdCustom } from '@/features/customize/model/useCustomize'
+import { useAuthStore } from '@/features/auth'
+import { useFinalCdCustom } from '@/features/customize'
 import { flexColCenter } from '@/shared/styles/mixins'
 import { Loading, Cd, SubHeader } from '@/shared/ui'
 
 const CustomizeStep3 = ({ currentCdId }: { currentCdId: number | null }) => {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
+  const { userInfo } = useAuthStore()
 
   const { data, isLoading, isError } = useFinalCdCustom(currentCdId as number)
 
@@ -21,9 +23,7 @@ const CustomizeStep3 = ({ currentCdId }: { currentCdId: number | null }) => {
     await queryClient.refetchQueries({ queryKey: ['playlistDetail', currentCdId] })
     await queryClient.refetchQueries({ queryKey: ['myCdList', 'RECENT'] })
     await queryClient.refetchQueries({ queryKey: ['feedCdList'] })
-    navigate(`/mypage/${currentCdId}/tracklist`, {
-      state: { isFromMyCdList: true },
-    })
+    navigate(`/${userInfo.shareCode}/cds/${currentCdId}`)
   }
 
   if (isLoading) return <Loading isLoading={isLoading} />
