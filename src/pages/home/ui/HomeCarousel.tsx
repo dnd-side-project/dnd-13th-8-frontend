@@ -66,7 +66,7 @@ const HomeCarousel = ({ data, isLogin }: HomeCarouselProps) => {
             <Slide
               $active={activeIndex === index + 1}
               onClick={() =>
-                isLogin
+                isLogin && slide.creatorShareCode
                   ? navigate(`/${slide.creatorShareCode}/cds/${slide.playlistId}`)
                   : navigate(`/discover/${slide.playlistId}`)
               }
