@@ -62,7 +62,10 @@ export const routesConfig: RouteConfig[] = [
       {
         path: ':bundleId/play',
         component: PlayerLayout,
-        children: [{ path: ':id?', component: CurationPlayer }],
+        children: [
+          { path: ':id?', component: CurationPlayer },
+          { path: ':id/tracklist', component: PlaylistInfoPage },
+        ],
       },
     ],
     hideNav: true,
