@@ -160,7 +160,7 @@ export const useCarouselCdList = (
   params: CarouselParams
 ) => {
   return useInfiniteQuery({
-    queryKey: ['feedCdList', type, shareCode, params.sort],
+    queryKey: ['feedCdList', type, shareCode, params.sort, params.anchorId],
 
     queryFn: ({ pageParam }: { pageParam: PageParam }) => {
       const fetchFn = type === 'cds' ? getCdCarousel : getLikedCdCarousel
