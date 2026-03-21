@@ -166,7 +166,14 @@ const CarouselItem = ({
 
               navigate(nextId ? `../${nextId}` : '../../', { replace: true })
               queryClient.invalidateQueries({ queryKey: ['myCdList'] })
-              queryClient.invalidateQueries({ queryKey: ['feedCdList'] })
+              queryClient.invalidateQueries({
+                queryKey: ['feedCdList', shareCode, pageType === 'MY' ? 'cds' : 'likes'],
+              })
+
+              // 캐러셀 -> 삭제된 아이템 제거
+              queryClient.removeQueries({
+                queryKey: ['feedCdList', pageType === 'MY' ? 'cds' : 'likes', shareCode],
+              })
             },
           })
         },
