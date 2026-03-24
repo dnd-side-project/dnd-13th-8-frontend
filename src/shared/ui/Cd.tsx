@@ -91,6 +91,8 @@ const Cd = ({ variant, bgColor = 'default', stickers }: CdProps) => {
             crossOrigin="anonymous"
             src={src}
             alt="cd-sticker"
+            draggable={false}
+            onDragStart={(e) => e.preventDefault()}
             style={{
               position: 'absolute',
               left: xCoordinate * ratio,
