@@ -64,7 +64,10 @@ export const useShufflePlaylists = (size: number = 5) => {
   })
 }
 
-export const usePlaylistDetail = (playlistId: number | null, options?: { enabled?: boolean }) => {
+export const usePlaylistDetail = (
+  playlistId: number | null | undefined, // TODO: mycd 레거시 정리 시 null 타입도 삭제
+  options?: { enabled?: boolean }
+) => {
   return useQuery({
     queryKey: ['playlistDetail', playlistId],
     queryFn: () => getPlaylistDetail(playlistId as number),

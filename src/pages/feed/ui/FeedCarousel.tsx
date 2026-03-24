@@ -1,28 +1,57 @@
-import { useEffect, useCallback, useState, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Navigate, useLocation, useNavigate, useOutletContext, useParams } from 'react-router-dom'
 
+import { useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
+import styled from 'styled-components'
 
+import { useToast } from '@/app/providers'
+import { Dots, LeftArrow } from '@/assets/icons'
 import { useCarouselCdList, usePlaylistDetail } from '@/entities/playlist'
+import { useMyCdActions } from '@/entities/playlist/model/useMyCd'
 import type { ShareCodeOwnerResponse } from '@/features/auth'
-import { CarouselItem } from '@/pages/feed/ui'
-import { Loading } from '@/shared/ui'
+import { useLike } from '@/features/like'
+import { getNextId } from '@/shared/lib'
+import { Header, Loading, SvgButton, BottomSheet, Modal } from '@/shared/ui'
+import type { ModalProps } from '@/shared/ui/Modal'
+import { PlaylistCarousel } from '@/widgets/playlist'
 
 interface FeedCarouselProps {
   type: 'cds' | 'likes'
   pageType: 'MY' | 'LIKE'
 }
 
+type OptionType = 'edit' | 'delete' | 'toggleVisibility' | 'like_delete'
+interface OptionItem {
+  text: string
+  type: OptionType
+}
+
+const GET_OPTIONS = (isPublic: boolean, pageType: 'MY' | 'LIKE'): OptionItem[] => {
+  if (pageType === 'LIKE') {
+    return [{ text: '삭제하기', type: 'like_delete' }]
+  }
+  return [
+    { text: 'CD 편집하기', type: 'edit' },
+    { text: isPublic ? '비공개로 전환' : '공개로 전환', type: 'toggleVisibility' },
+    { text: '삭제하기', type: 'delete' },
+  ]
+}
+
 const FeedCarousel = ({ type, pageType }: FeedCarouselProps) => {
   const { isOwner } = useOutletContext<ShareCodeOwnerResponse>()
   const navigate = useNavigate()
   const { state } = useLocation()
+  const { toast } = useToast()
+  const queryClient = useQueryClient()
   const { shareCode = '', id: routePlaylistId } = useParams<{
     id: string
     shareCode: string
   }>()
 
   const [currentSort] = useState(() => state?.currentSort ?? 'RECENT')
+  const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false)
+
   const anchorId = routePlaylistId ? Number(routePlaylistId) : undefined
 
   const {
@@ -46,20 +75,93 @@ const FeedCarousel = ({ type, pageType }: FeedCarouselProps) => {
     return data?.pages.flatMap((page) => page.content) ?? []
   }, [data])
 
-  const [centerItem, setCenterItem] = useState<{
-    playlistId: number | null
-    playlistName: string
-  }>({ playlistId: null, playlistName: '' })
+  const { data: playlistDetail, isLoading: isDetailLoading } = usePlaylistDetail(anchorId, {
+    enabled: !!anchorId,
+  })
+
+  const { deleteMutation, togglePublicMutation } = useMyCdActions(anchorId ?? 0, { enabled: false })
+
+  const currentIdx = useMemo(
+    () => playlistData.findIndex((p) => p.playlistId === anchorId),
+    [playlistData, anchorId]
+  )
+
+  const { toggleLike } = useLike(anchorId ?? 0, {
+    shouldNavigate: true,
+    getNextId: () => getNextId(currentIdx, playlistData),
+  })
+
+  const onModalClose = () => setModal((prev) => ({ ...prev, isOpen: false }))
+  const [modal, setModal] = useState<ModalProps>({
+    isOpen: false,
+    title: '',
+    description: '',
+    ctaType: 'single',
+    confirmText: '확인',
+    cancelText: '취소',
+    onClose: onModalClose,
+    onConfirm: onModalClose,
+    onCancel: onModalClose,
+  })
+
+  const handleOptionClick = (optionType: OptionType) => {
+    setIsBottomSheetOpen(false)
+
+    if (optionType === 'edit') navigate(`/customize`, { state: { cdId: anchorId } })
+
+    if (optionType === 'delete') {
+      setModal({
+        isOpen: true,
+        title: '해당 CD를 삭제할까요?',
+        ctaType: 'double',
+        confirmText: '삭제하기',
+        onConfirm: () => {
+          deleteMutation.mutate(undefined, {
+            onSuccess: async () => {
+              onModalClose()
+              await toast('CD_DELETE')
+              const nextId = getNextId(currentIdx, playlistData)
+              navigate(nextId ? `../${nextId}` : '../../', { replace: true })
+              queryClient.invalidateQueries({ queryKey: ['feedCdList'] })
+            },
+          })
+        },
+        onCancel: onModalClose,
+        onClose: onModalClose,
+      })
+    }
+
+    if (optionType === 'toggleVisibility') {
+      togglePublicMutation.mutate(undefined, {
+        onSuccess: () => {
+          toast(playlistDetail?.isPublic ? 'PRIVATE' : 'PUBLIC')
+          queryClient.invalidateQueries({ queryKey: ['playlistDetail', anchorId] })
+        },
+        onError: () => {
+          setModal({
+            isOpen: true,
+            title: 'CD 공개 설정을 변경하지 못했어요',
+            description: '잠시 후 다시 시도해주세요',
+            ctaType: 'single',
+            confirmText: '확인',
+            onClose: onModalClose,
+            onConfirm: onModalClose,
+          })
+        },
+      })
+    }
+
+    if (optionType === 'like_delete') toggleLike()
+  }
+
+  const isInvalid = axios.isAxiosError(error) && error.response?.status === 404
 
   // 좋아요 해제 후 새로고침 시
   useEffect(() => {
     if (isLoading) return
 
-    const isInvalid = axios.isAxiosError(error) && error.response?.status === 404
-
     if (isInvalid) {
       const targetId = state?.nextId
-
       if (targetId) {
         navigate(`../${targetId}`, {
           replace: true,
@@ -74,24 +176,13 @@ const FeedCarousel = ({ type, pageType }: FeedCarouselProps) => {
   useEffect(() => {
     if (isLoading) return
 
-    const currentIndex = playlistData.findIndex((p) => p.playlistId === anchorId)
-
-    if (currentIndex !== -1) {
-      const currentItem = playlistData[currentIndex]
-      setCenterItem({
-        playlistId: currentItem.playlistId,
-        playlistName: currentItem.playlistName,
-      })
-
-      if (currentIndex === playlistData.length - 1 && hasNextPage && !isFetchingNextPage) {
+    if (currentIdx !== -1) {
+      if (currentIdx === playlistData.length - 1 && hasNextPage && !isFetchingNextPage)
         fetchNextPage()
-      }
-      if (currentIndex === 0 && hasPreviousPage && !isFetchingPreviousPage) {
-        fetchPreviousPage()
-      }
+
+      if (currentIdx === 0 && hasPreviousPage && !isFetchingPreviousPage) fetchPreviousPage()
     } else if (routePlaylistId === undefined && playlistData.length > 0) {
-      const firstItem = playlistData[0]
-      navigate(`../${firstItem.playlistId}`, {
+      navigate(`../${playlistData[0].playlistId}`, {
         replace: true,
         state: { ...state, currentSort },
       })
@@ -99,7 +190,7 @@ const FeedCarousel = ({ type, pageType }: FeedCarouselProps) => {
   }, [
     playlistData,
     isLoading,
-    anchorId,
+    currentIdx,
     routePlaylistId,
     navigate,
     fetchNextPage,
@@ -112,28 +203,11 @@ const FeedCarousel = ({ type, pageType }: FeedCarouselProps) => {
     currentSort,
   ])
 
-  const handleCenterChange = useCallback(
-    (playlist: { playlistId: number; playlistName: string }) => {
-      if (playlist.playlistId === anchorId) return
-      setCenterItem(playlist)
-      navigate(`../${playlist.playlistId}`, {
-        replace: true,
-        state: { ...state, currentSort },
-      })
-    },
-    [navigate, state, currentSort, anchorId]
-  )
-
-  const { data: playlistDetail, isLoading: isDetailLoading } = usePlaylistDetail(
-    centerItem.playlistId,
-    { enabled: !!centerItem.playlistId }
-  )
-
   if (isLoading || isDetailLoading) {
     return <Loading isLoading />
   }
 
-  if (isError) {
+  if (isError && !isInvalid) {
     return <Navigate to="/error" replace />
   }
 
@@ -142,15 +216,54 @@ const FeedCarousel = ({ type, pageType }: FeedCarouselProps) => {
   }
 
   return (
-    <CarouselItem
-      playlistData={playlistData}
-      playlistDetail={playlistDetail}
-      centerItem={centerItem}
-      onCenterChange={handleCenterChange}
-      pageType={pageType}
-      isOwner={isOwner}
-    />
+    <>
+      <Header
+        left={<SvgButton icon={LeftArrow} onClick={() => navigate(-1)} />}
+        center={
+          <span>
+            {pageType === 'MY'
+              ? isOwner
+                ? '나의 CD'
+                : `${playlistDetail.creatorNickname}의 CD`
+              : '좋아요한 CD'}
+          </span>
+        }
+        right={isOwner && <SvgButton icon={Dots} onClick={() => setIsBottomSheetOpen(true)} />}
+      />
+
+      <PlaylistCarousel
+        playlistData={playlistData}
+        playlistDetail={playlistDetail}
+        onCenterChange={(p) => navigate(`../${p.playlistId}`, { replace: true, state })}
+        basePath={pageType === 'MY' ? `/${shareCode}/cds` : `/${shareCode}/likes`}
+      />
+
+      <BottomSheet
+        isOpen={isBottomSheetOpen}
+        onClose={() => setIsBottomSheetOpen(false)}
+        height="fit-content"
+      >
+        {GET_OPTIONS(playlistDetail.isPublic, pageType).map((option) => (
+          <OptionButton key={option.type} onClick={() => handleOptionClick(option.type)}>
+            {option.text}
+          </OptionButton>
+        ))}
+      </BottomSheet>
+
+      <Modal {...modal} />
+    </>
   )
 }
 
 export default FeedCarousel
+
+const OptionButton = styled.button`
+  width: 100%;
+  padding: 18px 20px;
+  margin: 0 auto;
+  ${({ theme }) => theme.FONT.headline2};
+  color: ${({ theme }) => theme.COLOR['gray-100']};
+  &:hover {
+    color: ${({ theme }) => theme.COLOR['primary-normal']};
+  }
+`
