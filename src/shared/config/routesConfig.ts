@@ -25,7 +25,6 @@ const Following = lazy(() => import('@/pages/feed/following'))
 const Cds = lazy(() => import('@/pages/feed/cds'))
 const Likes = lazy(() => import('@/pages/feed/likes'))
 const TracklistDetail = lazy(() => import('@/pages/feed/tracklist'))
-const CdPlayerLayout = lazy(() => import('@/pages/feed/ui/layout/CdPlayerLayout'))
 const ProfileEditLayout = lazy(() => import('@/pages/profileEdit/ProfileEditLayout'))
 const ProfileEdit = lazy(() => import('@/pages/profileEdit'))
 const SettingsLayout = lazy(() => import('@/pages/settings/SettingsLayout'))
@@ -37,7 +36,7 @@ const Admin = lazy(() => import('@/pages/admin'))
 const CurationLayout = lazy(() => import('@/pages/curation/CurationLayout'))
 const Curation = lazy(() => import('@/pages/curation'))
 const CurationPlayer = lazy(() => import('@/pages/curation/play'))
-const PlayerLayout = lazy(() => import('@/pages/curation/play/PlayerLayout'))
+const PlayerLayout = lazy(() => import('@/widgets/playlist/PlayerLayout'))
 
 export interface RouteConfig {
   path: string
@@ -140,7 +139,7 @@ export const routesConfig: RouteConfig[] = [
       },
       {
         path: 'cds',
-        component: CdPlayerLayout,
+        component: PlayerLayout,
         isPrivate: true,
         isNotSuspense: true,
         children: [
@@ -150,7 +149,7 @@ export const routesConfig: RouteConfig[] = [
       },
       {
         path: 'likes',
-        component: CdPlayerLayout,
+        component: PlayerLayout,
         isPrivate: true,
         isNotSuspense: true,
         children: [

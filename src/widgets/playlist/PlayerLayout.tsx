@@ -4,14 +4,13 @@ import { Outlet, useOutletContext } from 'react-router-dom'
 import styled from 'styled-components'
 
 import PlaylistProvider, { usePlaylist } from '@/app/providers/PlayerProvider'
-import type { BundleInfo } from '@/entities/bundle'
 import { getVideoId } from '@/shared/lib'
 import { useDevice } from '@/shared/lib/useDevice'
 import { VolumeButton, YoutubePlayer } from '@/widgets/playlist'
 
 const PlayerLayout = () => {
   return (
-    <PlaylistProvider key="curation">
+    <PlaylistProvider>
       <Content />
     </PlaylistProvider>
   )
@@ -28,8 +27,8 @@ const Content = () => {
     handlePlayerError,
   } = usePlaylist()
   const [isMuted, setIsMuted] = useState<boolean | null>(null)
-  const bundle = useOutletContext<BundleInfo>()
   const { isMobile } = useDevice()
+  const context = useOutletContext()
 
   const videoId = currentPlaylist
     ? getVideoId(currentPlaylist.songs[currentTrackIndex]?.youtubeUrl)
@@ -37,7 +36,7 @@ const Content = () => {
 
   return (
     <>
-      <Outlet context={bundle} />
+      <Outlet context={context} />
 
       {videoId && (
         <YoutubePlayer
@@ -49,10 +48,7 @@ const Content = () => {
               if (isPlaying) playerRef.current.playVideo()
               else playerRef.current.pauseVideo()
             }
-
-            if (isMobile) {
-              setIsMuted(event.target.isMuted())
-            }
+            if (isMobile) setIsMuted(event.target.isMuted())
           }}
           onStateChange={handlePlayerStateChange}
           onError={handlePlayerError}
@@ -67,10 +63,11 @@ const Content = () => {
     </>
   )
 }
+
 export default PlayerLayout
 
 const ButtonWrapper = styled.div`
   position: absolute;
   top: 62px;
-  z-index: 999; // TODO: 레이어 정리 후 theme z-index 리팩토링 필요
+  z-index: 999;
 `
