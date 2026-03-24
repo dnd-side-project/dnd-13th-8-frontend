@@ -153,7 +153,6 @@ export const routesConfig: RouteConfig[] = [
       {
         path: 'cds',
         component: CdPlayerLayout,
-        isPrivate: true,
         isNotSuspense: true,
         children: [
           { path: ':id?', component: Cds },
@@ -163,7 +162,6 @@ export const routesConfig: RouteConfig[] = [
       {
         path: 'likes',
         component: CdPlayerLayout,
-        isPrivate: true,
         isNotSuspense: true,
         children: [
           { path: ':id?', component: Likes },
