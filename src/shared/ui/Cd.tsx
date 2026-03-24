@@ -88,7 +88,6 @@ const Cd = ({ variant, bgColor = 'default', stickers }: CdProps) => {
         return (
           <img
             key={`${cdItemId}-${xCoordinate}-${yCoordinate}`}
-            crossOrigin="anonymous"
             src={src}
             alt="cd-sticker"
             draggable={false}
