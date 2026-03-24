@@ -44,8 +44,11 @@ const Content = () => {
           videoId={videoId}
           onReady={(event) => {
             playerRef.current = event.target
-            playerRef.current?.seekTo(currentTime, true)
-            if (!isPlaying) playerRef.current?.pauseVideo()
+            if (currentPlaylist) {
+              if (currentTime !== undefined) playerRef.current.seekTo(currentTime, true)
+              if (isPlaying) playerRef.current.playVideo()
+              else playerRef.current.pauseVideo()
+            }
 
             if (isMobile) {
               setIsMuted(event.target.isMuted())
