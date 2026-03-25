@@ -316,13 +316,12 @@ const RateList = styled.div`
 
 const RateItem = styled.div`
   flex: 1;
-  height: 64px;
 `
 
 const RateLabel = styled.label`
   ${flexColCenter}
   width: 100%;
-  height: 100%;
+  aspect-ratio: 1 / 1.1;
   border: 1px solid ${({ theme }) => theme.COLOR['gray-600']};
   border-radius: 10px;
   cursor: pointer;
