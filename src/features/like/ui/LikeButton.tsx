@@ -73,7 +73,6 @@ const LikeButton = ({ playlistId, type = 'HOME', playlistData, activeIndex }: Li
           title="로그인 후 이용할 수 있어요"
           ctaType="double"
           onConfirm={() => {
-            console.log('누름')
             navigate('/login')
             setIsModalOpen(false)
           }}
