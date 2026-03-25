@@ -1,7 +1,8 @@
 import { createContext, useState, useContext, useRef, useCallback, type ReactNode } from 'react'
 
-import { useToast } from '@/app/providers'
 import type { PlaylistDetail } from '@/entities/playlist'
+
+import { useToast } from './ToastProvider'
 
 type PlaylistContextType = {
   currentPlaylist: PlaylistDetail | null

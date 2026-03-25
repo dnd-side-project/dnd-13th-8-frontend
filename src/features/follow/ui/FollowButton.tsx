@@ -88,9 +88,9 @@ const variants = {
   small: css`
     padding: 4px 10px;
     max-height: 24px;
-    background: ${({ theme }) => theme.COLOR['gray-600']};
+    background: rgba(255, 255, 255, 0.05);
     border-radius: 99px;
-    border: 1px solid ${({ theme }) => theme.COLOR['gray-100']};
+    border: 1px solid ${({ theme }) => theme.COLOR['gray-600']};
     color: ${({ theme }) => theme.COLOR['gray-100']};
     ${({ theme }) => theme.FONT.caption1};
     gap: 2px;

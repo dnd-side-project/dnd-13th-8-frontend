@@ -94,6 +94,12 @@ const GlobalStyle = createGlobalStyle`
   meta[name="format-detection"] {
     content: "telephone=no, email=no, address=no";
   }
+
+  /* 이미지 드래그 인식 해제 */
+  img {
+    -webkit-user-drag: none;
+    user-select: none;
+  }
 `
 
 export default GlobalStyle
