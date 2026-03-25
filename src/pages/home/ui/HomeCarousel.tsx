@@ -27,6 +27,8 @@ interface HomeCarouselProps {
   isLogin: boolean
 }
 
+const GENRES_WITHOUT_PUNCH_HOLE = ['WORKOUT', 'DRIVE']
+
 const HomeCarousel = ({ data, isLogin }: HomeCarouselProps) => {
   const [activeIndex, setActiveIndex] = useState(0)
   const [emblaApi, setEmblaApi] = useState<EmblaCarouselType | undefined>(undefined)
@@ -78,7 +80,7 @@ const HomeCarousel = ({ data, isLogin }: HomeCarouselProps) => {
               />
               <SlideOverlay
                 $active={activeIndex === index + 1}
-                $hasPunchHole={!['WORKOUT', 'DRIVE'].includes(slide?.genre ?? '')}
+                $hasPunchHole={!GENRES_WITHOUT_PUNCH_HOLE.includes(slide?.genre ?? '')}
               >
                 <Badge size="large" text={getGenreLabel(slide.genre ?? '')} />
                 <Title>{slide.playlistName}</Title>
