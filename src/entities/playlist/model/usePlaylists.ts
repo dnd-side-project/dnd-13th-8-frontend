@@ -160,7 +160,8 @@ type PageParam = { cursor: number; direction: CarouselDirection } | undefined
 export const useCarouselCdList = (
   type: FEED_CD_LIST_TAB_TYPE, // cds or likes
   shareCode: string,
-  params: CarouselParams
+  params: CarouselParams,
+  options?: { enabled?: boolean }
 ) => {
   return useInfiniteQuery({
     queryKey: ['feedCdList', type, shareCode, params.sort, params.anchorId],
@@ -198,6 +199,6 @@ export const useCarouselCdList = (
       return { cursor: firstPage.prevCursor, direction: 'PREV' }
     },
 
-    enabled: !!shareCode,
+    enabled: options?.enabled !== false && !!shareCode,
   })
 }

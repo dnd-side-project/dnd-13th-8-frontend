@@ -51,8 +51,12 @@ const FeedCarousel = ({ type, pageType }: FeedCarouselProps) => {
 
   const [currentSort] = useState(() => state?.currentSort ?? 'RECENT')
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false)
-
   const anchorId = routePlaylistId ? Number(routePlaylistId) : undefined
+
+  const { deleteMutation, togglePublicMutation } = useMyCdActions(anchorId ?? 0, {
+    enabled: false,
+  })
+  const isDeleting = deleteMutation.isPending || deleteMutation.isSuccess
 
   const {
     data,
@@ -65,11 +69,16 @@ const FeedCarousel = ({ type, pageType }: FeedCarouselProps) => {
     hasPreviousPage,
     isFetchingNextPage,
     isFetchingPreviousPage,
-  } = useCarouselCdList(type, shareCode, {
-    anchorId,
-    sort: currentSort,
-    limit: anchorId ? 2 : 3,
-  })
+  } = useCarouselCdList(
+    type,
+    shareCode,
+    {
+      anchorId,
+      sort: currentSort,
+      limit: anchorId ? 2 : 3,
+    },
+    { enabled: !isDeleting }
+  )
 
   const playlistData = useMemo(() => {
     return data?.pages.flatMap((page) => page.content) ?? []
@@ -78,8 +87,6 @@ const FeedCarousel = ({ type, pageType }: FeedCarouselProps) => {
   const { data: playlistDetail, isLoading: isDetailLoading } = usePlaylistDetail(anchorId, {
     enabled: !!anchorId,
   })
-
-  const { deleteMutation, togglePublicMutation } = useMyCdActions(anchorId ?? 0, { enabled: false })
 
   const currentIdx = useMemo(
     () => playlistData.findIndex((p) => p.playlistId === anchorId),
