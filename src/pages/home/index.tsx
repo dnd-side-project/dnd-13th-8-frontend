@@ -54,10 +54,10 @@ const HomePage = () => {
     setIsBottomSheetOpen(false)
   }
 
-  const { data: AdminRecommendData } = useAdminRecommendation(10)
-  const { data: WeeklyRecommendData } = useWeeklyRecommendation(3)
+  const { data: AdminRecommendData } = useAdminRecommendation(7)
+  const { data: WeeklyRecommendData } = useWeeklyRecommendation(5)
   const { data: GenreData } = useRecommendedGenres()
-  const { data: UserRecommendData } = useUserRecommendation(5)
+  const { data: UserRecommendData } = useUserRecommendation(7)
   const { data: TimeRecommendData } = useTimeRecommendation(timeSlot)
 
   const handleKeywordSearch = (genreCode: string) => {
