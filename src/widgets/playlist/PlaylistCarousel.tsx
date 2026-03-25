@@ -7,8 +7,8 @@ import { ChatProvider } from '@/app/providers/ChatProvider'
 import { usePlaylist } from '@/app/providers/PlayerProvider'
 import type { CdMetaResponse, PlaylistDetail } from '@/entities/playlist'
 import { SwipeCarousel } from '@/features/swipe'
-import { useDevice } from '@/shared/lib/useDevice'
-import { cdSpinner, flexRowCenter } from '@/shared/styles/mixins'
+import { useDevice, useMarquee } from '@/shared/lib'
+import { cdSpinner, flexRowCenter, marquee } from '@/shared/styles/mixins'
 import { LiveInfo, Cd } from '@/shared/ui'
 import { ActionBar, ControlBar, ProgressBar } from '@/widgets/playlist'
 
@@ -28,7 +28,6 @@ const PlaylistCarousel = ({
   const { id: playlistId } = useParams()
   const { isMobile } = useDevice()
   const isSmall = isMobile && window.innerHeight < 633
-
   const [activeIndex, setActiveIndex] = useState(0)
 
   const {
@@ -40,9 +39,20 @@ const PlaylistCarousel = ({
     prevTrack,
     play,
     pause,
-    playerRef,
     unmuteOnce,
   } = usePlaylist()
+
+  const {
+    isOverflow,
+    isAutoRunning,
+    isHovered,
+    titleRef,
+    handleTitleMouseEnter,
+    handleTitleMouseLeave,
+    handleAnimationEnd,
+    handleTitleTouchStart,
+    handleTitleTouchEnd,
+  } = useMarquee(playlistDetail.playlistName, isPlaying)
 
   useEffect(() => {
     if (!playlistId || !playlistData.length) return
@@ -75,7 +85,7 @@ const PlaylistCarousel = ({
       setPlaylist(currentPlaylist, trackIndex, seconds)
       if (!isPlaying) play()
     },
-    [currentPlaylist, setPlaylist, playerRef, isPlaying, play]
+    [currentPlaylist, setPlaylist, isPlaying, play]
   )
 
   const handleTogglePlay = () => {
@@ -133,7 +143,22 @@ const PlaylistCarousel = ({
 
         <TitleWrapper>
           {!playlistDetail?.isPublic && <PrivateLabel>비공개</PrivateLabel>}
-          <Title $isMobile={isMobile}>{playlistDetail.playlistName}</Title>
+
+          <Title
+            ref={titleRef}
+            $isMobile={isMobile}
+            $isOverflow={isOverflow}
+            $isHovered={isHovered}
+            $isAutoRunning={isAutoRunning}
+            onMouseEnter={handleTitleMouseEnter}
+            onMouseLeave={handleTitleMouseLeave}
+            onTouchStart={handleTitleTouchStart}
+            onTouchEnd={handleTitleTouchEnd}
+            onAnimationEnd={handleAnimationEnd}
+          >
+            {playlistDetail.playlistName}
+          </Title>
+
           <Creator>{playlistDetail.creatorNickname}</Creator>
         </TitleWrapper>
 
@@ -185,11 +210,21 @@ const CdSpinner = styled.div<{ $isPlaying: boolean }>`
 
 const TitleWrapper = styled.div`
   padding-top: 60px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  overflow: hidden;
 `
 
-const Title = styled.p<{ $isMobile?: boolean }>`
+const Title = styled.p<{
+  $isMobile?: boolean
+  $isOverflow?: boolean
+  $isAutoRunning?: boolean
+  $isHovered?: boolean
+}>`
   ${({ theme }) => theme.FONT.headline1};
-  padding-top: 8px;
+
+  ${marquee}
   @media (min-height: 899px) {
     padding-top: 56px;
   }
@@ -219,6 +254,8 @@ const BottomWrapper = styled.div`
 
 const PrivateLabel = styled.span`
   padding: 4px 8px;
+  width: fit-content;
+  margin-bottom: 8px;
   ${({ theme }) => theme.FONT.caption1};
   color: ${({ theme }) => theme.COLOR['gray-300']};
   background-color: ${({ theme }) => theme.COLOR['gray-700']};
