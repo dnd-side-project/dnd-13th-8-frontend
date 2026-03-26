@@ -4,7 +4,7 @@ import styled from 'styled-components'
 
 import { useToast } from '@/app/providers'
 import { Menu } from '@/assets/icons'
-import { useDeleteChatMessage } from '@/features/chat/model/useChat'
+import { useDeleteChatMessage, useReportChat } from '@/features/chat/model/useChat'
 import { BottomSheet, Profile, SvgButton } from '@/shared/ui'
 
 interface CommentProps {
@@ -40,6 +40,7 @@ const Comment = ({
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false)
   const { toast } = useToast()
   const { mutate: deleteMessage } = useDeleteChatMessage(roomId, removeMessage)
+  const { mutate: reportMessage } = useReportChat()
 
   const handleOptionClick = (type: 'delete' | 'report') => {
     if (type === 'delete') {
@@ -47,7 +48,14 @@ const Comment = ({
         onSuccess: () => toast('COMMENT'),
       })
     } else if (type === 'report') {
-      toast('REPORT')
+      reportMessage(
+        { roomId, messageId },
+        {
+          onSuccess: () => {
+            toast('REPORT')
+          },
+        }
+      )
     }
 
     setIsBottomSheetOpen(false)

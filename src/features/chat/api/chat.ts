@@ -23,3 +23,7 @@ export const getChatCount = (roomId: string) => {
 export const getListenerCount = (roomId: string) => {
   return api.get<ListenerNumResponse>(`/chat/rooms/${roomId}/count/member`)
 }
+
+export const postReportChatMessage = (roomId: string, messageId: string) => {
+  return api.post(`/chat/rooms/${roomId}/messages/${messageId}/report`)
+}
