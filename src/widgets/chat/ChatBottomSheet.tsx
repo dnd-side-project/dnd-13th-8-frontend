@@ -106,6 +106,7 @@ const ChatBottomSheet = ({ isOpen, onClose, roomId, creatorId }: ChatBottomSheet
                 Icon={Icon || undefined}
                 role={role}
                 messageId={msg.messageId}
+                shareCode={msg.shareCode}
                 roomId={msg.roomId}
                 removeMessage={removeMessage}
               />

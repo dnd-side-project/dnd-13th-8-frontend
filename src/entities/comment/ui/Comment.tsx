@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import styled from 'styled-components'
 
@@ -14,6 +15,7 @@ interface CommentProps {
   role: 'owner' | 'mine' | 'other'
   roomId: string
   messageId: string
+  shareCode: string | null
   Icon?: React.ComponentType<React.SVGProps<SVGSVGElement>>
   removeMessage: (id: string) => void
 }
@@ -34,13 +36,22 @@ const Comment = ({
   role,
   Icon,
   roomId,
+  shareCode,
   messageId,
   removeMessage,
 }: CommentProps) => {
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false)
+  const navigate = useNavigate()
+
   const { toast } = useToast()
   const { mutate: deleteMessage } = useDeleteChatMessage(roomId, removeMessage)
   const { mutate: reportMessage } = useReportChat()
+
+  const isClickable = !!shareCode
+  const handleProfileClick = () => {
+    if (!shareCode) return
+    navigate(`/${shareCode}`)
+  }
 
   const handleOptionClick = (type: 'delete' | 'report') => {
     if (type === 'delete') {
@@ -51,9 +62,7 @@ const Comment = ({
       reportMessage(
         { roomId, messageId },
         {
-          onSuccess: () => {
-            toast('REPORT')
-          },
+          onSuccess: () => toast('REPORT'),
         }
       )
     }
@@ -64,14 +73,24 @@ const Comment = ({
   return (
     <>
       <CommentWrapper>
-        <Profile size={32} profileUrl={profileUrl} />
+        <ProfileWrapper
+          onClick={isClickable ? handleProfileClick : undefined}
+          $clickable={isClickable}
+        >
+          <Profile size={32} profileUrl={profileUrl} />
+        </ProfileWrapper>
+
         <TextBox>
-          <Name>{name}</Name>
+          <Name onClick={isClickable ? handleProfileClick : undefined} $clickable={isClickable}>
+            {name}
+          </Name>
+
           <Text>
             {Icon && <Icon width={20} height={20} />}
             {comment}
           </Text>
         </TextBox>
+
         <SvgButton width={20} height={20} icon={Menu} onClick={() => setIsBottomSheetOpen(true)} />
       </CommentWrapper>
 
@@ -101,6 +120,7 @@ const CommentWrapper = styled.div`
   gap: 12px;
   padding: 12px 0;
 `
+
 const TextBox = styled.div`
   display: flex;
   flex-direction: column;
@@ -108,9 +128,10 @@ const TextBox = styled.div`
   flex: 1;
 `
 
-const Name = styled.span`
+const Name = styled.span<{ $clickable: boolean }>`
   ${({ theme }) => theme.FONT.caption1};
   color: ${({ theme }) => theme.COLOR['gray-200']};
+  cursor: ${({ $clickable }) => ($clickable ? 'pointer' : 'default')};
 `
 
 const Text = styled.span`
@@ -119,6 +140,7 @@ const Text = styled.span`
   display: flex;
   gap: 6px;
 `
+
 const StyledButton = styled.button<{ $optionType: 'delete' | 'report' }>`
   width: 100%;
   padding: 16px 20px;
@@ -127,4 +149,8 @@ const StyledButton = styled.button<{ $optionType: 'delete' | 'report' }>`
 
   color: ${({ $optionType, theme }) =>
     $optionType === 'delete' ? theme.COLOR['gray-50'] : theme.COLOR['common-error']};
+`
+
+const ProfileWrapper = styled.button<{ $clickable: boolean }>`
+  cursor: ${({ $clickable }) => ($clickable ? 'pointer' : 'default')};
 `
