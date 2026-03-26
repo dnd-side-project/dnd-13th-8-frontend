@@ -163,7 +163,6 @@ const Title = styled.span<{
 }>`
   ${({ theme }) => theme.FONT.headline1};
   color: ${({ theme }) => theme.COLOR['gray-10']};
-  line-height: 1;
 
   ${marquee}
 `
