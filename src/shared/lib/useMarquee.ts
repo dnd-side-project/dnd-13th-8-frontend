@@ -38,8 +38,12 @@ export const useMarquee = (text: string, isPlaying?: boolean) => {
     if (!isOverflow) return
     if (hasAutoPlayedRef.current) return
 
-    setIsAutoRunning(true)
-    hasAutoPlayedRef.current = true // auto는 1번만
+    const timer = setTimeout(() => {
+      setIsAutoRunning(true)
+      hasAutoPlayedRef.current = true // auto는 1번만
+    }, 1000)
+
+    return () => clearTimeout(timer)
   }, [isPlaying, isOverflow])
 
   const handleAnimationEnd = useCallback(() => {
