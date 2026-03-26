@@ -72,15 +72,11 @@ const Content = styled.div`
 
 const Title = styled.h2`
   ${({ theme }) => theme.FONT.headline2};
-  width: 136px;
+  width: 180px;
   min-height: 48px;
   font-weight: 600;
   text-align: left;
-
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  word-break: break-all;
+  padding-left: 4px;
+  color: ${({ theme }) => theme.COLOR['gray-100']};
+  white-space: pre-line;
 `

@@ -82,6 +82,7 @@ const Title = styled.h1`
   color: ${({ theme }) => theme.COLOR['gray-10']};
   text-align: center;
   font-weight: 600;
+  white-space: nowrap;
 `
 
 const PlayButton = styled.button`
