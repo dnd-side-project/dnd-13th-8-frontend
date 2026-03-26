@@ -1,4 +1,5 @@
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState } from 'react'
+import { useInView } from 'react-intersection-observer'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 
 import styled from 'styled-components'
@@ -21,7 +22,6 @@ import { SearchResultItem } from '@/widgets/search'
 const SearchResultPage = () => {
   const navigate = useNavigate()
   const location = useLocation()
-  const listRef = useRef<HTMLDivElement>(null)
 
   const queryParams = new URLSearchParams(location.search)
   const keyword = queryParams.get('keyword') ?? ''
@@ -52,13 +52,15 @@ const SearchResultPage = () => {
 
   const totalCount = current.data?.pages[0]?.totalCount
 
-  const handleScroll = () => {
-    if (!listRef.current || !current.hasNextPage || current.isFetchingNextPage) return
-    const { scrollTop, scrollHeight, clientHeight } = listRef.current
-    if (scrollHeight - scrollTop <= clientHeight + 100) {
-      current.fetchNextPage()
-    }
-  }
+  // 마지막 요소 감지
+  const { ref: targetRef } = useInView({
+    threshold: 0,
+    onChange: (inView) => {
+      if (inView && current.hasNextPage && !current.isFetchingNextPage) {
+        current.fetchNextPage()
+      }
+    },
+  })
 
   useEffect(() => {
     setSearchValue(keyword)
@@ -99,7 +101,7 @@ const SearchResultPage = () => {
         )}
       </TopWrapper>
 
-      <Result ref={listRef} onScroll={handleScroll}>
+      <Result>
         {totalCount && totalCount > 0 ? (
           <>
             <ContentHeader
@@ -139,6 +141,7 @@ const SearchResultPage = () => {
                 <Loading isLoading />
               </LoadingWrapper>
             )}
+            <LoadingTrigger ref={targetRef} />
           </>
         ) : (
           <NoDataWrapper>
@@ -157,7 +160,8 @@ const Result = styled.section`
   flex-direction: column;
   gap: 16px;
   overflow-y: auto;
-  max-height: calc(100vh - 100px);
+  flex: 1;
+  min-height: 0;
 `
 
 const ResultList = styled.div`
@@ -178,6 +182,10 @@ const LoadingWrapper = styled.div`
   justify-content: center;
   align-items: center;
   padding: 20px 0;
+`
+
+const LoadingTrigger = styled.div`
+  height: 1px;
 `
 
 const TopWrapper = styled.div`

@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { Outlet, useLocation, useNavigate, useParams } from 'react-router-dom'
+import { Outlet, useLocation, useMatch, useNavigate, useParams } from 'react-router-dom'
 
 import { LeftArrow } from '@/assets/icons'
 import { useBundlePlaylist } from '@/entities/bundle'
@@ -11,6 +11,8 @@ const CurationLayout = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const { bundleId, id: playlistId } = useParams()
+
+  const isTracklistPage = useMatch('/curation/:bundleId/play/:id/tracklist')
 
   const sectionTitle = useMemo(() => {
     return location.state?.sectionTitle || getRandomItem(HOME_SECTION_TITLES.TIME)
@@ -26,15 +28,17 @@ const CurationLayout = () => {
 
   return (
     <div>
-      <Header
-        left={
-          <SvgButton
-            icon={LeftArrow}
-            onClick={() => navigate(playlistId ? `/curation/${bundleId}` : '/')}
-          />
-        }
-        center={<span>{playlistId ? data?.title : sectionTitle}</span>}
-      />
+      {!isTracklistPage && (
+        <Header
+          left={
+            <SvgButton
+              icon={LeftArrow}
+              onClick={() => navigate(playlistId ? `/curation/${bundleId}` : '/')}
+            />
+          }
+          center={<span>{playlistId ? data?.title : sectionTitle}</span>}
+        />
+      )}
 
       <Outlet context={data} />
     </div>

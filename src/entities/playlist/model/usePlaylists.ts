@@ -64,7 +64,10 @@ export const useShufflePlaylists = (size: number = 5) => {
   })
 }
 
-export const usePlaylistDetail = (playlistId: number | null, options?: { enabled?: boolean }) => {
+export const usePlaylistDetail = (
+  playlistId: number | null | undefined, // TODO: mycd 레거시 정리 시 null 타입도 삭제
+  options?: { enabled?: boolean }
+) => {
   return useQuery({
     queryKey: ['playlistDetail', playlistId],
     queryFn: () => getPlaylistDetail(playlistId as number),
@@ -157,10 +160,11 @@ type PageParam = { cursor: number; direction: CarouselDirection } | undefined
 export const useCarouselCdList = (
   type: FEED_CD_LIST_TAB_TYPE, // cds or likes
   shareCode: string,
-  params: CarouselParams
+  params: CarouselParams,
+  options?: { enabled?: boolean }
 ) => {
   return useInfiniteQuery({
-    queryKey: ['feedCdList', type, shareCode, params.sort],
+    queryKey: ['feedCdList', type, shareCode, params.sort, params.anchorId],
 
     queryFn: ({ pageParam }: { pageParam: PageParam }) => {
       const fetchFn = type === 'cds' ? getCdCarousel : getLikedCdCarousel
@@ -195,6 +199,6 @@ export const useCarouselCdList = (
       return { cursor: firstPage.prevCursor, direction: 'PREV' }
     },
 
-    enabled: !!shareCode,
+    enabled: options?.enabled !== false && !!shareCode,
   })
 }

@@ -46,3 +46,40 @@ export const cdSpinner = css<{ $isPlaying: boolean }>`
   animation-play-state: ${({ $isPlaying }) => ($isPlaying ? 'running' : 'paused')};
   transform-origin: center;
 `
+
+export const marquee = css<{
+  $isOverflow?: boolean
+  $isHovered?: boolean
+  $isAutoRunning?: boolean
+  $duration?: number
+}>`
+  display: block;
+  white-space: nowrap;
+
+  @keyframes marqueeAnim {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-100%);
+    }
+  }
+
+  ${({ $isOverflow, $isHovered, $isAutoRunning, $duration = 10 }) => {
+    if (!$isOverflow) return ''
+
+    if ($isHovered || $isAutoRunning) {
+      return css`
+        animation: marqueeAnim ${$duration}s linear 1;
+      `
+    }
+
+    // 멈춘 상태에서는 말줄임표
+    return css`
+      overflow: hidden;
+      text-overflow: ellipsis;
+      animation: none;
+      transform: translateX(0);
+    `
+  }}
+`

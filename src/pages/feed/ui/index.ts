@@ -1,8 +1,6 @@
 export { default as FollowTab } from './FollowTab'
 export { default as FeedCdList } from './FeedCdList'
 export { default as FeedProfile } from './FeedProfile'
-export { default as CdPlayerLayout } from './layout/CdPlayerLayout'
-export { default as CarouselItem } from './CarouselItem'
 export { default as FollowLayout } from './layout/FollowLayout'
 export { default as FeedCdListLayout } from './layout/FeedCdListLayout'
 export { default as FeedCarousel } from './FeedCarousel'

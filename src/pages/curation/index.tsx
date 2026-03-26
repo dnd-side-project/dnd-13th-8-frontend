@@ -128,7 +128,7 @@ const TotalCount = styled.p`
 `
 
 const ContentSection = styled.section`
-  padding: 24px 0 0 0;
+  padding: 24px 0 60px 0;
 `
 
 const PlaylistItems = styled.div`

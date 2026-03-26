@@ -1,12 +1,13 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import styled, { keyframes, css } from 'styled-components'
+import styled from 'styled-components'
 
 import type { PlaylistDetail } from '@/entities/playlist'
 import { FollowButton } from '@/features/follow'
+import { useMarquee } from '@/shared/lib'
 import { useDevice } from '@/shared/lib/useDevice'
-import { cdSpinner, flexColCenter } from '@/shared/styles/mixins'
+import { cdSpinner, flexColCenter, marquee } from '@/shared/styles/mixins'
 import { Cd, Header, LiveInfo, Profile } from '@/shared/ui'
 import { ActionBar, PlayButton, ProgressBar } from '@/widgets/playlist'
 
@@ -32,20 +33,22 @@ const PlaylistLayout = ({
   onSelectTrack,
 }: PlaylistSlideProps) => {
   const [showPlayButton, setShowPlayButton] = useState(false)
-  const [isOverflow, setIsOverflow] = useState(false)
 
   const navigate = useNavigate()
   const { isMobile } = useDevice()
-
   const title = currentPlaylist?.playlistName ?? ''
-  const containerRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
-    const el = containerRef.current
-    if (!el) return
-
-    setIsOverflow(el.scrollWidth > el.clientWidth)
-  }, [title])
+  const {
+    isOverflow,
+    isAutoRunning,
+    isHovered,
+    titleRef,
+    handleTitleMouseEnter,
+    handleTitleMouseLeave,
+    handleAnimationEnd,
+    handleTitleTouchStart,
+    handleTitleTouchEnd,
+  } = useMarquee(title, isPlaying)
 
   const handleProgressClick = useCallback(
     (trackIndex: number, seconds: number) => {
@@ -100,11 +103,20 @@ const PlaylistLayout = ({
         <FollowButton variant="small" shareCode={String(currentPlaylist.creatorShareCode)} />
       </CreatorInfo>
 
-      <TitleContainer ref={containerRef}>
-        <MarqueeTitle $animate={isOverflow}>
-          <Title>{title}</Title>
-          {isOverflow && <Title aria-hidden>{title}</Title>}
-        </MarqueeTitle>
+      <TitleContainer>
+        <Title
+          ref={titleRef}
+          $isOverflow={isOverflow}
+          $isHovered={isHovered}
+          $isAutoRunning={isAutoRunning}
+          onMouseEnter={handleTitleMouseEnter}
+          onMouseLeave={handleTitleMouseLeave}
+          onTouchStart={handleTitleTouchStart}
+          onTouchEnd={handleTitleTouchEnd}
+          onAnimationEnd={handleAnimationEnd}
+        >
+          {title}
+        </Title>
       </TitleContainer>
 
       <ProgressBarWrapper>
@@ -139,34 +151,20 @@ const CdSpinner = styled.div<{ $isPlaying: boolean }>`
 const TitleContainer = styled.div`
   width: 100%;
   overflow: hidden;
-  white-space: nowrap;
   margin-top: 10px;
   position: relative;
+  z-index: ${({ theme }) => theme.Z_INDEX.topLayer};
 `
 
-const marqueeAnim = keyframes`
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
-`
-
-const MarqueeTitle = styled.div<{
-  $animate: boolean
+const Title = styled.span<{
+  $isOverflow?: boolean
+  $isHovered?: boolean
+  $isAutoRunning?: boolean
 }>`
-  display: flex;
-  width: max-content;
-
-  ${({ $animate }) =>
-    $animate &&
-    css`
-      animation: ${marqueeAnim} 20s linear infinite;
-    `}
-`
-
-const Title = styled.span`
   ${({ theme }) => theme.FONT.headline1};
   color: ${({ theme }) => theme.COLOR['gray-10']};
-  flex-shrink: 0;
-  margin-right: 8px;
+
+  ${marquee}
 `
 
 const Creator = styled.p`

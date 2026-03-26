@@ -72,6 +72,8 @@ export default PlaylistInfo
 
 const Wrapper = styled.div`
   ${flexColCenter}
+  height: 100dvh;
+  overflow: hidden;
 `
 
 const Content = styled.section`
@@ -79,11 +81,18 @@ const Content = styled.section`
   flex-direction: column;
   width: 100%;
   gap: 28px;
+
+  flex: 1;
+  overflow: hidden;
 `
 const TrackInfo = styled.ul`
   display: flex;
   flex-direction: column;
   gap: 20px;
+  padding-bottom: 100px;
+
+  flex: 1;
+  overflow-y: auto;
 
   & > li {
     cursor: pointer;

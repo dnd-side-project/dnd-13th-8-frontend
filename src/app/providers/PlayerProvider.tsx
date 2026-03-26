@@ -53,14 +53,17 @@ const PlaylistProvider = ({ children }: PlaylistProviderProps) => {
     if (time !== undefined) setCurrentTime(time)
 
     const isSamePlaylist = currentPlaylist?.playlistId === playlist.playlistId
-
     setIsPlaying((prev) => (isSamePlaylist ? prev : autoPlay))
 
     if (playerRef.current) {
-      if (time !== undefined) playerRef.current.seekTo(time, true)
+      try {
+        const state = playerRef.current.getPlayerState()
+        if (state === -1 || state === undefined) return
 
-      if (!isSamePlaylist && autoPlay) {
-        playerRef.current.playVideo()
+        if (time !== undefined) playerRef.current.seekTo(time, true)
+        if (!isSamePlaylist && autoPlay) playerRef.current.playVideo()
+      } catch {
+        // 플레이어 미준비 상태는 onReady에서 처리
       }
     }
   }

@@ -31,7 +31,7 @@ const Modal = ({
 }: ModalProps) => {
   return (
     <Overlay isOpen={isOpen} onClose={onClose}>
-      <ModalContainer>
+      <ModalContainer onClick={(e) => e.stopPropagation()}>
         <div>
           <ModalTitle>{title}</ModalTitle>
           {description && <ModalDescription>{description}</ModalDescription>}

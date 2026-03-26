@@ -9,14 +9,11 @@ const CustomizePage = lazy(() => import('@/pages/customize'))
 const SearchPage = lazy(() => import('@/pages/search'))
 const SearchResult = lazy(() => import('@/pages/search/SearchResultPage'))
 const DiscoverLayout = lazy(() => import('@/pages/discover/DiscoverLayout'))
-const MyCdLayout = lazy(() => import('@/pages/mycd/MyCdLayout'))
 const DiscoverCarousel = lazy(() => import('@/pages/discover'))
 const PlaylistInfoPage = lazy(() => import('@/pages/discover/tracklist'))
 const LoginLayout = lazy(() => import('@/pages/login/LoginLayout'))
 const LoginPage = lazy(() => import('@/pages/login'))
 const LoginCallbackPage = lazy(() => import('@/pages/login/callback'))
-const MyCdPage = lazy(() => import('@/pages/mycd'))
-const MyCdInfoPage = lazy(() => import('@/pages/mycd/tracklist'))
 const NotFoundPage = lazy(() => import('@/pages/notFound'))
 const ErrorPage = lazy(() => import('@/pages/error'))
 const FeedbackPage = lazy(() => import('@/pages/feedback'))
@@ -28,7 +25,6 @@ const Following = lazy(() => import('@/pages/feed/following'))
 const Cds = lazy(() => import('@/pages/feed/cds'))
 const Likes = lazy(() => import('@/pages/feed/likes'))
 const TracklistDetail = lazy(() => import('@/pages/feed/tracklist'))
-const CdPlayerLayout = lazy(() => import('@/pages/feed/ui/layout/CdPlayerLayout'))
 const ProfileEditLayout = lazy(() => import('@/pages/profileEdit/ProfileEditLayout'))
 const ProfileEdit = lazy(() => import('@/pages/profileEdit'))
 const SettingsLayout = lazy(() => import('@/pages/settings/SettingsLayout'))
@@ -40,7 +36,7 @@ const Admin = lazy(() => import('@/pages/admin'))
 const CurationLayout = lazy(() => import('@/pages/curation/CurationLayout'))
 const Curation = lazy(() => import('@/pages/curation'))
 const CurationPlayer = lazy(() => import('@/pages/curation/play'))
-const PlayerLayout = lazy(() => import('@/pages/curation/play/PlayerLayout'))
+const PlayerLayout = lazy(() => import('@/widgets/playlist/PlayerLayout'))
 
 export interface RouteConfig {
   path: string
@@ -65,7 +61,10 @@ export const routesConfig: RouteConfig[] = [
       {
         path: ':bundleId/play',
         component: PlayerLayout,
-        children: [{ path: ':id?', component: CurationPlayer }],
+        children: [
+          { path: ':id?', component: CurationPlayer },
+          { path: ':id/tracklist', component: PlaylistInfoPage },
+        ],
       },
     ],
     hideNav: true,
@@ -84,18 +83,6 @@ export const routesConfig: RouteConfig[] = [
       { path: '', component: RedirectToShuffle }, // /discover → 셔플 리다이렉트
       { path: ':id', component: DiscoverCarousel },
       { path: ':id/tracklist', component: PlaylistInfoPage },
-    ],
-  },
-
-  // 나의 CD
-  {
-    path: '/mycd',
-    component: MyCdLayout,
-    isPrivate: true,
-    isNotSuspense: true,
-    children: [
-      { path: ':id?', component: MyCdPage },
-      { path: ':id?/tracklist', component: MyCdInfoPage },
     ],
   },
 
@@ -152,7 +139,7 @@ export const routesConfig: RouteConfig[] = [
       },
       {
         path: 'cds',
-        component: CdPlayerLayout,
+        component: PlayerLayout,
         isNotSuspense: true,
         children: [
           { path: ':id?', component: Cds },
@@ -161,7 +148,7 @@ export const routesConfig: RouteConfig[] = [
       },
       {
         path: 'likes',
-        component: CdPlayerLayout,
+        component: PlayerLayout,
         isNotSuspense: true,
         children: [
           { path: ':id?', component: Likes },

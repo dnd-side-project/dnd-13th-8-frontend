@@ -18,6 +18,7 @@ export const useLikeStatus = (playlistId: number, options?: { enabled?: boolean 
 interface UseLikeOptions {
   shouldNavigate?: boolean
   getNextId?: () => number | undefined
+  openLoginModal?: () => void
 }
 
 const useLike = (playlistId: number, options?: UseLikeOptions) => {
@@ -89,7 +90,7 @@ const useLike = (playlistId: number, options?: UseLikeOptions) => {
 
   const toggleLike = () => {
     if (!isLogin) {
-      navigate('/login')
+      options?.openLoginModal?.()
       return
     }
 

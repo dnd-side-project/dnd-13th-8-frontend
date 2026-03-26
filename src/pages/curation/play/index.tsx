@@ -3,17 +3,18 @@ import { useNavigate, useOutletContext, useParams } from 'react-router-dom'
 
 import type { BundleInfo } from '@/entities/bundle'
 import { usePlaylistDetail, usePlaylistDetails } from '@/entities/playlist'
-import { CurationCarousel } from '@/pages/curation/ui'
+import { PlaylistCarousel } from '@/widgets/playlist'
 
 const CurationPlayer = () => {
   const bundle = useOutletContext<BundleInfo>()
+
   const navigate = useNavigate()
   const { id: routePlaylistId } = useParams()
 
   const ids = useMemo(() => bundle.playlists.map((p) => p.playlistId), [bundle])
   const { data: playlistData } = usePlaylistDetails(ids)
 
-  const routeId = routePlaylistId ? Number(routePlaylistId) : null
+  const routeId = Number(routePlaylistId)
 
   useEffect(() => {
     if (!playlistData || routeId) return
@@ -40,10 +41,11 @@ const CurationPlayer = () => {
   if (!playlistDetail || !playlistData) return null
 
   return (
-    <CurationCarousel
+    <PlaylistCarousel
       playlistData={playlistData}
       playlistDetail={playlistDetail}
       onCenterChange={handleCenterChange}
+      basePath={`/curation/${bundle.bundleId}/play`}
     />
   )
 }
