@@ -27,6 +27,8 @@ interface HomeCarouselProps {
   isLogin: boolean
 }
 
+const GENRES_WITHOUT_PUNCH_HOLE = ['WORKOUT', 'DRIVE']
+
 const HomeCarousel = ({ data, isLogin }: HomeCarouselProps) => {
   const [activeIndex, setActiveIndex] = useState(0)
   const [emblaApi, setEmblaApi] = useState<EmblaCarouselType | undefined>(undefined)
@@ -76,7 +78,10 @@ const HomeCarousel = ({ data, isLogin }: HomeCarouselProps) => {
                 bgColor="none"
                 stickers={slide.cdItems ?? slide.cdResponse?.cdItems ?? []}
               />
-              <SlideOverlay $active={activeIndex === index + 1}>
+              <SlideOverlay
+                $active={activeIndex === index + 1}
+                $hasPunchHole={!GENRES_WITHOUT_PUNCH_HOLE.includes(slide?.genre ?? '')}
+              >
                 <Badge size="large" text={getGenreLabel(slide.genre ?? '')} />
                 <Title>{slide.playlistName}</Title>
               </SlideOverlay>
@@ -155,7 +160,7 @@ const Title = styled.p`
   word-break: break-word;
 `
 
-const SlideOverlay = styled.div<{ $active: boolean }>`
+const SlideOverlay = styled.div<{ $active: boolean; $hasPunchHole: boolean }>`
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -165,12 +170,42 @@ const SlideOverlay = styled.div<{ $active: boolean }>`
   padding: 6px 16px 12px 16px;
 
   background: rgba(124, 124, 124, 0.1);
-  border: 0.5px solid rgba(255, 255, 255, 0.2);
+  border-top: 0.5px solid rgba(255, 255, 255, 0.2);
   box-shadow:
     0px 4px 4px rgba(0, 0, 0, 0.25),
     0px 0px 12px rgba(0, 0, 0, 0.04);
   backdrop-filter: blur(8px);
   transition: all 0.5s ease;
+
+  ${({ $hasPunchHole }) =>
+    $hasPunchHole &&
+    css`
+      -webkit-mask-image: radial-gradient(
+        ellipse 25.5px 17px at 50.2% 0,
+        transparent 99%,
+        #000 100%
+      );
+      -webkit-mask-repeat: no-repeat;
+      -webkit-mask-size: 100% 100%;
+
+      mask-image: radial-gradient(ellipse 25.5px 17px at 50.2% 0, transparent 99%, #000 100%);
+      mask-repeat: no-repeat;
+      mask-size: 100% 100%;
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: -0.5px;
+        left: 50.2%;
+        transform: translateX(-50%);
+        width: 50.5px;
+        height: 17px;
+        border: 0.5px solid rgba(255, 255, 255, 0.2);
+        border-top: 0;
+        border-radius: 0 0 25.5px 25.5px / 0 0 17px 17px;
+        pointer-events: none;
+      }
+    `}
 
   ${({ $active }) =>
     $active &&
