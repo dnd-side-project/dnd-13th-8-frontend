@@ -1,13 +1,12 @@
 import { useState, useEffect } from 'react'
-import { Outlet, useLocation } from 'react-router-dom'
+import { Outlet } from 'react-router-dom'
 
 import styled from 'styled-components'
 
 import PlaylistProvider, { usePlaylist } from '@/app/providers/PlayerProvider'
 import { DiscoverCoachMark } from '@/pages/discover/ui'
 import { getVideoId } from '@/shared/lib'
-import { useDevice } from '@/shared/lib/useDevice'
-import { YoutubePlayer, VolumeButton } from '@/widgets/playlist'
+import { YoutubePlayer } from '@/widgets/playlist'
 
 const DiscoverLayout = () => {
   return (
@@ -27,11 +26,6 @@ const Content = () => {
     handlePlayerStateChange,
     handlePlayerError,
   } = usePlaylist()
-
-  const { isMobile } = useDevice()
-
-  const location = useLocation()
-  const isTracklistPage = location.pathname.includes('tracklist')
 
   const videoId = currentPlaylist
     ? getVideoId(currentPlaylist.songs[currentTrackIndex]?.youtubeUrl)
@@ -53,7 +47,7 @@ const Content = () => {
   return (
     <Page>
       {showCoachmark && <DiscoverCoachMark onClose={handleCloseCoachmark} />}
-      <Outlet />
+      <Outlet context={{ isMuted, setIsMuted }} />
 
       {videoId && (
         <YoutubePlayer
@@ -62,21 +56,11 @@ const Content = () => {
             playerRef.current = event.target
             playerRef.current?.seekTo(currentTime, true)
             if (!isPlaying) playerRef.current?.pauseVideo()
-
-            if (isMobile) {
-              setIsMuted(event.target.isMuted())
-            }
           }}
           onStateChange={handlePlayerStateChange}
           setIsMuted={setIsMuted}
           onError={handlePlayerError}
         />
-      )}
-
-      {isMobile && isMuted && !isTracklistPage && (
-        <ButtonWrapper>
-          <VolumeButton playerRef={playerRef} isMuted={isMuted} setIsMuted={setIsMuted} />
-        </ButtonWrapper>
       )}
     </Page>
   )
@@ -88,10 +72,4 @@ const Page = styled.div`
   position: relative;
   width: 100%;
   height: 100%;
-`
-
-const ButtonWrapper = styled.div`
-  position: absolute;
-  top: 62px;
-  z-index: 999; // TODO: 레이어 정리 후 theme z-index 리팩토링 필요
 `

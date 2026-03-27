@@ -1,5 +1,5 @@
 import { useEffect, useCallback, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useOutletContext } from 'react-router-dom'
 
 import styled from 'styled-components'
 
@@ -10,13 +10,19 @@ import { SwipeCarousel } from '@/features/swipe'
 import { useDevice, useMarquee } from '@/shared/lib'
 import { cdSpinner, flexRowCenter, marquee } from '@/shared/styles/mixins'
 import { LiveInfo, Cd } from '@/shared/ui'
-import { ActionBar, ControlBar, ProgressBar } from '@/widgets/playlist'
+import { ActionBar, ControlBar, ProgressBar, VolumeButton } from '@/widgets/playlist'
 
 interface PlaylistCarouselProps {
   playlistData: CdMetaResponse
   playlistDetail: PlaylistDetail
   basePath: string
   onCenterChange: (playlist: { playlistId: number }) => void
+}
+
+interface OutletContextType {
+  isMuted: boolean | null
+  setIsMuted: (value: boolean) => void
+  playerRef: React.RefObject<YT.Player | null>
 }
 
 const PlaylistCarousel = ({
@@ -27,6 +33,7 @@ const PlaylistCarousel = ({
 }: PlaylistCarouselProps) => {
   const { id: playlistId } = useParams()
   const { isMobile } = useDevice()
+  const { isMuted, setIsMuted, playerRef } = useOutletContext<OutletContextType>()
   const isSmall = isMobile && window.innerHeight < 633
   const [activeIndex, setActiveIndex] = useState(0)
 
@@ -63,7 +70,7 @@ const PlaylistCarousel = ({
   useEffect(() => {
     if (!playlistDetail) return
     if (currentPlaylist?.playlistId === playlistDetail.playlistId) return
-    setPlaylist(playlistDetail, 0, 0, !isMobile)
+    setPlaylist(playlistDetail, 0, 0)
   }, [playlistDetail, currentPlaylist, isMobile, setPlaylist])
 
   const handleSelectIndex = useCallback(
@@ -175,6 +182,12 @@ const PlaylistCarousel = ({
             onPrev={prevTrack}
           />
         </BottomWrapper>
+
+        {isMuted && setIsMuted && (
+          <VolumeButtonWrapper>
+            <VolumeButton playerRef={playerRef} isMuted={isMuted} setIsMuted={setIsMuted} />
+          </VolumeButtonWrapper>
+        )}
       </CenterWrapper>
     </ChatProvider>
   )
@@ -260,4 +273,10 @@ const PrivateLabel = styled.span`
   color: ${({ theme }) => theme.COLOR['gray-300']};
   background-color: ${({ theme }) => theme.COLOR['gray-700']};
   border-radius: 99px;
+`
+
+const VolumeButtonWrapper = styled.div`
+  position: absolute;
+  top: 62px;
+  z-index: ${({ theme }) => theme.Z_INDEX.topLayer};
 `

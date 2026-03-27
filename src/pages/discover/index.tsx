@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useOutletContext } from 'react-router-dom'
 
 import styled from 'styled-components'
 
@@ -16,6 +16,12 @@ import { SwipeCarousel } from '@/features/swipe'
 import { Loading } from '@/shared/ui'
 import { PlaylistLayout } from '@/widgets/playlist'
 
+interface OutletContextType {
+  isMobile: boolean
+  isMuted: boolean | null
+  setIsMuted: (value: boolean) => void
+}
+
 const DiscoverPage = () => {
   const {
     currentPlaylist,
@@ -29,6 +35,8 @@ const DiscoverPage = () => {
     nextTrack,
     prevTrack,
   } = usePlaylist()
+
+  const { isMuted, setIsMuted } = useOutletContext<OutletContextType>()
 
   const { mutate: startPlaylist } = usePlaylistStartMutation()
   const { mutate: confirmPlaylist } = usePlaylistConfirmMutation()
@@ -128,6 +136,8 @@ const DiscoverPage = () => {
                     if (currentPlaylist) setPlaylist(currentPlaylist, trackIndex, time)
                   }}
                   playerRef={playerRef}
+                  isMuted={isMuted}
+                  setIsMuted={setIsMuted}
                 />
               </Slide>
             )
