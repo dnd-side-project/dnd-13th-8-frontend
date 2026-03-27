@@ -31,9 +31,7 @@ const App = () => {
 
   const [isNavVisible, setIsNavVisible] = useState(true)
 
-  const isMobileView =
-    isMobile && (location.pathname.startsWith('/mycd') || location.pathname.startsWith('/discover'))
-  const LAYOUT_BOTTOM_GAP = isMobileView ? 16 : 34
+  const LAYOUT_BOTTOM_GAP = isMobile ? 16 : 34
 
   // 비회원일 경우 API 호출을 위한 익명 토큰 발급
   const checkAnonymousLogin = () => {
