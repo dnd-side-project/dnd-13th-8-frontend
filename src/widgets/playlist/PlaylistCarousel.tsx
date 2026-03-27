@@ -148,7 +148,7 @@ const PlaylistCarousel = ({
           type="MY"
         />
 
-        <TitleWrapper>
+        <TitleWrapper $isMobile={isMobile} $hasPrivate={!playlistDetail?.isPublic}>
           {!playlistDetail?.isPublic && <PrivateLabel>비공개</PrivateLabel>}
 
           <Title
@@ -205,14 +205,14 @@ const Container = styled.div`
 const EmblaSlide = styled.div<{ $isMobile?: boolean }>`
   flex: 0 0 50%;
   ${flexRowCenter}
-  padding: ${({ $isMobile }) => ($isMobile ? '6px 0 0 0' : '16px 0')};
+  padding: ${({ $isMobile }) => ($isMobile ? '0 0 16px 0' : '16px 0 48px 0')};
 `
 
 const Slide = styled.div<{ $active?: boolean; $isMobile?: boolean }>`
   position: relative;
   ${flexRowCenter}
   transition: transform 0.8s ease;
-  margin: ${({ $isMobile }) => ($isMobile ? '0 24px 16px 24px' : '32px 24px 24px 24px')};
+  margin: ${({ $isMobile }) => ($isMobile ? '0 12px' : '0 24px')};
   opacity: ${({ $active }) => ($active ? 1 : 0.5)};
 `
 
@@ -221,8 +221,12 @@ const CdSpinner = styled.div<{ $isPlaying: boolean }>`
   ${cdSpinner}
 `
 
-const TitleWrapper = styled.div`
-  padding-top: 60px;
+const TitleWrapper = styled.div<{
+  $isMobile?: boolean
+  $hasPrivate?: boolean
+}>`
+  padding-top: ${({ $isMobile, $hasPrivate }) =>
+    $isMobile ? ($hasPrivate ? '16px' : '28px') : '60px'};
   display: flex;
   flex-direction: column;
   width: 100%;
