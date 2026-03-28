@@ -129,7 +129,7 @@ const Slide = styled.div<{ $active: boolean }>`
   ${({ $active }) =>
     $active &&
     css`
-      border: 0.8px solid transparent;
+      border: 0.5px solid transparent;
       border-radius: 24px;
       transform: scale(1);
       background:
@@ -139,7 +139,8 @@ const Slide = styled.div<{ $active: boolean }>`
             ${({ theme }) => theme.COLOR['gray-800']}
           )
           padding-box,
-        linear-gradient(to bottom right, rgba(230, 255, 248, 0.5), rgb(24, 25, 32, 0.8)) border-box;
+        linear-gradient(to top left, rgba(93, 100, 118, 0.1) 10%, rgba(93, 100, 118, 1) 100%)
+          border-box;
     `}
 `
 

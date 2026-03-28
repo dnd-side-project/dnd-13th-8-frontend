@@ -61,8 +61,8 @@ const Wrapper = styled.div`
   border: 0.5px solid transparent;
   border-radius: 14px;
   background:
-    linear-gradient(144.41deg, #2a2f39, #191b22) padding-box,
-    linear-gradient(135deg, rgba(74, 77, 97, 0.6), #202128) border-box;
+    linear-gradient(144.41deg, #2a2f39 0%, #191b22 100%) padding-box,
+    linear-gradient(to top left, rgba(55, 57, 71, 0) 0%, rgba(71, 73, 91, 1) 100%) border-box;
 `
 
 const InfoText = styled.div`
