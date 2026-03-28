@@ -19,6 +19,8 @@ const AddTrackToBundle = () => {
 
   const filteredBundleList = allBundleList?.filter((bundle) => bundle.timeSlot === currentTab)
 
+  console.log(filteredBundleList)
+
   const onClickTitle = (bundleId: number) => {
     setCurrentBundleId(bundleId)
     const bundle = allBundleList?.find((bundle) => bundle.bundleId === bundleId)
@@ -95,7 +97,7 @@ const AddTrackToBundle = () => {
                   $isActive={currentBundleId === bundle.bundleId}
                   onClick={() => onClickTitle(bundle.bundleId)}
                 >
-                  {`${bundle.bundleId}`.padStart(2, '0')} | {bundle.title}
+                  {`${bundle.bundleId}`.padStart(2, '0')} | {bundle.title.replaceAll('\n', '\\n')}
                 </Title>
                 <SvgButton
                   width={18}

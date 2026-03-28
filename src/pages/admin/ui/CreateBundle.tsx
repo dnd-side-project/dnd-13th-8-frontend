@@ -6,7 +6,6 @@ import { useToast } from '@/app/providers'
 import { TIME_SLOTS, useBundle } from '@/entities/bundle'
 import { flexColCenter, flexRowCenter } from '@/shared/styles/mixins'
 import type { TimeSlot } from '@/shared/types/common'
-import { Input } from '@/shared/ui'
 
 const CreateBundle = () => {
   const { toast } = useToast()
@@ -51,14 +50,17 @@ const CreateBundle = () => {
         ))}
       </TimeList>
       <TitleCtaBox>
-        <Input
-          type="text"
-          placeholder="모음집 제목을 입력해주세요"
+        <Textarea
+          rows={2}
+          cols={42}
           value={title}
+          placeholder="모음집 제목을 입력해주세요"
           onChange={(e) => setTitle(e.target.value)}
         />
         <SubmitButton disabled={!(timeSlot && title.trim().length)} onClick={onCreateBundleClick}>
-          타이틀 저장
+          제목
+          <br />
+          저장하기
         </SubmitButton>
       </TitleCtaBox>
     </>
@@ -115,4 +117,23 @@ const TitleCtaBox = styled.div`
   ${flexRowCenter}
   gap: 12px;
   width: 100%;
+`
+
+const Textarea = styled.textarea`
+  padding: 10px;
+  width: 100%;
+  border: 1px solid ${({ theme }) => theme.COLOR['gray-700']};
+  border-radius: 10px;
+  color: ${({ theme }) => theme.COLOR['gray-10']};
+  background-color: ${({ theme }) => theme.COLOR['gray-700']};
+  caret-color: ${({ theme }) => theme.COLOR['primary-normal']};
+  ${({ theme }) => theme.FONT['body2-normal']};
+
+  &::placeholder {
+    color: ${({ theme }) => theme.COLOR['gray-300']};
+  }
+
+  &:focus-within {
+    border: 1px solid ${({ theme }) => theme.COLOR['primary-normal']};
+  }
 `
