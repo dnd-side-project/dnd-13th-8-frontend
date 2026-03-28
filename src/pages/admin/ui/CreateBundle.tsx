@@ -133,7 +133,7 @@ const Textarea = styled.textarea`
     color: ${({ theme }) => theme.COLOR['gray-300']};
   }
 
-  &:focus-within {
+  &:focus {
     border: 1px solid ${({ theme }) => theme.COLOR['primary-normal']};
   }
 `

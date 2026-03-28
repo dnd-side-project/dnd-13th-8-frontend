@@ -19,8 +19,6 @@ const AddTrackToBundle = () => {
 
   const filteredBundleList = allBundleList?.filter((bundle) => bundle.timeSlot === currentTab)
 
-  console.log(filteredBundleList)
-
   const onClickTitle = (bundleId: number) => {
     setCurrentBundleId(bundleId)
     const bundle = allBundleList?.find((bundle) => bundle.bundleId === bundleId)
