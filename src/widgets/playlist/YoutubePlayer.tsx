@@ -21,7 +21,8 @@ const YoutubePlayer = ({
   const containerRef = useRef<HTMLDivElement | null>(null)
   const { isMobile } = useDevice()
   const [apiReady, setApiReady] = useState<boolean>(!!window.YT?.Player)
-  const prevVideoId = useRef<string | null>(null)
+  const playerCreatedRef = useRef<boolean>(false) // 플레이어 중복 생성 방지
+  const playerReadyRef = useRef<boolean>(false) // 플레이어 초기화 완료 여부
 
   // YouTube IFrame API 로드
   useEffect(() => {
@@ -37,28 +38,15 @@ const YoutubePlayer = ({
     window.onYouTubeIframeAPIReady = () => setApiReady(true)
   }, [])
 
-  // 플레이어 생성
+  // 플레이어 생성 (한 번만)
   useEffect(() => {
-    if (!apiReady || !containerRef.current || !videoId) return
-
-    if (prevVideoId.current === videoId) return
-
-    // 기존 플레이어 정리 (중복 생성 방지)
-    if (playerRef.current) {
-      try {
-        playerRef.current.destroy()
-      } catch (err) {
-        console.warn(err)
-      }
-      playerRef.current = null
-      containerRef.current.innerHTML = ''
-    }
+    if (!apiReady || !containerRef.current || playerCreatedRef.current) return
 
     const playerContainer = document.createElement('div')
     containerRef.current.appendChild(playerContainer)
 
     playerRef.current = new window.YT.Player(playerContainer, {
-      videoId,
+      videoId: videoId || '',
       playerVars: {
         autoplay: 1,
         mute: isMobile ? 1 : 0,
@@ -66,6 +54,8 @@ const YoutubePlayer = ({
       },
       events: {
         onReady: (e: { target: YT.Player }) => {
+          playerReadyRef.current = true // 플레이어 준비 완료
+          // 모바일에서만 현재 muted 상태를 state에 저장
           if (isMobile && setIsMuted) setIsMuted(e.target.isMuted())
           onReady(e)
         },
@@ -74,23 +64,26 @@ const YoutubePlayer = ({
       },
     })
 
-    prevVideoId.current = videoId
-  }, [apiReady, videoId, isMobile, onReady, onStateChange, setIsMuted])
+    playerCreatedRef.current = true
+  }, [apiReady, isMobile, onReady, onStateChange, onError, setIsMuted])
+
+  // 비디오 ID 변경 시
+  useEffect(() => {
+    if (!playerRef.current || !videoId || !playerReadyRef.current) return
+
+    playerRef.current.unMute()
+    playerRef.current.loadVideoById(videoId)
+  }, [videoId])
 
   // 언마운트 시 정리
   useEffect(() => {
     return () => {
       if (playerRef.current) {
         try {
-          playerRef.current.destroy()
+          playerRef.current.stopVideo()
         } catch (err) {
           console.warn(err)
         }
-        playerRef.current = null
-      }
-
-      if (containerRef.current) {
-        containerRef.current.innerHTML = ''
       }
     }
   }, [])

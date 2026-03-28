@@ -46,7 +46,6 @@ const PlaylistCarousel = ({
     prevTrack,
     play,
     pause,
-    unmuteOnce,
   } = usePlaylist()
 
   const {
@@ -96,10 +95,6 @@ const PlaylistCarousel = ({
   )
 
   const handleTogglePlay = () => {
-    if (isMobile && !isPlaying) {
-      unmuteOnce()
-    }
-
     if (isPlaying) {
       pause()
     } else {
@@ -242,9 +237,6 @@ const Title = styled.p<{
   ${({ theme }) => theme.FONT.headline1};
 
   ${marquee}
-  @media (min-height: 899px) {
-    padding-top: 56px;
-  }
 `
 
 const Creator = styled.p`
