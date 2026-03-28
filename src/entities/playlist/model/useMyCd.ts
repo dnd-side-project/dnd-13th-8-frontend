@@ -56,7 +56,7 @@ export const useMyCdActions = (cdId: number, options?: { enabled?: boolean }) =>
       queryClient.invalidateQueries({ queryKey: ['playlistDetail', cdId] })
       queryClient.invalidateQueries({ queryKey: ['getTracklist', cdId] })
       queryClient.invalidateQueries({ queryKey: ['myCdList'] })
-      queryClient.invalidateQueries({ queryKey: ['feedCdList'] })
+      queryClient.invalidateQueries({ queryKey: ['feedCdInfiniteList'] })
     },
   })
 
