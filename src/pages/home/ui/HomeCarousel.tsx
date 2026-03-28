@@ -168,7 +168,7 @@ const SlideOverlay = styled.div<{ $active: boolean; $hasPunchHole: boolean }>`
   bottom: 0;
   width: 100%;
   padding: 6px 16px 12px 16px;
-
+  border-radius: 0 0 20px 20px;
   background: rgba(124, 124, 124, 0.1);
   border-top: 0.5px solid rgba(255, 255, 255, 0.2);
   box-shadow:
@@ -180,29 +180,24 @@ const SlideOverlay = styled.div<{ $active: boolean; $hasPunchHole: boolean }>`
   ${({ $hasPunchHole }) =>
     $hasPunchHole &&
     css`
-      -webkit-mask-image: radial-gradient(
-        ellipse 25.5px 17px at 50.2% 0,
-        transparent 99%,
-        #000 100%
-      );
+      -webkit-mask-image: radial-gradient(circle 31px at 50% -20px, transparent 99%, #000 100%);
       -webkit-mask-repeat: no-repeat;
       -webkit-mask-size: 100% 100%;
 
-      mask-image: radial-gradient(ellipse 25.5px 17px at 50.2% 0, transparent 99%, #000 100%);
+      mask-image: radial-gradient(circle 31px at 50% -20px, transparent 99%, #000 100%);
       mask-repeat: no-repeat;
       mask-size: 100% 100%;
 
       &::before {
         content: '';
         position: absolute;
-        top: -0.5px;
-        left: 50.2%;
-        transform: translateX(-50%);
-        width: 50.5px;
-        height: 17px;
-        border: 0.5px solid rgba(255, 255, 255, 0.2);
-        border-top: 0;
-        border-radius: 0 0 25.5px 25.5px / 0 0 17px 17px;
+        left: 50%;
+        top: -20px;
+        transform: translate(-50%, -50%);
+        width: 62px;
+        height: 62px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.15);
         pointer-events: none;
       }
     `}
