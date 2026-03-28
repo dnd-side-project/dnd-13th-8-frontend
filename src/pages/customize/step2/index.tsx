@@ -171,7 +171,7 @@ const CustomizeStep2 = ({
       {
         onSuccess: (response) => {
           setCurrentCdId?.(response?.playlistId ?? null)
-          queryClient.invalidateQueries({ queryKey: ['feedCdList'] })
+          queryClient.invalidateQueries({ queryKey: ['feedCdInfiniteList'] })
           setCurrentStep(3)
           removeTempData()
         },

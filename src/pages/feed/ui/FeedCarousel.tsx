@@ -130,6 +130,7 @@ const FeedCarousel = ({ type, pageType }: FeedCarouselProps) => {
               const nextId = getNextId(currentIdx, playlistData)
               navigate(nextId ? `../${nextId}` : '../../', { replace: true })
               queryClient.invalidateQueries({ queryKey: ['feedCdList'] })
+              queryClient.invalidateQueries({ queryKey: ['feedCdInfiniteList'] })
             },
           })
         },
