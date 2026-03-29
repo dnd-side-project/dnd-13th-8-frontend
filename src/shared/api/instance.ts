@@ -2,7 +2,7 @@ import axios, { AxiosError } from 'axios'
 import type { AxiosResponse, InternalAxiosRequestConfig } from 'axios'
 
 import { useAuthStore } from '@/features/auth'
-import { useGlobalModalStore } from '@/shared/store/globalModalStore'
+// import { useGlobalModalStore } from '@/shared/store/globalModalStore'
 
 export const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -25,9 +25,6 @@ axiosInstance.interceptors.request.use(
   },
   (error) => Promise.reject(error)
 )
-
-// 에러 모달 호출
-const store = useGlobalModalStore
 
 // 응답 interceptor
 axiosInstance.interceptors.response.use(
@@ -77,16 +74,17 @@ axiosInstance.interceptors.response.use(
     }
 
     // QA용 에러 로그 모달
-    const msg = error.response?.data?.message ?? ''
-    if (import.meta.env.VITE_ENVIRONMENT_TYPE !== 'PROD') {
-      store.setState({
-        isOpen: true,
-        title: `[${status}] ${code}`,
-        description: msg,
-        ctaType: 'single',
-        confirmText: '확인',
-      })
-    }
+    // const store = useGlobalModalStore
+    // const msg = error.response?.data?.message ?? ''
+    // if (import.meta.env.VITE_ENVIRONMENT_TYPE !== 'PROD') {
+    //   store.setState({
+    //     isOpen: true,
+    //     title: `[${status}] ${code}`,
+    //     description: msg,
+    //     ctaType: 'single',
+    //     confirmText: '확인',
+    //   })
+    // }
 
     console.error('Axios Error: ', error.response ?? error)
     return Promise.reject(error)

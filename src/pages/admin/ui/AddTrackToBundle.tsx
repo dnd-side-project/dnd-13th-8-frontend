@@ -95,7 +95,7 @@ const AddTrackToBundle = () => {
                   $isActive={currentBundleId === bundle.bundleId}
                   onClick={() => onClickTitle(bundle.bundleId)}
                 >
-                  {`${bundle.bundleId}`.padStart(2, '0')} | {bundle.title}
+                  {`${bundle.bundleId}`.padStart(2, '0')} | {bundle.title.replaceAll('\n', '\\n')}
                 </Title>
                 <SvgButton
                   width={18}

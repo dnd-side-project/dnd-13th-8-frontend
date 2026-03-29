@@ -114,7 +114,7 @@ const FeedProfile = ({ userProfile, shareCode, isMyFeed, setModal }: FeedProfile
           </CtaButton>
         )}
         <ShareButton type="button" onClick={onShareButtonClick}>
-          <Share />
+          <Share width={20} height={20} />
         </ShareButton>
       </CtaContainer>
     </>

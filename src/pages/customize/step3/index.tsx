@@ -22,7 +22,6 @@ const CustomizeStep3 = ({ currentCdId }: { currentCdId: number | null }) => {
   const moveToTracklist = async () => {
     await queryClient.refetchQueries({ queryKey: ['playlistDetail', currentCdId] })
     await queryClient.refetchQueries({ queryKey: ['myCdList', 'RECENT'] })
-    await queryClient.refetchQueries({ queryKey: ['feedCdList'] })
     navigate(`/${userInfo.shareCode}/cds/${currentCdId}`)
   }
 

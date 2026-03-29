@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef, useEffect } from 'react'
+import { useState, useMemo, useRef, useEffect, useLayoutEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 
 import { useQueryClient, type DefaultError } from '@tanstack/react-query'
@@ -42,6 +42,7 @@ const CustomizeStep2 = ({
   const location = useLocation()
   const queryClient = useQueryClient()
 
+  const stickersRef = useRef<StickerInfoType[]>([])
   const fileInputRef = useRef<HTMLInputElement>(null)
   const cdContainerRef = useRef<HTMLCanvasElement>(null)
   const imageCache = useRef<{ [key: string]: HTMLImageElement | null }>({})
@@ -171,7 +172,7 @@ const CustomizeStep2 = ({
       {
         onSuccess: (response) => {
           setCurrentCdId?.(response?.playlistId ?? null)
-          queryClient.invalidateQueries({ queryKey: ['feedCdList'] })
+          queryClient.invalidateQueries({ queryKey: ['feedCdInfiniteList'] })
           setCurrentStep(3)
           removeTempData()
         },
@@ -329,7 +330,7 @@ const CustomizeStep2 = ({
       const img = new Image()
       img.onload = () => {
         imageCache.current[src] = img
-        drawStickers()
+        drawStickers(stickersRef.current)
       }
       img.src = src
     }
@@ -496,7 +497,7 @@ const CustomizeStep2 = ({
 
     // resize 모드일 때는 Canvas를 즉시 업데이트
     if (resizeMode === 'resize') {
-      drawStickers()
+      drawStickers(updatedStickers)
     }
   }
 
@@ -595,12 +596,14 @@ const CustomizeStep2 = ({
   // ===============================
 
   // Canvas에 스티커 그리기
-  const drawStickers = (logicalSize = 280) => {
+  const drawStickers = (targetStickers?: StickerInfoType[], logicalSize = 280) => {
     const canvas = cdContainerRef.current
     if (!canvas) return
 
     const ctx = canvas.getContext('2d')
     if (!ctx) return
+
+    const stickersToDraw = targetStickers ?? stickersRef.current
 
     // Canvas 초기화
     ctx.clearRect(0, 0, logicalSize, logicalSize)
@@ -681,7 +684,7 @@ const CustomizeStep2 = ({
     ctx.clip()
 
     // 스티커들 그리기
-    stickers.forEach((sticker, index) => {
+    stickersToDraw.forEach((sticker, index) => {
       const cachedImg = imageCache.current[sticker.src]
 
       if (cachedImg && cachedImg.complete && cachedImg.naturalWidth > 0) {
@@ -817,82 +820,14 @@ const CustomizeStep2 = ({
     canvas.height = logicalSize * dpr
 
     // 좌표계 스케일링
+    ctx.setTransform(1, 0, 0, 1, 0, 0)
     ctx.scale(dpr, dpr)
 
     // 초기 그리기
-    drawStickers(logicalSize)
+    drawStickers(undefined, logicalSize)
 
     // 모바일 Safari 등에서 터치 스크롤 간섭 방지
     const stopDefault = (ev: TouchEvent) => ev.preventDefault()
-
-    // 수정 모드일 경우 스티커 데이터 화면에 렌더링
-    if (isEditMode && prevTracklist?.cdResponse?.cdItems.length) {
-      const prevStickers: StickerInfoType[] = prevTracklist.cdResponse.cdItems.map(
-        (prevSticker, index) => {
-          const scaleFactor = 280 / 285
-
-          // imageUrl이 DEFAULT면 테마에서 이미지 찾아오기
-          let src = prevSticker?.imageUrl ?? ''
-          if (src === 'DEFAULT') {
-            // 타입 오류 방지: item.theme을 StickerThemeType으로 명확히 변환
-            const theme = prevSticker.theme as StickerThemeType
-            const images = getCurrentThemeImages(theme) as Record<string, { default: string }>
-            const sortedKeys = Object.keys(images).sort((a, b) => {
-              const numA = parseInt(a.match(/(\d+)\.png$/)?.[1] ?? '0', 10)
-              const numB = parseInt(b.match(/(\d+)\.png$/)?.[1] ?? '0', 10)
-              return numA - numB
-            })
-
-            // propId에서 theme offset 빼고 index 계산
-            const themeOffset = getThemeOffset(theme)
-            const idx = prevSticker.propId - themeOffset - 1
-            src = images[sortedKeys[idx]]?.default ?? ''
-          }
-
-          return {
-            id: uuidv4(),
-            propId: prevSticker?.propId,
-            type: prevSticker?.theme as StickerThemeType,
-            src,
-            x: prevSticker.xCoordinate * scaleFactor,
-            y: prevSticker.yCoordinate * scaleFactor,
-            z: index + 1,
-            width: prevSticker.width * scaleFactor,
-            height: prevSticker.height * scaleFactor,
-            scale: prevSticker.scale,
-            rotation: prevSticker.angle,
-          }
-        }
-      )
-
-      // stickers 세팅 전에 이미지 미리 로드
-      let loadedCount = 0
-      prevStickers.forEach((sticker) => {
-        if (imageCache.current[sticker.src]) {
-          loadedCount++
-          if (loadedCount === prevStickers.length) {
-            setStickers(prevStickers)
-          }
-          return
-        }
-
-        const img = new Image()
-        img.onload = () => {
-          imageCache.current[sticker.src] = img
-          loadedCount++
-          if (loadedCount === prevStickers.length) {
-            setStickers(prevStickers)
-          }
-        }
-        img.onerror = () => {
-          loadedCount++
-          if (loadedCount === prevStickers.length) {
-            setStickers(prevStickers)
-          }
-        }
-        img.src = sticker.src
-      })
-    }
 
     return () => {
       canvas.removeEventListener('touchstart', stopDefault)
@@ -911,7 +846,7 @@ const CustomizeStep2 = ({
           imageCache.current[src] = img
           // 이미지 로딩 완료 후 Canvas 다시 그리기
           if (cdContainerRef.current) {
-            drawStickers()
+            drawStickers(stickersRef.current)
           }
         }
         img.src = src
@@ -928,7 +863,7 @@ const CustomizeStep2 = ({
           imageCache.current[src] = img
           // 이미지 로딩 완료 후 Canvas 다시 그리기
           if (cdContainerRef.current) {
-            drawStickers()
+            drawStickers(stickersRef.current)
           }
         }
         img.onerror = () => {
@@ -940,6 +875,79 @@ const CustomizeStep2 = ({
       }
     })
   }, [currentThemeId, stickerUrls])
+
+  // 수정 모드일 경우 스티커 데이터 화면에 렌더링
+  useEffect(() => {
+    if (!isEditMode) return
+    if (!prevTracklist?.cdResponse?.cdItems?.length) return
+
+    const prevStickers: StickerInfoType[] = prevTracklist.cdResponse.cdItems.map(
+      (prevSticker, index) => {
+        const scaleFactor = 280 / 285
+
+        // imageUrl이 DEFAULT면 테마에서 이미지 찾아오기
+        let src = prevSticker?.imageUrl ?? ''
+        if (src === 'DEFAULT') {
+          // 타입 오류 방지: item.theme을 StickerThemeType으로 명확히 변환
+          const theme = prevSticker.theme as StickerThemeType
+          const images = getCurrentThemeImages(theme) as Record<string, { default: string }>
+          const sortedKeys = Object.keys(images).sort((a, b) => {
+            const numA = parseInt(a.match(/(\d+)\.png$/)?.[1] ?? '0', 10)
+            const numB = parseInt(b.match(/(\d+)\.png$/)?.[1] ?? '0', 10)
+            return numA - numB
+          })
+
+          // propId에서 theme offset 빼고 index 계산
+          const themeOffset = getThemeOffset(theme)
+          const idx = prevSticker.propId - themeOffset - 1
+          src = images[sortedKeys[idx]]?.default ?? ''
+        }
+
+        return {
+          id: uuidv4(),
+          propId: prevSticker?.propId,
+          type: prevSticker?.theme as StickerThemeType,
+          src,
+          x: prevSticker.xCoordinate * scaleFactor,
+          y: prevSticker.yCoordinate * scaleFactor,
+          z: index + 1,
+          width: prevSticker.width * scaleFactor,
+          height: prevSticker.height * scaleFactor,
+          scale: prevSticker.scale,
+          rotation: prevSticker.angle,
+        }
+      }
+    )
+
+    // stickers 세팅 전에 이미지 미리 로드
+    let loadedCount = 0
+
+    prevStickers.forEach((sticker) => {
+      if (imageCache.current[sticker.src]) {
+        loadedCount++
+        if (loadedCount === prevStickers.length) {
+          setStickers(prevStickers)
+        }
+        return
+      }
+
+      const img = new Image()
+      img.onload = () => {
+        imageCache.current[sticker.src] = img
+        loadedCount++
+        if (loadedCount === prevStickers.length) {
+          setStickers(prevStickers)
+        }
+      }
+      img.onerror = () => {
+        loadedCount++
+        if (loadedCount === prevStickers.length) {
+          setStickers(prevStickers)
+        }
+      }
+      img.src = sticker.src
+    })
+  }, [isEditMode, prevTracklist])
 
   // 비회원이 로그인 후 돌아왔을 때 이전 데이터 복구 및 저장 실행
   useEffect(() => {
@@ -985,9 +993,15 @@ const CustomizeStep2 = ({
     }
   }, [isLogin])
 
-  // stickers가 변경될 때마다 다시 그리기
-  useEffect(() => {
-    drawStickers()
+  // 스티커 데이터 항상 최신화, 변경될 때마다 다시 그리기
+  useLayoutEffect(() => {
+    stickersRef.current = stickers
+
+    const frame = requestAnimationFrame(() => {
+      drawStickers(stickers)
+    })
+
+    return () => cancelAnimationFrame(frame)
   }, [stickers, selectedSticker])
 
   return (

@@ -141,7 +141,7 @@ export const useFeedCdList = ({
   params: Omit<CdListParams, 'cursor'>
 }) => {
   return useInfiniteQuery({
-    queryKey: ['feedCdList', shareCode, feedView, params.sort],
+    queryKey: ['feedCdInfiniteList', shareCode, feedView, params.sort],
     queryFn: ({ pageParam }) => {
       const fetchParams = {
         ...params,

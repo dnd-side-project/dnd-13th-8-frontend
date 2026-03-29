@@ -47,11 +47,11 @@ const CardButton = styled.button`
   border-radius: 14px;
   ${flexColCenter}
   gap: 16px;
-  border: 0.5px solid transparent;
+  border: 0.7px solid transparent;
   border-radius: 16px;
   background:
-    linear-gradient(144.41deg, #2a2f39, #191b22) padding-box,
-    linear-gradient(135deg, rgba(74, 77, 97, 0.8), #1f2027 70%) border-box;
+    linear-gradient(144.41deg, #2a2f39 0%, #191b22 100%) padding-box,
+    linear-gradient(to top left, rgba(93, 100, 118, 0) 10%, rgba(93, 100, 118, 1) 100%) border-box;
 `
 
 const CdContainer = styled.div`
