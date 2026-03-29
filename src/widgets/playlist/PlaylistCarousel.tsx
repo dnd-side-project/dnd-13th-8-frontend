@@ -15,6 +15,7 @@ import { ActionBar, ControlBar, ProgressBar, VolumeButton } from '@/widgets/play
 interface PlaylistCarouselProps {
   playlistData: CdMetaResponse
   playlistDetail: PlaylistDetail
+  showCreator?: boolean
   basePath: string
   onCenterChange: (playlist: { playlistId: number }) => void
 }
@@ -28,6 +29,7 @@ interface OutletContextType {
 const PlaylistCarousel = ({
   playlistData,
   playlistDetail,
+  showCreator = true,
   basePath,
   onCenterChange,
 }: PlaylistCarouselProps) => {
@@ -173,7 +175,7 @@ const PlaylistCarousel = ({
             {playlistDetail.playlistName}
           </Title>
 
-          <Creator>{playlistDetail.creatorNickname}</Creator>
+          {showCreator && <Creator>{playlistDetail.creatorNickname}</Creator>}
         </TitleWrapper>
 
         <BottomWrapper>

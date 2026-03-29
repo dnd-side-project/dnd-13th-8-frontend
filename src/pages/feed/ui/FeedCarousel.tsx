@@ -241,6 +241,7 @@ const FeedCarousel = ({ type, pageType }: FeedCarouselProps) => {
       <PlaylistCarousel
         playlistData={playlistData}
         playlistDetail={playlistDetail}
+        showCreator={!(pageType === 'MY' && isOwner)}
         onCenterChange={(p) => navigate(`../${p.playlistId}`, { replace: true, state })}
         basePath={pageType === 'MY' ? `/${shareCode}/cds` : `/${shareCode}/likes`}
       />
