@@ -22,11 +22,15 @@ interface CommentProps {
 
 const COMMENT_OPTIONS = {
   owner: [
+    { text: '프로필로 가기', type: 'profile' },
     { text: '삭제하기', type: 'delete' },
     { text: '신고하기', type: 'report' },
   ],
   mine: [{ text: '삭제하기', type: 'delete' }],
-  other: [{ text: '신고하기', type: 'report' }],
+  other: [
+    { text: '프로필로 가기', type: 'profile' },
+    { text: '신고하기', type: 'report' },
+  ],
 } as const
 
 const Comment = ({
@@ -53,7 +57,7 @@ const Comment = ({
     navigate(`/${shareCode}`)
   }
 
-  const handleOptionClick = (type: 'delete' | 'report') => {
+  const handleOptionClick = (type: 'delete' | 'report' | 'profile') => {
     if (type === 'delete') {
       deleteMessage(messageId, {
         onSuccess: () => toast('COMMENT'),
@@ -65,6 +69,8 @@ const Comment = ({
           onSuccess: () => toast('REPORT'),
         }
       )
+    } else if (type === 'profile') {
+      handleProfileClick()
     }
 
     setIsBottomSheetOpen(false)
@@ -99,15 +105,17 @@ const Comment = ({
         onClose={() => setIsBottomSheetOpen(false)}
         height="fit-content"
       >
-        {COMMENT_OPTIONS[role].map((option) => (
-          <StyledButton
-            key={option.text}
-            $optionType={option.type}
-            onClick={() => handleOptionClick(option.type)}
-          >
-            {option.text}
-          </StyledButton>
-        ))}
+        {COMMENT_OPTIONS[role]
+          .filter((option) => !(option.type === 'profile' && !shareCode))
+          .map((option) => (
+            <StyledButton
+              key={option.text}
+              $optionType={option.type}
+              onClick={() => handleOptionClick(option.type)}
+            >
+              {option.text}
+            </StyledButton>
+          ))}
       </BottomSheet>
     </>
   )
@@ -141,14 +149,14 @@ const Text = styled.span`
   gap: 6px;
 `
 
-const StyledButton = styled.button<{ $optionType: 'delete' | 'report' }>`
+const StyledButton = styled.button<{ $optionType: 'delete' | 'report' | 'profile' }>`
   width: 100%;
   padding: 16px 20px;
 
   ${({ theme }) => theme.FONT.headline2};
 
   color: ${({ $optionType, theme }) =>
-    $optionType === 'delete' ? theme.COLOR['gray-50'] : theme.COLOR['common-error']};
+    $optionType === 'report' ? theme.COLOR['common-error'] : theme.COLOR['gray-50']};
 `
 
 const ProfileWrapper = styled.button<{ $clickable: boolean }>`
