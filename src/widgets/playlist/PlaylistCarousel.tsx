@@ -46,6 +46,7 @@ const PlaylistCarousel = ({
     prevTrack,
     play,
     pause,
+    updateCurrentTime,
   } = usePlaylist()
 
   const {
@@ -88,10 +89,21 @@ const PlaylistCarousel = ({
   const handleProgressClick = useCallback(
     (trackIndex: number, seconds: number) => {
       if (!currentPlaylist) return
-      setPlaylist(currentPlaylist, trackIndex, seconds)
+
+      const isSameTrack = currentTrackIndex === trackIndex
+
+      if (isSameTrack) {
+        updateCurrentTime(seconds)
+        if (playerRef.current) {
+          playerRef.current.seekTo(seconds, true)
+        }
+      } else {
+        setPlaylist(currentPlaylist, trackIndex, seconds)
+      }
+
       if (!isPlaying) play()
     },
-    [currentPlaylist, setPlaylist, isPlaying, play]
+    [currentPlaylist, currentTrackIndex, updateCurrentTime, playerRef, setPlaylist, isPlaying, play]
   )
 
   const handleTogglePlay = () => {

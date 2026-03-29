@@ -38,13 +38,11 @@ const Content = () => {
       {videoId && (
         <YoutubePlayer
           videoId={videoId}
+          startSeconds={currentTime}
+          currentTrackIndex={currentTrackIndex}
           onReady={(event) => {
             playerRef.current = event.target
-            if (currentPlaylist) {
-              if (currentTime !== undefined) playerRef.current.seekTo(currentTime, true)
-              if (isPlaying) playerRef.current.playVideo()
-              else playerRef.current.pauseVideo()
-            }
+            if (!isPlaying) playerRef.current.pauseVideo()
             if (setIsMuted) setIsMuted(event.target.isMuted())
           }}
           onStateChange={handlePlayerStateChange}

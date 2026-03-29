@@ -24,6 +24,8 @@ type PlaylistContextType = {
   handlePlayerStateChange: (event: YT.OnStateChangeEvent) => void
   handlePlayerError: (event: YT.OnErrorEvent) => void
   unmuteOnce: () => void
+  isMuted: boolean
+  setIsMuted: (value: boolean) => void
 }
 
 interface PlaylistProviderProps {
@@ -55,17 +57,8 @@ const PlaylistProvider = ({ children }: PlaylistProviderProps) => {
     const isSamePlaylist = currentPlaylist?.playlistId === playlist.playlistId
     setIsPlaying((prev) => (isSamePlaylist ? prev : autoPlay))
 
-    if (playerRef.current) {
-      try {
-        const state = playerRef.current.getPlayerState()
-        if (state === -1 || state === undefined) return
-
-        if (time !== undefined) playerRef.current.seekTo(time, true)
-        if (!isSamePlaylist && autoPlay) playerRef.current.playVideo()
-      } catch {
-        // 플레이어 미준비 상태는 onReady에서 처리
-      }
-    }
+    // 상태만 업데이트
+    // 플레이어 로드는 상위에서 videoId 변경으로 처리됨
   }
 
   const unmuteOnce = useCallback(() => {

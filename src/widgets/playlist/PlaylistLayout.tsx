@@ -19,7 +19,7 @@ interface PlaylistSlideProps {
   onPlayPause: () => void
   onNext: () => void
   onPrev: () => void
-  onSelectTrack: (trackIndex: number, time?: number) => void
+  onSelectTrack: (trackIndex: number, seconds: number) => void
   playerRef: React.RefObject<YT.Player | null>
   isMuted?: boolean | null
   setIsMuted?: (value: boolean) => void

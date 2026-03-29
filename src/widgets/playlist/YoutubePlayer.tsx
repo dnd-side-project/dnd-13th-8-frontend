@@ -4,6 +4,8 @@ import { useDevice } from '@/shared/lib/useDevice'
 
 interface YoutubePlayerProps {
   videoId: string | null
+  startSeconds?: number
+  currentTrackIndex?: number
   onReady: (event: { target: YT.Player }) => void
   onStateChange: (event: YT.OnStateChangeEvent) => void
   onError?: (event: YT.OnErrorEvent) => void
@@ -12,6 +14,8 @@ interface YoutubePlayerProps {
 
 const YoutubePlayer = ({
   videoId,
+  startSeconds = 0,
+  currentTrackIndex = 0,
   onReady,
   onStateChange,
   onError,
@@ -21,8 +25,14 @@ const YoutubePlayer = ({
   const containerRef = useRef<HTMLDivElement | null>(null)
   const { isMobile } = useDevice()
   const [apiReady, setApiReady] = useState<boolean>(!!window.YT?.Player)
-  const playerCreatedRef = useRef<boolean>(false) // 플레이어 중복 생성 방지
   const playerReadyRef = useRef<boolean>(false) // 플레이어 초기화 완료 여부
+  const prevTrackRef = useRef<{
+    videoId: string | null
+    index: number | null
+  }>({
+    videoId: null,
+    index: null,
+  })
 
   // YouTube IFrame API 로드
   useEffect(() => {
@@ -40,7 +50,7 @@ const YoutubePlayer = ({
 
   // 플레이어 생성 (한 번만)
   useEffect(() => {
-    if (!apiReady || !containerRef.current || playerCreatedRef.current) return
+    if (!apiReady || !containerRef.current || playerReadyRef.current) return
 
     const playerContainer = document.createElement('div')
     containerRef.current.appendChild(playerContainer)
@@ -54,8 +64,11 @@ const YoutubePlayer = ({
       },
       events: {
         onReady: (e: { target: YT.Player }) => {
-          playerReadyRef.current = true // 플레이어 준비 완료
-          // 모바일에서만 현재 muted 상태를 state에 저장
+          playerReadyRef.current = true
+          prevTrackRef.current = {
+            videoId: videoId || null,
+            index: currentTrackIndex,
+          }
           if (isMobile && setIsMuted) setIsMuted(e.target.isMuted())
           onReady(e)
         },
@@ -63,17 +76,28 @@ const YoutubePlayer = ({
         onError,
       },
     })
-
-    playerCreatedRef.current = true
   }, [apiReady, isMobile, onReady, onStateChange, onError, setIsMuted])
 
-  // 비디오 ID 변경 시
+  // 트랙 변경 시
   useEffect(() => {
     if (!playerRef.current || !videoId || !playerReadyRef.current) return
 
+    const isSameTrack =
+      prevTrackRef.current.videoId === videoId && prevTrackRef.current.index === currentTrackIndex
+
+    if (isSameTrack) return
+
+    prevTrackRef.current = {
+      videoId,
+      index: currentTrackIndex,
+    }
+
     playerRef.current.unMute()
-    playerRef.current.loadVideoById(videoId)
-  }, [videoId])
+    playerRef.current.loadVideoById({
+      videoId,
+      startSeconds,
+    })
+  }, [videoId, currentTrackIndex])
 
   // 언마운트 시 정리
   useEffect(() => {

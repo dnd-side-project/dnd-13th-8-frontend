@@ -34,6 +34,7 @@ const DiscoverPage = () => {
     pause,
     nextTrack,
     prevTrack,
+    updateCurrentTime,
   } = usePlaylist()
 
   const { isMuted, setIsMuted } = useOutletContext<OutletContextType>()
@@ -108,6 +109,24 @@ const DiscoverPage = () => {
     [playlistsData, currentPlaylist, setPlaylist, hasNextPage, isFetchingNextPage, fetchNextPage]
   )
 
+  const handleProgressClick = useCallback(
+    (trackIndex: number, seconds: number) => {
+      if (!currentPlaylist) return
+
+      const isSameTrack = currentTrackIndex === trackIndex
+
+      if (isSameTrack) {
+        if (playerRef.current) {
+          updateCurrentTime(seconds)
+          playerRef.current.seekTo(seconds, true)
+        }
+      } else {
+        setPlaylist(currentPlaylist, trackIndex, seconds)
+      }
+    },
+    [currentPlaylist, currentTrackIndex, playerRef, setPlaylist]
+  )
+
   if (isPlaylistsLoading) {
     return <Loading isLoading height="100%" />
   }
@@ -132,9 +151,7 @@ const DiscoverPage = () => {
                   onPlayPause={() => (isPlaying ? pause() : play())}
                   onNext={nextTrack}
                   onPrev={prevTrack}
-                  onSelectTrack={(trackIndex, time) => {
-                    if (currentPlaylist) setPlaylist(currentPlaylist, trackIndex, time)
-                  }}
+                  onSelectTrack={handleProgressClick} // 변경됨
                   playerRef={playerRef}
                   isMuted={isMuted}
                   setIsMuted={setIsMuted}
