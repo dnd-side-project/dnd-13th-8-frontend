@@ -27,7 +27,7 @@ const SearchPage = () => {
 
   const { data } = usePopularKeyword({
     range: '7d',
-    limit: 9,
+    limit: 20,
   })
 
   return (
