@@ -23,7 +23,6 @@ type PlaylistContextType = {
   playerRef: React.MutableRefObject<YT.Player | null>
   handlePlayerStateChange: (event: YT.OnStateChangeEvent) => void
   handlePlayerError: (event: YT.OnErrorEvent) => void
-  unmuteOnce: () => void
   isMuted: boolean
   setIsMuted: (value: boolean) => void
 }
@@ -41,6 +40,8 @@ const PlaylistProvider = ({ children }: PlaylistProviderProps) => {
   const [isPlaying, setIsPlaying] = useState(false)
   const [isMuted, setIsMuted] = useState(true)
   const { toast } = useToast()
+
+  console.log('isMuted', isMuted)
 
   const playerRef = useRef<YT.Player | null>(null)
 
@@ -60,12 +61,6 @@ const PlaylistProvider = ({ children }: PlaylistProviderProps) => {
     // 상태만 업데이트
     // 플레이어 로드는 상위에서 videoId 변경으로 처리됨
   }
-
-  const unmuteOnce = useCallback(() => {
-    if (!playerRef.current) return
-    playerRef.current.unMute()
-    playerRef.current.playVideo()
-  }, [])
 
   const play = useCallback(() => {
     if (playerRef.current) playerRef.current.playVideo()
@@ -130,7 +125,6 @@ const PlaylistProvider = ({ children }: PlaylistProviderProps) => {
     updateCurrentTime,
     playerRef,
     handlePlayerStateChange,
-    unmuteOnce,
     isMuted,
     setIsMuted,
     handlePlayerError,
