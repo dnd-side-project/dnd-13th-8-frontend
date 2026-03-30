@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { Outlet } from 'react-router-dom'
 
 import styled from 'styled-components'
@@ -25,8 +24,9 @@ const Content = () => {
     isPlaying,
     handlePlayerStateChange,
     handlePlayerError,
+    isMuted,
+    setIsMuted,
   } = usePlaylist()
-  const [isMuted, setIsMuted] = useState<boolean | null>(null)
   const { isMobile } = useDevice()
 
   const videoId = currentPlaylist
@@ -40,14 +40,11 @@ const Content = () => {
       {videoId && (
         <YoutubePlayer
           videoId={videoId}
+          isMuted={isMuted}
           onReady={(event) => {
             playerRef.current = event.target
             playerRef.current?.seekTo(currentTime, true)
             if (!isPlaying) playerRef.current?.pauseVideo()
-
-            if (isMobile) {
-              setIsMuted(event.target.isMuted())
-            }
           }}
           onStateChange={handlePlayerStateChange}
           onError={handlePlayerError}
