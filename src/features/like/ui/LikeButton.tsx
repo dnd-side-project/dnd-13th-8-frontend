@@ -9,7 +9,6 @@ import { useLike } from '@/features/like'
 import { getNextId } from '@/shared/lib'
 import { myCdButton } from '@/shared/styles/mixins'
 import { Modal } from '@/shared/ui'
-import SvgButton from '@/shared/ui/SvgButton'
 
 interface LikeButtonProps {
   playlistId: number
@@ -47,10 +46,8 @@ const LikeButton = ({ playlistId, type = 'HOME', playlistData, activeIndex }: Li
 
   return (
     <>
-      <Wrapper $opacity={opacity} $isMy={type === 'MY'}>
-        <SvgButton
-          icon={Icon}
-          onClick={handleClick}
+      <Wrapper $opacity={opacity} $isMy={type === 'MY'} onClick={handleClick}>
+        <Icon
           width={size}
           height={size}
           fill={
@@ -90,7 +87,7 @@ const LikeButton = ({ playlistId, type = 'HOME', playlistData, activeIndex }: Li
 
 export default LikeButton
 
-const Wrapper = styled.div<{ $opacity?: number; $isMy: boolean }>`
+const Wrapper = styled.button<{ $opacity?: number; $isMy: boolean }>`
   opacity: ${({ $opacity }) => $opacity};
   ${({ $isMy }) => $isMy && myCdButton};
 `

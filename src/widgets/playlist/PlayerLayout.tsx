@@ -1,12 +1,9 @@
-import { useState } from 'react'
 import { Outlet, useOutletContext } from 'react-router-dom'
 
-import styled from 'styled-components'
-
 import PlaylistProvider, { usePlaylist } from '@/app/providers/PlayerProvider'
+import type { BundleInfo } from '@/entities/bundle'
 import { getVideoId } from '@/shared/lib'
-import { useDevice } from '@/shared/lib/useDevice'
-import { VolumeButton, YoutubePlayer } from '@/widgets/playlist'
+import { YoutubePlayer } from '@/widgets/playlist'
 
 const PlayerLayout = () => {
   return (
@@ -25,10 +22,9 @@ const Content = () => {
     isPlaying,
     handlePlayerStateChange,
     handlePlayerError,
+    isMuted,
   } = usePlaylist()
-  const [isMuted, setIsMuted] = useState<boolean | null>(null)
-  const { isMobile } = useDevice()
-  const context = useOutletContext()
+  const bundleInfo = useOutletContext<BundleInfo>()
 
   const videoId = currentPlaylist
     ? getVideoId(currentPlaylist.songs[currentTrackIndex]?.youtubeUrl)
@@ -36,38 +32,24 @@ const Content = () => {
 
   return (
     <>
-      <Outlet context={context} />
+      <Outlet context={{ ...bundleInfo, playerRef }} />
 
       {videoId && (
         <YoutubePlayer
           videoId={videoId}
+          startSeconds={currentTime}
+          isMuted={isMuted}
+          currentTrackIndex={currentTrackIndex}
           onReady={(event) => {
             playerRef.current = event.target
-            if (currentPlaylist) {
-              if (currentTime !== undefined) playerRef.current.seekTo(currentTime, true)
-              if (isPlaying) playerRef.current.playVideo()
-              else playerRef.current.pauseVideo()
-            }
-            if (isMobile) setIsMuted(event.target.isMuted())
+            if (!isPlaying) playerRef.current.pauseVideo()
           }}
           onStateChange={handlePlayerStateChange}
           onError={handlePlayerError}
         />
-      )}
-
-      {isMobile && isMuted && currentTrackIndex !== 0 && (
-        <ButtonWrapper>
-          <VolumeButton playerRef={playerRef} isMuted={isMuted} setIsMuted={setIsMuted} />
-        </ButtonWrapper>
       )}
     </>
   )
 }
 
 export default PlayerLayout
-
-const ButtonWrapper = styled.div`
-  position: absolute;
-  top: 62px;
-  z-index: 999;
-`

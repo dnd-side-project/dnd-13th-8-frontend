@@ -1,6 +1,8 @@
 import { useMemo } from 'react'
 import { Outlet, useLocation, useMatch, useNavigate, useParams } from 'react-router-dom'
 
+import styled from 'styled-components'
+
 import { LeftArrow } from '@/assets/icons'
 import { useBundlePlaylist } from '@/entities/bundle'
 import { HOME_SECTION_TITLES } from '@/shared/config/homeTitles'
@@ -36,7 +38,7 @@ const CurationLayout = () => {
               onClick={() => navigate(playlistId ? `/curation/${bundleId}` : '/')}
             />
           }
-          center={<span>{playlistId ? data?.title : sectionTitle}</span>}
+          center={<Title>{playlistId ? data?.title : sectionTitle}</Title>}
         />
       )}
 
@@ -45,3 +47,7 @@ const CurationLayout = () => {
   )
 }
 export default CurationLayout
+
+const Title = styled.span`
+  white-space: nowrap;
+`

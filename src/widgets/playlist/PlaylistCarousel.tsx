@@ -1,5 +1,5 @@
 import { useEffect, useCallback, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useOutletContext } from 'react-router-dom'
 
 import styled from 'styled-components'
 
@@ -10,23 +10,30 @@ import { SwipeCarousel } from '@/features/swipe'
 import { useDevice, useMarquee } from '@/shared/lib'
 import { cdSpinner, flexRowCenter, marquee } from '@/shared/styles/mixins'
 import { LiveInfo, Cd } from '@/shared/ui'
-import { ActionBar, ControlBar, ProgressBar } from '@/widgets/playlist'
+import { ActionBar, ControlBar, ProgressBar, VolumeButton } from '@/widgets/playlist'
 
 interface PlaylistCarouselProps {
   playlistData: CdMetaResponse
   playlistDetail: PlaylistDetail
+  showCreator?: boolean
   basePath: string
   onCenterChange: (playlist: { playlistId: number }) => void
+}
+
+interface OutletContextType {
+  playerRef: React.RefObject<YT.Player | null>
 }
 
 const PlaylistCarousel = ({
   playlistData,
   playlistDetail,
+  showCreator = true,
   basePath,
   onCenterChange,
 }: PlaylistCarouselProps) => {
   const { id: playlistId } = useParams()
   const { isMobile } = useDevice()
+  const { playerRef } = useOutletContext<OutletContextType>()
   const isSmall = isMobile && window.innerHeight < 633
   const [activeIndex, setActiveIndex] = useState(0)
 
@@ -39,7 +46,9 @@ const PlaylistCarousel = ({
     prevTrack,
     play,
     pause,
-    unmuteOnce,
+    updateCurrentTime,
+    isMuted,
+    setIsMuted,
   } = usePlaylist()
 
   const {
@@ -63,8 +72,8 @@ const PlaylistCarousel = ({
   useEffect(() => {
     if (!playlistDetail) return
     if (currentPlaylist?.playlistId === playlistDetail.playlistId) return
-    setPlaylist(playlistDetail, 0, 0, !isMobile)
-  }, [playlistDetail, currentPlaylist, isMobile, setPlaylist])
+    setPlaylist(playlistDetail, 0, 0)
+  }, [playlistDetail, currentPlaylist, setPlaylist])
 
   const handleSelectIndex = useCallback(
     (index: number) => {
@@ -82,17 +91,24 @@ const PlaylistCarousel = ({
   const handleProgressClick = useCallback(
     (trackIndex: number, seconds: number) => {
       if (!currentPlaylist) return
-      setPlaylist(currentPlaylist, trackIndex, seconds)
+
+      const isSameTrack = currentTrackIndex === trackIndex
+
+      if (isSameTrack) {
+        updateCurrentTime(seconds)
+        if (playerRef.current) {
+          playerRef.current.seekTo(seconds, true)
+        }
+      } else {
+        setPlaylist(currentPlaylist, trackIndex, seconds)
+      }
+
       if (!isPlaying) play()
     },
-    [currentPlaylist, setPlaylist, isPlaying, play]
+    [currentPlaylist, currentTrackIndex, updateCurrentTime, playerRef, setPlaylist, isPlaying, play]
   )
 
   const handleTogglePlay = () => {
-    if (isMobile && !isPlaying) {
-      unmuteOnce()
-    }
-
     if (isPlaying) {
       pause()
     } else {
@@ -141,7 +157,7 @@ const PlaylistCarousel = ({
           type="MY"
         />
 
-        <TitleWrapper>
+        <TitleWrapper $isMobile={isMobile} $hasPrivate={!playlistDetail?.isPublic}>
           {!playlistDetail?.isPublic && <PrivateLabel>비공개</PrivateLabel>}
 
           <Title
@@ -159,7 +175,7 @@ const PlaylistCarousel = ({
             {playlistDetail.playlistName}
           </Title>
 
-          <Creator>{playlistDetail.creatorNickname}</Creator>
+          {showCreator && <Creator>{playlistDetail.creatorNickname}</Creator>}
         </TitleWrapper>
 
         <BottomWrapper>
@@ -175,6 +191,12 @@ const PlaylistCarousel = ({
             onPrev={prevTrack}
           />
         </BottomWrapper>
+
+        {isMuted && setIsMuted && (
+          <VolumeButtonWrapper>
+            <VolumeButton playerRef={playerRef} isMuted={isMuted} setIsMuted={setIsMuted} />
+          </VolumeButtonWrapper>
+        )}
       </CenterWrapper>
     </ChatProvider>
   )
@@ -192,14 +214,14 @@ const Container = styled.div`
 const EmblaSlide = styled.div<{ $isMobile?: boolean }>`
   flex: 0 0 50%;
   ${flexRowCenter}
-  padding: ${({ $isMobile }) => ($isMobile ? '6px 0 0 0' : '16px 0')};
+  padding: ${({ $isMobile }) => ($isMobile ? '0 0 16px 0' : '16px 0 48px 0')};
 `
 
 const Slide = styled.div<{ $active?: boolean; $isMobile?: boolean }>`
   position: relative;
   ${flexRowCenter}
   transition: transform 0.8s ease;
-  margin: ${({ $isMobile }) => ($isMobile ? '0 24px 16px 24px' : '32px 24px 24px 24px')};
+  margin: ${({ $isMobile }) => ($isMobile ? '0 12px' : '0 24px')};
   opacity: ${({ $active }) => ($active ? 1 : 0.5)};
 `
 
@@ -208,8 +230,12 @@ const CdSpinner = styled.div<{ $isPlaying: boolean }>`
   ${cdSpinner}
 `
 
-const TitleWrapper = styled.div`
-  padding-top: 60px;
+const TitleWrapper = styled.div<{
+  $isMobile?: boolean
+  $hasPrivate?: boolean
+}>`
+  padding-top: ${({ $isMobile, $hasPrivate }) =>
+    $isMobile ? ($hasPrivate ? '16px' : '28px') : '60px'};
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -225,9 +251,6 @@ const Title = styled.p<{
   ${({ theme }) => theme.FONT.headline1};
 
   ${marquee}
-  @media (min-height: 899px) {
-    padding-top: 56px;
-  }
 `
 
 const Creator = styled.p`
@@ -260,4 +283,10 @@ const PrivateLabel = styled.span`
   color: ${({ theme }) => theme.COLOR['gray-300']};
   background-color: ${({ theme }) => theme.COLOR['gray-700']};
   border-radius: 99px;
+`
+
+const VolumeButtonWrapper = styled.div`
+  position: absolute;
+  top: 62px;
+  z-index: ${({ theme }) => theme.Z_INDEX.topLayer};
 `

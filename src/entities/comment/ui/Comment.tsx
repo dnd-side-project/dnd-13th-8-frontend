@@ -1,10 +1,11 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import styled from 'styled-components'
 
 import { useToast } from '@/app/providers'
 import { Menu } from '@/assets/icons'
-import { useDeleteChatMessage } from '@/features/chat/model/useChat'
+import { useDeleteChatMessage, useReportChat } from '@/features/chat/model/useChat'
 import { BottomSheet, Profile, SvgButton } from '@/shared/ui'
 
 interface CommentProps {
@@ -14,17 +15,22 @@ interface CommentProps {
   role: 'owner' | 'mine' | 'other'
   roomId: string
   messageId: string
+  shareCode: string | null
   Icon?: React.ComponentType<React.SVGProps<SVGSVGElement>>
   removeMessage: (id: string) => void
 }
 
 const COMMENT_OPTIONS = {
   owner: [
+    { text: '프로필로 가기', type: 'profile' },
     { text: '삭제하기', type: 'delete' },
     { text: '신고하기', type: 'report' },
   ],
   mine: [{ text: '삭제하기', type: 'delete' }],
-  other: [{ text: '신고하기', type: 'report' }],
+  other: [
+    { text: '프로필로 가기', type: 'profile' },
+    { text: '신고하기', type: 'report' },
+  ],
 } as const
 
 const Comment = ({
@@ -34,20 +40,37 @@ const Comment = ({
   role,
   Icon,
   roomId,
+  shareCode,
   messageId,
   removeMessage,
 }: CommentProps) => {
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false)
+  const navigate = useNavigate()
+
   const { toast } = useToast()
   const { mutate: deleteMessage } = useDeleteChatMessage(roomId, removeMessage)
+  const { mutate: reportMessage } = useReportChat()
 
-  const handleOptionClick = (type: 'delete' | 'report') => {
+  const isClickable = !!shareCode
+  const handleProfileClick = () => {
+    if (!shareCode) return
+    navigate(`/${shareCode}`)
+  }
+
+  const handleOptionClick = (type: 'delete' | 'report' | 'profile') => {
     if (type === 'delete') {
       deleteMessage(messageId, {
         onSuccess: () => toast('COMMENT'),
       })
     } else if (type === 'report') {
-      toast('REPORT')
+      reportMessage(
+        { roomId, messageId },
+        {
+          onSuccess: () => toast('REPORT'),
+        }
+      )
+    } else if (type === 'profile') {
+      handleProfileClick()
     }
 
     setIsBottomSheetOpen(false)
@@ -56,14 +79,21 @@ const Comment = ({
   return (
     <>
       <CommentWrapper>
-        <Profile size={32} profileUrl={profileUrl} />
+        <ProfileWrapper onClick={handleProfileClick} disabled={!isClickable}>
+          <Profile size={32} profileUrl={profileUrl} />
+        </ProfileWrapper>
+
         <TextBox>
-          <Name>{name}</Name>
+          <Name onClick={handleProfileClick} disabled={!isClickable}>
+            {name}
+          </Name>
+
           <Text>
             {Icon && <Icon width={20} height={20} />}
             {comment}
           </Text>
         </TextBox>
+
         <SvgButton width={20} height={20} icon={Menu} onClick={() => setIsBottomSheetOpen(true)} />
       </CommentWrapper>
 
@@ -72,15 +102,17 @@ const Comment = ({
         onClose={() => setIsBottomSheetOpen(false)}
         height="fit-content"
       >
-        {COMMENT_OPTIONS[role].map((option) => (
-          <StyledButton
-            key={option.text}
-            $optionType={option.type}
-            onClick={() => handleOptionClick(option.type)}
-          >
-            {option.text}
-          </StyledButton>
-        ))}
+        {COMMENT_OPTIONS[role]
+          .filter((option) => !(option.type === 'profile' && !shareCode))
+          .map((option) => (
+            <StyledButton
+              key={option.text}
+              $optionType={option.type}
+              onClick={() => handleOptionClick(option.type)}
+            >
+              {option.text}
+            </StyledButton>
+          ))}
       </BottomSheet>
     </>
   )
@@ -93,6 +125,7 @@ const CommentWrapper = styled.div`
   gap: 12px;
   padding: 12px 0;
 `
+
 const TextBox = styled.div`
   display: flex;
   flex-direction: column;
@@ -100,9 +133,14 @@ const TextBox = styled.div`
   flex: 1;
 `
 
-const Name = styled.span`
+const Name = styled.button`
   ${({ theme }) => theme.FONT.caption1};
   color: ${({ theme }) => theme.COLOR['gray-200']};
+  text-align: left;
+
+  &:disabled {
+    cursor: default;
+  }
 `
 
 const Text = styled.span`
@@ -111,12 +149,19 @@ const Text = styled.span`
   display: flex;
   gap: 6px;
 `
-const StyledButton = styled.button<{ $optionType: 'delete' | 'report' }>`
+
+const StyledButton = styled.button<{ $optionType: 'delete' | 'report' | 'profile' }>`
   width: 100%;
   padding: 16px 20px;
 
   ${({ theme }) => theme.FONT.headline2};
 
   color: ${({ $optionType, theme }) =>
-    $optionType === 'delete' ? theme.COLOR['gray-50'] : theme.COLOR['common-error']};
+    $optionType === 'report' ? theme.COLOR['common-error'] : theme.COLOR['gray-50']};
+`
+
+const ProfileWrapper = styled.button`
+  &:disabled {
+    cursor: default;
+  }
 `

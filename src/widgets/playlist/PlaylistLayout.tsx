@@ -9,7 +9,7 @@ import { useMarquee } from '@/shared/lib'
 import { useDevice } from '@/shared/lib/useDevice'
 import { cdSpinner, flexColCenter, marquee } from '@/shared/styles/mixins'
 import { Cd, Header, LiveInfo, Profile } from '@/shared/ui'
-import { ActionBar, PlayButton, ProgressBar } from '@/widgets/playlist'
+import { ActionBar, PlayButton, ProgressBar, VolumeButton } from '@/widgets/playlist'
 
 interface PlaylistSlideProps {
   currentPlaylist: PlaylistDetail | null
@@ -19,10 +19,10 @@ interface PlaylistSlideProps {
   onPlayPause: () => void
   onNext: () => void
   onPrev: () => void
-  onSelectTrack: (trackIndex: number, time?: number) => void
+  onSelectTrack: (trackIndex: number, seconds: number) => void
   playerRef: React.RefObject<YT.Player | null>
   isMuted?: boolean | null
-  setIsMuted?: React.Dispatch<React.SetStateAction<boolean | null>>
+  setIsMuted?: (value: boolean) => void
 }
 
 const PlaylistLayout = ({
@@ -31,6 +31,9 @@ const PlaylistLayout = ({
   isPlaying,
   onPlayPause,
   onSelectTrack,
+  playerRef,
+  isMuted,
+  setIsMuted,
 }: PlaylistSlideProps) => {
   const [showPlayButton, setShowPlayButton] = useState(false)
 
@@ -126,6 +129,12 @@ const PlaylistLayout = ({
           onClick={handleProgressClick}
         />
       </ProgressBarWrapper>
+
+      {isMuted && setIsMuted && (
+        <VolumeButtonWrapper>
+          <VolumeButton playerRef={playerRef} isMuted={isMuted} setIsMuted={setIsMuted} />
+        </VolumeButtonWrapper>
+      )}
     </>
   )
 }
@@ -218,4 +227,10 @@ const CreatorButton = styled.button`
   display: flex;
   align-items: center;
   gap: 8px;
+`
+
+const VolumeButtonWrapper = styled.div`
+  position: absolute;
+  top: 62px;
+  z-index: ${({ theme }) => theme.Z_INDEX.topLayer};
 `

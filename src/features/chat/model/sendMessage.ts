@@ -32,6 +32,8 @@ export const useChatSocket = (roomId: string) => {
     if (!roomId || !authToken) return
     if (clientRef.current?.active) return // 이미 활성화된 연결 방지
 
+    setMessages([]) // roomId 변경 시 메시지 초기화
+
     const client = new Client({
       webSocketFactory: () => new SockJS(`${import.meta.env.VITE_API_URL}/chat/ws`),
       connectHeaders: {

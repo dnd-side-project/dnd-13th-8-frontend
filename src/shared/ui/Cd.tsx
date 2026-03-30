@@ -132,7 +132,7 @@ const sizeMap = {
   responsive: { borderRadius: 10 },
   home: { container: 180, base: 180, borderRadius: 0 },
   mycd: { container: 260, base: 260, borderRadius: 0 },
-  mycd_mo: { container: 240, base: 240, borderRadius: 0 },
+  mycd_mo: { container: 230, base: 230, borderRadius: 0 },
   splitCard_lg: { container: 136, base: 118, borderRadius: 16 },
   splitCard_sm: { container: 64, base: 55, borderRadius: 6 },
 } as const

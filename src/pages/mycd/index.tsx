@@ -28,7 +28,6 @@ const MyCdPage = () => {
     play,
     pause,
     playerRef,
-    unmuteOnce,
   } = usePlaylist()
 
   const { userInfo } = useAuthStore()
@@ -231,10 +230,6 @@ const MyCdPage = () => {
                 <ControlBar
                   isPlaying={isPlaying}
                   onTogglePlay={() => {
-                    if (isMobile && !isPlaying) {
-                      unmuteOnce()
-                    }
-
                     if (isPlaying) {
                       pause()
                     } else {

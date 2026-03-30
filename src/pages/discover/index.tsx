@@ -28,6 +28,9 @@ const DiscoverPage = () => {
     pause,
     nextTrack,
     prevTrack,
+    updateCurrentTime,
+    isMuted,
+    setIsMuted,
   } = usePlaylist()
 
   const { mutate: startPlaylist } = usePlaylistStartMutation()
@@ -100,6 +103,24 @@ const DiscoverPage = () => {
     [playlistsData, currentPlaylist, setPlaylist, hasNextPage, isFetchingNextPage, fetchNextPage]
   )
 
+  const handleProgressClick = useCallback(
+    (trackIndex: number, seconds: number) => {
+      if (!currentPlaylist) return
+
+      const isSameTrack = currentTrackIndex === trackIndex
+
+      if (isSameTrack) {
+        if (playerRef.current) {
+          updateCurrentTime(seconds)
+          playerRef.current.seekTo(seconds, true)
+        }
+      } else {
+        setPlaylist(currentPlaylist, trackIndex, seconds)
+      }
+    },
+    [currentPlaylist, currentTrackIndex, playerRef, setPlaylist, updateCurrentTime]
+  )
+
   if (isPlaylistsLoading) {
     return <Loading isLoading height="100%" />
   }
@@ -124,10 +145,10 @@ const DiscoverPage = () => {
                   onPlayPause={() => (isPlaying ? pause() : play())}
                   onNext={nextTrack}
                   onPrev={prevTrack}
-                  onSelectTrack={(trackIndex, time) => {
-                    if (currentPlaylist) setPlaylist(currentPlaylist, trackIndex, time)
-                  }}
+                  onSelectTrack={handleProgressClick}
                   playerRef={playerRef}
+                  isMuted={isMuted}
+                  setIsMuted={setIsMuted}
                 />
               </Slide>
             )
