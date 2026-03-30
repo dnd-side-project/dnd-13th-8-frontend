@@ -79,15 +79,12 @@ const Comment = ({
   return (
     <>
       <CommentWrapper>
-        <ProfileWrapper
-          onClick={isClickable ? handleProfileClick : undefined}
-          $clickable={isClickable}
-        >
+        <ProfileWrapper onClick={handleProfileClick} disabled={!isClickable}>
           <Profile size={32} profileUrl={profileUrl} />
         </ProfileWrapper>
 
         <TextBox>
-          <Name onClick={isClickable ? handleProfileClick : undefined} $clickable={isClickable}>
+          <Name onClick={handleProfileClick} disabled={!isClickable}>
             {name}
           </Name>
 
@@ -136,10 +133,14 @@ const TextBox = styled.div`
   flex: 1;
 `
 
-const Name = styled.span<{ $clickable: boolean }>`
+const Name = styled.button`
   ${({ theme }) => theme.FONT.caption1};
   color: ${({ theme }) => theme.COLOR['gray-200']};
-  cursor: ${({ $clickable }) => ($clickable ? 'pointer' : 'default')};
+  text-align: left;
+
+  &:disabled {
+    cursor: default;
+  }
 `
 
 const Text = styled.span`
@@ -159,6 +160,8 @@ const StyledButton = styled.button<{ $optionType: 'delete' | 'report' | 'profile
     $optionType === 'report' ? theme.COLOR['common-error'] : theme.COLOR['gray-50']};
 `
 
-const ProfileWrapper = styled.button<{ $clickable: boolean }>`
-  cursor: ${({ $clickable }) => ($clickable ? 'pointer' : 'default')};
+const ProfileWrapper = styled.button`
+  &:disabled {
+    cursor: default;
+  }
 `
