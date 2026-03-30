@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { Outlet, useOutletContext } from 'react-router-dom'
 
 import PlaylistProvider, { usePlaylist } from '@/app/providers/PlayerProvider'
@@ -23,8 +22,8 @@ const Content = () => {
     isPlaying,
     handlePlayerStateChange,
     handlePlayerError,
+    isMuted,
   } = usePlaylist()
-  const [isMuted, setIsMuted] = useState<boolean | null>(null)
   const bundleInfo = useOutletContext<BundleInfo>()
 
   const videoId = currentPlaylist
@@ -33,17 +32,17 @@ const Content = () => {
 
   return (
     <>
-      <Outlet context={{ ...bundleInfo, isMuted, setIsMuted, playerRef }} />
+      <Outlet context={{ ...bundleInfo, playerRef }} />
 
       {videoId && (
         <YoutubePlayer
           videoId={videoId}
           startSeconds={currentTime}
+          isMuted={isMuted}
           currentTrackIndex={currentTrackIndex}
           onReady={(event) => {
             playerRef.current = event.target
             if (!isPlaying) playerRef.current.pauseVideo()
-            if (setIsMuted) setIsMuted(event.target.isMuted())
           }}
           onStateChange={handlePlayerStateChange}
           onError={handlePlayerError}

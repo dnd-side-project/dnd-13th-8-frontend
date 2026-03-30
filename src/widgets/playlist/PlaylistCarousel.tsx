@@ -21,8 +21,6 @@ interface PlaylistCarouselProps {
 }
 
 interface OutletContextType {
-  isMuted: boolean | null
-  setIsMuted: (value: boolean) => void
   playerRef: React.RefObject<YT.Player | null>
 }
 
@@ -35,7 +33,7 @@ const PlaylistCarousel = ({
 }: PlaylistCarouselProps) => {
   const { id: playlistId } = useParams()
   const { isMobile } = useDevice()
-  const { isMuted, setIsMuted, playerRef } = useOutletContext<OutletContextType>()
+  const { playerRef } = useOutletContext<OutletContextType>()
   const isSmall = isMobile && window.innerHeight < 633
   const [activeIndex, setActiveIndex] = useState(0)
 
@@ -49,6 +47,8 @@ const PlaylistCarousel = ({
     play,
     pause,
     updateCurrentTime,
+    isMuted,
+    setIsMuted,
   } = usePlaylist()
 
   const {

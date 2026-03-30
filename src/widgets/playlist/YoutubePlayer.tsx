@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
 
-import { useDevice } from '@/shared/lib/useDevice'
 
 interface YoutubePlayerProps {
   videoId: string | null
@@ -9,7 +8,7 @@ interface YoutubePlayerProps {
   onReady: (event: { target: YT.Player }) => void
   onStateChange: (event: YT.OnStateChangeEvent) => void
   onError?: (event: YT.OnErrorEvent) => void
-  setIsMuted?: (muted: boolean) => void
+  isMuted: boolean
 }
 
 const YoutubePlayer = ({
@@ -19,11 +18,10 @@ const YoutubePlayer = ({
   onReady,
   onStateChange,
   onError,
-  setIsMuted,
+  isMuted,
 }: YoutubePlayerProps) => {
   const playerRef = useRef<YT.Player | null>(null)
   const containerRef = useRef<HTMLDivElement | null>(null)
-  const { isMobile } = useDevice()
   const [apiReady, setApiReady] = useState<boolean>(!!window.YT?.Player)
   const playerReadyRef = useRef<boolean>(false) // 플레이어 초기화 완료 여부
   const prevTrackRef = useRef<{
@@ -59,7 +57,7 @@ const YoutubePlayer = ({
       videoId: videoId || '',
       playerVars: {
         autoplay: 1,
-        mute: isMobile ? 1 : 0,
+        mute: isMuted ? 1 : 0,
         playsinline: 1,
       },
       events: {
@@ -69,14 +67,13 @@ const YoutubePlayer = ({
             videoId: videoId || null,
             index: currentTrackIndex,
           }
-          if (isMobile && setIsMuted) setIsMuted(e.target.isMuted())
           onReady(e)
         },
         onStateChange,
         onError,
       },
     })
-  }, [apiReady, isMobile, onReady, onStateChange, onError, setIsMuted])
+  }, [apiReady, onReady, onStateChange, onError])
 
   // 트랙 변경 시
   useEffect(() => {
@@ -92,12 +89,21 @@ const YoutubePlayer = ({
       index: currentTrackIndex,
     }
 
-    playerRef.current.unMute()
     playerRef.current.loadVideoById({
       videoId,
       startSeconds,
     })
   }, [videoId, currentTrackIndex, startSeconds])
+
+  useEffect(() => {
+    if (!playerRef.current || !playerReadyRef.current) return
+
+    if (isMuted) {
+      playerRef.current.mute()
+    } else {
+      playerRef.current.unMute()
+    }
+  }, [isMuted])
 
   // 언마운트 시 정리
   useEffect(() => {

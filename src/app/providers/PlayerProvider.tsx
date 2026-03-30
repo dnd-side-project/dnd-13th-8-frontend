@@ -1,6 +1,7 @@
 import { createContext, useState, useContext, useRef, useCallback, type ReactNode } from 'react'
 
 import type { PlaylistDetail } from '@/entities/playlist'
+import { useDevice } from '@/shared/lib'
 
 import { useToast } from './ToastProvider'
 
@@ -38,10 +39,10 @@ const PlaylistProvider = ({ children }: PlaylistProviderProps) => {
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0)
   const [currentTime, setCurrentTime] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false)
-  const [isMuted, setIsMuted] = useState(true)
-  const { toast } = useToast()
+  const { isMobile } = useDevice()
+  const [isMuted, setIsMuted] = useState(isMobile)
 
-  console.log('isMuted', isMuted)
+  const { toast } = useToast()
 
   const playerRef = useRef<YT.Player | null>(null)
 

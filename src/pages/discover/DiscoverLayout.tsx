@@ -25,6 +25,7 @@ const Content = () => {
     isPlaying,
     handlePlayerStateChange,
     handlePlayerError,
+    isMuted,
   } = usePlaylist()
 
   const videoId = currentPlaylist
@@ -42,24 +43,22 @@ const Content = () => {
     setShowCoachmark(false)
   }
 
-  const [isMuted, setIsMuted] = useState<boolean | null>(null)
-
   return (
     <Page>
       {showCoachmark && <DiscoverCoachMark onClose={handleCloseCoachmark} />}
-      <Outlet context={{ isMuted, setIsMuted }} />
+      <Outlet />
 
       {videoId && (
         <YoutubePlayer
           videoId={videoId}
           startSeconds={currentTime}
+          isMuted={isMuted}
           currentTrackIndex={currentTrackIndex}
           onReady={(event) => {
             playerRef.current = event.target
             if (!isPlaying) playerRef.current?.pauseVideo()
           }}
           onStateChange={handlePlayerStateChange}
-          setIsMuted={setIsMuted}
           onError={handlePlayerError}
         />
       )}
