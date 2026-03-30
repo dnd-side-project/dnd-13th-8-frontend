@@ -73,7 +73,7 @@ const PlaylistCarousel = ({
     if (!playlistDetail) return
     if (currentPlaylist?.playlistId === playlistDetail.playlistId) return
     setPlaylist(playlistDetail, 0, 0)
-  }, [playlistDetail, currentPlaylist, isMobile, setPlaylist])
+  }, [playlistDetail, currentPlaylist, setPlaylist])
 
   const handleSelectIndex = useCallback(
     (index: number) => {

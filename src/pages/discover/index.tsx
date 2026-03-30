@@ -124,7 +124,7 @@ const DiscoverPage = () => {
         setPlaylist(currentPlaylist, trackIndex, seconds)
       }
     },
-    [currentPlaylist, currentTrackIndex, playerRef, setPlaylist]
+    [currentPlaylist, currentTrackIndex, playerRef, setPlaylist, updateCurrentTime]
   )
 
   if (isPlaylistsLoading) {

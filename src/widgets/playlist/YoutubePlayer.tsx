@@ -97,7 +97,7 @@ const YoutubePlayer = ({
       videoId,
       startSeconds,
     })
-  }, [videoId, currentTrackIndex])
+  }, [videoId, currentTrackIndex, startSeconds])
 
   // 언마운트 시 정리
   useEffect(() => {
