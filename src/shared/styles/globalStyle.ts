@@ -23,6 +23,12 @@ const GlobalStyle = createGlobalStyle`
     line-height: 1.5;
   }
 
+  ul, ol, li {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
   button, input, textarea, select, a {
     font-family: inherit;
   }
@@ -87,6 +93,12 @@ const GlobalStyle = createGlobalStyle`
   /* 전화번호, 이메일 등을 자동으로 링크화하지 않게 함 */
   meta[name="format-detection"] {
     content: "telephone=no, email=no, address=no";
+  }
+
+  /* 이미지 드래그 인식 해제 */
+  img {
+    -webkit-user-drag: none;
+    user-select: none;
   }
 `
 

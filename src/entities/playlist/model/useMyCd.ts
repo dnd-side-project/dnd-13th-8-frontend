@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import {
   getMyCdList,
-  getLikedCdList,
+  getMyLikedCdList,
   getTracklist,
   deleteMyCd,
   patchMyCdPublic,
@@ -20,7 +20,7 @@ export const useMyCdList = (sort: string) => {
 export const useMyLikedCdList = (sort: string) => {
   return useQuery({
     queryKey: ['myLikeList', sort],
-    queryFn: () => getLikedCdList(sort),
+    queryFn: () => getMyLikedCdList(sort),
     staleTime: 0, // 캐시 무효화
     refetchOnWindowFocus: false,
   })
@@ -53,7 +53,10 @@ export const useMyCdActions = (cdId: number, options?: { enabled?: boolean }) =>
     mutationKey: ['patchMyCdPublic', cdId],
     mutationFn: () => patchMyCdPublic(cdId),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['playlistDetail', cdId] })
       queryClient.invalidateQueries({ queryKey: ['getTracklist', cdId] })
+      queryClient.invalidateQueries({ queryKey: ['myCdList'] })
+      queryClient.invalidateQueries({ queryKey: ['feedCdInfiniteList'] })
     },
   })
 

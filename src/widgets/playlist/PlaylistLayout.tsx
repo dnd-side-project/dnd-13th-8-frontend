@@ -4,10 +4,12 @@ import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
 import type { PlaylistDetail } from '@/entities/playlist'
+import { FollowButton } from '@/features/follow'
+import { useMarquee } from '@/shared/lib'
 import { useDevice } from '@/shared/lib/useDevice'
-import { flexColCenter } from '@/shared/styles/mixins'
-import { Button, Cd, Header, LiveInfo } from '@/shared/ui'
-import { ActionBar, PlayButton, ProgressBar } from '@/widgets/playlist'
+import { cdSpinner, flexColCenter, marquee } from '@/shared/styles/mixins'
+import { Cd, Header, LiveInfo, Profile } from '@/shared/ui'
+import { ActionBar, PlayButton, ProgressBar, VolumeButton } from '@/widgets/playlist'
 
 interface PlaylistSlideProps {
   currentPlaylist: PlaylistDetail | null
@@ -17,11 +19,10 @@ interface PlaylistSlideProps {
   onPlayPause: () => void
   onNext: () => void
   onPrev: () => void
-  onSelectTrack: (trackIndex: number, time?: number) => void
+  onSelectTrack: (trackIndex: number, seconds: number) => void
   playerRef: React.RefObject<YT.Player | null>
   isMuted?: boolean | null
-  setIsMuted?: React.Dispatch<React.SetStateAction<boolean | null>>
-  type?: 'My' | 'Discover'
+  setIsMuted?: (value: boolean) => void
 }
 
 const PlaylistLayout = ({
@@ -30,13 +31,27 @@ const PlaylistLayout = ({
   isPlaying,
   onPlayPause,
   onSelectTrack,
-  type = 'Discover',
+  playerRef,
+  isMuted,
+  setIsMuted,
 }: PlaylistSlideProps) => {
   const [showPlayButton, setShowPlayButton] = useState(false)
-  const navigate = useNavigate()
 
-  const deviceType = useDevice()
-  const isMobile = deviceType === 'mobile'
+  const navigate = useNavigate()
+  const { isMobile } = useDevice()
+  const title = currentPlaylist?.playlistName ?? ''
+
+  const {
+    isOverflow,
+    isAutoRunning,
+    isHovered,
+    titleRef,
+    handleTitleMouseEnter,
+    handleTitleMouseLeave,
+    handleAnimationEnd,
+    handleTitleTouchStart,
+    handleTitleTouchEnd,
+  } = useMarquee(title, isPlaying)
 
   const handleProgressClick = useCallback(
     (trackIndex: number, seconds: number) => {
@@ -52,17 +67,14 @@ const PlaylistLayout = ({
     setTimeout(() => setShowPlayButton(false), duration)
   }
 
+  if (!currentPlaylist) return null
+
   return (
     <>
       <Overlay onClick={handleOverlayClick} />
       <Header center={<span>둘러보기</span>} />
       <Container>
         <LiveInfo />
-        {type === 'My' && (
-          <Button size="S" state="primary" onClick={() => navigate('/mypage/customize')}>
-            꾸미기
-          </Button>
-        )}
       </Container>
       <Wrapper>
         <CdContainer>
@@ -70,33 +82,59 @@ const PlaylistLayout = ({
             <PlayButton isPlaying={isPlaying} onPlayPause={onPlayPause} show={showPlayButton} />
           )}
           <CdSpinner $isPlaying={isPlaying}>
-            <Cd
-              variant="xxl"
-              bgColor="none"
-              stickers={currentPlaylist?.cdResponse?.cdItems ?? []}
-            />
+            <Cd variant="xxl" bgColor="none" stickers={currentPlaylist.cdResponse.cdItems} />
           </CdSpinner>
         </CdContainer>
         <ActionBarContainer $isMobile={isMobile}>
           <ActionBar
-            playlistId={currentPlaylist?.playlistId ?? 0}
-            creatorId={currentPlaylist?.creatorId ?? ''}
-            stickers={currentPlaylist?.cdResponse?.cdItems ?? []}
+            playlistId={currentPlaylist.playlistId}
+            creatorId={currentPlaylist.creatorId}
+            stickers={currentPlaylist.cdResponse.cdItems}
             type="DISCOVER"
           />
         </ActionBarContainer>
       </Wrapper>
+      <CreatorInfo>
+        <CreatorButton
+          onClick={() =>
+            currentPlaylist.creatorShareCode && navigate(`/${currentPlaylist.creatorShareCode}`)
+          }
+        >
+          <Profile size={32} profileUrl={currentPlaylist.creatorProfileImageUrl} />
+          <Creator>{currentPlaylist.creatorNickname}</Creator>
+        </CreatorButton>
+        <FollowButton variant="small" shareCode={String(currentPlaylist.creatorShareCode)} />
+      </CreatorInfo>
 
-      <Title>{currentPlaylist?.playlistName ?? ''}</Title>
-      <Creator>{currentPlaylist?.creatorNickname ?? ''}</Creator>
+      <TitleContainer>
+        <Title
+          ref={titleRef}
+          $isOverflow={isOverflow}
+          $isHovered={isHovered}
+          $isAutoRunning={isAutoRunning}
+          onMouseEnter={handleTitleMouseEnter}
+          onMouseLeave={handleTitleMouseLeave}
+          onTouchStart={handleTitleTouchStart}
+          onTouchEnd={handleTitleTouchEnd}
+          onAnimationEnd={handleAnimationEnd}
+        >
+          {title}
+        </Title>
+      </TitleContainer>
 
       <ProgressBarWrapper>
         <ProgressBar
-          trackLengths={currentPlaylist?.songs.map((t) => t.youtubeLength) || []}
+          trackLengths={currentPlaylist.songs.map((t) => t.youtubeLength)}
           currentIndex={currentTrackIndex}
           onClick={handleProgressClick}
         />
       </ProgressBarWrapper>
+
+      {isMuted && setIsMuted && (
+        <VolumeButtonWrapper>
+          <VolumeButton playerRef={playerRef} isMuted={isMuted} setIsMuted={setIsMuted} />
+        </VolumeButtonWrapper>
+      )}
     </>
   )
 }
@@ -116,28 +154,33 @@ const Container = styled.div`
 
 const CdSpinner = styled.div<{ $isPlaying: boolean }>`
   position: relative;
-  animation: spin 40s linear infinite;
-  animation-play-state: ${(props) => (props.$isPlaying ? 'running' : 'paused')};
-  transform-origin: center;
-
-  @keyframes spin {
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(360deg);
-    }
-  }
+  ${cdSpinner}
 `
 
-const Title = styled.p`
+const TitleContainer = styled.div`
+  width: 100%;
+  overflow: hidden;
+  margin-top: 10px;
+  position: relative;
+  z-index: ${({ theme }) => theme.Z_INDEX.topLayer};
+`
+
+const Title = styled.span<{
+  $isOverflow?: boolean
+  $isHovered?: boolean
+  $isAutoRunning?: boolean
+}>`
   ${({ theme }) => theme.FONT.headline1};
+  color: ${({ theme }) => theme.COLOR['gray-10']};
+
+  ${marquee}
 `
 
 const Creator = styled.p`
   ${({ theme }) => theme.FONT['body2-normal']};
-  color: ${({ theme }) => theme.COLOR['gray-300']};
+  color: ${({ theme }) => theme.COLOR['gray-100']};
 `
+
 const ActionBarContainer = styled.div<{ $isMobile?: boolean }>`
   display: flex;
   justify-content: flex-end;
@@ -170,4 +213,24 @@ const ProgressBarWrapper = styled.div`
   position: relative;
   z-index: ${({ theme }) => theme.Z_INDEX.topLayer};
   padding-top: 32px;
+`
+
+const CreatorInfo = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+  z-index: ${({ theme }) => theme.Z_INDEX.topLayer};
+`
+
+const CreatorButton = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`
+
+const VolumeButtonWrapper = styled.div`
+  position: absolute;
+  top: 62px;
+  z-index: ${({ theme }) => theme.Z_INDEX.topLayer};
 `

@@ -9,10 +9,11 @@ import styled from 'styled-components'
 
 import SvgButton from '@/shared/ui/SvgButton'
 
-type InputType = 'text' | 'search' | 'url'
+type InputType = 'text' | 'search' | 'url' | 'tel'
 type IconPosition = 'left' | 'right'
 
 interface InputProps {
+  id?: string
   type: InputType
   placeholder?: string
   value?: string
@@ -33,6 +34,7 @@ interface InputProps {
 }
 
 const Input = ({
+  id,
   type,
   placeholder,
   value,
@@ -60,6 +62,7 @@ const Input = ({
           icon && React.createElement(icon)
         )}
         <StyledInput
+          id={id}
           type={type}
           placeholder={placeholder}
           value={value}
@@ -114,6 +117,7 @@ const StyledInput = styled.input`
   padding: 0;
   width: 100%;
   color: ${({ theme }) => theme.COLOR['gray-10']};
+  caret-color: ${({ theme }) => theme.COLOR['primary-normal']};
   ${({ theme }) => theme.FONT['body2-normal']};
 
   &::placeholder {

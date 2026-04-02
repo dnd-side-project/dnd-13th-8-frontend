@@ -1,8 +1,8 @@
 import axios, { AxiosError } from 'axios'
 import type { AxiosResponse, InternalAxiosRequestConfig } from 'axios'
 
-import { useAuthStore } from '@/features/auth/store/authStore'
-import { useGlobalModalStore } from '@/shared/store/globalModalStore'
+import { useAuthStore } from '@/features/auth'
+// import { useGlobalModalStore } from '@/shared/store/globalModalStore'
 
 export const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -26,9 +26,6 @@ axiosInstance.interceptors.request.use(
   (error) => Promise.reject(error)
 )
 
-// 에러 모달 호출용 임시 코드
-const store = useGlobalModalStore
-
 // 응답 interceptor
 axiosInstance.interceptors.response.use(
   (response: AxiosResponse) => response.data,
@@ -38,9 +35,6 @@ axiosInstance.interceptors.response.use(
     const { isLogin, setLogout } = useAuthStore.getState()
     const currentPath = window.location.pathname
 
-    // const { openModal } = useGlobalModalStore.getState()
-    const msg = error.response?.data?.message ?? ''
-
     if (code === 'COMMON-401' || status === 401) {
       if (isLogin) {
         // 회원 로그인 토큰 만료 만료 → 로그아웃 + 로그인 페이지 이동
@@ -49,7 +43,7 @@ axiosInstance.interceptors.response.use(
           localStorage.setItem('show_expired_toast', 'true')
           window.location.replace('/login')
         }
-        return
+        return Promise.reject(error)
       }
 
       // 비회원 → 익명 토큰 재발급 (로그인/콜백 페이지는 제외)
@@ -79,15 +73,18 @@ axiosInstance.interceptors.response.use(
       }
     }
 
-    if (import.meta.env.VITE_ENVIRONMENT_TYPE !== 'PROD') {
-      store.setState({
-        isOpen: true,
-        title: `[${status}] ${code}`,
-        description: msg,
-        ctaType: 'single',
-        confirmText: '확인',
-      })
-    }
+    // QA용 에러 로그 모달
+    // const store = useGlobalModalStore
+    // const msg = error.response?.data?.message ?? ''
+    // if (import.meta.env.VITE_ENVIRONMENT_TYPE !== 'PROD') {
+    //   store.setState({
+    //     isOpen: true,
+    //     title: `[${status}] ${code}`,
+    //     description: msg,
+    //     ctaType: 'single',
+    //     confirmText: '확인',
+    //   })
+    // }
 
     console.error('Axios Error: ', error.response ?? error)
     return Promise.reject(error)

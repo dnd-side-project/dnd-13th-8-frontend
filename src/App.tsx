@@ -3,7 +3,6 @@ import { useLocation } from 'react-router-dom'
 
 import styled from 'styled-components'
 
-import { ToastProvider } from '@app/providers'
 import { AppRoutes } from '@app/routes/routes'
 
 import { routesConfig, type RouteConfig } from '@shared/config/routesConfig'
@@ -19,26 +18,20 @@ import {
   OpacityCharacterPink,
   OpacityMusic,
 } from '@/assets/images'
-import { useAnonymousLogin } from '@/features/auth/model/useAuth'
-import { useAuthStore } from '@/features/auth/store/authStore'
+import { useAnonymousLogin, useAuthStore } from '@/features/auth'
 import { GlobalErrorModal } from '@/shared/ui'
 import NavBar, { NAV_HEIGHT } from '@/widgets/layout/NavBar'
 
 const App = () => {
-  const deviceType = useDevice()
+  const { isMobile, layoutWidth } = useDevice()
   const location = useLocation()
-  const isMobile = deviceType === 'mobile'
 
   const { isLogin } = useAuthStore()
   const { mutate } = useAnonymousLogin()
 
   const [isNavVisible, setIsNavVisible] = useState(true)
 
-  const LAYOUT_WIDTH = isMobile ? 'clamp(320px, 100dvw, 430px)' : '430px'
-
-  const isMobileView =
-    isMobile && (location.pathname.startsWith('/mycd') || location.pathname.startsWith('/discover'))
-  const LAYOUT_BOTTOM_GAP = isMobileView ? 16 : 34
+  const LAYOUT_BOTTOM_GAP = isMobile ? 16 : 34
 
   // 비회원일 경우 API 호출을 위한 익명 토큰 발급
   const checkAnonymousLogin = () => {
@@ -97,7 +90,7 @@ const App = () => {
 
   return (
     <RootWrapper>
-      {deviceType !== 'mobile' && (
+      {!isMobile && (
         <div aria-hidden="true">
           <CommonBgElement src={CommonBg} alt="background" />
           <LogoElement src={Logo} alt="logo" />
@@ -142,18 +135,16 @@ const App = () => {
 
       <MainLayout
         $isNavVisible={isNavVisible}
-        $layoutWidth={LAYOUT_WIDTH}
+        $layoutWidth={layoutWidth}
         $layoutBottomGap={LAYOUT_BOTTOM_GAP}
       >
-        <ToastProvider>
-          <AppRoutes />
-          {isNavVisible && (
-            <NavContainer $layoutWidth={LAYOUT_WIDTH} $layoutBottomGap={LAYOUT_BOTTOM_GAP}>
-              <NavBar />
-            </NavContainer>
-          )}
-          <GlobalErrorModal />
-        </ToastProvider>
+        <AppRoutes />
+        {isNavVisible && (
+          <NavContainer $layoutWidth={layoutWidth} $layoutBottomGap={LAYOUT_BOTTOM_GAP}>
+            <NavBar />
+          </NavContainer>
+        )}
+        <GlobalErrorModal />
       </MainLayout>
     </RootWrapper>
   )
@@ -180,7 +171,7 @@ const MainLayout = styled.main<{
     -10px 0 30px -5px rgba(0, 0, 0, 0.3),
     10px 0 30px -5px rgba(0, 0, 0, 0.3);
 
-  @media (max-width: 980px) {
+  @media (max-width: 979px) {
     position: relative;
     margin: 0 auto;
     left: 0;
@@ -210,7 +201,7 @@ const NavContainer = styled.div<{
     rgb(15, 16, 20) 50%
   );
 
-  @media (max-width: 980px) {
+  @media (max-width: 979px) {
     left: 50%;
     transform: translateX(-50%);
   }

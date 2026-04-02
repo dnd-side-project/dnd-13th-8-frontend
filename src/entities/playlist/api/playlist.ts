@@ -1,10 +1,24 @@
-import type {
-  CdMetaResponse,
-  PlaylistDetail,
-  PlaylistParams,
-  PlaylistResponse,
+import {
+  type CdListResponse,
+  type CdListParams,
+  type CdMetaResponse,
+  type PlaylistDetail,
+  type PlaylistParams,
+  type PlaylistResponse,
+  type CarouselParams,
+  type CarouselCdListResponse,
 } from '@/entities/playlist/types/playlist'
 import { api } from '@/shared/api/httpClient'
+
+// 피드 CD 리스트 조회
+export const getCdList = (params: CdListParams) => {
+  return api.get<CdListResponse>(`/main/playlist/feed/${params.shareCode}`, { params })
+}
+
+// 피드 좋아요 한 CD 리스트 조회
+export const getLikedCdList = (params: CdListParams) => {
+  return api.get<CdListResponse>(`/main/playlist/feed/${params.shareCode}/likes`, { params })
+}
 
 // 나의 CD 리스트 조회
 export const getMyCdList = (sort: string) => {
@@ -12,7 +26,7 @@ export const getMyCdList = (sort: string) => {
 }
 
 // 좋아요한 CD 리스트 조회
-export const getLikedCdList = (sort: string) => {
+export const getMyLikedCdList = (sort: string) => {
   return api.get<CdMetaResponse>(`/main/playlist/mypage/me/likes?sort=${sort}`)
 }
 
@@ -59,4 +73,18 @@ export const postPlaylistConfirm = (playlistId: number) => {
 // 플리 조회수 단건 조회
 export const getPlaylistViewCounts = (playlistId: number) => {
   return api.get(`/main/playlist/browse/view-counts/${playlistId}`)
+}
+
+// 피드 플레이리스트 캐러셀 조회
+export const getCdCarousel = (shareCode: string, params: CarouselParams) => {
+  return api.get<CarouselCdListResponse>(`/main/playlist/feed/${shareCode}/carousel`, {
+    params,
+  })
+}
+
+// 피드 좋아요한 플레이리스트 캐러셀 조회
+export const getLikedCdCarousel = (shareCode: string, params: CarouselParams) => {
+  return api.get<CarouselCdListResponse>(`/main/playlist/feed/${shareCode}/likes/carousel`, {
+    params,
+  })
 }

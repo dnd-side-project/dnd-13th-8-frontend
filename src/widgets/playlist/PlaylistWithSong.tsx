@@ -58,22 +58,11 @@ const Wrapper = styled.div`
   gap: 16px;
   padding: 15px;
   width: 240px;
-
-  border: 1px solid transparent;
+  border: 0.5px solid transparent;
   border-radius: 14px;
   background:
-    linear-gradient(
-        to bottom right,
-        ${({ theme }) => theme.COLOR['gray-600']},
-        ${({ theme }) => theme.COLOR['gray-800']}
-      )
-      padding-box,
-    linear-gradient(
-        to bottom right,
-        ${({ theme }) => theme.COLOR['gray-600']},
-        ${({ theme }) => theme.COLOR['gray-800']}
-      )
-      border-box;
+    linear-gradient(144.41deg, #2a2f39 0%, #191b22 100%) padding-box,
+    linear-gradient(to top left, rgba(55, 57, 71, 0) 0%, rgba(71, 73, 91, 1) 100%) border-box;
 `
 
 const InfoText = styled.div`

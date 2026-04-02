@@ -1,15 +1,6 @@
-import type { CdCustomData, Track } from '@/entities/playlist'
-
-export interface Playlist {
-  playlistId: number
-  playlistName: string
-  creatorId: string
-  creatorNickname: string
-  songs: Track[]
-  cdResponse?: {
-    cdItems: CdCustomData[]
-  }
-}
+import type { BundleInfo } from '@/entities/bundle'
+import type { Playlist } from '@/entities/playlist'
+import type { ProfileResponse } from '@/entities/user'
 
 export type RecommendationsResponse = Playlist[]
 
@@ -19,3 +10,7 @@ export interface GenreInfo {
 }
 
 export type RecommendedGenresResponse = GenreInfo[]
+
+export type RecommendUserResponse = ProfileResponse[]
+
+export type TimeRecommendationResponse = BundleInfo[]

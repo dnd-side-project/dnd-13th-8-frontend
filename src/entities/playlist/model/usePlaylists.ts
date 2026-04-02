@@ -1,3 +1,5 @@
+import { useLocation } from 'react-router-dom'
+
 import {
   useInfiniteQuery,
   useMutation,
@@ -6,8 +8,13 @@ import {
   useQueryClient,
   type InfiniteData,
 } from '@tanstack/react-query'
+import axios from 'axios'
 
 import {
+  getCdCarousel,
+  getCdList,
+  getLikedCdCarousel,
+  getLikedCdList,
   getMyPlaylistDetail,
   getPlaylistDetail,
   getPlaylistViewCounts,
@@ -15,10 +22,23 @@ import {
   postPlaylistConfirm,
   postPlaylistStart,
 } from '@/entities/playlist/api/playlist'
-import type { PlaylistDetail, PlaylistResponse } from '@/entities/playlist/types/playlist'
-import { useAuthStore } from '@/features/auth/store/authStore'
+import type {
+  PlaylistDetail,
+  PlaylistResponse,
+  CdListParams,
+  FEED_CD_LIST_TAB_TYPE,
+  CarouselParams,
+  CarouselDirection,
+} from '@/entities/playlist/types/playlist'
+import { useAuthStore, type ShareCode } from '@/features/auth'
 
 export const useShufflePlaylists = (size: number = 5) => {
+  const { isLogin, accessToken } = useAuthStore()
+  const location = useLocation()
+
+  // 로그인 콜백 중인지 확인
+  const isLoggingIn = location.pathname === '/login/callback'
+
   return useInfiniteQuery<
     PlaylistResponse, // queryFn 반환 타입
     Error, // 에러 타입
@@ -39,11 +59,15 @@ export const useShufflePlaylists = (size: number = 5) => {
       }
       return undefined
     },
-    enabled: !!useAuthStore.getState().accessToken || !!sessionStorage.getItem('anonymous_token'),
+    enabled:
+      !isLoggingIn && (isLogin ? !!accessToken : !!sessionStorage.getItem('anonymous_token')),
   })
 }
 
-export const usePlaylistDetail = (playlistId: number | null, options?: { enabled?: boolean }) => {
+export const usePlaylistDetail = (
+  playlistId: number | null | undefined, // TODO: mycd 레거시 정리 시 null 타입도 삭제
+  options?: { enabled?: boolean }
+) => {
   return useQuery({
     queryKey: ['playlistDetail', playlistId],
     queryFn: () => getPlaylistDetail(playlistId as number),
@@ -105,4 +129,76 @@ export const usePlaylistDetails = (ids: number[]) => {
   }, [])
 
   return { data, isLoading, isError }
+}
+
+export const useFeedCdList = ({
+  shareCode,
+  feedView,
+  params,
+}: {
+  shareCode: ShareCode
+  feedView: FEED_CD_LIST_TAB_TYPE
+  params: Omit<CdListParams, 'cursor'>
+}) => {
+  return useInfiniteQuery({
+    queryKey: ['feedCdInfiniteList', shareCode, feedView, params.sort],
+    queryFn: ({ pageParam }) => {
+      const fetchParams = {
+        ...params,
+        cursor: pageParam as string,
+      }
+      return feedView === 'cds' ? getCdList(fetchParams) : getLikedCdList(fetchParams)
+    },
+    initialPageParam: '', // 초기 cursor 값
+    getNextPageParam: (lastPage) => (lastPage.hasNext ? lastPage.nextCursor : undefined),
+    enabled: !!shareCode,
+  })
+}
+
+type PageParam = { cursor: number; direction: CarouselDirection } | undefined
+
+export const useCarouselCdList = (
+  type: FEED_CD_LIST_TAB_TYPE, // cds or likes
+  shareCode: string,
+  params: CarouselParams,
+  options?: { enabled?: boolean }
+) => {
+  return useInfiniteQuery({
+    queryKey: ['feedCdList', type, shareCode, params.sort, params.anchorId],
+
+    queryFn: ({ pageParam }: { pageParam: PageParam }) => {
+      const fetchFn = type === 'cds' ? getCdCarousel : getLikedCdCarousel
+
+      return fetchFn(shareCode, {
+        ...params,
+        // pageParam이 존재하면 anchorId를 undefined로 덮어씌워서 없앰
+        anchorId: pageParam ? undefined : params.anchorId,
+        cursor: pageParam?.cursor,
+        direction: pageParam?.direction,
+      })
+    },
+
+    retry: (_, error) => {
+      // 404면 재시도 X
+      if (axios.isAxiosError(error) && error.response?.status === 404) {
+        return false
+      }
+
+      return true // 아니면 디폴트 값인 3번까지 재시도
+    },
+
+    initialPageParam: undefined as PageParam,
+
+    getNextPageParam: (lastPage): PageParam => {
+      if (!lastPage.hasNext || lastPage.nextCursor === null) return undefined
+      return { cursor: lastPage.nextCursor, direction: 'NEXT' }
+    },
+
+    getPreviousPageParam: (firstPage): PageParam => {
+      if (!firstPage.hasPrev || firstPage.prevCursor === null) return undefined
+      return { cursor: firstPage.prevCursor, direction: 'PREV' }
+    },
+
+    enabled: options?.enabled !== false && !!shareCode,
+  })
 }

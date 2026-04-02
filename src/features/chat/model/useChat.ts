@@ -6,7 +6,12 @@ import {
   type InfiniteData,
 } from '@tanstack/react-query'
 
-import { deleteChatMessage, getChatCount, getChatHistory } from '@/features/chat/api/chat'
+import {
+  deleteChatMessage,
+  getChatCount,
+  getChatHistory,
+  postReportChatMessage,
+} from '@/features/chat/api/chat'
 import type { ChatHistoryResponse } from '@/features/chat/types/chat'
 
 export const useInfiniteChatHistory = (roomId: string, limit = 50) => {
@@ -47,5 +52,12 @@ export const useChatCount = (roomId: string) => {
     enabled: !!roomId, // roomId가 있을 때만 실행
     staleTime: 0,
     refetchOnWindowFocus: false,
+  })
+}
+
+export const useReportChat = () => {
+  return useMutation({
+    mutationFn: ({ roomId, messageId }: { roomId: string; messageId: string }) =>
+      postReportChatMessage(roomId, messageId),
   })
 }

@@ -58,12 +58,9 @@ const PlaylistInfo = ({ playlistData, isLoading, isError }: PlaylistInfoProps) =
         <TrackInfo>
           {playlistData.songs &&
             playlistData.songs.map((track, index) => (
-              <Link
-                key={track.id}
-                data={track}
-                variant="large"
-                onClick={() => handleClickTrack(index)}
-              />
+              <li key={track.id}>
+                <Link data={track} variant="large" onClick={() => handleClickTrack(index)} />
+              </li>
             ))}
         </TrackInfo>
       </Content>
@@ -75,6 +72,8 @@ export default PlaylistInfo
 
 const Wrapper = styled.div`
   ${flexColCenter}
+  height: 100dvh;
+  overflow: hidden;
 `
 
 const Content = styled.section`
@@ -82,11 +81,22 @@ const Content = styled.section`
   flex-direction: column;
   width: 100%;
   gap: 28px;
+
+  flex: 1;
+  overflow: hidden;
 `
-const TrackInfo = styled.div`
+const TrackInfo = styled.ul`
   display: flex;
   flex-direction: column;
   gap: 20px;
+  padding-bottom: 100px;
+
+  flex: 1;
+  overflow-y: auto;
+
+  & > li {
+    cursor: pointer;
+  }
 `
 
 const NoDataWrapper = styled.div`

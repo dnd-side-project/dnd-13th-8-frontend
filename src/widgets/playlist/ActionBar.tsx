@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { Playlist } from '@/assets/icons'
-import type { CdCustomData } from '@/entities/playlist'
+import type { CdCustomData, CdMetaResponse } from '@/entities/playlist'
 import { LikeButton } from '@/features/like'
 import { ShareButton } from '@/features/share'
 import { flexColCenter, flexRowCenter, myCdButton } from '@/shared/styles/mixins'
@@ -15,7 +15,8 @@ interface ActionBarProps {
   creatorId: string
   stickers?: CdCustomData[]
   type?: 'MY' | 'DISCOVER'
-  selectedTab?: 'MY' | 'LIKE'
+  playlistData?: CdMetaResponse
+  activeIndex?: number
 }
 
 const ActionBar = ({
@@ -23,23 +24,23 @@ const ActionBar = ({
   creatorId,
   stickers,
   type = 'DISCOVER',
-  selectedTab = 'MY',
+  playlistData,
+  activeIndex,
 }: ActionBarProps) => {
   const navigate = useNavigate()
 
   const handleMovePlaylist = () => {
-    if (type === 'DISCOVER') {
-      navigate(`/discover/${playlistId}/tracklist`)
-    } else {
-      navigate(`/mycd/${playlistId}/tracklist`)
-    }
+    navigate(`./tracklist`)
   }
 
   return (
     <Wrapper $type={type}>
-      {!(type === 'MY' && selectedTab === 'MY') && (
-        <LikeButton playlistId={playlistId} type={type} />
-      )}
+      <LikeButton
+        playlistId={playlistId}
+        type={type}
+        playlistData={playlistData}
+        activeIndex={activeIndex}
+      />
       <ChatButton roomId={playlistId} creatorId={creatorId} type={type} />
       <ShareButton playlistId={playlistId} stickers={stickers} type={type} />
       <DetailButton $isMy={type === 'MY'} onClick={handleMovePlaylist}>

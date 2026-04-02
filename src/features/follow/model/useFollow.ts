@@ -1,48 +1,111 @@
-import { useState } from 'react'
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQueryClient,
+  type InfiniteData,
+} from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import {
+  postFollow,
+  deleteFollow,
+  getFollowStatus,
+  getFollowingList,
+  getFollowerList,
+} from '@/features/follow/api/follow'
+import type { FollowListResponse, FollowSortType } from '@/features/follow/types/follow'
 
-import { postFollow, deleteFollow, getFollowStatus } from '@/features/follow/api/follow'
-
-const useFollow = (playlistId: number, initialIsFollowing: boolean) => {
+const useFollow = (shareCode: string, initialIsFollowing?: boolean, enabled = true) => {
   const queryClient = useQueryClient()
-  const [isFollowing, setIsFollowing] = useState(initialIsFollowing)
+
+  const { data } = useQuery({
+    queryKey: ['followStatus', shareCode],
+    queryFn: () => getFollowStatus(shareCode),
+    enabled: !!shareCode && enabled,
+    initialData: initialIsFollowing !== undefined ? { isFollowing: initialIsFollowing } : undefined,
+  })
 
   const followMutation = useMutation({
-    mutationFn: (playlistId: number) => postFollow(playlistId),
+    mutationFn: () => postFollow(shareCode),
     onSuccess: () => {
-      setIsFollowing(true)
-      queryClient.invalidateQueries({ queryKey: ['playlistDetail', playlistId] })
+      queryClient.invalidateQueries({ queryKey: ['followStatus', shareCode] })
+      queryClient.invalidateQueries({
+        queryKey: ['followingList'],
+        refetchType: 'none',
+      })
+      queryClient.invalidateQueries({
+        queryKey: ['followerList'],
+        refetchType: 'none',
+      })
+      queryClient.invalidateQueries({ queryKey: ['getUserProfile', shareCode] })
     },
   })
 
   const unfollowMutation = useMutation({
-    mutationFn: (playlistId: number) => deleteFollow(playlistId),
+    mutationFn: () => deleteFollow(shareCode),
     onSuccess: () => {
-      setIsFollowing(false)
-      queryClient.invalidateQueries({ queryKey: ['playlistDetail', playlistId] })
+      queryClient.invalidateQueries({ queryKey: ['followStatus', shareCode] })
+      queryClient.invalidateQueries({
+        queryKey: ['followingList'],
+        refetchType: 'none',
+      })
+      queryClient.invalidateQueries({
+        queryKey: ['followerList'],
+        refetchType: 'none',
+      })
+      queryClient.invalidateQueries({ queryKey: ['getUserProfile', shareCode] })
     },
   })
 
+  const isFollowing = data?.isFollowing ?? initialIsFollowing ?? false
+
   const toggleFollow = () => {
     if (followMutation.isPending || unfollowMutation.isPending) return
+
     if (isFollowing) {
-      unfollowMutation.mutate(playlistId)
+      unfollowMutation.mutate()
     } else {
-      followMutation.mutate(playlistId)
+      followMutation.mutate()
     }
   }
 
-  return { isFollowing, toggleFollow, followMutation, unfollowMutation }
+  return {
+    isFollowing,
+    toggleFollow,
+    isLoading: followMutation.isPending || unfollowMutation.isPending,
+  }
 }
 
 export default useFollow
 
-export const useFollowStatus = (playlistId: number, options?: { enabled?: boolean }) => {
-  return useQuery({
-    queryKey: ['followStatus', playlistId],
-    queryFn: () => getFollowStatus(playlistId),
-    staleTime: 0,
-    enabled: playlistId !== undefined && (options?.enabled ?? true),
+export const useFollowList = (
+  type: 'FOLLOWERS' | 'FOLLOWING',
+  shareCode: string,
+  sort: FollowSortType = 'LATEST'
+) => {
+  const isFollower = type === 'FOLLOWERS'
+  const queryKey = isFollower ? 'followerList' : 'followingList'
+  const fetchFn = isFollower ? getFollowerList : getFollowingList
+
+  return useInfiniteQuery<
+    FollowListResponse,
+    Error,
+    InfiniteData<FollowListResponse>,
+    string[],
+    number | undefined
+  >({
+    queryKey: [queryKey, shareCode, sort],
+    queryFn: ({ pageParam }) =>
+      fetchFn(shareCode, {
+        cursor: pageParam,
+        limit: 10,
+        sort,
+      }),
+    initialPageParam: undefined,
+    enabled: !!shareCode,
+    getNextPageParam: (lastPage) => {
+      if (!lastPage.hasNext) return undefined
+      return lastPage.nextCursor
+    },
   })
 }

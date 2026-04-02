@@ -13,57 +13,47 @@ interface PlaylistProps {
   id: number
   stickers?: CdCustomData[]
   cdVariant?: CdProps['variant']
-  isPublic?: boolean
 }
 
-const Playlist = ({
-  id,
-  title,
-  username,
-  stickers,
-  cdVariant = 'xl',
-  isPublic = true,
-}: PlaylistProps) => {
+const Playlist = ({ id, title, username, stickers, cdVariant = 'xl' }: PlaylistProps) => {
   const navigate = useNavigate()
 
-  // 마이페이지에서만 아래 옵션을 사용하고 있어 구분하기 위함
-  const isFromMypage = cdVariant === 'responsive'
+  // 피드 페이지에서만 아래 옵션을 사용하고 있어 구분하기 위함
+  const isFromFeedPage = cdVariant === 'responsive'
 
   const handleClick = () => {
-    if (isFromMypage) return
+    if (isFromFeedPage) return
     navigate(`/discover/${id}`)
   }
 
   return (
-    <Wrapper onClick={handleClick} $cdVariant={cdVariant}>
-      <CdBox $cdVariant={cdVariant}>
-        <Cd variant={cdVariant} stickers={stickers} isPublic={isPublic} />
+    <Wrapper onClick={handleClick} $isFromFeedPage={isFromFeedPage}>
+      <CdBox $isFromFeedPage={isFromFeedPage}>
+        <Cd variant={cdVariant} stickers={stickers} />
         <ButtonContainer>
           <LikeButton playlistId={id} type="HOME" />
         </ButtonContainer>
       </CdBox>
-      {!isFromMypage && (
-        <InfoBox>
-          <Title>{title}</Title>
-          <UserName>{username}</UserName>
-        </InfoBox>
-      )}
+      <InfoBox>
+        <Title>{title}</Title>
+        <UserName>{username}</UserName>
+      </InfoBox>
     </Wrapper>
   )
 }
 
 export default Playlist
 
-const Wrapper = styled.div<{ $cdVariant: string }>`
+const Wrapper = styled.div<{ $isFromFeedPage: boolean }>`
   display: flex;
   flex-direction: column;
   gap: 12px;
-  width: ${({ $cdVariant }) => ($cdVariant === 'responsive' ? '100%' : '140px')};
+  width: ${({ $isFromFeedPage }) => ($isFromFeedPage ? '100%' : '140px')};
 `
 
-const CdBox = styled.div<{ $cdVariant: string }>`
+const CdBox = styled.div<{ $isFromFeedPage: boolean }>`
   position: relative;
-  width: ${({ $cdVariant }) => ($cdVariant === 'responsive' ? '100%' : '140px')};
+  width: ${({ $isFromFeedPage }) => ($isFromFeedPage ? '100%' : '140px')};
   aspect-ratio: 1 / 1;
   border-radius: 16px;
 
@@ -76,6 +66,7 @@ const ButtonContainer = styled.div`
   position: absolute;
   top: 6px;
   right: 6px;
+  z-index: 2;
 `
 
 const Title = styled.h3`

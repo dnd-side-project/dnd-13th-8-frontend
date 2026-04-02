@@ -10,6 +10,7 @@ export interface ChatMessage {
   content: string
   sentAt: string
   profileImage: string | null
+  shareCode: string | null
   systemMessage?: boolean
   roomId: string
 }

@@ -1,4 +1,4 @@
-import type { ProfileResponse } from '@/features/profile/types/profile'
+export type ShareCode = string
 
 export interface LoginPayload {
   code: string
@@ -8,6 +8,7 @@ export interface LoginPayload {
 export interface UserInfo {
   userId: string
   nickname: string
+  shareCode: ShareCode
   profileUrl: string | null
 }
 
@@ -26,5 +27,13 @@ export interface AuthState {
   isLogin: boolean
   setLogin: (data: LoginResponse) => void
   setLogout: () => void
-  updateUserInfo: (data: ProfileResponse) => void
+  updateUserInfo: (data: UserInfo) => void
+}
+
+export interface ShareCodeOwnerResponse {
+  isOwner: boolean
+}
+
+export interface IsAdminResponse {
+  isAdmin: boolean
 }

@@ -24,9 +24,7 @@ const Overlay = ({
   const overlayRef = useRef<HTMLDivElement>(null)
   const prevOverflowRef = useRef<string | null>(null)
 
-  const deviceType = useDevice()
-
-  const LAYOUT_WIDTH = deviceType === 'mobile' ? 'clamp(320px, 100dvw, 430px)' : '430px'
+  const { layoutWidth } = useDevice()
 
   // ESC 키로 onClose
   const handleEscape = useCallback(
@@ -92,7 +90,7 @@ const Overlay = ({
             as="div"
             ref={overlayRef}
             onClick={handleOverlayClick}
-            $layoutWidth={LAYOUT_WIDTH}
+            $layoutWidth={layoutWidth}
             $childrenAlign={childrenAlign}
           >
             {children}
@@ -113,7 +111,7 @@ const Overlay = ({
           initial="hidden"
           animate="visible"
           exit="exit"
-          $layoutWidth={LAYOUT_WIDTH}
+          $layoutWidth={layoutWidth}
           $childrenAlign={childrenAlign}
         >
           {children}
@@ -140,7 +138,7 @@ const StyledOverlay = styled(motion.div)<{
   height: 100dvh;
   background-color: ${({ theme }) => theme.OPACITY.scrim};
 
-  @media (max-width: 980px) {
+  @media (max-width: 979px) {
     top: 0;
     left: 50%;
     right: 0;

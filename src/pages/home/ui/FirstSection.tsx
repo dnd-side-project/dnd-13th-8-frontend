@@ -7,7 +7,7 @@ import { Logo, RightArrow, Search } from '@/assets/icons'
 import { HomeCharacter } from '@/assets/images'
 import { usePlaylistDetails, useShufflePlaylists } from '@/entities/playlist'
 import { useMyCdList } from '@/entities/playlist/model/useMyCd'
-import { useAuthStore } from '@/features/auth/store/authStore'
+import { useAuthStore } from '@/features/auth'
 import { FeedbackIcon } from '@/pages/feedback/ui'
 import { BUTTON_TEXT, TITLE_TEXT } from '@/pages/home/config/messages'
 import { HomeCarousel } from '@/pages/home/ui'
@@ -18,8 +18,6 @@ const FirstSection = () => {
   const { isLogin, userInfo } = useAuthStore()
   const navigate = useNavigate()
 
-  // TODO: 알림 기능 2차 스프린트 시 작업 예정
-  // const handleNotiClick = () => navigate('/mypage/notification')
   const handleSearchClick = () => navigate('/search')
 
   const { data } = useShufflePlaylists(4)
@@ -36,8 +34,6 @@ const FirstSection = () => {
           left={<Logo />}
           right={
             <>
-              {/* TODO: 알림 기능 2차 스프린트 시 작업 예정 */}
-              {/* <SvgButton icon={Notification} onClick={handleNotiClick} /> */}
               <FeedbackIcon />
               <SvgButton
                 icon={Search}
@@ -53,7 +49,7 @@ const FirstSection = () => {
         <CtaContainer>
           <Title>{TITLE_TEXT.MEMBER_NO_CD}</Title>
 
-          <CtaButton onClick={() => (isLogin ? navigate('/mypage/customize') : navigate('/login'))}>
+          <CtaButton onClick={() => (isLogin ? navigate('/customize') : navigate('/login'))}>
             {BUTTON_TEXT.MEMBER_NO_CD} <RightArrow stroke="#000000" />
           </CtaButton>
 

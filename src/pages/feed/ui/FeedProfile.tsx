@@ -1,0 +1,223 @@
+import { useMemo } from 'react'
+import { useNavigate } from 'react-router-dom'
+
+import styled, { css } from 'styled-components'
+
+import { Pencil, Add, Tick, Share } from '@/assets/icons'
+import { PROFILE_KEYWORDS_LIST, type ProfileResponse } from '@/entities/user'
+import { useAuthStore, type ShareCode } from '@/features/auth'
+import { useFollow } from '@/features/follow'
+import { useShareLink } from '@/shared/lib'
+import { flexRowCenter } from '@/shared/styles/mixins'
+import { Profile, Badge } from '@/shared/ui'
+import type { ModalProps } from '@/shared/ui/Modal'
+
+interface FeedProfileProps {
+  userProfile?: ProfileResponse
+  shareCode: ShareCode
+  isMyFeed: boolean
+  setModal: (modal: ModalProps) => void
+}
+
+const FeedProfile = ({ userProfile, shareCode, isMyFeed, setModal }: FeedProfileProps) => {
+  const navigate = useNavigate()
+  const { isLogin } = useAuthStore()
+  const { shareLink } = useShareLink()
+
+  const { isFollowing, toggleFollow } = useFollow(shareCode)
+
+  const FollowIcon = isFollowing ? Tick : Add
+
+  const keywordLabelMap = useMemo(() => {
+    return PROFILE_KEYWORDS_LIST.reduce(
+      (acc, cur) => {
+        acc[cur.id] = cur.label
+        return acc
+      },
+      {} as Record<string, string>
+    )
+  }, [])
+
+  const onFollowClick = () => {
+    if (!isLogin) {
+      setModal({
+        isOpen: true,
+        title: '로그인 후 이용할 수 있어요',
+        ctaType: 'double',
+        onConfirm: () => {
+          navigate('/login')
+          setModal({ isOpen: false } as ModalProps)
+        },
+        onClose: () => setModal({ isOpen: false } as ModalProps),
+        onCancel: () => setModal({ isOpen: false } as ModalProps),
+        confirmText: '로그인하기',
+        cancelText: '다음에 하기',
+      })
+      return
+    }
+    toggleFollow()
+  }
+
+  const onShareButtonClick = async () => {
+    shareLink({
+      copyType: 'feed',
+      copyValue: userProfile?.shareCode || shareCode,
+      title: `[DEULAK] ${userProfile?.nickname}님의 피드`,
+      url: `${window.location.origin}/${userProfile?.shareCode || shareCode}`,
+    })
+  }
+
+  return (
+    <>
+      <ProfileContainer>
+        <ProfileImage>
+          <Profile size={80} profileUrl={userProfile?.profileUrl} />
+        </ProfileImage>
+        <ProfileInfo>
+          {(userProfile?.keywords?.length ?? 0) > 0 && (
+            <KeywordsBox>
+              {userProfile?.keywords.map((keyword) => (
+                <Badge key={keyword} size="large" text={keywordLabelMap[keyword]} />
+              ))}
+            </KeywordsBox>
+          )}
+          <NameInfoBox>
+            <Nickname>{userProfile?.nickname}</Nickname>
+            <ShareCodeText>{`@${userProfile?.shareCode}`}</ShareCodeText>
+          </NameInfoBox>
+          <FollowInfoBox>
+            <FollowButton onClick={() => navigate('followers')}>
+              팔로워 {userProfile?.followCount?.followerCount ?? 0}
+            </FollowButton>
+            <VerticalText>|</VerticalText>
+            <FollowButton onClick={() => navigate('following')}>
+              팔로잉 {userProfile?.followCount?.followingCount ?? 0}
+            </FollowButton>
+          </FollowInfoBox>
+        </ProfileInfo>
+      </ProfileContainer>
+
+      <CtaContainer>
+        {isMyFeed ? (
+          <CtaButton type="button" $ctaType="edit" onClick={() => navigate('/profileEdit')}>
+            <Pencil width={20} height={20} />
+            <span>프로필 편집</span>
+          </CtaButton>
+        ) : (
+          <CtaButton
+            type="button"
+            $ctaType={isFollowing ? 'following' : 'follow'}
+            onClick={onFollowClick}
+          >
+            <FollowIcon width={20} height={20} />
+            <span>{isFollowing ? '팔로잉' : '팔로우'}</span>
+          </CtaButton>
+        )}
+        <ShareButton type="button" onClick={onShareButtonClick}>
+          <Share width={20} height={20} />
+        </ShareButton>
+      </CtaContainer>
+    </>
+  )
+}
+
+export default FeedProfile
+
+const ctaVariants = {
+  edit: css`
+    color: ${({ theme }) => theme.COLOR['gray-200']};
+    background-color: ${({ theme }) => theme.COLOR['gray-600']};
+  `,
+
+  follow: css`
+    color: ${({ theme }) => theme.COLOR['gray-700']};
+    background-color: ${({ theme }) => theme.COLOR['primary-normal']};
+  `,
+
+  following: css`
+    color: ${({ theme }) => theme.COLOR['primary-normal']};
+    background-color: ${({ theme }) => theme.COLOR['gray-600']};
+  `,
+}
+
+const ProfileContainer = styled.section`
+  position: relative;
+  margin: -20px -20px 0 -20px;
+  padding: 0 20px;
+  border-radius: 24px 24px 0px 0px;
+  background-color: ${({ theme }) => theme.COLOR['gray-900']};
+`
+
+const ProfileImage = styled.div`
+  display: flex;
+  justify-content: center;
+  margin: -40px 0 24px 0;
+`
+
+const ProfileInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+`
+
+const KeywordsBox = styled.div`
+  display: flex;
+  gap: 4px;
+`
+
+const NameInfoBox = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`
+
+const Nickname = styled.h2`
+  ${({ theme }) => theme.FONT.heading1}
+  color: ${({ theme }) => theme.COLOR['gray-10']};
+  font-weight: 600;
+`
+
+const ShareCodeText = styled.span`
+  ${({ theme }) => theme.FONT.caption1}
+  color: ${({ theme }) => theme.COLOR['gray-300']};
+`
+
+const FollowInfoBox = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`
+
+const FollowButton = styled.button`
+  ${({ theme }) => theme.FONT['body2-normal']}
+  color: ${({ theme }) => theme.COLOR['gray-300']};
+`
+
+const VerticalText = styled.span`
+  ${({ theme }) => theme.FONT.caption1}
+  color: ${({ theme }) => theme.COLOR['gray-600']};
+`
+
+const CtaContainer = styled.div`
+  display: flex;
+  gap: 8px;
+  margin-top: 24px;
+  margin-bottom: 32px;
+`
+
+const ShareButton = styled.button`
+  ${flexRowCenter}
+  width: 44px;
+  height: 44px;
+  background-color: ${({ theme }) => theme.COLOR['gray-600']};
+  border-radius: 11px;
+`
+
+const CtaButton = styled.button<{ $ctaType: 'edit' | 'follow' | 'following' }>`
+  ${flexRowCenter}
+  gap: 4px;
+  flex: 1;
+  border-radius: 11px;
+  ${({ theme }) => theme.FONT['body2-normal']}
+  ${({ $ctaType }) => ctaVariants[$ctaType]}
+`

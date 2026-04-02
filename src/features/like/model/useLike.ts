@@ -1,8 +1,8 @@
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
-import { useAuthStore } from '@/features/auth/store/authStore'
+import { useAuthStore } from '@/features/auth'
 import { postLike, deleteLike, getLikeStatus } from '@/features/like/api/like'
 import type { LikeStatusResponse } from '@/features/like/type/like'
 
@@ -15,10 +15,17 @@ export const useLikeStatus = (playlistId: number, options?: { enabled?: boolean 
   })
 }
 
-const useLike = (playlistId: number) => {
+interface UseLikeOptions {
+  shouldNavigate?: boolean
+  getNextId?: () => number | undefined
+  openLoginModal?: () => void
+}
+
+const useLike = (playlistId: number, options?: UseLikeOptions) => {
   const queryClient = useQueryClient()
   const { isLogin } = useAuthStore()
   const navigate = useNavigate()
+  const location = useLocation()
 
   const { data: statusData, isLoading } = useLikeStatus(playlistId, { enabled: isLogin })
   const isLiked = statusData?.isLiked ?? false
@@ -49,6 +56,7 @@ const useLike = (playlistId: number) => {
     // 성공 실패 관계 없이 무조건 실행
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['likeStatus', playlistId] })
+      queryClient.invalidateQueries({ queryKey: ['feedCdList'], refetchType: 'none' })
     },
   })
 
@@ -61,7 +69,7 @@ const useLike = (playlistId: number) => {
 
       queryClient.setQueryData<LikeStatusResponse>(['likeStatus', playlistId], (old) => ({
         ...(old ?? { isLiked: false }),
-        isLiked: true,
+        isLiked: false,
       }))
 
       return { previous }
@@ -75,17 +83,36 @@ const useLike = (playlistId: number) => {
 
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['likeStatus', playlistId] })
+      queryClient.invalidateQueries({ queryKey: ['myLikeList'] })
+      queryClient.invalidateQueries({ queryKey: ['feedCdList'], refetchType: 'none' })
     },
   })
 
   const toggleLike = () => {
     if (!isLogin) {
-      navigate('/login')
+      options?.openLoginModal?.()
       return
     }
 
-    if (isLiked) unlikeMutation.mutate()
-    else likeMutation.mutate()
+    if (isLiked) {
+      unlikeMutation.mutate(undefined, {
+        onSuccess: () => {
+          if (options?.shouldNavigate) {
+            const nextId = options.getNextId?.()
+
+            navigate(location.pathname, {
+              replace: true,
+              state: {
+                ...location.state,
+                nextId: nextId,
+              },
+            })
+          }
+        },
+      })
+    } else {
+      likeMutation.mutate()
+    }
   }
 
   return { liked: isLiked, toggleLike, isLoading }

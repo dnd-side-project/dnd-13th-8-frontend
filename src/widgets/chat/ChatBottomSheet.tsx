@@ -5,7 +5,7 @@ import styled from 'styled-components'
 
 import { useChat } from '@/app/providers/ChatProvider'
 import { Comment } from '@/entities/comment'
-import { useUserInfo } from '@/features/auth/model/useAuth'
+import { useUserInfo } from '@/features/auth'
 import { parseMessage, type ChatCountResponse, type ChatMessage } from '@/features/chat'
 import { useInfiniteChatHistory } from '@/features/chat/model/useChat'
 import { flexColCenter } from '@/shared/styles/mixins'
@@ -106,6 +106,7 @@ const ChatBottomSheet = ({ isOpen, onClose, roomId, creatorId }: ChatBottomSheet
                 Icon={Icon || undefined}
                 role={role}
                 messageId={msg.messageId}
+                shareCode={msg.shareCode}
                 roomId={msg.roomId}
                 removeMessage={removeMessage}
               />

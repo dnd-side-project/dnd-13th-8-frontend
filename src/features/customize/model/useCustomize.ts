@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 
 import {
   getFinalCdCustom,
@@ -6,7 +6,6 @@ import {
   postCdTempSave,
   postCdFinalCreate,
   postCdFinalUpdate,
-  getUserStickers,
   postUserSticker,
 } from '@/features/customize/api/customize'
 import type { CdSavePayload, UserStickerPayload } from '@/features/customize/types/customize'
@@ -54,23 +53,10 @@ export const useCdSave = () => {
 }
 
 export const useUserSticker = () => {
-  const queryClient = useQueryClient()
-
-  // 조회
-  const { data: userStickerList } = useQuery({
-    queryKey: ['getUserStickers'],
-    queryFn: () => getUserStickers(),
-  })
-
-  // 업로드
   const uploadMutation = useMutation({
     mutationKey: ['postUserSticker'],
     mutationFn: ({ theme, file }: UserStickerPayload) => {
       return postUserSticker({ theme, file })
-    },
-    onSuccess: () => {
-      // 캐시 무효화하여 유저 스티커 리스트 재조회
-      queryClient.invalidateQueries({ queryKey: ['getUserStickers'] })
     },
     onError: (error) => {
       console.error('스티커 업로드 실패', error)
@@ -78,7 +64,6 @@ export const useUserSticker = () => {
   })
 
   return {
-    userStickerList,
     uploadSticker: uploadMutation,
     uploadPending: uploadMutation.isPending,
   }

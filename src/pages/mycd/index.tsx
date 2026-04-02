@@ -9,7 +9,7 @@ import { NoLike } from '@/assets/icons'
 import { MemberCharacter } from '@/assets/images'
 import { usePlaylistDetail } from '@/entities/playlist'
 import { useMyCdActions, useMyCdList, useMyLikedCdList } from '@/entities/playlist/model/useMyCd'
-import { useAuthStore } from '@/features/auth/store/authStore'
+import { useAuthStore } from '@/features/auth'
 import { HeaderTab, PlaylistCarousel } from '@/pages/mycd/ui'
 import type { MyCdTab } from '@/pages/mycd/ui/HeaderTab'
 import { useDevice } from '@/shared/lib/useDevice'
@@ -28,13 +28,11 @@ const MyCdPage = () => {
     play,
     pause,
     playerRef,
-    unmuteOnce,
   } = usePlaylist()
 
   const { userInfo } = useAuthStore()
   const navigate = useNavigate()
-  const deviceType = useDevice()
-  const isMobile = deviceType === 'mobile'
+  const { isMobile } = useDevice()
 
   const { id: routePlaylistId } = useParams<{ id?: string }>()
   const { search } = useLocation()
@@ -161,9 +159,7 @@ const MyCdPage = () => {
         <HeaderTab selectedTab={selectedTab} onSelect={handleTabSelect} />
         <CenterContent>
           <img src={MemberCharacter} alt="Guest Character" width={160} height={160} />
-          <NavigateBtn onClick={() => navigate('/mypage/customize')}>
-            새로운 CD에 취향 담기
-          </NavigateBtn>
+          <NavigateBtn onClick={() => navigate('/customize')}>새로운 CD에 취향 담기</NavigateBtn>
         </CenterContent>
       </EmptyPage>
     )
@@ -197,7 +193,7 @@ const MyCdPage = () => {
                   size="S"
                   state="primary"
                   onClick={() =>
-                    navigate(`/mypage/customize`, {
+                    navigate(`/customize`, {
                       state: { cdId: currentPlaylist?.playlistId },
                     })
                   }
@@ -218,7 +214,6 @@ const MyCdPage = () => {
                 creatorId={currentPlaylist.creatorId}
                 stickers={playlistDetail?.cdResponse?.cdItems || []}
                 type="MY"
-                selectedTab={selectedTab}
               />
               <Title $isMobile={isMobile}> {centerItem.playlistName}</Title>
               {selectedTab === 'LIKE' && playlistDetail?.creatorNickname && (
@@ -235,10 +230,6 @@ const MyCdPage = () => {
                 <ControlBar
                   isPlaying={isPlaying}
                   onTogglePlay={() => {
-                    if (isMobile && !isPlaying) {
-                      unmuteOnce()
-                    }
-
                     if (isPlaying) {
                       pause()
                     } else {

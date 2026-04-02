@@ -87,4 +87,5 @@ const StyledButton = styled.button<{
   ${flexRowCenter}
   ${({ $size }) => sizeStyles[$size]}
   ${({ $state }) => stateStyles[$state]}
+  transition: background-color 0.2s ease;
 `

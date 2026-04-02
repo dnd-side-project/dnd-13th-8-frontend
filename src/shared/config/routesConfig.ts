@@ -4,33 +4,39 @@ import type { ComponentType, LazyExoticComponent } from 'react'
 import RedirectToShuffle from '@/pages/discover/ui/RedirectToShuffle'
 
 const HomePage = lazy(() => import('@/pages/home'))
-const MypageLayout = lazy(() => import('@/pages/mypage/ui/MypageLayout'))
-const Mypage = lazy(() => import('@/pages/mypage/ui/main'))
-const Customize = lazy(() => import('@/pages/mypage/ui/customize'))
-const MypageTracklist = lazy(() => import('@/pages/mypage/ui/tracklist'))
-const Setting = lazy(() => import('@/pages/mypage/ui/setting'))
-const Terms = lazy(() => import('@/pages/mypage/ui/terms'))
-const Privacy = lazy(() => import('@/pages/mypage/ui/privacy'))
-const Unregister = lazy(() => import('@/pages/mypage/ui/unregister'))
-const Notification = lazy(() => import('@/pages/mypage/ui/notification'))
+const CustomizeLayout = lazy(() => import('@/pages/customize/CustomizeLayout'))
+const CustomizePage = lazy(() => import('@/pages/customize'))
 const SearchPage = lazy(() => import('@/pages/search'))
 const SearchResult = lazy(() => import('@/pages/search/SearchResultPage'))
 const DiscoverLayout = lazy(() => import('@/pages/discover/DiscoverLayout'))
-const MyCdLayout = lazy(() => import('@/pages/mycd/MyCdLayout'))
 const DiscoverCarousel = lazy(() => import('@/pages/discover'))
 const PlaylistInfoPage = lazy(() => import('@/pages/discover/tracklist'))
 const LoginLayout = lazy(() => import('@/pages/login/LoginLayout'))
 const LoginPage = lazy(() => import('@/pages/login'))
 const LoginCallbackPage = lazy(() => import('@/pages/login/callback'))
-const MyCdPage = lazy(() => import('@/pages/mycd'))
-const MyCdInfoPage = lazy(() => import('@/pages/mycd/tracklist'))
 const NotFoundPage = lazy(() => import('@/pages/notFound'))
 const ErrorPage = lazy(() => import('@/pages/error'))
 const FeedbackPage = lazy(() => import('@/pages/feedback'))
 const FeedLayout = lazy(() => import('@/pages/feed/FeedLayout'))
-const FollowLayout = lazy(() => import('@/pages/feed/FollowLayout'))
+const FollowLayout = lazy(() => import('@/pages/feed/ui/layout/FollowLayout'))
+const Feed = lazy(() => import('@/pages/feed'))
 const Followers = lazy(() => import('@/pages/feed/followers'))
 const Following = lazy(() => import('@/pages/feed/following'))
+const Cds = lazy(() => import('@/pages/feed/cds'))
+const Likes = lazy(() => import('@/pages/feed/likes'))
+const TracklistDetail = lazy(() => import('@/pages/feed/tracklist'))
+const ProfileEditLayout = lazy(() => import('@/pages/profileEdit/ProfileEditLayout'))
+const ProfileEdit = lazy(() => import('@/pages/profileEdit'))
+const SettingsLayout = lazy(() => import('@/pages/settings/SettingsLayout'))
+const Settings = lazy(() => import('@/pages/settings'))
+const Unregister = lazy(() => import('@/pages/settings/unregister'))
+const Notification = lazy(() => import('@/pages/settings/notification'))
+const AdminLayout = lazy(() => import('@/pages/admin/AdminLayout'))
+const Admin = lazy(() => import('@/pages/admin'))
+const CurationLayout = lazy(() => import('@/pages/curation/CurationLayout'))
+const Curation = lazy(() => import('@/pages/curation'))
+const CurationPlayer = lazy(() => import('@/pages/curation/play'))
+const PlayerLayout = lazy(() => import('@/widgets/playlist/PlayerLayout'))
 
 export interface RouteConfig {
   path: string
@@ -44,6 +50,25 @@ export interface RouteConfig {
 export const routesConfig: RouteConfig[] = [
   // 홈
   { path: '/', component: HomePage },
+
+  // 큐레이션
+  {
+    path: '/curation',
+    component: CurationLayout,
+    children: [
+      { path: ':bundleId', component: Curation },
+
+      {
+        path: ':bundleId/play',
+        component: PlayerLayout,
+        children: [
+          { path: ':id?', component: CurationPlayer },
+          { path: ':id/tracklist', component: PlaylistInfoPage },
+        ],
+      },
+    ],
+    hideNav: true,
+  },
 
   // 검색
   { path: '/search', component: SearchPage },
@@ -61,35 +86,13 @@ export const routesConfig: RouteConfig[] = [
     ],
   },
 
-  // 나의 CD
+  // CD 커스터마이즈
   {
-    path: '/mycd',
-    component: MyCdLayout,
-    isPrivate: true,
-    isNotSuspense: true,
-    children: [
-      { path: ':id?', component: MyCdPage },
-      { path: ':id?/tracklist', component: MyCdInfoPage },
-    ],
-  },
-
-  // 마이페이지
-  {
-    path: '/mypage',
-    component: MypageLayout,
+    path: '/customize',
+    component: CustomizeLayout,
     hideNav: true,
-    isPrivate: true,
-    isNotSuspense: true,
-    children: [
-      { path: '', component: Mypage, hideNav: false, isNotSuspense: false },
-      { path: 'customize', component: Customize, isNotSuspense: false },
-      { path: ':id/tracklist', component: MypageTracklist, hideNav: false },
-      { path: 'setting', component: Setting },
-      { path: 'terms', component: Terms },
-      { path: 'privacy', component: Privacy },
-      { path: 'unregister', component: Unregister },
-      { path: 'notification', component: Notification },
-    ],
+    isNotSuspense: false,
+    children: [{ path: '', component: CustomizePage }],
   },
 
   // 로그인
@@ -111,16 +114,17 @@ export const routesConfig: RouteConfig[] = [
     hideNav: true,
   },
 
-  // 에러 페이지
-  { path: '*', component: NotFoundPage, isNotSuspense: true },
-  { path: '/error', component: ErrorPage, isNotSuspense: true },
-
   // 유저 피드
   {
-    path: '/:userId',
+    path: '/:shareCode',
     component: FeedLayout,
     isNotSuspense: true,
     children: [
+      {
+        path: '',
+        component: Feed,
+        isNotSuspense: true,
+      },
       {
         path: 'followers',
         component: FollowLayout,
@@ -133,6 +137,67 @@ export const routesConfig: RouteConfig[] = [
         isNotSuspense: true,
         children: [{ path: '', component: Following }],
       },
+      {
+        path: 'cds',
+        component: PlayerLayout,
+        isNotSuspense: true,
+        children: [
+          { path: ':id?', component: Cds },
+          { path: ':id?/tracklist', component: TracklistDetail },
+        ],
+      },
+      {
+        path: 'likes',
+        component: PlayerLayout,
+        isNotSuspense: true,
+        children: [
+          { path: ':id?', component: Likes },
+          { path: ':id?/tracklist', component: TracklistDetail },
+        ],
+      },
     ],
   },
+
+  // 프로필 수정
+  {
+    path: '/profileEdit',
+    component: ProfileEditLayout,
+    isPrivate: true,
+    hideNav: true,
+    children: [{ path: '', component: ProfileEdit }],
+  },
+
+  // 설정
+  {
+    path: '/settings',
+    component: SettingsLayout,
+    hideNav: true,
+    isPrivate: true,
+    isNotSuspense: true,
+    children: [
+      { path: '', component: Settings },
+      { path: 'unregister', component: Unregister },
+      { path: 'notification', component: Notification },
+    ],
+  },
+
+  // 어드민
+  {
+    path: '/administrator',
+    component: AdminLayout,
+    hideNav: true,
+    isPrivate: true,
+    isNotSuspense: true,
+    children: [
+      {
+        path: '',
+        component: Admin,
+        isNotSuspense: true,
+      },
+    ],
+  },
+
+  // 에러 페이지
+  { path: '*', component: NotFoundPage, isNotSuspense: true },
+  { path: '/error', component: ErrorPage, isNotSuspense: true },
 ]

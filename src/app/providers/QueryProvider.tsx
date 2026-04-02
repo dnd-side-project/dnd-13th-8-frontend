@@ -7,7 +7,7 @@ interface QueryProviderProps {
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 5 * 60 * 1000, // TODO: refresh 필요한 시간에 맞춰 staleTime 조정 필요
+      staleTime: 5 * 60 * 1000,
       retry: 1, // 쿼리 실패 시 1번 재시도
     },
   },

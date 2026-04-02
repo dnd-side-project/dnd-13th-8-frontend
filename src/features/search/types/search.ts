@@ -1,4 +1,5 @@
-import type { CdCustomData, Track } from '@/entities/playlist'
+import type { CdCustomData } from '@/entities/playlist'
+import type { MUSIC_GENRES } from '@/shared/config/musicGenres'
 
 export interface SearchParams {
   query: string
@@ -7,18 +8,9 @@ export interface SearchParams {
   page?: number
 }
 
+export type MusicGenreId = (typeof MUSIC_GENRES)[number]['id']
 export interface CategoryPlaylistParams {
-  genre:
-    | 'STUDY'
-    | 'SLEEP'
-    | 'RELAX'
-    | 'WORKOUT'
-    | 'DRIVE'
-    | 'PARTY'
-    | 'MOOD'
-    | 'ROMANCE'
-    | 'KPOP'
-    | 'SAD'
+  genre: MusicGenreId
   sort?: 'POPULAR' | 'RECENT'
   limit?: number
   cursorId?: number
@@ -29,22 +21,30 @@ export interface PopularKeywordParams {
   limit?: number
 }
 
-export interface Playlist {
+export interface UserSearchResult {
+  type: 'USER'
+  userId: string
+  shareCode: string
+  nickname: string
+  profileUrl: string | null
+}
+
+export interface PlaylistSearchResult {
+  type: 'PLAYLIST'
   playlistId: number
   playlistName: string
   creatorId: string
   creatorNickname: string
-  tracks: Track[]
-  type: 'USER' | 'PLAYLIST'
-
   cdResponse?: {
     cdItems: CdCustomData[]
   }
 }
 
+export type SearchResult = UserSearchResult | PlaylistSearchResult
+
 export type SearchPlaylistResponse = {
   content: {
-    results: Playlist[]
+    results: SearchResult[]
   }
   page: number
   size: number
@@ -53,7 +53,7 @@ export type SearchPlaylistResponse = {
 }
 
 export interface CategoryPlaylistItem {
-  content: Playlist[]
+  content: PlaylistSearchResult[]
   hasNext: boolean
   page: number
   size: number
@@ -71,3 +71,9 @@ export interface PopularKeywordResponse {
   limit: number
   keywords: PopularKeywordItem[]
 }
+export const SEARCH_TYPE = {
+  KEYWORD: 'keyword',
+  CATEGORY: 'category',
+} as const
+
+export type SearchType = (typeof SEARCH_TYPE)[keyof typeof SEARCH_TYPE]

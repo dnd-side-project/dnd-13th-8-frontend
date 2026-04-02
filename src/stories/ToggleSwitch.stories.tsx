@@ -2,10 +2,10 @@ import { useState } from 'react'
 
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
-import ToggleSwitch from '@/pages/mypage/ui/components/ToggleSwitch'
+import { ToggleSwitch } from '@/pages/customize/ui'
 
 const meta: Meta<typeof ToggleSwitch> = {
-  title: 'Pages/MyPage/ToggleSwitch',
+  title: 'Pages/Customize/ToggleSwitch',
   component: ToggleSwitch,
   parameters: {
     layout: 'centered',

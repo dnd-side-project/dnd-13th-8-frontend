@@ -1,9 +1,16 @@
+import type { ShareCode } from '@/features/auth'
+import type { SortType } from '@/shared/ui/ContentHeader'
+
+export type FEED_CD_LIST_TAB_TYPE = 'cds' | 'likes'
+
 export interface CdBasicInfo {
   playlistId: number
   playlistName: string
   creatorNickname?: string
+  creatorShareCode?: string
   genre: string
   isPublic: boolean
+  isLiked?: boolean
 }
 
 export interface CdCustomData {
@@ -24,12 +31,27 @@ export interface CdCoverInfo {
   cdItems: CdCustomData[]
 }
 
-export type CdMetaResponse = (CdBasicInfo & OnlyCdResponse)[]
+export interface CdListParams {
+  shareCode: ShareCode
+  sort: SortType
+  cursor: string | null
+  limit: number
+}
 
 export interface OnlyCdResponse {
   cdResponse: {
     cdItems: CdCustomData[]
   }
+}
+
+export type CdMetaResponse = (CdBasicInfo & OnlyCdResponse)[]
+
+export interface CdListResponse {
+  content: (CdBasicInfo & OnlyCdResponse)[]
+  nextCursor: string | null
+  size: number
+  hasNext: boolean
+  totalCount: number
 }
 
 export interface Track {
@@ -44,6 +66,7 @@ export interface Track {
 export interface Creator {
   creatorId: string
   creatorNickname: string
+  creatorShareCode?: string
   creatorProfileImageUrl?: string
 }
 
@@ -71,4 +94,37 @@ export interface PlaylistResponse {
 export interface PlaylistParams {
   cursorId?: number
   size?: number
+}
+
+export type CarouselDirection = 'NEXT' | 'PREV'
+export type CarouselSort = 'POPULAR' | 'RECENT'
+
+export interface CarouselParams {
+  anchorId?: number
+  direction?: CarouselDirection
+  cursor?: number
+  sort?: CarouselSort
+  limit?: number
+}
+
+export interface CarouselCdListResponse {
+  content: (CdBasicInfo & OnlyCdResponse)[]
+  prevCursor: number | null
+  nextCursor: number | null
+  size: number
+  hasPrev: boolean
+  hasNext: boolean
+  totalCount: number
+}
+
+// main/recommendation response
+export interface Playlist {
+  playlistId: number
+  playlistName: string
+  creatorId: string
+  creatorNickname: string
+  songs: Track[]
+  cdResponse?: {
+    cdItems: CdCustomData[]
+  }
 }

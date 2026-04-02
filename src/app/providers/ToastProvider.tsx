@@ -2,19 +2,9 @@ import { createContext, useCallback, useContext, useState, type ReactNode } from
 
 import styled from 'styled-components'
 
+import { type ToastType, TOAST_MESSAGES } from '@/shared/config/toast'
+import { useDevice } from '@/shared/lib/useDevice'
 import { Toast } from '@/shared/ui'
-
-type ToastType = 'LINK' | 'IMAGE' | 'REPORT' | 'COMMENT' | 'AUTH_EXPIRED' | 'CD_DELETE' | 'SUBMIT'
-
-const TOAST_MESSAGES: Record<ToastType, string> = {
-  LINK: '링크가 복사됐어요',
-  IMAGE: '이미지가 저장됐어요',
-  REPORT: '신고가 접수됐어요',
-  COMMENT: '댓글이 삭제됐어요',
-  AUTH_EXPIRED: '로그인 정보가 만료되었어요',
-  CD_DELETE: 'CD가 삭제됐어요',
-  SUBMIT: '의견이 제출됐어요!',
-}
 
 type ToastContextType = {
   toast: (type: ToastType) => void
@@ -23,6 +13,8 @@ type ToastContextType = {
 const ToastContext = createContext<ToastContextType | undefined>(undefined)
 
 export const ToastProvider = ({ children }: { children: ReactNode }) => {
+  const { layoutWidth } = useDevice()
+
   const [toastState, setToastState] = useState<{ message: string; type: ToastType } | null>(null)
 
   const toast = useCallback((type: ToastType) => {
@@ -34,8 +26,8 @@ export const ToastProvider = ({ children }: { children: ReactNode }) => {
     <ToastContext.Provider value={{ toast }}>
       {children}
       {toastState && (
-        <ToastContainer>
-          <Toast message={toastState.message} />
+        <ToastContainer $layoutWidth={layoutWidth}>
+          <Toast type={toastState.type} />
         </ToastContainer>
       )}
     </ToastContext.Provider>
@@ -48,11 +40,20 @@ export const useToast = () => {
   return context
 }
 
-const ToastContainer = styled.div`
+const ToastContainer = styled.div<{ $layoutWidth: string }>`
   position: absolute;
   top: 16px;
-  left: 0;
-  right: 0;
   padding: 0 20px;
+  width: ${({ $layoutWidth }) => $layoutWidth};
   z-index: ${({ theme }) => theme.Z_INDEX.topLayer};
+
+  @media (max-width: 979px) {
+    margin: 0 auto;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  @media (min-width: 980px) {
+    left: 55%;
+  }
 `

@@ -1,0 +1,53 @@
+import { useMemo } from 'react'
+import { Outlet, useLocation, useMatch, useNavigate, useParams } from 'react-router-dom'
+
+import styled from 'styled-components'
+
+import { LeftArrow } from '@/assets/icons'
+import { useBundlePlaylist } from '@/entities/bundle'
+import { HOME_SECTION_TITLES } from '@/shared/config/homeTitles'
+import { getRandomItem } from '@/shared/lib'
+import { Header, Loading, SvgButton } from '@/shared/ui'
+
+const CurationLayout = () => {
+  const navigate = useNavigate()
+  const location = useLocation()
+  const { bundleId, id: playlistId } = useParams()
+
+  const isTracklistPage = useMatch('/curation/:bundleId/play/:id/tracklist')
+
+  const sectionTitle = useMemo(() => {
+    return location.state?.sectionTitle || getRandomItem(HOME_SECTION_TITLES.TIME)
+  }, [location.state?.sectionTitle])
+
+  const { data, isLoading, isError } = useBundlePlaylist(Number(bundleId))
+
+  if (isLoading) return <Loading isLoading={isLoading} />
+  if (isError) {
+    navigate('/error')
+    return null
+  }
+
+  return (
+    <div>
+      {!isTracklistPage && (
+        <Header
+          left={
+            <SvgButton
+              icon={LeftArrow}
+              onClick={() => navigate(playlistId ? `/curation/${bundleId}` : '/')}
+            />
+          }
+          center={<Title>{playlistId ? data?.title : sectionTitle}</Title>}
+        />
+      )}
+
+      <Outlet context={data} />
+    </div>
+  )
+}
+export default CurationLayout
+
+const Title = styled.span`
+  white-space: nowrap;
+`

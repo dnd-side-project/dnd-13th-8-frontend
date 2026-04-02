@@ -1,33 +1,25 @@
 import { useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 import styled from 'styled-components'
 
 import { useToast } from '@/app/providers'
 import { Kakao } from '@/assets/icons'
 import { LoginBg as LoginBgImg, LoginContent as LoginContentImg } from '@/assets/images'
-import { generateCodeVerifier, generateCodeChallenge } from '@/features/auth/lib/pkce'
-import { useAuthStore } from '@/features/auth/store/authStore'
+import { startKakaoLogin, useAuthStore } from '@/features/auth'
+import { useDevice, openPolicyLink } from '@/shared/lib'
 import { flexColCenter, flexRowCenter } from '@/shared/styles/mixins'
 
 const LoginPage = () => {
   const navigate = useNavigate()
-  const { toast } = useToast?.() ?? {}
+  const location = useLocation()
+  const { toast } = useToast()
+  const { layoutWidth } = useDevice()
 
   const onKakaoLoginClick = async () => {
-    const KAKAO_CLIENT_ID = import.meta.env.VITE_KAKAO_CLIENT_ID
-    const REDIRECT_URI = `${import.meta.env.VITE_BASE_URL}/login/callback`
-
-    const codeVerifier = generateCodeVerifier()
-    const codeChallenge = await generateCodeChallenge(codeVerifier)
-
-    sessionStorage.setItem('pkce_code_verifier', codeVerifier)
-
-    const authUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${KAKAO_CLIENT_ID}&redirect_uri=${encodeURIComponent(
-      REDIRECT_URI
-    )}&response_type=code&code_challenge=${codeChallenge}&code_challenge_method=S256&scope=profile_nickname%20profile_image`
-
-    window.location.href = authUrl
+    const { redirectTo, action } =
+      (location.state as { redirectTo?: string; action?: string }) || {}
+    await startKakaoLogin(redirectTo, action)
   }
 
   useEffect(() => {
@@ -35,7 +27,7 @@ const LoginPage = () => {
     if (isLogin) {
       navigate('/', { replace: true })
     }
-  }, [])
+  }, [navigate])
 
   useEffect(() => {
     if (localStorage.getItem('show_expired_toast') === 'true') {
@@ -45,27 +37,46 @@ const LoginPage = () => {
   }, [toast])
 
   return (
-    <>
-      <LoginBg />
+    <Container $layoutWidth={layoutWidth}>
+      <LoginBg $layoutWidth={layoutWidth} />
       <LoginWrap>
-        <LoginContent src={LoginContentImg} alt="login content" width={240} height={368} />
-        <CtaContainer>
-          <LoginButton type="button" onClick={onKakaoLoginClick}>
-            <Kakao width={20} height={20} />
-            <span>카카오로 시작하기</span>
-          </LoginButton>
-          <GuestButton type="button" onClick={() => navigate('/')}>
-            비회원으로 둘러보기
-          </GuestButton>
-        </CtaContainer>
+        <LoginBox>
+          <LoginImage src={LoginContentImg} alt="login content" width={240} height={368} />
+          <CtaContainer>
+            <LoginButton type="button" onClick={onKakaoLoginClick}>
+              <Kakao width={20} height={20} />
+              <span>카카오로 시작하기</span>
+            </LoginButton>
+            <GuestButton type="button" onClick={() => navigate('/')}>
+              비회원으로 둘러보기
+            </GuestButton>
+          </CtaContainer>
+        </LoginBox>
+        <TermsAndPrivacy>
+          <button type="button" onClick={() => openPolicyLink('terms')}>
+            서비스 이용 약관
+          </button>
+          <span>|</span>
+          <button type="button" onClick={() => openPolicyLink('privacy')}>
+            개인정보 처리방침
+          </button>
+        </TermsAndPrivacy>
       </LoginWrap>
-    </>
+    </Container>
   )
 }
 
 export default LoginPage
 
-const LoginBg = styled.div`
+const Container = styled.div<{ $layoutWidth: string }>`
+  position: relative;
+  margin: 0 -20px;
+  width: ${({ $layoutWidth }) => $layoutWidth};
+  min-height: 100dvh;
+  overflow-x: hidden;
+`
+
+const LoginBg = styled.div<{ $layoutWidth: string }>`
   z-index: 0;
   position: absolute;
   top: 0;
@@ -79,19 +90,37 @@ const LoginBg = styled.div`
 `
 
 const LoginWrap = styled.div`
+  position: relative;
+  z-index: 1;
   ${flexColCenter}
-  gap: 80px;
   width: 100%;
-  height: 100dvh;
+  min-height: 100dvh;
+  padding: 60px 20px 34px;
+  box-sizing: border-box;
 `
 
-const LoginContent = styled.img`
-  z-index: 1;
+const LoginBox = styled.div`
+  ${flexColCenter}
+  flex: 1;
+  justify-content: center;
+  gap: 80px;
+  width: 100%;
+
+  @media (max-height: 670px) {
+    gap: 40px;
+  }
+`
+
+const LoginImage = styled.img`
+  width: 100%;
   object-fit: contain;
+
+  @media (max-height: 670px) {
+    max-height: 50dvh;
+  }
 `
 
 const CtaContainer = styled.div`
-  z-index: 1;
   ${flexColCenter}
   gap: 24px;
   width: 100%;
@@ -113,4 +142,21 @@ const GuestButton = styled.button`
   ${({ theme }) => theme.FONT['body1-normal']}
   color: ${({ theme }) => theme.COLOR['gray-10']};
   text-decoration: underline;
+`
+
+const TermsAndPrivacy = styled.div`
+  margin-top: 40px;
+  ${flexRowCenter}
+  gap: 12px;
+  color: ${({ theme }) => theme.COLOR['gray-200']};
+
+  & > button {
+    ${({ theme }) => theme.FONT.caption1}
+    text-decoration: underline;
+    color: inherit;
+  }
+
+  & > span {
+    ${({ theme }) => theme.FONT.caption1}
+  }
 `

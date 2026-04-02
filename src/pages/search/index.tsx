@@ -5,7 +5,7 @@ import styled, { css } from 'styled-components'
 
 import { CARD_IMAGES_SMALL } from '@/assets/card'
 import { LeftArrow, Search } from '@/assets/icons'
-import { usePopularKeyword } from '@/features/search'
+import { SEARCH_TYPE, usePopularKeyword, type SearchType } from '@/features/search'
 import { TrendKeyword } from '@/pages/search/ui'
 import { MUSIC_GENRES } from '@/shared/config/musicGenres'
 import { CategoryButton, Header, Input, SvgButton } from '@/shared/ui'
@@ -14,20 +14,20 @@ const SearchPage = () => {
   const [searchValue, setSearchValue] = useState('')
   const navigate = useNavigate()
 
-  const handleSearch = () => {
-    if (!searchValue.trim()) return
+  const handleSearch = (keyword: string, type: SearchType) => {
+    if (!keyword.trim()) return
     navigate({
       pathname: '/searchResult',
       search: `?${createSearchParams({
-        keyword: searchValue.trim(),
-        keywordType: 'keyword',
+        keyword: keyword.trim(),
+        keywordType: type,
       })}`,
     })
   }
 
   const { data } = usePopularKeyword({
     range: '7d',
-    limit: 9,
+    limit: 20,
   })
 
   return (
@@ -38,14 +38,14 @@ const SearchPage = () => {
       />
       <Input
         type="search"
-        placeholder="듣고 싶은 키워드로 검색"
+        placeholder="듣고 싶은 트랙명 키워드 또는 닉네임 검색"
         value={searchValue}
         onChange={(e) => setSearchValue(e.target.value)}
         icon={Search}
         iconPosition="left"
         onKeyDown={(e) => {
           if (e.key === 'Enter') {
-            handleSearch()
+            handleSearch(searchValue, SEARCH_TYPE.KEYWORD)
           }
         }}
       />
@@ -56,21 +56,13 @@ const SearchPage = () => {
             <TrendKeyword
               key={`${item.score}-${item.term}`}
               text={item.term}
-              onClick={() =>
-                navigate({
-                  pathname: '/searchResult',
-                  search: `?${createSearchParams({
-                    keyword: item.term,
-                    keywordType: 'keyword',
-                  })}`,
-                })
-              }
+              onClick={() => handleSearch(item.term, SEARCH_TYPE.KEYWORD)}
             />
           ))}
         </Keywords>
       </TrendKeywordsSection>
       <MoodSection>
-        <h1>장르와 테마</h1>
+        <h1>카테고리</h1>
         <Category>
           {MUSIC_GENRES.map((genre) => (
             <CategoryButton
@@ -78,15 +70,7 @@ const SearchPage = () => {
               text={genre.label}
               size="small"
               bgImage={CARD_IMAGES_SMALL[genre.id]}
-              onClick={() =>
-                navigate({
-                  pathname: '/searchResult',
-                  search: `?${createSearchParams({
-                    keyword: genre.id,
-                    keywordType: 'category',
-                  })}`,
-                })
-              }
+              onClick={() => handleSearch(genre.id, SEARCH_TYPE.CATEGORY)}
             />
           ))}
         </Category>

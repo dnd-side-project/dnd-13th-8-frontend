@@ -3,7 +3,7 @@ import { useEffect, useRef, useState, useCallback } from 'react'
 import { Client, type Message } from '@stomp/stompjs'
 import SockJS from 'sockjs-client/dist/sockjs'
 
-import { useAuthStore } from '@/features/auth/store/authStore'
+import { useAuthStore } from '@/features/auth'
 import { getListenerCount, type ChatMessage } from '@/features/chat'
 
 export const useChatSocket = (roomId: string) => {
@@ -32,13 +32,15 @@ export const useChatSocket = (roomId: string) => {
     if (!roomId || !authToken) return
     if (clientRef.current?.active) return // 이미 활성화된 연결 방지
 
+    setMessages([]) // roomId 변경 시 메시지 초기화
+
     const client = new Client({
       webSocketFactory: () => new SockJS(`${import.meta.env.VITE_API_URL}/chat/ws`),
       connectHeaders: {
         Authorization: `Bearer ${authToken}`,
       },
 
-      debug: (str) => console.log('[STOMP]', str),
+      debug: import.meta.env.DEV ? (str) => console.log('[STOMP]', str) : () => {},
     })
 
     client.onConnect = async () => {

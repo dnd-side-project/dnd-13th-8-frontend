@@ -2,12 +2,10 @@ import { useRef, useState, useEffect } from 'react'
 
 import styled from 'styled-components'
 
-import { EyeSlashWhite } from '@/assets/icons'
 import overlayUrl from '@/assets/icons/icn_overlay.svg?url'
 import type { CdCustomData } from '@/entities/playlist/types/playlist'
-import { THEME_IMAGES_MAP } from '@/pages/mypage/lib/customizeTheme'
-import { THEME_PROP_ID_OFFSET } from '@/pages/mypage/types/mypage'
-import { flexRowCenter, flexColCenter } from '@/shared/styles/mixins'
+import { THEME_PROP_ID_OFFSET, THEME_IMAGES_MAP } from '@/features/customize'
+import { flexRowCenter } from '@/shared/styles/mixins'
 
 export interface CdProps {
   variant:
@@ -23,12 +21,13 @@ export interface CdProps {
     | 'home'
     | 'mycd'
     | 'mycd_mo'
+    | 'splitCard_lg'
+    | 'splitCard_sm'
   bgColor?: 'none' | 'default' | 'dark'
   stickers?: CdCustomData[]
-  isPublic?: boolean
 }
 
-const Cd = ({ variant, bgColor = 'default', stickers, isPublic = true }: CdProps) => {
+const Cd = ({ variant, bgColor = 'default', stickers }: CdProps) => {
   const baseRef = useRef<HTMLDivElement>(null)
   const [dynamicBase, setDynamicBase] = useState(0)
 
@@ -89,9 +88,10 @@ const Cd = ({ variant, bgColor = 'default', stickers, isPublic = true }: CdProps
         return (
           <img
             key={`${cdItemId}-${xCoordinate}-${yCoordinate}`}
-            crossOrigin="anonymous"
             src={src}
             alt="cd-sticker"
+            draggable={false}
+            onDragStart={(e) => e.preventDefault()}
             style={{
               position: 'absolute',
               left: xCoordinate * ratio,
@@ -106,12 +106,6 @@ const Cd = ({ variant, bgColor = 'default', stickers, isPublic = true }: CdProps
         )
       })}
       <Overlay />
-      {!isPublic && (
-        <PrivateCover>
-          <EyeSlashWhite width={16} height={16} />
-          <span>비공개된 CD</span>
-        </PrivateCover>
-      )}
     </Base>
   )
 
@@ -138,7 +132,9 @@ const sizeMap = {
   responsive: { borderRadius: 10 },
   home: { container: 180, base: 180, borderRadius: 0 },
   mycd: { container: 260, base: 260, borderRadius: 0 },
-  mycd_mo: { container: 240, base: 240, borderRadius: 0 },
+  mycd_mo: { container: 230, base: 230, borderRadius: 0 },
+  splitCard_lg: { container: 136, base: 118, borderRadius: 16 },
+  splitCard_sm: { container: 64, base: 55, borderRadius: 6 },
 } as const
 
 interface StyleProps {
@@ -174,17 +170,4 @@ const Overlay = styled.div`
   background: url(${overlayUrl}) no-repeat center/cover;
   mix-blend-mode: multiply;
   pointer-events: none;
-`
-
-const PrivateCover = styled.div`
-  position: relative;
-  ${flexColCenter}
-  gap: 3px;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(42, 47, 57, 0.7);
-
-  & > span {
-    ${({ theme }) => theme.FONT['caption2']}
-  }
 `

@@ -11,7 +11,10 @@ const getDeviceType = (): DeviceType => {
   return isMobile ? 'mobile' : 'pc'
 }
 
-export const useDevice = (): DeviceType => {
+export const useDevice = () => {
   const [deviceType] = useState<DeviceType>(() => getDeviceType())
-  return deviceType
+  const isMobile = deviceType === 'mobile'
+  const layoutWidth = isMobile ? 'clamp(320px, 100dvw, 430px)' : '430px'
+
+  return { deviceType, isMobile, layoutWidth }
 }
