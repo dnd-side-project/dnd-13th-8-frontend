@@ -1,5 +1,5 @@
 import { useEffect, useCallback, useState } from 'react'
-import { useParams, useOutletContext } from 'react-router-dom'
+import { useParams, useOutletContext, useNavigate } from 'react-router-dom'
 
 import styled from 'styled-components'
 
@@ -34,6 +34,8 @@ const PlaylistCarousel = ({
   const { id: playlistId } = useParams()
   const { isMobile } = useDevice()
   const { playerRef } = useOutletContext<OutletContextType>()
+  const navigate = useNavigate()
+
   const isSmall = isMobile && window.innerHeight < 633
   const [activeIndex, setActiveIndex] = useState(0)
 
@@ -175,7 +177,15 @@ const PlaylistCarousel = ({
             {playlistDetail.playlistName}
           </Title>
 
-          {showCreator && <Creator>{playlistDetail.creatorNickname}</Creator>}
+          {showCreator && (
+            <Creator
+              type="button"
+              disabled={!showCreator || !playlistDetail.creatorShareCode}
+              onClick={() => navigate(`/${playlistDetail.creatorShareCode}`)}
+            >
+              {playlistDetail.creatorNickname}
+            </Creator>
+          )}
         </TitleWrapper>
 
         <BottomWrapper>
@@ -253,10 +263,12 @@ const Title = styled.p<{
   ${marquee}
 `
 
-const Creator = styled.p`
+const Creator = styled.button`
+  width: fit-content;
   ${({ theme }) => theme.FONT['body2-normal']};
   color: ${({ theme }) => theme.COLOR['gray-300']};
   margin-top: 2px;
+  text-align: left;
 `
 
 const CenterWrapper = styled.div`
